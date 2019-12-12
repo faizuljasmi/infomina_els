@@ -27,7 +27,7 @@ First, make sure you have Composer and Laravel installed. To do so, refer [here]
 
 Then, clone the repo
 
-`git clone https://github.com/faizuljasmi/laravel-FMS.git`
+`git clone https://github.com/faizuljasmi/infomina_els.git`
 
 Then, rename ".env.example" to ".env". Configure the file according to your local databse config.
 
@@ -41,18 +41,11 @@ Once you have it configured, run:
 
 This will populate your database with all appropriate tables
 
-Then, run:
-
-` php artisan db:seed`
-
-This will populate your tables with fake data, which is sweet for testing, developing and viewing purposes.
-
 Lastly, run:
 
  `php artisan serve`
  
  ## Admin account:
  
- email: faizul@rocketweb.my
+ Go to localhost/register to create first admin account. Then to create new employee account, use Create New User feature
  
- pswd: secret
