@@ -11,6 +11,7 @@ class LeaveApplicationController extends Controller
     public function create(){
         $leaveType = LeaveType::orderBy('id','ASC')->get();
         $employees = User::orderBy('id','ASC')->get();
+        
         //dd($leaveType);
         return view('leaveapp.create')->with(compact('leaveType', 'employees'));
     }

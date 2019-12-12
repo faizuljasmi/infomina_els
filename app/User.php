@@ -50,4 +50,8 @@ class User extends Authenticatable
         return $this->belongsTo(EmpType::class, 'emp_type_id');
     }
 
+    public function leave_applications(){
+        return $this->hasMany(LeaveApplication::class);
+    }
+
 }
