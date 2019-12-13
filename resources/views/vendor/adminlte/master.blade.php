@@ -23,23 +23,33 @@
     @else
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @endif
+
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+    
+
+    <script src="{{ asset('vendor/extra/js/moment.min.js') }}"></script>
+    <script src="{{ asset('vendor/extra/js/daterangepicker.min.js') }}"></script>
+    <script src="{{ asset('vendor/extra/js/myform.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ asset('vendor/extra/css/daterangepicker.css') }}">
+
 </head>
 <body class="@yield('classes_body')" @yield('body_data')>
 
 @yield('body')
 
 @if(! config('adminlte.enabled_laravel_mix'))
-<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+{{-- <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+<script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script> --}}
 
 @include('adminlte::plugins', ['type' => 'js'])
 
 @yield('adminlte_js')
 @else
 <script src="{{ asset('js/app.js') }}"></script>
-
 @endif
-
 </body>
 </html>
