@@ -15,7 +15,7 @@ class CreateEmpTypesTable extends Migration
     {
         Schema::create('emp_types', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
+            $table->string('name')->unique();
             // $table->integer('ent_annual')->nullable();
             // $table->integer('ent_calamity')->nullable();
             // $table->integer('ent_carryfwd')->nullable();

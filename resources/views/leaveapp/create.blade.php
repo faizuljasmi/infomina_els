@@ -65,7 +65,7 @@
                   <label>Relief Personel:</label>
                   <select class="form-control" id="exampleFormControlSelect1">
                     <option selected>Choose Person</option>
-                    @foreach($employees as $emp)
+                    @foreach($groupMates as $emp)
                     <option>{{$emp->name}}</option>
                     @endforeach
                 </select>

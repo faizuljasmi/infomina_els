@@ -30,17 +30,35 @@
                         <input type="text" class="form-control" id="type" placeholder="{{$empType->name}}">
                         </div>
                         <div class="form-group col-md-3">
+                        <label for="type">Employee Group</label>
+                        <input type="text" class="form-control" id="type" placeholder="{{$empGroup->name}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                        <label for="type">Authority One</label>
+                        <input type="text" class="form-control" id="type" placeholder="{{$empAuth->authority_1_id}}">
+                        </div>
+                        <div class="form-group col-md-3">
                         <label for="type">Job Title</label>
-                        <input type="text" class="form-control" id="type" placeholder="Software Engineer">
+                        <input type="text" class="form-control" id="type" placeholder="{{$user->job_title}}">
                         </div>
                         <div class="form-group col-md-3">
                         <label for="type">Join Date</label>
-                        <input type="text" class="form-control" id="type" placeholder="2 Dec 2019">
+                        <input type="text" class="form-control" id="type" placeholder="{{$user->join_date}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                        <label for="type">Emergency Contact Name</label>
+                        <input type="text" class="form-control" id="type" placeholder="{{$user->emergency_contact_name}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                        <label for="type">Emergency Contact No.</label>
+                        <input type="text" class="form-control" id="type" placeholder="{{$user->emergency_contact_no}}">
                         </div>
                     </div>
                     </fieldset>
                 </form>
-                <div class="float-sm-right"><button type="button" class="btn btn-primary" >Edit</button></div>
+                <div class="float-sm-right"><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit user profile and leave">
+                                <a href="{{route('user_edit', $user->id)}}" class="btn btn-info btn-sm">Edit</a>
+                            </span></div>
             </div>
         </div>
     </div> 

@@ -1,5 +1,5 @@
 @extends('adminlte::page')
 
 @section('content')
-    <h4>Editin for {{$user->name}}</h4>
+    <h5>Edit Profile: {{$user->name}}</h5>
 @endsection

@@ -17,9 +17,9 @@ class CreateLeaveApplicationsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('leave_type_id');
-            $table->enum('status', ['PENDING_1', 'PENDING_2','PENDING_3','APPROVED', 'DENIED_1','DENIED_2','DENIED_3','CANCELLED' ]);
+            $table->enum('status', ['PENDING_1', 'PENDING_2','PENDING_3','APPROVED', 'DENIED_1','DENIED_2','DENIED_3','CANCELLED' ])->default('PENDING_1');
             $table->unsignedBigInteger('approver_id_1')->nullable();
-            $table->unsignedBigInteger('approver_id_2')->nullabel();
+            $table->unsignedBigInteger('approver_id_2')->nullable();
             $table->unsignedBigInteger('approver_id_3')->nullable();
             $table->date('date_from');
             $table->date('date_to');

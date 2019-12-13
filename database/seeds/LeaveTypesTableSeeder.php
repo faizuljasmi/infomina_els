@@ -31,9 +31,6 @@ class LeaveTypesTableSeeder extends Seeder
                 'name' => 'Emergency',
               ),
               array(
-                'name' => 'Hospitalization',
-              ),
-              array(
                 'name' => 'Marriage',
               ),
               array(
