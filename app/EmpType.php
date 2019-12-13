@@ -26,7 +26,7 @@ class EmpType extends Model
     ];
 
         
-    public function user(){
+    public function users(){
         $this->hasMany(User::class);
     }
 

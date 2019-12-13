@@ -21,8 +21,8 @@ class HomeController extends Controller
     public function index(){
         //Get current user who is logged in
         $user = auth()->user();
-        $app = LeaveApplication::find(1);
-        dd($app->approver_one->toArray());
+        // $app = LeaveApplication::find(1);
+        // dd($app->approver_one->toArray());
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
