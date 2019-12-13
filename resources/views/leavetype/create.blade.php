@@ -16,7 +16,7 @@
     <!-- <div class="register-box">
         <div class="card">
             <div class="card-body register-card-body">
-            <form method="POST" action="/emptype_create">
+            <form method="POST" action="/emptype/create">
                 {{ csrf_field() }}
 
                 <div class="input-group mb-3">
@@ -105,7 +105,7 @@
         </button>
       </div>
       <div class="modal-body">
-      <form method="POST" action="/leavetype_create">
+      <form method="POST" action="/leavetype/create">
                     {{ csrf_field() }}
                     <div class = "form-row">
 

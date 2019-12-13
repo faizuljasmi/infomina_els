@@ -220,7 +220,7 @@ return [
             'submenu' => [  
                 [
                     'text' => 'Add Employee Type',
-                    'url'  => '/emptype_create',
+                    'url'  => '/emptype/create',
                     'icon' => 'fas fa-fw fa-user-tag',
                     'can' => 'admin-dashboard'
                 ],       
@@ -234,7 +234,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Add Leave Type',
-                    'url'  => '/leavetype_create',
+                    'url'  => '/leavetype/create',
                     'icon' => 'fas fa-fw fa-calendar-plus',
                     'can' => 'admin-dashboard'
                 ],         

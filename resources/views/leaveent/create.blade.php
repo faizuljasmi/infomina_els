@@ -86,7 +86,7 @@ foreach ($leaveEnt->toArray() as $row) {
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-            <form method="POST" action="/create_entitlement/{{$empType->id}}">
+            <form method="POST" action="/entitlement/create/{{$empType->id}}">
                 {{ csrf_field() }}
                     @foreach($allLeaveTypes as $type)
                     <?php

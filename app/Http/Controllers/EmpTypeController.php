@@ -26,9 +26,11 @@ class EmpTypeController extends Controller
      */
     public function create()
     {
+        //Get all employee types already been created
         $allTypes = $this->getAllTypes();
+        //Get all leave types, to be assigned to employee type
         $allLeaveTypes = $this->getAllLeaveTypes();
-        
+        //Get leave entitlements
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->get();
         //dd($leaveEnt);
 
@@ -46,10 +48,10 @@ class EmpTypeController extends Controller
         $this->validate(request(),[
             'name' => ['required', 'string', 'max:255'],
         ]);
-
+        //Create employee type
         $emptype = EmpType::create(request(['name']));
 
-        return redirect()->to('/emptype_create')->with('message', 'Employee Type created succesfully');
+        return redirect()->to('/emptype/create')->with('message', 'Employee Type created succesfully');
     }
 
     /**
@@ -72,6 +74,7 @@ class EmpTypeController extends Controller
     public function edit(EmpType $empType)
     {
         //
+        return view ('emptype.edit')->with(compact('empType'));
     }
 
     /**
@@ -83,7 +86,8 @@ class EmpTypeController extends Controller
      */
     public function update(Request $request, EmpType $empType)
     {
-        //
+        $empType->update($request->only('name'));
+        return redirect()->to('/emptype/create')->with('message', 'Employee Type updated succesfully');
     }
 
     /**

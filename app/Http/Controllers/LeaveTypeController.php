@@ -44,7 +44,7 @@ class LeaveTypeController extends Controller
 
         $emptype = LeaveType::create(request(['name']));
 
-        return redirect()->to('/leavetype_create')->with('message', 'Leave type created succesfully');
+        return redirect()->to('/leavetype/create')->with('message', 'Leave type created succesfully');
     }
 
     /**

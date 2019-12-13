@@ -81,7 +81,7 @@ class LeaveEntitlementController extends Controller
                 $dupcheck->no_of_days = (int)$val;
                 $dupcheck->save();
                 // $message = 'Entitled leave for '.$empType->name.' updated succesfully';
-                // return redirect()->to('/emptype_create')->with('message', $message);
+                // return redirect()->to('/emptype/create')->with('message', $message);
             }
             // dd($dupcheck->id);
            
@@ -113,7 +113,7 @@ class LeaveEntitlementController extends Controller
     // }
        
 
-        return redirect()->to('/emptype_create')->with('message', 'Leave entitlement added succesfully');
+        return redirect()->to('/emptype/create')->with('message', 'Leave entitlement added succesfully');
     }
 
     /**

@@ -45,7 +45,7 @@
                             <td>
                                 <a href="{{route('leaveent_create', $type)}}" class="btn btn-success btn-sm">Set Leave Entitlement</a>
                                 <!-- <button class="btn btn-success btn-sm">Set Leave Entitlement</button> -->
-                                <button class="btn btn-info btn-sm"><i class="fa fa-pencil-alt"></i></button>
+                                <a href="{{route('emptype_edit',$type)}}" class="btn btn-info btn-sm" ><i class="fa fa-pencil-alt"></i></a>
                                 <a href="{{route('emptype_delete',$type)}}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this employee type?')"><i class="fa fa-trash-alt"></i></a>
                             </td>
                             </tr>
@@ -67,7 +67,7 @@
         </button>
       </div>
       <div class="modal-body">
-      <form method="POST" action="/emptype_create">
+      <form method="POST" action="/emptype/create">
                     {{ csrf_field() }}
                     <div class = "form-row">
 
