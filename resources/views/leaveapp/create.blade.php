@@ -39,7 +39,7 @@
       <div class="row">
 
         <!-- Left Col -->
-        <section class="col-lg-5 connectedSortable ui-sortable">
+        <section class="col-lg-6 connectedSortable ui-sortable">
           <form method="POST" action="/leaveapp/create">
             <!-- Application Form -->
             <div class="card card-primary">
@@ -77,7 +77,8 @@
                     </div>
                     <select class="form-control" name="apply_for">
                       <option value="full-day">Full Day</option>
-                      <option value="half-day">Half Day</option>
+                      <option value="half-day-am">Half Day AM</option>
+                      <option value="half-day-pm">Half Day PM</option>
                     </select>
                   </div>
                 </div>
@@ -131,7 +132,7 @@
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control float-right" name="date_resume">
+                    <input type="date" class="form-control float-right" name="date_resume">
                   </div>
                 </div>
 
@@ -169,19 +170,33 @@
                   </div>
                 </div>
 
-
-                <!-- Emergency Contant -->
+                <!-- Emergency Contact Name-->
                 <div class="form-group">
-                  <label>Emergency Contant</label>
+                  <label>Emergency Contact Name</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-user"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" name="emergency_contact_name">
+                  </div>
+                </div>
+
+                <!-- Emergency Contact No -->
+                <div class="form-group">
+                  <label>Emergency Contact No</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="fa fa-phone"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact">
+                    <input type="text" class="form-control float-right" name="emergency_contact_no">
                   </div>
                 </div>
+
+
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-success float-right">Submit</button>
@@ -192,10 +207,10 @@
         </section>
 
         <!-- Right Col -->
-        <section class="col-lg-6 connectedSortable ui-sortable">
+        <section class="col-lg-5 connectedSortable ui-sortable">
 
           <div class="row">
-            <div class="col-lg-6 connectedSortable ui-sortable">
+            <div class="col-lg-12 connectedSortable ui-sortable">
               <!-- Vanilla Calendar -->
               <div class="card">
                 <div class="card-header bg-teal">
@@ -204,7 +219,7 @@
                 <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
               </div>
             </div>
-            <div class="col-lg-6 connectedSortable ui-sortable">
+            <div class="col-lg-12 connectedSortable ui-sortable">
               <!-- Approval Authorities -->
               <div class="card">
                 <div class="card-header bg-teal">
@@ -273,74 +288,139 @@
   $(document).ready(MainLeaveApplicationCreate);
 
   function MainLeaveApplicationCreate() {
-    const isHalfDay = function(){
-      return _form.get(FC.apply_for) == "half-day";
-    }
-
-    const updateDateResume = function(){
-      console.log("updateDateResume")
-    }
-    
-    const updateTotalDay = function(){
-      console.log("updateTotalDay")
-    }
-
+  
     let calendar = new VanillaCalendar({
         holiday: [
-          "20191204","20191205"
+          "20191204","20191205","20191206"
         ],
         selector: ".myCalendar",
         onSelect: (data, elem) => {
-            console.log(data, elem)
+            // console.log(data, elem)
         }
     });
+
+   
+    const validation = {
+      onchange : function(v, e, fc){
+          console.log("onchange", v, e, fc);
+          let name = fc.name;
+
+          if(name == FC.date_from.name || name == FC.date_to.name){
+            let error = validation.validateDateFromAndTo(name);
+            if(error != null){
+              alert(error);
+              _form.set(fc, "");
+              return;
+            }
+          }
+
+          validation._dateFrom(name);
+          validation._dateTo(name);
+
+          validation._totalDay(name);
+          validation._dateResume(name);
+        
+      },
+      isHalfDayAm : function(){
+        return _form.get(FC.apply_for) == "half-day-am";
+      },
+      isHalfDayPm : function(){
+        return _form.get(FC.apply_for) == "half-day-pm";
+      },
+      isFullDay : function(){
+        return _form.get(FC.apply_for) == "full-day";
+      },
+      validateDateFromAndTo : function(name){
+        let date_from = _form.get(FC.date_from);
+        let date_to = _form.get(FC.date_to);
+        if(
+          (name == FC.date_from.name && calendar.isWeekend(date_from)) 
+          || 
+          (name == FC.date_to.name && calendar.isWeekend(date_to))
+        ){
+          return `Selected date is a WEEKEND. Please select another date.`;
+        }
+        if(
+          (name == FC.date_from.name && calendar.isHoliday(date_from)) 
+          || 
+          (name == FC.date_to.name && calendar.isHoliday(date_to))
+        ){
+          return `Selected date is a HOLIDAY. Please select another date.`;
+        }
+
+        if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
+          if(calendar.isDateSmaller(date_to, date_from)){
+            if(name == FC.date_from.name){
+              return "[Date From] cannot be bigger than [Date To]";
+            } else if(name == FC.date_to.name){
+              return "[Date To] cannot be smaller than [Date From]";
+            }
+          }
+        }
+        return null;
+      },
+      // #########################################
+      // specific to field
+      _dateFrom : function(name){
+      },
+      _dateTo : function(name){
+        if(validation.isHalfDayAm() || validation.isHalfDayPm()){
+          _form.disabled(FC.date_to);
+          _form.copy(FC.date_from, FC.date_to);
+        } else if(validation.isFullDay()){
+          _form.required(FC.date_to);
+          if(name == FC.apply_for.name){
+            _form.set(FC.date_to, "");
+          }
+        }
+      },
+      _dateResume : function(name){
+        if(!_form.isEmpty(FC.date_to)){
+          let dateTo = _form.get(FC.date_to);
+          let nextWorkingDay = calendar.getNextWorkingDay(dateTo);
+          nextWorkingDay = calendar.getDateInput(nextWorkingDay);
+          _form.set(FC.date_resume, nextWorkingDay)
+        }
+      },
+      _totalDay : function(name){
+        if(validation.isHalfDayAm() || validation.isHalfDayPm()){
+          _form.set(FC.total_days, 0.5);
+        }else if(validation.isFullDay()){
+          if(name == FC.apply_for.name){
+            _form.set(FC.total_days, "");
+          }
+
+          if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
+            let from = _form.get(FC.date_from);
+            let to = _form.get(FC.date_to);
+            let total = calendar.getTotalWorkingDay(from, to);
+            console.log("total",total)
+            _form.set(FC.total_days, total);
+          } else{
+            _form.set(FC.total_days, "");
+          }
+        }
+      }
+    }
 
     let _form = null;
     let parent_id = "leaveapp-create";
     let FC = {
       leave_type_id : {
         name : "leave_type_id",
-        type : MyFormType.SELECT,
-        onchange: function(v, el, meta){
-          console.log(v,el,meta);
-
-          let label = _form.desc(meta);
-          _form.set(FC.total_days, 4);
-        }
+        type : MyFormType.SELECT
       },
       apply_for : {
         name : "apply_for",
-        type : MyFormType.SELECT,
-        onchange: function(v, el, meta){
-          if(isHalfDay()){
-            _form.disabled(FC.date_to);
-            _form.copy(FC.date_from, FC.date_to);
-            updateTotalDay();
-            updateDateResume();
-          } else{
-            _form.required(FC.date_to);
-          }
-        }
+        type : MyFormType.SELECT
       },
       date_from : {
         name : "date_from",
-        type : MyFormType.DATE,
-        onchange: function(v, el, meta){
-          if(isHalfDay()){
-            _form.copy(FC.date_from, FC.date_to);
-          }
-
-          updateTotalDay();
-          updateDateResume();
-        }
+        type : MyFormType.DATE
       },
       date_to : {
         name : "date_to",
-        type : MyFormType.DATE,
-        onchange: function(v, el, meta){
-          updateTotalDay();
-          updateDateResume();
-        }
+        type : MyFormType.DATE
       },
       total_days : {
         name : "total_days",
@@ -362,8 +442,12 @@
         name : "relief_personnel_id",
         type : MyFormType.SELECT
       },
-      emergency_contact  : {
-        name : "emergency_contact",
+      emergency_contact_no  : {
+        name : "emergency_contact_no",
+        type : MyFormType.TEXT
+      },
+      emergency_contact_name  : {
+        name : "emergency_contact_name",
         type : MyFormType.TEXT
       },
       // ####################################
@@ -375,16 +459,16 @@
       // approver_id_3
     }
 
-    _form = new MyForm({parent_id : parent_id, items : FC});
+    _form = new MyForm({parent_id : parent_id, items : FC, onchange : validation.onchange});
 
-    // set required
     _form.required(FC.leave_type_id);
     _form.required(FC.date_from);
     _form.required(FC.date_to);
 
-    // set disabled
     _form.disabled(FC.date_resume);
     _form.disabled(FC.total_days);
+  
+
   }
 
 </script>
