@@ -130,11 +130,12 @@
                       </span>
                     </div>
                     <select class="form-control" id="exampleFormControlSelect1">
-                      <option value="">Choose Person</option>
-                      @foreach($employees as $emp)
+                      <option selected>Choose Person</option>
+                      @foreach($groupMates as $emp)
                       <option value="{{$emp->id}}">{{$emp->name}}</option>
                       @endforeach
                     </select>
+
                   </div>
                 </div>
 

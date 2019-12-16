@@ -43,6 +43,13 @@ Route::get('/emptype/edit/{empType}','EmpTypeController@edit')->name('emptype_ed
 Route::post('emptype/update/{empType}','EmpTypeController@update')->name('emptype_update')->middleware('auth');
 Route::get('/delete/emp_type/{empType}','EmpTypeController@destroy')->name('emptype_delete')->middleware('auth');
 
+//Employee Group
+Route::get('/empgroup/create','EmpGroupController@create')->middleware('auth');
+Route::post('empgroup/create','EmpGroupController@store')->middleware('auth');
+Route::get('/empgroup/edit/{empGroup}','EmpGroupController@edit')->name('empgroup_edit')->middleware('auth');
+Route::post('empgroup/update/{empGroup}','EmpGroupController@update')->name('empgroup_update')->middleware('auth');
+Route::get('/delete/emp_group/{empGroup}','EmpGroupController@destroy')->name('empgroup_delete')->middleware('auth');
+
 //Leave Entitlement
 Route::get('/entitlement/create/{empType}','LeaveEntitlementController@create')->name('leaveent_create')->middleware('auth');
 Route::post('entitlement/create/{empType}', 'LeaveEntitlementController@store')->middleware('auth');

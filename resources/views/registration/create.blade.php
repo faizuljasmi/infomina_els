@@ -138,7 +138,7 @@
                     <option>Employee</option>
                     </select>
                 </div>
-
+                <!-- Choose Employee Type -->
                 <div class = "form-group">
                 <label for="employee_type">Employee Type:</label>
                     <select class="form-control" id="emp_type_id" name="emp_type_id">
@@ -146,6 +146,20 @@
                         <option value="{{$et->id}}">{{$et->name}}</option>
                     @endforeach
                     </select>
+                </div>
+                <!-- Choose Employee Group -->
+                <div class = "form-group">
+                <label for="employee_type">Employee Group:</label>
+                    <select class="form-control" id="emp_group_id" name="emp_group_id">
+                    @foreach($empGroups as $eg)
+                        <option value="{{$et->id}}">{{$eg->name}}</option>
+                    @endforeach
+                    </select>
+                </div>
+                <!-- Enter Job Title -->
+                <div class = "form-group">
+                <label for="employee_type">Job Title:</label>
+                <input class="form-control" type="text" placeholder="Position Name" id="job_title" name="job_title">
                 </div>
                     <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

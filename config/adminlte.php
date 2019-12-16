@@ -206,15 +206,15 @@ return [
             'url'  => '/apply/leave',
             'icon' => 'fas fa-fw fa-calendar-alt',
         ],
-        ['header' => 'Settings', 'can' => 'admin-dashboard'],
+        ['header' => ' System Settings', 'can' => 'admin-dashboard'],
         [
-            'text' => 'Create New User',
+            'text' => 'User',
             'url'  => '/create',
             'icon' => 'fas fa-fw fa-user-plus',
             'can' => 'admin-dashboard'
         ],
         [
-            'text'    => 'Employee Settings',
+            'text'    => 'Employee',
             'can' => 'admin-dashboard',
             'icon'    => 'fas fa-fw fa-user-cog',
             'submenu' => [  
@@ -223,12 +223,18 @@ return [
                     'url'  => '/emptype/create',
                     'icon' => 'fas fa-fw fa-user-tag',
                     'can' => 'admin-dashboard'
-                ],       
+                ], 
+                [
+                    'text' => 'Add Employee Group',
+                    'url'  => '/empgroup/create',
+                    'icon' => 'fas fa-fw fa-user-tag',
+                    'can' => 'admin-dashboard'
+                ],         
             ],
         ],
 
         [
-            'text'    => 'Leave Settings',
+            'text'    => 'Leave',
             'can' => 'admin-dashboard',
             'icon'    => 'fas fa-fw fa-calendar-alt',
             'submenu' => [
@@ -239,6 +245,12 @@ return [
                     'can' => 'admin-dashboard'
                 ],         
             ],
+        ],
+        ['header' => ' My Settings', 'can' => 'admin-dashboard'],
+        [
+            'text' => 'Edit My Profile',
+            'url'  => '#',
+            'icon' => 'fas fa-fw fa-user-edit',
         ],
         // ['header' => 'labels'],
         // [

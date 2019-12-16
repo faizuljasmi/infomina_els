@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddEmpTypeIdToUsersTable extends Migration
+class AddEmpGroupIdToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,8 @@ class AddEmpTypeIdToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('emp_type_id')->nullable();
-            $table->foreign('emp_type_id')->references('id')->on('emp_types')->onDelete('cascade');;
+            $table->unsignedBigInteger('emp_group_id')->nullable();
+            $table->foreign('emp_group_id')->references('id')->on('emp_groups')->onDelete('cascade');;
         });
     }
 
@@ -27,8 +27,8 @@ class AddEmpTypeIdToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('users_emp_type_id_foreign');
-            $table->dropColumn('emp_type_id');
+            $table->dropForeign('users_emp_group_id_foreign');
+            $table->dropColumn('emp_group_id');
         });
     }
 }

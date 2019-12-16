@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLeaveTypesTable extends Migration
+class CreateEmpGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateLeaveTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('leave_types', function (Blueprint $table) {
+        Schema::create('emp_groups', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateLeaveTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('leave_types');
+        Schema::dropIfExists('emp_groups');
     }
 }

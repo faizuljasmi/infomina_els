@@ -11,7 +11,7 @@
             </button>
         </div>
     @endif
-    <h2>Employee Type</h2>
+    <h2>Employee Group</h2>
 
     
 <div class="row">
@@ -19,14 +19,14 @@
 <div class ="col-md-6">
     <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
- Create New Type
+ Create New Group
 </button>
 
 </div>
     <div class="mt-2 col-md-12">
         <div class="card">
-            <div class="card-header bg-olivs">
-                <strong>Employee Types List</strong>
+            <div class="card-header bg-olive">
+                <strong>Employee Groups List</strong>
             </div>
                 <div class="card-body">
                 <table class="table table-sm table-bordered">
@@ -38,15 +38,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                        @foreach($allTypes as $type)
+                        @foreach($allGroups as $ag)
                             <tr>
-                            <td>{{$type->id}}</td>
-                            <td>{{$type->name}}</td>
+                            <td>{{$ag->id}}</td>
+                            <td>{{$ag->name}}</td>
                             <td>
-                                <a href="{{route('leaveent_create', $type)}}" class="btn btn-success btn-sm">Set Leave Entitlement</a>
-                                <!-- <button class="btn btn-success btn-sm">Set Leave Entitlement</button> -->
-                                <a href="{{route('emptype_edit',$type)}}" class="btn btn-info btn-sm" ><i class="fa fa-pencil-alt"></i></a>
-                                <a href="{{route('emptype_delete',$type)}}" class="btn btn-danger btn-sm" onclick="return confirm('Warning: Are you sure you want to delete this employee type? Deleting this group will also delete all users associated with it.')"><i class="fa fa-trash-alt"></i></a>
+                                <a href="{{route('empgroup_edit',$ag)}}" class="btn btn-info btn-sm" ><i class="fa fa-pencil-alt"></i></a>
+                                <a href="{{route('empgroup_delete',$ag)}}" class="btn btn-danger btn-sm" onclick="return confirm('Warning: Are you sure you want to delete this employee group? Deleting this group will also delete all users associated with it')"><i class="fa fa-trash-alt"></i></a>
                             </td>
                             </tr>
                         @endforeach
@@ -61,20 +59,20 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Create New Employee Type</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Create New Employee Group</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-      <form method="POST" action="/emptype/create">
+      <form method="POST" action="/empgroup/create">
                     {{ csrf_field() }}
                     <div class = "form-row">
 
                     <!-- Employee Type Name -->
-                    <label for = "typename">Employee Type Name</label>
+                    <label for = "typename">Employee Group Name</label>
                         <input type="text" name="name" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" value="{{ old('name') }}" id="typename"
-                            placeholder="Ex: Executive" autofocus>
+                            placeholder="Ex: IT1" autofocus>
                     
 
                         @if ($errors->has('name'))
