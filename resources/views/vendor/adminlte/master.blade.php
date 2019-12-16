@@ -29,11 +29,15 @@
     <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
     
 
+    <!-- Vendor extra JS -->
+    <script src="{{ asset('vendor/extra/js/vanilla-calendar.js') }}"></script>
     <script src="{{ asset('vendor/extra/js/moment.min.js') }}"></script>
     <script src="{{ asset('vendor/extra/js/daterangepicker.min.js') }}"></script>
     <script src="{{ asset('vendor/extra/js/myform.js') }}"></script>
-
+    
+    <!-- Vendor extra CSS -->
     <link rel="stylesheet" href="{{ asset('vendor/extra/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/extra/css/vanilla-calendar.css') }}">
 
 </head>
 <body class="@yield('classes_body')" @yield('body_data')>

@@ -9,9 +9,68 @@ var MyFormType = {
 
 var MyForm = function({ parent_id, items }) {
     this.parent = $("#" + parent_id);
+    this.form = this.parent.find("form");
+    this.items = items;
+
+    // reset form
+    this.form.trigger("reset");
+
+    this.registerEvent();
 };
 
+MyForm.prototype.required = function(name) {
+    let el = this.elByName(name);
+    el.attr("required", "required");
+    el.removeAttr("readonly");
+};
+MyForm.prototype.disabled = function(name) {
+    let el = this.elByName(name);
+    el.attr("readonly", "readonly");
+    el.removeAttr("required");
+};
+MyForm.prototype.optional = function(name) {
+    let el = this.elByName(name);
+    el.removeAttr("required");
+    el.removeAttr("readonly");
+};
+
+MyForm.prototype.copy = function(nameFrom, nameTo) {
+    return this.set(nameTo, this.get(nameFrom));
+};
+MyForm.prototype.get = function(name) {
+    return this.elByName(name).val();
+};
+
+MyForm.prototype.set = function(name, v) {
+    this.elByName(name).val(v);
+};
+
+MyForm.prototype.desc = function({ name, type }) {
+    let el = this.elByName(name);
+    if (type == MyFormType.SELECT) {
+        return el.find("option:selected").text();
+    }
+
+    return "";
+};
+MyForm.prototype.registerEvent = function() {
+    for (let k in this.items) {
+        let item = this.items[k];
+        let el = this.elByName(item.name);
+
+        if (item.onchange) {
+            el.change(function(e) {
+                e = e.currentTarget;
+                let v = $(e).val();
+                item.onchange(v, e, item);
+            });
+        }
+    }
+};
 MyForm.prototype.elByName = function(name) {
+    if(typeof name !== "string" && name){
+        name = name.name;
+    }
     return this.parent.find(`[name=${name}]`);
 };
 
@@ -107,3 +166,59 @@ MyForm.prototype.submit = function() {
 // $("input[data-bootstrap-switch]").each(function() {
 //     $(this).bootstrapSwitch("state", $(this).prop("checked"));
 // });
+
+// let pastDates = true, availableDates = false, availableWeekDays = false
+
+// let calendar = new VanillaCalendar({
+//     selector: "#myCalendar",
+//     onSelect: (data, elem) => {
+//         console.log(data, elem)
+//     }
+// })
+
+// let btnPastDates = document.querySelector('[name=pastDates]')
+// btnPastDates.addEventListener('click', () => {
+//     pastDates = !pastDates
+//     calendar.set({pastDates: pastDates})
+//     btnPastDates.innerText = `${(pastDates ? 'Disable' : 'Enable')} past dates`
+// })
+
+// let btnAvailableDates = document.querySelector('[name=availableDates]')
+// btnAvailableDates.addEventListener('click', () => {
+//     availableDates = !availableDates
+//     btnAvailableDates.innerText = `${(availableDates ? 'Clear available dates' : 'Set available dates')}`
+//     if (!availableDates) {
+//         calendar.set({availableDates: [], datesFilter: false})
+//         return
+//     }
+//     let dates = () => {
+//         let result = []
+//         for (let i = 1; i < 15; ++i) {
+//             if (i % 2) continue
+//             let date = new Date(new Date().getTime() + (60 * 60 * 24 * 1000) * i)
+//             result.push({date: `${String(date.getFullYear())}-${String(date.getMonth() + 1).padStart(2, 0)}-${String(date.getDate()).padStart(2, 0)}`})
+//         }
+//         return result
+//     }
+//     calendar.set({availableDates: dates(), availableWeekDays: [], datesFilter: true})
+// })
+
+// let btnAvailableWeekDays = document.querySelector('[name=availableWeekDays]')
+// btnAvailableWeekDays.addEventListener('click', () => {
+//     availableWeekDays = !availableWeekDays
+//     btnAvailableWeekDays.innerText = `${(availableWeekDays ? 'Clear available weekdays' : 'Set available weekdays')}`
+//     if (!availableWeekDays) {
+//         calendar.set({availableWeekDays: [], datesFilter: false})
+//         return
+//     }
+//     let days = [{
+//         day: 'monday'
+//     }, {
+//         day: 'tuesday'
+//     }, {
+//         day: 'wednesday'
+//     }, {
+//         day: 'friday'
+//     }]
+//     calendar.set({availableWeekDays: days, availableDates: [], datesFilter: true})
+// })
