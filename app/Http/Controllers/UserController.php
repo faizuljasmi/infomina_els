@@ -12,7 +12,7 @@ use App\LeaveEntitlement;
 
 class UserController extends Controller
 {
-    //
+    
     public function index(){
         $user = auth()->user();
         $empType = $user->emp_types;

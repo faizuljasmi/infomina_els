@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\LeaveType;
 use App\User;
+use App\ApprovalAuthority;
 
 class LeaveApplicationController extends Controller
 {
@@ -16,7 +17,7 @@ class LeaveApplicationController extends Controller
 
         //Get THIS user id
         $user = auth()->user();
-
+        $leaveAuth = $user->approval_authority;
         //Get employees who are in the same group (for relieve personnel).
         $groupMates = User::orderBy('id','ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
         //dd($groupMate->name);
@@ -26,7 +27,7 @@ class LeaveApplicationController extends Controller
 
         //TODO: Get leave balance of THIS employee
 
-        return view('leaveapp.create')->with(compact('leaveType', 'groupMates'));
+        return view('leaveapp.create')->with(compact('leaveType', 'groupMates','leaveAuth'));
     }
 
 

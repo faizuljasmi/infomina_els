@@ -15,7 +15,7 @@ class CreateEmpGroupsTable extends Migration
     {
         Schema::create('emp_groups', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->string('name');
             $table->timestamps();
         });
     }

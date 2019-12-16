@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EmpGroupsTableSeeder::class);
         $this->call(LeaveTypesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
-        $this->call(EmpGroupsTableSeeder::class);
+        $this->call(LeaveEntitlementsTableSeeder::class);
     }
 }

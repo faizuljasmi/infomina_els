@@ -1,6 +1,36 @@
 @extends('adminlte::page')
 @section('content')
 
+
+              <!-- Approval Authorities -->
+              <!-- <div class="card">
+                <div class="card-header bg-teal">
+                  <strong>Approval Authorities</strong>
+                </div>
+                <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
+                  <div class="card-body">
+                    <table class="table table-bordered">
+                      <tr>
+                        <th>Level</th>
+                        <th>Name</th>
+                      </tr>
+                      <tr>
+                        <td>1</td>
+                        <td>{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_one->name:'NA'}}</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_two->name:'NA'}}</td>
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td>{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_three->name:'NA'}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div> -->
+
+
 <section id="leaveapp-create">
   <h3>Apply Leave</h3>
   <section class="content">
@@ -204,7 +234,8 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-12 connectedSortable ui-sortable">
+            
+            <div class="col-lg-6 connectedSortable ui-sortable">
               <!-- Leaves Balance -->
               <div class="card">
                 <div class="card-header bg-teal">

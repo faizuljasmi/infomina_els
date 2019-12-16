@@ -12,10 +12,10 @@ class LeaveType extends Model
 
         
     public function entitlements(){
-        $this->hasMany(LeaveEntitlement::class);
+        return $this->hasMany(LeaveEntitlement::class);
     }
 
     public function earnings(){
-        $this->hasMany(LeaveEarning::class);
+       return $this->hasMany(LeaveEarning::class);
     }
 }

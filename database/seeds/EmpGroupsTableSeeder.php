@@ -13,19 +13,19 @@ class EmpGroupsTableSeeder extends Seeder
     {
         DB::table('emp_groups')->insert(array(
             array(
-              'name' => 'IT1',
+              'name' => 'Group1',
             ),
             array(
-                'name' => 'IT2',
+                'name' => 'Group2',
               ),
               array(
-                'name' => 'SE1',
+                'name' => 'Group3',
               ),
               array(
-                'name' => 'SE2',
+                'name' => 'Group4',
               ),
               array(
-                'name' => 'HR',
+                'name' => 'Group5',
               ),
             
           ));

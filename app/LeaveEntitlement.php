@@ -13,11 +13,11 @@ class LeaveEntitlement extends Model
     ];
 
     public function leave_type(){
-        $this->belongsTo(LeaveType::class, 'leave_type_id');
+       return $this->belongsTo(LeaveType::class, 'leave_type_id');
     }
 
     public function emp_type(){
-        $this->belongsTo(EmpType::class, 'emp_type_id');
+        return $this->belongsTo(EmpType::class, 'emp_type_id');
     }
 
     // public function getEmpTypeAttribute(){

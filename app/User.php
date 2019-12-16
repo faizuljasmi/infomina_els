@@ -62,6 +62,10 @@ class User extends Authenticatable
         return $this->hasMany(LeaveApplication::class);
     }
 
+    public function leave_earnings(){
+        return $this->hasMany(LeaveEarning::class);
+    }
+
     //One user has one set of approval authority
     public function approval_authority(){
         return $this->hasOne(ApprovalAuthority::class);
