@@ -7,10 +7,12 @@ var MyFormType = {
     DATE: "date"
 };
 
-var MyForm = function({ parent_id, items }) {
+var MyForm = function({ parent_id, items, onchange }) {
     this.parent = $("#" + parent_id);
     this.form = this.parent.find("form");
     this.items = items;
+    this.onchange = onchange;
+
 
     // reset form
     this.form.trigger("reset");
@@ -37,6 +39,10 @@ MyForm.prototype.optional = function(name) {
 MyForm.prototype.copy = function(nameFrom, nameTo) {
     return this.set(nameTo, this.get(nameFrom));
 };
+MyForm.prototype.isEmpty = function(name) {
+    let v = this.get(name);
+    return v === "" || v === null || typeof v === "undefined";
+};
 MyForm.prototype.get = function(name) {
     return this.elByName(name).val();
 };
@@ -54,21 +60,22 @@ MyForm.prototype.desc = function({ name, type }) {
     return "";
 };
 MyForm.prototype.registerEvent = function() {
+    let obj = this;
     for (let k in this.items) {
         let item = this.items[k];
         let el = this.elByName(item.name);
 
-        if (item.onchange) {
+        if (obj.onchange) {
             el.change(function(e) {
                 e = e.currentTarget;
                 let v = $(e).val();
-                item.onchange(v, e, item);
+                obj.onchange(v, e, item);
             });
         }
     }
 };
 MyForm.prototype.elByName = function(name) {
-    if(typeof name !== "string" && name){
+    if (typeof name !== "string" && name) {
         name = name.name;
     }
     return this.parent.find(`[name=${name}]`);

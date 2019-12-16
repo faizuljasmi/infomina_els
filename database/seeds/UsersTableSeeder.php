@@ -16,7 +16,19 @@ class UsersTableSeeder extends Seeder
         factory('App\User')->create([
           'email'=> 'faizul.jasmi95@gmail.com',
           'name' => 'Faizul Jasmi',
-          'password' => bcrypt('secret'),
+          'password' => 'password',
+          'user_type' => 'admin'
+        ]);
+        factory('App\User')->create([
+          'email'=> 'employee@gmail.com',
+          'name' => 'Test Employee',
+          'password' => 'password',
+          'user_type' => 'employee'
+        ]);
+        factory('App\User')->create([
+          'email'=> 'admin@gmail.com',
+          'name' => 'Test Admin',
+          'password' => 'password',
           'user_type' => 'admin'
         ]);
         factory('App\User')->times(10)->create();

@@ -30,6 +30,7 @@
     
 
     <!-- Vendor extra JS -->
+    <script src="{{ asset('vendor/extra/js/util.js') }}"></script>
     <script src="{{ asset('vendor/extra/js/vanilla-calendar.js') }}"></script>
     <script src="{{ asset('vendor/extra/js/moment.min.js') }}"></script>
     <script src="{{ asset('vendor/extra/js/daterangepicker.min.js') }}"></script>

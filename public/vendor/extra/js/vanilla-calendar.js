@@ -65,9 +65,36 @@ let VanillaCalendar = (function() {
 
         /**
          * @author Wan Zulsarhan
+         * @return YYYY-MM-DD
+         */
+        const getDateInput = function(date) {
+            if (typeof date === "string") {
+                date = date.replaceAll("-", "");
+                return (
+                    date.substr(0, 4) +
+                    "-" +
+                    date.substr(4, 2) +
+                    "-" +
+                    date.substr(6, 2)
+                );
+            }
+            return (
+                date.getFullYear() +
+                "-" +
+                String(date.getMonth() + 1).padStart("2", 0) +
+                "-" +
+                String(date.getDate()).padStart("2", 0)
+            );
+        };
+        /**
+         * @author Wan Zulsarhan
          * @return YYYYMMDD
          */
         const getDateDb = function(date) {
+            if (typeof date === "string") {
+                date = date.replaceAll("-", "");
+                return date;
+            }
             return (
                 date.getFullYear() +
                 String(date.getMonth() + 1).padStart("2", 0) +
@@ -77,10 +104,24 @@ let VanillaCalendar = (function() {
 
         /**
          * @author Wan Zulsarhan
+         * @return dateObj
+         */
+        const getDateObj = function(dateStr) {
+            let dateDb = getDateDb(dateStr);
+            return moment(dateDb, "YYYYMMDD").toDate();
+        };
+
+        /**
+         * @author Wan Zulsarhan
          * @return Boolean
          */
-        const isWeekend = function(date) {
-            return [0, 6].indexOf(date.getDay()) >= 0;
+        const isWeekend = function(dateObj) {
+            return [0, 6].indexOf(dateObj.getDay()) >= 0;
+        };
+
+        const isHoliday = function(dateObj) {
+            let dateDb = getDateDb(dateObj);
+            return opts.holiday.indexOf(dateDb) >= 0;
         };
 
         const createDay = function(date) {
@@ -159,7 +200,7 @@ let VanillaCalendar = (function() {
             if (opts.holiday.indexOf(dateDb) >= 0) {
                 newDayElem.classList.add("vanilla-calendar-date--holiday");
             }
-            if(isWeekend(date)){
+            if (isWeekend(date)) {
                 newDayElem.classList.add("vanilla-calendar-date--weekend");
             }
 
@@ -295,7 +336,107 @@ let VanillaCalendar = (function() {
             for (let k in options)
                 if (opts.hasOwnProperty(k)) opts[k] = options[k];
             createMonth();
-            //             this.reset()
+            //this.reset()
+        };
+
+        /**
+         * @return dateDb : YYYYMMDD
+         */
+        this.getDateDb = function(dateObj) {
+            return getDateDb(dateObj);
+        };
+
+        /**
+         * @return dateInput : YYYY-MM-DD
+         */
+        this.getDateInput = function(dateObj) {
+            return getDateInput(dateObj);
+        };
+
+        this.isDateBigger = function(date1, date2) {
+            date1 = this.getDateDb(date1);
+            date2 = this.getDateDb(date2);
+            return date1 > date2;
+        };
+
+        this.isDateSmaller = function(date1, date2) {
+            date1 = this.getDateDb(date1);
+            date2 = this.getDateDb(date2);
+            return date1 < date2;
+        };
+
+        this.isDateSame = function(date1, date2) {
+            date1 = this.getDateDb(date1);
+            date2 = this.getDateDb(date2);
+            return date1 == date2;
+        };
+
+        this.isWeekend = function(dateStr) {
+            let dateObj = getDateObj(dateStr);
+            return isWeekend(dateObj);
+        };
+
+        this.isHoliday = function(dateStr) {
+            let dateObj = getDateObj(dateStr);
+            return isHoliday(dateObj);
+        };
+
+        this.getTotalWorkingDay = function(dateFrom, dateTo) {
+            dateFrom = this.getDateDb(dateFrom);
+            dateTo = this.getDateDb(dateTo);
+            if (dateFrom == dateTo) {
+                return 1;
+            }
+
+            let attempt = 20;
+            let nextDateDb = dateFrom;
+            let total = 1;
+            for (let i = 0; i < attempt; i++) {
+                let nextDay = this.nextDay(nextDateDb);
+                nextDateDb = getDateDb(nextDay);
+
+                if (!isWeekend(nextDay) && !isHoliday(nextDay)) {
+                    total++;
+                }
+                if (nextDateDb == dateTo) {
+                    return total;
+                }
+            }
+
+            return total;
+        };
+        /**
+         * @return dateObj
+         */
+        this.getNextWorkingDay = function(date) {
+            date = this.getDateDb(date);
+
+            let attempt = 20;
+            let nextDateDb = date;
+            for (let i = 0; i < attempt; i++) {
+                let nextDay = this.nextDay(nextDateDb);
+
+                nextDateDb = getDateDb(nextDay);
+                if (isWeekend(nextDay)) {
+                    console.log("Weekend", nextDay);
+                    continue;
+                } else if (isHoliday(nextDay)) {
+                    console.log("Holiday", nextDay);
+                    continue;
+                } else {
+                    return nextDay;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * @return dateObj
+         */
+        this.nextDay = function(dateDb) {
+            return moment(dateDb, "YYYYMMDD")
+                .add(1, "days")
+                .toDate();
         };
 
         this.init();
