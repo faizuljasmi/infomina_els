@@ -249,7 +249,7 @@ return [
         ['header' => ' My Settings', ],
         [
             'text' => 'Edit My Profile',
-            'url'  => '#',
+            'url'  => '/myprofile',
             'icon' => 'fas fa-fw fa-user-edit',
         ],
         // ['header' => 'labels'],

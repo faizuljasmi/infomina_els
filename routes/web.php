@@ -24,6 +24,10 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 Route::get('/admin','HomeController@admin')->name('admin')->middleware('can:admin-dashboard');
 
+Route::get('/myprofile','UserController@index')->name('view_profile')->middleware('auth');
+Route::get('/myprofile/edit','UserController@edit')->middleware('auth');
+Route::post('/myprofile/update','UserController@update')->name('update_profile')->middleware('auth');
+
 //Create, Edit, Delete User
 Route::middleware('can:edit_users')->group(function(){
     Route::get('/create', 'RegistrationController@create')->middleware('auth');
