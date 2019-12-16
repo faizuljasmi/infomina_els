@@ -19,7 +19,7 @@
                 <strong>Profile</strong>
             </div>
             <div class="card-body">
-                @include('user.partials.form', ['action' => route('user_update', $user), 'user' => $user])
+                @include('user.employee.partials.form', ['action' => route('update_profile')])
             </div>
         </div>
     </div> 
@@ -32,24 +32,7 @@
             <div class="card-body">
             @if($empAuth === null)
             <strong>No record found</strong>
-            <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAuthority">Create</button></div>
-                <div class="modal fade" id="createAuthority" tabindex="-1" role="dialog" aria-labelledby="createAuthorityTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Create Approval Authorities for {{$user->name}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @include('leaveauth.partials.form', ['action' => route('approval_auth_create', $user), 'user' => $user])
-                    </div>
-                    </div>
-                </div>
-                </div>
             @else
-            <strong>Record found</strong>
             <table class="table table-bordered">
                   <tr>
                     <th>Level</th>
@@ -68,22 +51,6 @@
                     <td>{{isset($empAuth->authority_3_id) ? $empAuth->authority_three->name:'NA'}}</td>
                   </tr>
                 </table>
-                <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAuthority">Edit</button></div>
-                <div class="modal fade" id="editAuthority" tabindex="-1" role="dialog" aria-labelledby="editAuthorityTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Edit Approval Authorities for {{$user->name}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @include('leaveauth.partials.form', ['action' => route('approval_auth_update', $empAuth), 'empAuth' => $empAuth])
-                    </div>
-                    </div>
-                </div>
-                </div>
             @endif
             </div>
         </div>

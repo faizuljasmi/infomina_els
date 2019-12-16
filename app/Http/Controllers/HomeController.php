@@ -43,4 +43,9 @@ class HomeController extends Controller
         //dd($emptype->name);
         return view('admin')->with(compact('user','emptype','empTypes','leaveTypes'));
     }
+
+    public function getProfile() {
+        $user = Auth::user();
+        return view("admin_panel.info_views.users.user_profile")->with("user", $user);
+      }
 }

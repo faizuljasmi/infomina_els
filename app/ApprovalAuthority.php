@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ApprovalAuthority extends Model
 {
-    
+    protected $fillable = [
+        'user_id','authority_1_id','authority_2_id','authority_3_id',
+    ];
+
     //Relation with model user
     public function user(){
         return $this->belongsTo(User::class,'user_id');

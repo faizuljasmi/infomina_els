@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ApprovalAuthority;
 use Illuminate\Http\Request;
+use App\User;
 
 class ApprovalAuthorityController extends Controller
 {
@@ -22,9 +23,9 @@ class ApprovalAuthorityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(User $user)
     {
-        //
+        
     }
 
     /**
@@ -33,9 +34,18 @@ class ApprovalAuthorityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
-        //
+        $user_id = $user->id;
+        //dd($request->authority_1_id);
+        //$approvalAuth = ApprovalAuthority::create(request(['user_id','authority_1_id','authority_2_id','authority_3_id']));
+        $aa = new ApprovalAuthority;
+        $aa->user_id = $user_id;
+        $aa->authority_1_id = $request->authority_1_id;
+        $aa->authority_2_id = $request->authority_2_id;
+        $aa->authority_3_id = $request->authority_3_id;
+        $aa->save();
+        return redirect()->route('user_view', ['user' => $user])->with('message', 'User approval authority created succesfully');
     }
 
     /**
@@ -69,7 +79,9 @@ class ApprovalAuthorityController extends Controller
      */
     public function update(Request $request, ApprovalAuthority $approvalAuthority)
     {
-        //
+        $approvalAuthority->update($request->only('authority_1_id','authority_2_id','authority_3_id'));
+        return redirect()->route('user_view', ['user' => $approvalAuthority->user_id])->with('message', 'User approval authority updated succesfully');
+
     }
 
     /**

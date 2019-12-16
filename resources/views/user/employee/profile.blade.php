@@ -30,12 +30,6 @@
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" placeholder="{{$user->email}}">
                         </div>
-                        @if (Gate::forUser(Auth::user())->allows('admin-dashboard'))
-                        <div class="form-group col-md-3">
-                        <label for="level">User Type</label>
-                        <input type="text" class="form-control" id="level" placeholder="{{$user->user_type}}">
-                        </div>
-                        @endif
                         <div class="form-group col-md-3">
                         <label for="gender">Gender</label>
                         <input type="email" class="form-control" id="email" placeholder="{{$user->gender}}">
@@ -68,7 +62,7 @@
                     </fieldset>
                 </form>
                 <div class="float-sm-right"><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit user profile and leave">
-                                <a href="{{route('user_edit', $user->id)}}" class="btn btn-info">Edit</a>
+                                <a href="/myprofile/edit" class="btn btn-info">Edit</a>
                             </span></div>
             </div>
         </div>
@@ -82,24 +76,7 @@
             <div class="card-body">
             @if($empAuth === null)
             <strong>No record found</strong>
-            <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAuthority">Create</button></div>
-                <div class="modal fade" id="createAuthority" tabindex="-1" role="dialog" aria-labelledby="createAuthorityTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Create Approval Authorities for {{$user->name}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @include('leaveauth.partials.form', ['action' => route('approval_auth_create', $user), 'user' => $user])
-                    </div>
-                    </div>
-                </div>
-                </div>
             @else
-            <strong>Record found</strong>
             <table class="table table-bordered">
                   <tr>
                     <th>Level</th>
@@ -118,22 +95,6 @@
                     <td>{{isset($empAuth->authority_3_id) ? $empAuth->authority_three->name:'NA'}}</td>
                   </tr>
                 </table>
-                <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAuthority">Edit</button></div>
-                <div class="modal fade" id="editAuthority" tabindex="-1" role="dialog" aria-labelledby="editAuthorityTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Edit Approval Authorities for {{$user->name}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @include('leaveauth.partials.form', ['action' => route('approval_auth_update', $empAuth), 'empAuth' => $empAuth])
-                    </div>
-                    </div>
-                </div>
-                </div>
             @endif
             </div>
         </div>
@@ -196,7 +157,6 @@
                     </tr>
                  </tbody>
                 </table>
-                <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" >Edit</button></div>
             </div>
         </div>
     </div>
