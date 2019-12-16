@@ -19,7 +19,7 @@ class UsersTableSeeder extends Seeder
           'password' => bcrypt('secret'),
           'user_type' => 'admin'
         ]);
-        factory('App\User')->times(10)->create();
+        factory('App\User')->times(30)->create();
         Schema::enableForeignKeyConstraints();
     }
 }

@@ -29,6 +29,7 @@
                 <strong>Users List</strong>
             </div>
                 <div class="card-body">
+                {{ $users->links() }}
                 <table class="table table-sm table-bordered">
                         <thead>
                             <tr>
@@ -132,6 +133,13 @@
                     @endif
                 </div>
                 <div class = "form-group">
+                <label for="user_type">Gender:</label>
+                    <select class="form-control" id="gender" name="gender">
+                    <option>Male</option>
+                    <option>Female</option>
+                    </select>
+                </div>
+                <div class = "form-group">
                 <label for="user_type">User Level:</label>
                     <select class="form-control" id="user_type" name="user_type">
                     <option>Admin</option>
@@ -160,6 +168,11 @@
                 <div class = "form-group">
                 <label for="employee_type">Job Title:</label>
                 <input class="form-control" type="text" placeholder="Position Name" id="job_title" name="job_title">
+                </div>
+                <!-- Enter Join Date -->
+                <div class = "form-group">
+                <label for="employee_type">Join Date:</label>
+                <input class="form-control" type="date" placeholder="Join Date" id="join_date" name="join_date">
                 </div>
                     <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

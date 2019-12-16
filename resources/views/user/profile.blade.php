@@ -1,10 +1,19 @@
 @extends('adminlte::page')
 
 @section('content')
+@if(session()->has('message'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="icon fa fa-check"></i>
+            {{ session()->get('message') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
     <h4>Profile for {{$user->name}}</h4>
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-header bg-teal">
                 <strong>Profile</strong>
@@ -21,9 +30,15 @@
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" placeholder="{{$user->email}}">
                         </div>
+                        @if (Gate::forUser(Auth::user())->allows('admin-dashboard'))
                         <div class="form-group col-md-3">
-                        <label for="level">User Level</label>
+                        <label for="level">User Type</label>
                         <input type="text" class="form-control" id="level" placeholder="{{$user->user_type}}">
+                        </div>
+                        @endif
+                        <div class="form-group col-md-3">
+                        <label for="gender">Gender</label>
+                        <input type="email" class="form-control" id="email" placeholder="{{$user->gender}}">
                         </div>
                         <div class="form-group col-md-3">
                         <label for="type">Employee Type</label>
@@ -34,13 +49,9 @@
                         <input type="text" class="form-control" id="type" placeholder="{{$empGroup->name}}">
                         </div>
                         <div class="form-group col-md-3">
-                        <label for="type">Authority One</label>
-                        <input type="text" class="form-control" id="type" placeholder="{{$empAuth->authority_1_id}}">
-                        </div>
-                        <div class="form-group col-md-3">
                         <label for="type">Job Title</label>
                         <input type="text" class="form-control" id="type" placeholder="{{$user->job_title}}">
-                        </div>
+                        </div>  
                         <div class="form-group col-md-3">
                         <label for="type">Join Date</label>
                         <input type="text" class="form-control" id="type" placeholder="{{$user->join_date}}">
@@ -57,12 +68,81 @@
                     </fieldset>
                 </form>
                 <div class="float-sm-right"><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit user profile and leave">
-                                <a href="{{route('user_edit', $user->id)}}" class="btn btn-info btn-sm">Edit</a>
+                                <a href="{{route('user_edit', $user->id)}}" class="btn btn-info">Edit</a>
                             </span></div>
             </div>
         </div>
     </div> 
     
+    <div class="col-md-4">
+        <div class="card">
+            <div class = "card-header bg-teal">
+                <strong>Approval Authorities</strong>
+            </div>
+            <div class="card-body">
+            @if($empAuth === null)
+            <strong>No record found</strong>
+            <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAuthority">Create</button></div>
+                <div class="modal fade" id="createAuthority" tabindex="-1" role="dialog" aria-labelledby="createAuthorityTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Create Approval Authorities for {{$user->name}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @include('leaveauth.partials.form', ['action' => route('approval_auth_create', $user), 'user' => $user])
+                    </div>
+                    </div>
+                </div>
+                </div>
+            @else
+            <strong>Record found</strong>
+            <table class="table table-bordered">
+                  <tr>
+                    <th>Level</th>
+                    <th>Name</th>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>{{isset($empAuth->authority_1_id) ? $empAuth->authority_one->name:'NA'}}</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>{{isset($empAuth->authority_2_id) ? $empAuth->authority_two->name:'NA'}}</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>{{isset($empAuth->authority_3_id) ? $empAuth->authority_three->name:'NA'}}</td>
+                  </tr>
+                </table>
+                <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAuthority">Edit</button></div>
+                <div class="modal fade" id="editAuthority" tabindex="-1" role="dialog" aria-labelledby="editAuthorityTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Edit Approval Authorities for {{$user->name}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @include('leaveauth.partials.form', ['action' => route('approval_auth_update', $empAuth), 'empAuth' => $empAuth])
+                    </div>
+                    </div>
+                </div>
+                </div>
+            @endif
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <!-- Leave Days Form -->
     <div class="col-md-12">
         <div class="card">

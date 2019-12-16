@@ -246,7 +246,7 @@ return [
                 ],         
             ],
         ],
-        ['header' => ' My Settings', 'can' => 'admin-dashboard'],
+        ['header' => ' My Settings', ],
         [
             'text' => 'Edit My Profile',
             'url'  => '#',
