@@ -8,28 +8,32 @@ class LeaveApplication extends Model
 {
     //Declare Fillable
 
-    //Declare Relation with other models
+    //One leave app has belongs to one user
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
 
+    //One leave app has one leave type
     public function leaveType(){
         return $this->hasOne(LeaveType::class,'leave_type_id');
     }
 
-    //Declare Relation with other models
+    //One leave app has one 1st auth
     public function approver_one(){
         return $this->hasOne(User::class,'id','approver_id_1');
     }
 
+    //One leave app has one 2nd auth
     public function approver_two(){
         return $this->hasOne(User::class, 'id','approver_id_2');
     }
 
+    //One leave app has one 3rd auth
     public function approver_three(){
         return $this->hasOne(User::class,'id','approver_id_3');
     }
 
+    //One leave app has one releif personnel
     public function relief_personnel(){
         return $this->hasOne(User::class,'id','relief_personnel_id');
     }

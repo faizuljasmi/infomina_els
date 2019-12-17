@@ -36,14 +36,19 @@ class ApprovalAuthorityController extends Controller
      */
     public function store(Request $request, User $user)
     {
+        //Gets user ID
         $user_id = $user->id;
         //dd($request->authority_1_id);
         //$approvalAuth = ApprovalAuthority::create(request(['user_id','authority_1_id','authority_2_id','authority_3_id']));
+        
+        //Create new instance of ApprvAuth
         $aa = new ApprovalAuthority;
+        //Assign all attributes
         $aa->user_id = $user_id;
         $aa->authority_1_id = $request->authority_1_id;
         $aa->authority_2_id = $request->authority_2_id;
         $aa->authority_3_id = $request->authority_3_id;
+        //Save
         $aa->save();
         return redirect()->route('user_view', ['user' => $user])->with('message', 'User approval authority created succesfully');
     }

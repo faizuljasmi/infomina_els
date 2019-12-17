@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\EmpType;
 use App\EmpGroup;
@@ -14,12 +16,20 @@ class UserController extends Controller
 {
     
     public function index(){
+
+        //Get current logged in user
         $user = auth()->user();
+        //Get his employee type
         $empType = $user->emp_types;
+        //Get his employee group
         $empGroup = $user->emp_group;
+        //Get his approval authority
         $empAuth = $user->approval_authority;
         //dd($empAuth->getAuthorityOneAttribute);
+
+        //Get his leave entitlements
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();
+        //Get all leave types, for display
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
         return view('user.employee.profile')->with(compact('user','empType','empGroup','empAuth','leaveEnt','leaveTypes'));
     }
@@ -28,9 +38,7 @@ class UserController extends Controller
         
         $user = auth()->user();
         $empType = $user->emp_types;
-        
         $empGroup = $user->emp_group;
-
         $empAuth = $user->approval_authority;
         //dd($empAuth);
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();

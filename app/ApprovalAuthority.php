@@ -10,7 +10,7 @@ class ApprovalAuthority extends Model
         'user_id','authority_1_id','authority_2_id','authority_3_id',
     ];
 
-    //Relation with model user
+    //One set of approval authorities belongs to one user
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }

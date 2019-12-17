@@ -11,6 +11,7 @@ class EmpGroup extends Model
 
     ];
 
+    //One employee group has many users
     public function users(){
        return $this->hasMany(User::class);
     }

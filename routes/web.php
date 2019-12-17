@@ -27,6 +27,10 @@ Route::get('/admin','HomeController@admin')->name('admin')->middleware('can:admi
 Route::get('/myprofile','UserController@index')->name('view_profile')->middleware('auth');
 Route::get('/myprofile/edit','UserController@edit')->middleware('auth');
 Route::post('/myprofile/update','UserController@update')->name('update_profile')->middleware('auth');
+//Change Password
+Route::get('/change-password', 'ChangePasswordController@index');
+Route::post('/change-password', 'ChangePasswordController@store')->name('change.password');
+
 
 //Create, Edit, Delete User
 Route::middleware('can:edit_users')->group(function(){
