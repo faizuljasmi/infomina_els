@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\LeaveType;
 use App\User;
 use App\ApprovalAuthority;
+use App\LeaveApplication;
 
 class LeaveApplicationController extends Controller
 {
@@ -27,12 +28,46 @@ class LeaveApplicationController extends Controller
 
         //TODO: Get leave balance of THIS employee
 
-        return view('leaveapp.create')->with(compact('leaveType', 'groupMates','leaveAuth'));
+        return view('leaveapp.create')->with(compact('user','leaveType', 'groupMates','leaveAuth'));
     }
 
 
     //Store Application
     public function store(Request $request){
+        
+        //dd($request->emergency_contact_no);
+        //Get user id
+        $user = auth()->user();
+        $leaveApp = new LeaveApplication;
+        //get user id, leave type id
+        $leaveApp->user_id = $user->id;
+        $leaveApp->leave_type_id = $request->leave_type_id;
+        //status set pending 1
+        //get all authorities id
+        $leaveApp->approver_id_1 = $request->approver_id_1;
+        $leaveApp->approver_id_2 = $request->approver_id_2;
+        $leaveApp->approver_id_3 = $request->approver_id_3;
+
+
+        //get date from
+        $leaveApp->date_from = $request->date_from;
+        //get date to
+        $leaveApp->date_to = $request->date_to;
+        //get date resume
+        $leaveApp->date_resume = $request->date_resume;
+        //get total days
+        $leaveApp->total_days = $request->total_days;
+        //get reason
+        $leaveApp->reason = $request->reason;
+        //get relief personel id
+        $leaveApp->relief_personnel_id = $request->relief_personnel_id;
+        //get attachment
+        //get emergency contact
+        $leaveApp->emergency_contact = $request->emergency_contact_no;
+        $leaveApp->save();
+
+        //STORE
+        return redirect()->to('/home')->with('message','Leave application submitted succesfully');
 
     }
 
@@ -49,5 +84,19 @@ class LeaveApplicationController extends Controller
         $employees = User::orderBy('id','ASC')->get();
 
         return view('leaveapp.approve')->with(compact('leaveType', 'employees'));
+    }
+
+    public function view(LeaveApplication $leaveApplication){
+
+        $leaveApp = $leaveApplication;
+        //Get all leave types. TODO: show only entitled leave types instead of all leave types
+        $leaveType = LeaveType::orderBy('id','ASC')->get();
+        //Get THIS user id
+        $user = $leaveApp->user;
+        $leaveAuth = $user->approval_authority;
+        //Get employees who are in the same group (for relieve personnel).
+        $groupMates = User::orderBy('id','ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
+
+        return view('leaveapp.view')->with(compact('leaveApp','leaveType','user','leaveAuth','groupMates'));
     }
 }

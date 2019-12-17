@@ -15,7 +15,15 @@ class CreateBroughtForwardLeavesTable extends Migration
     {
         Schema::create('brought_forward_leaves', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('leave_type_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->integer('no_of_days');
             $table->timestamps();
+
+            $table->foreign('leave_type_id')->references('id')->on('leave_types');
+            $table->foreign('user_id')->references('id')->on('users');
+
+            $table->unique(['leave_type_id', 'user_id']);
         });
     }
 
@@ -26,6 +34,8 @@ class CreateBroughtForwardLeavesTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('brought_forward_leaves');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

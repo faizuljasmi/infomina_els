@@ -17,6 +17,7 @@ let VanillaCalendar = (function() {
             else el.removeEventListener(type, handler);
         }
         let opts = {
+            applied : [],
             holiday: [],
             selector: null,
             datesFilter: false,
@@ -197,6 +198,9 @@ let VanillaCalendar = (function() {
             // wzs21
             //newDayElem.classList.add('vanilla-calendar-date--'+getDateDb(date));
             let dateDb = getDateDb(date);
+            if (opts.applied.indexOf(dateDb) >= 0) {
+                newDayElem.classList.add("vanilla-calendar-date--applied");
+            }
             if (opts.holiday.indexOf(dateDb) >= 0) {
                 newDayElem.classList.add("vanilla-calendar-date--holiday");
             }

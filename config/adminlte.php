@@ -203,7 +203,7 @@ return [
         ],
         [
             'text' => 'Apply Leave',
-            'url'  => '/apply/leave',
+            'url'  => '/leave/apply',
             'icon' => 'fas fa-fw fa-calendar-alt',
         ],
         ['header' => ' System Settings', 'can' => 'admin-dashboard'],

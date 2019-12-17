@@ -11,6 +11,9 @@
     --vanilla-calendar-selected-color: #fff;
     --vanilla-calendar-today-color: black;
 
+    --vanilla-calendar-applied-bg-color: blue;
+    --vanilla-calendar-applied-color: rgb(5, 4, 4);
+
     --vanilla-calendar-holiday-bg-color: #ffbd77;
     --vanilla-calendar-holiday-color: black;
     
@@ -117,6 +120,9 @@
 
 
 
+.vanilla-calendar .vanilla-calendar-date--applied {
+    background-color: var(--vanilla-calendar-applied-bg-color);
+}
 .vanilla-calendar .vanilla-calendar-date--holiday {
     background-color: var(--vanilla-calendar-holiday-bg-color);
 }

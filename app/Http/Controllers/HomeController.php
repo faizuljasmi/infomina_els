@@ -19,15 +19,16 @@ class HomeController extends Controller
      */
 
     public function index(){
+        
         //Get current user who is logged in
         $user = auth()->user();
-        // $app = LeaveApplication::find(1);
-        // dd($app->approver_one->toArray());
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        //dd($emptype->name);
-        return view('home')->with(compact('user','emptype','empTypes','leaveTypes'));
+        //$leaveApps = $user->leave_applications;
+        $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where('user_id', '=', $user->id)->paginate(3);
+        //dd($leaveApps);
+        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps'));
     }
 
     /**

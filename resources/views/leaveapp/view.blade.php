@@ -6,23 +6,23 @@
 
 
 <section id="leaveapp-create">
-  <h3>Apply Leave</h3>
+  <h4>View Leave Application</h4>
+  
   <section class="content">
     <div class="container-fluid">
-
       <div class="row">
-
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
+       
           <form method="POST" action="{{route('leaveapp_store')}}">
           @csrf
             <!-- Application Form -->
             <div class="card card-primary">
               <div class="card-header bg-teal">
-                <strong>Application Form</strong>
+                <strong>Application Details <button type="submit" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Delete. Can only be done while on pending lvl 1"><i class="fa fa-trash-alt"></i></i></button><button type="submit" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Edit leave application"><i class="fa fa-pencil-alt"></i></button></strong>
               </div>
               <div class="card-body">
-
+              <fieldset disabled>
                 <!-- Leave Type -->
                 <div class="form-group">
                   <label>Leave Type</label>
@@ -32,12 +32,7 @@
                         <i class="far fa-star"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="leave_type_id">
-                      <option value="">Choose Leave</option>
-                      @foreach($leaveType as $lt)
-                      <option value="{{$lt->id}}">{{$lt->name}}</option>
-                      @endforeach
-                    </select>
+                    <input type="text" class="form-control" id="type" placeholder="{{$leaveApp->leaveType->name}}">
                   </div>
                 </div>
 
@@ -68,7 +63,7 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_from">
+                    <input type="text" class="form-control" id="type" placeholder="{{$leaveApp->date_from}}">
                   </div>
                 </div>
 
@@ -81,7 +76,7 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_to">
+                    <input type="text" class="form-control" id="type" placeholder="{{$leaveApp->date_to}}">
                   </div>
                 </div>
 
@@ -94,7 +89,7 @@
                         <i class="far fa-calendar-check"></i>
                       </span>
                     </div>
-                    <input type="number" class="form-control float-right" name="total_days">
+                    <input type="number" class="form-control" id="type" placeholder="{{$leaveApp->total_days}}">
                   </div>
                 </div>
 
@@ -107,7 +102,7 @@
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_resume">
+                    <input type="number" class="form-control" id="type" placeholder="{{$leaveApp->date_resume}}">
                   </div>
                 </div>
 
@@ -115,7 +110,7 @@
                 <!-- Reason -->
                 <div class="form-group">
                   <label>Reason</label>
-                  <textarea class="form-control" rows="5" name="reason"></textarea>
+                  <input type="number" class="form-control" id="type" placeholder="{{$leaveApp->reason}}">
                 </div>
 
                 <!-- File Attachment -->
@@ -136,10 +131,7 @@
                       </span>
                     </div>
                     <select class="form-control" name="relief_personnel_id">
-                      <option selected>Choose Person</option>
-                      @foreach($groupMates as $emp)
-                      <option value="{{$emp->id}}">{{$emp->name}}</option>
-                      @endforeach
+                      <option selected value="{{$leaveApp->relief_personnel_id}}">{{$leaveApp->relief_personnel->name}}</option>
                     </select>
 
                   </div>
@@ -170,14 +162,13 @@
                     <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
                   </div>
                 </div>
-
+                <fieldset>
                 <!-- $leaveAuth->authority_1_id -->
                 <input style="display:none;" type="text" name="approver_id_1" value="{{$leaveAuth->authority_1_id}}" />
                 <input style="display:none;" type="text" name="approver_id_2" value="{{$leaveAuth->authority_2_id}}" />
                 <input style="display:none;" type="text" name="approver_id_3" value="{{$leaveAuth->authority_3_id}}" />
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-success float-right">Submit</button>
+                
+                
               </div>
             </div>
           </form>
@@ -208,18 +199,64 @@
                       <tr>
                         <th>Level</th>
                         <th>Name</th>
+                        <th>Status</th>
                       </tr>
                       <tr>
                         <td>1</td>
                         <td>{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_one->name:'NA'}}</td>
+                        <td>
+                            @if(!isset($leaveAuth->authority_1_id))
+                            NA
+                            @elseif($leaveApp->status == 'PENDING_1')
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'DENIED_1' )
+                            <span class="badge badge-danger" ><i class="fas fa-ban"></i></span>
+                            @else
+                            <span class="badge badge-success" ><i class="far fa-check-circle"></i></span>
+                            @endif
+                        </td>
                       </tr>
                       <tr>
                         <td>2</td>
                         <td>{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_two->name:'NA'}}</td>
+                        <td>
+                            @if(!isset($leaveAuth->authority_2_id))
+                            NA
+                            @elseif($leaveApp->status == 'PENDING_1')
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'PENDING_2')
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'DENIED_1' )
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'DENIED_2' )
+                            <span class="badge badge-danger" ><i class="fas fa-ban"></i></span>
+                            @else
+                            <span class="badge badge-success" ><i class="far fa-check-circle"></i></span>
+                            @endif
+                        </td>
                       </tr>
                       <tr>
                         <td>3</td>
                         <td>{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_three->name:'NA'}}</td>
+                        <td>
+                            @if(!isset($leaveAuth->authority_3_id))
+                            NA
+                            @elseif($leaveApp->status == 'PENDING_1')
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'PENDING_2')
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'PENDING_3')
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'DENIED_1' )
+                            <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
+                            @elseif($leaveApp->status == 'DENIED_2' )
+                            <span class="badge badge-danger" ><i class="fas fa-ban"></i></span>
+                            @elseif($leaveApp->status == 'DENIED_3' )
+                            <span class="badge badge-danger" ><i class="fas fa-ban"></i></span>
+                            @else
+                            <span class="badge badge-success" ><i class="far fa-check-circle"></i></span>
+                            @endif
+                        </td>
                       </tr>
                     </table>
                   </div>
@@ -266,6 +303,7 @@
   function MainLeaveApplicationCreate() {
   
     let calendar = new VanillaCalendar({
+        applied : ['20191203'],
         holiday: [
           "20191204","20191205","20191206"
         ],

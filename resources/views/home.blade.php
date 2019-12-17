@@ -118,46 +118,39 @@
     </tr>
   </thead>
   <tbody>
+    @php $count = ($leaveApps->currentPage()-1) * $leaveApps->perPage(); @endphp
+      @foreach($leaveApps as $la)
     <tr>
-      <th scope="row">1</th>
-      <td>Annual</td>
-      <td>3 days</td>
-      <td>11 Dec 2019</td>
-      <td>13 Dec 2019</td>
-      <td>10 Dec 2019</td>
-      <td><span class="badge badge-warning">Pending</span></td>
+      <td>{{++$count}}</td>
+      <td>{{$la->leaveType->name}}</td>
+      <td>{{$la->total_days}} day(s)</td>
+      <td>{{ \Carbon\Carbon::parse($la->date_from)->formatLocalized('%A %d %b %Y')}}</td>
+      <td>{{ \Carbon\Carbon::parse($la->date_to)->formatLocalized('%A %d %b %Y')}}</td>
+      <td>{{ \Carbon\Carbon::parse($la->created_at)->diffForHumans()}}</td>
       <td>
-        <button type="button" class="btn btn-success btn-sm"><i class="far fa-eye"></i></button>
-        <button type="button" class="btn btn-primary btn-sm"><i class="far fa-edit"></i></button>
-        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+        @if($la->status == 'PENDING_1')
+        <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 1"><i class="far fa-clock"></i> Lvl 1</span>
+        @elseif($la->status == 'PENDING_2')
+        <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 2"><i class="far fa-clock"></i> Lvl 2</span>
+        @elseif($la->status == 'PENDING_3')
+        <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 3"><i class="far fa-clock"></i> Lvl 3</span>
+        @elseif($la->status == 'APPROVED')
+        <span class="badge badge-success" data-toggle="tooltip" title="Your application has been approved"><i class="far fa-check-circle"></i></span>
+        @elseif($la->status == 'DENIED_1')
+        <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 1"><i class="fas fa-ban"></i> Lvl 1</span>
+        @elseif($la->status == 'DENIED_2')
+        <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 2"><i class="fas fa-ban"></i> Lvl 2</span>
+        @elseif($la->status == 'DENIED_3')
+        <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 3"><i class="fas fa-ban"></i> Lvl 3</span>
+        @elseif($la->status == 'CANCELLED')
+        <span class="badge badge-secondary" data-toggle="tooltip" title="This application has been cancelled">Cancelled</span>
+        @endif
       </td>
+      <td><a href="{{route('view_application', $la->id)}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="View leave application"><i class="fa fa-eye"></i></a></td>
     </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Medical</td>
-      <td>1 day</td>
-      <td>8 Dec 2019</td>
-      <td>8 Dec 2019</td>
-      <td>9 Dec 2019</td>
-      <td><span class="badge badge-warning">Pending</span></td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm"><i class="far fa-eye"></i></button>
-        <button type="button" class="btn btn-primary btn-sm"><i class="far fa-edit"></i></button>
-        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Annual</td>
-      <td>4 days</td>
-      <td>10 Dec 2019</td>
-      <td>13 Dec 2019</td>
-      <td>27 Nov 2019</td>
-      <td><span class="badge badge-success">Approved</span></td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm"><i class="far fa-eye"></i></button>
-      </td>
-    </tr>
+    @endforeach
+    {{$leaveApps->links()}}
+
   </tbody>
 </table>
             </div>

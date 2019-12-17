@@ -66,6 +66,23 @@ class User extends Authenticatable
         return $this->hasMany(LeaveEarning::class);
     }
 
+    public function brought_forward_leaves(){
+        return $this->hasMany(BroughtForwardLeave::class);
+    }
+
+    public function burnt_leaves(){
+        return $this->hasMany(BurntLeave::class);
+    }
+
+    public function taken_leaves(){
+        return $this->hasMany(TakenLeave::class);
+    }
+
+    public function leave_balances(){
+        return $this->hasMany(LeaveBalance::class);
+    }
+
+
     //One user has one set of approval authority
     public function approval_authority(){
         return $this->hasOne(ApprovalAuthority::class);

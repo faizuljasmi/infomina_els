@@ -75,5 +75,6 @@ Route::middleware('can:edit_settings')->group(function() {
 
 
 //Leave Application
-Route::get('/apply/leave','LeaveApplicationController@create')->middleware('auth');
-Route::get('/apply/approve','LeaveApplicationController@approve')->middleware('auth');
+Route::get('/leave/apply','LeaveApplicationController@create')->middleware('auth');
+Route::post('leave/apply','LeaveApplicationController@store')->name('leaveapp_store')->middleware('auth');
+Route::get('/leave/apply/view/{leaveApplication}','LeaveApplicationController@view')->name('view_application')->middleware('auth');

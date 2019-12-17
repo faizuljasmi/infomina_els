@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class LeaveApplication extends Model
 {
     //Declare Fillable
+    protected $fillable = [
+        'date_from','date_to', 'date_resume',
+        'total_days', 'reason', 'relief_personnel_id',
+        'attachment','emergency_contact',
+    ];
 
     //One leave app has belongs to one user
     public function user(){
@@ -15,7 +20,7 @@ class LeaveApplication extends Model
 
     //One leave app has one leave type
     public function leaveType(){
-        return $this->hasOne(LeaveType::class,'leave_type_id');
+        return $this->hasOne(LeaveType::class,'id','leave_type_id');
     }
 
     //One leave app has one 1st auth
