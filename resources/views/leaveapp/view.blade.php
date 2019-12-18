@@ -7,7 +7,13 @@
 
 <section id="leaveapp-create">
   <h4>View Leave Application</h4>
-  
+  @cannot('view', $leaveApp)
+    <div class="alert alert-danger" role="alert">
+        You don't have permission to view this application
+        <a href ="/home"><button type="button" class="btn btn-info btn-sm">Back</button></a>
+    </div>
+  @endcannot
+  @can('view', $leaveApp)
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -23,6 +29,18 @@
               </div>
               <div class="card-body">
               <fieldset disabled>
+                  <!-- Applicants Name -->
+                <div class="form-group">
+                  <label>Applicant Name</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                      <i class="fas fa-user"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control" id="type" placeholder="{{$leaveApp->user->name}}">
+                  </div>
+                </div>
                 <!-- Leave Type -->
                 <div class="form-group">
                   <label>Leave Type</label>
@@ -117,7 +135,7 @@
                 <div class="form-group">
                   <label>Attachment</label>
                   <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment">
+                    <a href="{{$leaveApp->attachment_url}}" target="_blank">View Attachment</a>
                   </div>
                 </div>
 
@@ -127,7 +145,7 @@
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
-                        <i class="fa fa-user"></i>
+                      <i class="fas fa-user-shield"></i>
                       </span>
                     </div>
                     <select class="form-control" name="relief_personnel_id">
@@ -287,6 +305,7 @@
       </div>
 
   </section>
+  @endcan
 
   <!-- Empty Col -->
   <section class="col-lg-1 connectedSortable ui-sortable">

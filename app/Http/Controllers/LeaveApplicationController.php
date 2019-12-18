@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\LeaveType;
 use App\User;
 use App\ApprovalAuthority;
@@ -64,6 +65,31 @@ class LeaveApplicationController extends Controller
         //get attachment
         //get emergency contact
         $leaveApp->emergency_contact = $request->emergency_contact_no;
+        //dd($request->file('attachment'));
+        //Upload attachment operations
+        //Upload image
+
+        // file validation
+        $validator = Validator::make($request->all(),
+        ['attachment' => 'required|mimes:jpeg,png,jpg,pdf|max:2048']);
+        //dd($validator->fails());
+        // if validation fails
+        if($validator->fails()) {
+            return redirect()->to('/leave/apply')->with('message','Your file attachment format is invalid. Application is not submitted');
+        }
+
+        if($request->hasFile('attachment')){
+            $att = $request->file('attachment');
+            $uploaded_file = $att->store('public');
+            //Pecahkan
+            $paths = explode('/',$uploaded_file);
+            $filename = $paths[1];
+            //dd($uploaded_file);
+            //Save filename into Database
+            $leaveApp->attachment = $filename;
+      }
+        
+
         $leaveApp->save();
 
         //STORE

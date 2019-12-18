@@ -1,7 +1,15 @@
 @extends('adminlte::page')
 @section('content')
 
-
+@if(session()->has('message'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="icon fa fa-check"></i>
+            {{ session()->get('message') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
 
 
 
@@ -14,7 +22,7 @@
 
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
-          <form method="POST" action="{{route('leaveapp_store')}}">
+          <form method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data">
           @csrf
             <!-- Application Form -->
             <div class="card card-primary">
@@ -122,7 +130,8 @@
                 <div class="form-group">
                   <label>Attachment</label>
                   <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment">
+                    <input type="file" class="form-control-file" name="attachment" id="attachment">
+                    <span class="text-danger"> {{ $errors->first('attachment') }}</span>
                   </div>
                 </div>
 

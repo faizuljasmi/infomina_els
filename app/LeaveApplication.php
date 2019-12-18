@@ -43,4 +43,8 @@ class LeaveApplication extends Model
         return $this->hasOne(User::class,'id','relief_personnel_id');
     }
 
+    public function getAttachmentUrlAttribute(){
+        return $this->attributes['attachment'] ? url('/storage/'.$this->attributes['attachment']) : 'https://placehold.it/900x300';
+      }
+
 }
