@@ -6,7 +6,7 @@
                             <label for="name">Authority One</label>
                             <select class="form-control" id="authority_1_id" name="authority_1_id">
                             <option value="">NA</option>
-                            @foreach($users as $u)
+                            @foreach($authUsers as $u)
                             <option value="{{$u->id}}" {{isset($empAuth->authority_1_id) && $empAuth->authority_one->name == $u->name ? 'selected':''}} >{{$u->name}}</option>
                             @endforeach
                             </select>
@@ -16,7 +16,7 @@
                             <label for="name">Authority Two</label>
                             <select class="form-control" id="authority_2_id" name="authority_2_id">
                             <option value="">NA</option>
-                            @foreach($users as $u)
+                            @foreach($authUsers as $u)
                             <option value="{{$u->id}}" {{isset($empAuth->authority_2_id) && $empAuth->authority_two->name == $u->name ? 'selected':''}} >{{$u->name}}</option>
                             @endforeach
                             </select>
@@ -26,7 +26,7 @@
                             <label for="name">Authority Three</label>
                             <select class="form-control" id="authority_3_id" name="authority_3_id">
                             <option value="">NA</option>
-                            @foreach($users as $u)
+                            @foreach($authUsers as $u)
                             <option value="{{$u->id}}" {{isset($empAuth->authority_3_id) && $empAuth->authority_three->name == $u->name ? 'selected':''}} >{{$u->name}}</option>
                             @endforeach
                             </select>

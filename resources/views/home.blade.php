@@ -124,8 +124,8 @@
       <td>{{++$count}}</td>
       <td>{{$la->leaveType->name}}</td>
       <td>{{$la->total_days}} day(s)</td>
-      <td>{{ \Carbon\Carbon::parse($la->date_from)->formatLocalized('%A %d %b %Y')}}</td>
-      <td>{{ \Carbon\Carbon::parse($la->date_to)->formatLocalized('%A %d %b %Y')}}</td>
+      <td>{{ \Carbon\Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YY')}}</td>
+      <td>{{ \Carbon\Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YY')}}</td>
       <td>{{ \Carbon\Carbon::parse($la->created_at)->diffForHumans()}}</td>
       <td>
         @if($la->status == 'PENDING_1')

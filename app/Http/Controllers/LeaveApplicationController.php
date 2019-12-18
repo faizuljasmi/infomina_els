@@ -62,22 +62,18 @@ class LeaveApplicationController extends Controller
         $leaveApp->reason = $request->reason;
         //get relief personel id
         $leaveApp->relief_personnel_id = $request->relief_personnel_id;
-        //get attachment
         //get emergency contact
         $leaveApp->emergency_contact = $request->emergency_contact_no;
-        //dd($request->file('attachment'));
-        //Upload attachment operations
-        //Upload image
 
-        // file validation
+        //Attachment validation
         $validator = Validator::make($request->all(),
         ['attachment' => 'required|mimes:jpeg,png,jpg,pdf|max:2048']);
-        //dd($validator->fails());
+
         // if validation fails
         if($validator->fails()) {
             return redirect()->to('/leave/apply')->with('message','Your file attachment format is invalid. Application is not submitted');
         }
-
+        //If validation passes and has a file. Not necessary to check but just to be safe
         if($request->hasFile('attachment')){
             $att = $request->file('attachment');
             $uploaded_file = $att->store('public');
@@ -85,7 +81,7 @@ class LeaveApplicationController extends Controller
             $paths = explode('/',$uploaded_file);
             $filename = $paths[1];
             //dd($uploaded_file);
-            //Save filename into Database
+            //Save attachment filenam into leave application table
             $leaveApp->attachment = $filename;
       }
         
@@ -105,11 +101,44 @@ class LeaveApplicationController extends Controller
 
     }
 
-    public function approve(){
-        $leaveType = LeaveType::orderBy('id','ASC')->get();
-        $employees = User::orderBy('id','ASC')->get();
+    public function approve(LeaveApplication $leaveApplication){
+    
+        //Get current user id
+        $user = auth()->user();
+        //Get leave application authorities ID
+        $la_1 = $leaveApplication->approver_id_1;
+        $la_2 = $leaveApplication->approver_id_2;
+        $la_3 = $leaveApplication->approver_id_3;
 
-        return view('leaveapp.approve')->with(compact('leaveType', 'employees'));
+        //If user id same as approver id 1
+        if($la_1 == $user->id){
+            //if no authority 2, terus change to approved
+            if($la_2 == null){
+                $leaveApplication->status = 'APPROVED';
+            }
+            //else update status to pending 2, 
+            else{
+                $leaveApplication->status = 'PENDING_2';
+            }
+        }
+        //if user id same as approved id 2
+        if($la_2 == $user->id){
+            //if no authority 3, terus change to approved
+            if($la_3 == null){
+                $leaveApplication->status = 'APPROVED';
+            }
+            //else update status to pending 3
+            else{
+                $leaveApplication->status = 'PENDING_3';
+            }
+        }
+        //If user id same as approved id 3, update status to approved
+        else{
+            $leaveApplication->status = 'APPROVED';
+        }
+        $leaveApplication->update();
+
+        return redirect()->to('/admin')->with('message','Leave application status updated succesfully');
     }
 
     public function view(LeaveApplication $leaveApplication){

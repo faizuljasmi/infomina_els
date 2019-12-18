@@ -10,6 +10,7 @@ class LeaveApplication extends Model
     protected $fillable = [
         'date_from','date_to', 'date_resume',
         'total_days', 'reason', 'relief_personnel_id',
+        'status',
         'attachment','emergency_contact',
     ];
 

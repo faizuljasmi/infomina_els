@@ -128,7 +128,7 @@
 
                 <!-- File Attachment -->
                 <div class="form-group">
-                  <label>Attachment</label>
+                  <label>Attachment <small class="text-muted">Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
                   <div class="input-group">
                     <input type="file" class="form-control-file" name="attachment" id="attachment">
                     <span class="text-danger"> {{ $errors->first('attachment') }}</span>

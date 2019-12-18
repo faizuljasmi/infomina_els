@@ -40,6 +40,9 @@
     <link rel="stylesheet" href="{{ asset('vendor/extra/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/extra/css/vanilla-calendar.css') }}">
 
+    <link rel="icon" href="{{ URL::asset('/css/favicon.png') }}" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/app.css')  }}">
+
 </head>
 <body class="@yield('classes_body')" @yield('body_data')>
 

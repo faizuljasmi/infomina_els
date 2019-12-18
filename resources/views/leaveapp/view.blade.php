@@ -25,7 +25,13 @@
             <!-- Application Form -->
             <div class="card card-primary">
               <div class="card-header bg-teal">
-                <strong>Application Details <button type="submit" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Delete. Can only be done while on pending lvl 1"><i class="fa fa-trash-alt"></i></i></button><button type="submit" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Edit leave application"><i class="fa fa-pencil-alt"></i></button></strong>
+                <strong>Application Details 
+                    @if($leaveApp->user_id == auth()->user()->id)
+                    <button type="submit" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Delete. Can only be done while on pending lvl 1"><i class="fa fa-trash-alt"></i></i></button><button type="submit" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Edit leave application"><i class="fa fa-pencil-alt"></i></button>
+                    @else
+                    <a href="{{route('approve_application', $leaveApp->id)}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Approve Application">Approve</a>
+                    @endif
+                </strong>
               </div>
               <div class="card-body">
               <fieldset disabled>
@@ -184,9 +190,7 @@
                 <!-- $leaveAuth->authority_1_id -->
                 <input style="display:none;" type="text" name="approver_id_1" value="{{$leaveAuth->authority_1_id}}" />
                 <input style="display:none;" type="text" name="approver_id_2" value="{{$leaveAuth->authority_2_id}}" />
-                <input style="display:none;" type="text" name="approver_id_3" value="{{$leaveAuth->authority_3_id}}" />
-                
-                
+                <input style="display:none;" type="text" name="approver_id_3" value="{{$leaveAuth->authority_3_id}}" />     
               </div>
             </div>
           </form>

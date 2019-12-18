@@ -66,7 +66,7 @@
 
               <div class="info-box-content">
                 <span class="info-box-text">Pending Applications</span>
-                <span class="info-box-number">7</span>
+                <span class="info-box-number">{{$leaveApps->count()}}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -93,116 +93,82 @@
               <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
-                  <div class="col-md-8">
+                  <div class="col-md-9">
                     <p class="text-center">
                       <strong>Recent Leave Applications</strong>
                     </p>
-                    <table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">No.</th>
-      <th scope="col">Applicant</th>
-      <th scope="col">Leave Type</th>
-      <th scope="col">Duration</th>
-      <th scope="col">Date Submitted</th>
-      <th scope="col">Status</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Employee One</td>
-      <td>Annual</td>
-      <td>3 days</td>
-      <td>2 Dec 2019</td>
-      <td>
-          <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
-          <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
-          <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
-    </td>
-      <td>
-        <a href="/apply/approve"><button type="button" class="btn btn-success btn-sm">View</i></button></a>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Employee Four</td>
-      <td>Medical</td>
-      <td>1 Day</td>
-      <td>4 Dec 2019</td>
-      <td>
-          <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
-          <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
-    </td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Employee Three</td>
-      <td>Annual</td>
-      <td>2 Days</td>
-      <td>4 Dec 2019</td>
-      <td>
-          <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
-          <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
-          <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
-    </td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">4</th>
-      <td>Employee Two</td>
-      <td>Medical</td>
-      <td>1 Day</td>
-      <td>7 Dec 2019</td>
-      <td>
-          <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
-          <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
-          <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
-    </td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">5</th>
-      <td>Employee Six</td>
-      <td>Medical</td>
-      <td>1 Day</td>
-      <td>10 Dec 2019</td>
-      <td>
-          <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
-          <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
-          <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
-    </td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<nav aria-label="Page navigation example">
-  <ul class="pagination justify-content-end">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1">Previous</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
-</nav>
+                    <table class="table table-striped table-bordered">
+                    @if($leaveApps->count() > 0)
+                      <thead>
+                        <tr>
+                          <th scope="col">No.</th>
+                          <th scope="col">Applicant</th>
+                          <th scope="col">Leave Type</th>
+                          <th scope="col">From</th>
+                          <th scope="col">To</th>
+                          <th scope="col">Duration</th>
+                          <th scope="col">Submitted</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach($leaveApps as $la)
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>{{$la->user->name}}</td>
+                          <td>{{$la->leaveType->name}}</td>
+                          <td>{{ \Carbon\Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YY')}}</td>
+                          <td>{{ \Carbon\Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YY')}}</td>
+                          <td>{{$la->total_days}} day(s)</td>
+                          <td>{{ \Carbon\Carbon::parse($la->created_at)->diffForHumans()}}</td>
+                          <td>
+                          @if(!isset($la->approver_id_2))
+                            @if($la->status == 'PENDING_1')
+                            <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                            @endif
+                          @elseif(!isset($la->approver_id_3))
+                            @if($la->status == 'PENDING_1')
+                            <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                            <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                            @elseif($la->status == 'PENDING_2')
+                            <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
+                            <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                            @endif
+                          @else
+                            @if($la->status == 'PENDING_1')
+                              <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                              <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                              <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                              @elseif($la->status == 'PENDING_2')
+                              <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
+                              <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                              <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                              @elseif($la->status == 'PENDING_3')
+                              <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
+                              <span class="badge badge-pill badge-success"><i class="far fa-check-circle"></i></span>
+                              <span class="badge badge-pill badge-warning"><i class="far fa-clock"></i></i></span>
+                            @endif
+                          @endif
+                        </td>
+                          <td>
+                            <a href="{{route('view_application', $la->id)}}"><button type="button" class="btn btn-success btn-sm">View</i></button></a>
+                          </td>
+                        </tr>
+                        @endforeach
+                        @else
+                        <th>
+                        No pending application
+                        </th>
+                        @endif
+                      </tbody>
+                    </table>
+                    {{$leaveApps->links()}}
+                    
 
                   </div>
                   <!-- /.col -->
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                     <p class="text-center">
                       <strong>Leave Calendar</strong>
                     </p>
