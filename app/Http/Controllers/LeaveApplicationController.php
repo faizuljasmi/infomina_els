@@ -122,7 +122,7 @@ class LeaveApplicationController extends Controller
             }
         }
         //if user id same as approved id 2
-        if($la_2 == $user->id){
+        else if($la_2 == $user->id){
             //if no authority 3, terus change to approved
             if($la_3 == null){
                 $leaveApplication->status = 'APPROVED';
@@ -135,6 +135,32 @@ class LeaveApplicationController extends Controller
         //If user id same as approved id 3, update status to approved
         else{
             $leaveApplication->status = 'APPROVED';
+        }
+        $leaveApplication->update();
+
+        return redirect()->to('/admin')->with('message','Leave application status updated succesfully');
+    }
+
+    public function deny(LeaveApplication $leaveApplication){
+    
+        //Get current user id
+        $user = auth()->user();
+        //Get leave application authorities ID
+        $la_1 = $leaveApplication->approver_id_1;
+        $la_2 = $leaveApplication->approver_id_2;
+        $la_3 = $leaveApplication->approver_id_3;
+
+        //If user id same as approver id 1
+        if($la_1 == $user->id){
+            $leaveApplication->status = 'DENIED_1';
+        }
+        //if user id same as approved id 2
+        else if($la_2 == $user->id){
+            $leaveApplication->status = 'DENIED_2';
+        }
+        //If user id same as approved id 3,
+        else{
+            $leaveApplication->status = 'DENIED_3';
         }
         $leaveApplication->update();
 

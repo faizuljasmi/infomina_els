@@ -29,7 +29,8 @@
                     @if($leaveApp->user_id == auth()->user()->id)
                     <button type="submit" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Delete. Can only be done while on pending lvl 1"><i class="fa fa-trash-alt"></i></i></button><button type="submit" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Edit leave application"><i class="fa fa-pencil-alt"></i></button>
                     @else
-                    <a href="{{route('approve_application', $leaveApp->id)}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Approve Application">Approve</a>
+                    <a href="{{route('deny_application', $leaveApp->id)}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Deny Application">Deny</a>
+                    <a href="{{route('approve_application', $leaveApp->id)}}" class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Approve</a>
                     @endif
                 </strong>
               </div>
