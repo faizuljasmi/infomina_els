@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class LeaveBalance extends Model
 {
     protected $fillable = [
-        'no_of-days',
+        'no_of_days',
     ];
 
     //One leave balance belongs to one user

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class LeaveApplication extends Model
 {
+    //use Notifiable;
+    
     //Declare Fillable
     protected $fillable = [
         'date_from','date_to', 'date_resume',

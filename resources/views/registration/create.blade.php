@@ -41,6 +41,7 @@
                         </thead>
                         <tbody>
                         @foreach($users as $u)
+                        @if($u->id != auth()->user()->id)
                             <tr>
                             <td>{{$u->id}}</td>
                             <td>{{$u->name}}</td>
@@ -55,6 +56,7 @@
                             <button class="btn btn-danger btn-sm"><i class="fa fa-trash-alt"></i></button>
                             </td>
                             </tr>
+                            @endif
                         @endforeach
                         </tbody>
                     </table>

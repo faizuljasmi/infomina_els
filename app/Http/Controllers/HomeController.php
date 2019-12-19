@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Notifications\NewApplication;
 use App\User;
 use App\EmpType;
 use App\LeaveType;
 use App\LeaveApplication;
+use App\LeaveEntitlement;
+use App\LeaveEarning;
 
 class HomeController extends Controller
 {
@@ -25,10 +28,12 @@ class HomeController extends Controller
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
+        $leaveEnts = LeaveEntitlement::orderBy('leave_type_id','ASC')->where('emp_type_id','=',$user->emp_type_id)->get();
+        //dd($leaveEnts);
+        $leaveEarns = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         //$leaveApps = $user->leave_applications;
         $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where('user_id', '=', $user->id)->paginate(3);
-        //dd($leaveApps);
-        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps'));
+        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns'));
     }
 
     /**
@@ -38,6 +43,7 @@ class HomeController extends Controller
     public function admin(){
         //Get current user who is logged in
         $user = auth()->user();
+        
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();

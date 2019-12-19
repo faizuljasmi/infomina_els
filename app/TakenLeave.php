@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class TakenLeave extends Model
 {
     protected $fillable = [
-        'no_of-days',
+        'no_of_days',
     ];
 
     //One taken leave belongs to one user

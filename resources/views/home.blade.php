@@ -209,17 +209,9 @@
                     </tr>
                     <tr>
                     <th>Entitled</th>
-                        <td>14</td>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>5</td>
-                        <td>60</td>
-                        <td>2</td>
-                        <td>60</td>
-                        <td>2</td>
-                        <td>14</td>
-                        <td>0</td>
-                        <td>0</td>
+                      @foreach($leaveEnts as $le)
+                        <td>{{isset($le->no_of_days) ? $le->no_of_days:'NA'}}</td>
+                      @endforeach
                     </tr>
                     <tr>
                     <th>Brought Forward</th>
@@ -237,17 +229,9 @@
                     </tr>
                     <tr>
                     <th>Earned</th>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>5</td>
-                        <td>60</td>
-                        <td>2</td>
-                        <td>60</td>
-                        <td>2</td>
-                        <td>14</td>
-                        <td>5</td>
-                        <td>0</td>
+                      @foreach($leaveEarns as $le)
+                        <td>{{isset($le->no_of_days) ? $le->no_of_days:'NA'}}</td>
+                      @endforeach
                     </tr>
                     <tr>
                     <th>Taken</th>

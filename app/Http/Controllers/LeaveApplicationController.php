@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Notifications\Notifiable;
+use Notification;
+use App\Notifications\NewApplication;
+use App\Notifications\StatusUpdate;
 use App\LeaveType;
 use App\User;
 use App\ApprovalAuthority;
 use App\LeaveApplication;
+use App\LeaveEntitlement;
+use App\LeaveEarning;
+use App\LeaveBalance;
+use App\TakenLeave;
 
 class LeaveApplicationController extends Controller
 {
@@ -87,6 +95,9 @@ class LeaveApplicationController extends Controller
         
 
         $leaveApp->save();
+        //Send email notification
+        //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
+        $leaveApp->approver_one->notify(new NewApplication($leaveApp));
 
         //STORE
         return redirect()->to('/home')->with('message','Leave application submitted succesfully');
@@ -138,6 +149,51 @@ class LeaveApplicationController extends Controller
         }
         $leaveApplication->update();
 
+        //If the application is approved
+        if($leaveApplication->status == 'APPROVED'){
+
+            //Update leave taken table
+            //Check for existing record
+            $dupcheck = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+
+            //If does not exist, create new
+            if($dupcheck == null){
+                $tl = new TakenLeave;
+                $tl->leave_type_id = $leaveApplication->leave_type_id;
+                $tl->user_id = $leaveApplication->user_id;
+                $tl->no_of_days = $leaveApplication->total_days;
+                $tl->save();
+            }
+            //else update existing
+            else{
+                $dupcheck->no_of_days += $leaveApplication->total_days;
+                $dupcheck->save();
+            }
+
+            //Update leave balance table
+            //Check for existing record
+             $dupcheck2 = LeaveBalance::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+    
+            //If does not exist, create new
+            if($dupcheck2 == null){
+                $lb = new LeaveBalance;
+                $lb->leave_type_id = $leaveApplication->leave_type_id;
+                $lb->user_id = $leaveApplication->user_id;
+                $le = LeaveEarning::where('leave_type_id','=',$leaveApplication->leave_type_id,'AND','user_id','=',$leaveApplication->user_id)->first();
+                $lb->no_of_days = $le->no_of_days - $leaveApplication->total_days;
+                $lb->save();
+            }
+            //else update existing
+            else{
+                $dupcheck2->no_of_days -= $leaveApplication->total_days;
+                $dupcheck2->save();
+            }
+        }
+        
+        
+        //Send status update email
+        $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+
         return redirect()->to('/admin')->with('message','Leave application status updated succesfully');
     }
 
@@ -163,6 +219,9 @@ class LeaveApplicationController extends Controller
             $leaveApplication->status = 'DENIED_3';
         }
         $leaveApplication->update();
+        //Send status update email
+        $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+
 
         return redirect()->to('/admin')->with('message','Leave application status updated succesfully');
     }
