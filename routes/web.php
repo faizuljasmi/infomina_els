@@ -67,6 +67,11 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::get('/entitlement/create/{empType}','LeaveEntitlementController@create')->name('leaveent_create')->middleware('auth');
     Route::post('entitlement/create/{empType}', 'LeaveEntitlementController@store')->middleware('auth');
 
+    //Set Leave Earnings amount settings
+    Route::post('/leave/earnings/set/{user}','LeaveController@setEarnings')->name('earnings_set')->middleware('auth');
+    //Set Brough Forward Leave amount settings
+    Route::post('/leave/broughtforward/set/{user}','LeaveController@setBroughtForward')->name('brought_fwd_set')->middleware('auth');
+
     //Approval authority
     Route::post('/create/approval_authority/{user}','ApprovalAuthorityController@store')->name('approval_auth_create')->middleware('auth');
     Route::post('update/approval_authority/{approvalAuthority}','ApprovalAuthorityController@update')->name('approval_auth_update')->middleware('auth');

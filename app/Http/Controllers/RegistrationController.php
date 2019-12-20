@@ -8,6 +8,8 @@ use App\EmpType;
 use App\EmpGroup;
 use App\LeaveType;
 use App\LeaveEntitlement;
+use App\LeaveEarning;
+use App\BroughtForwardLeave;
 
 
 class RegistrationController extends Controller
@@ -62,15 +64,16 @@ class RegistrationController extends Controller
         $user = $user;
         $users = User::orderBy('id','ASC')->get()->except($user->id);
         $authUsers = User::where('user_type', '=', 'Admin')->get();
-        //dd($authUsers);
         $empType = $user->emp_types;
         $empGroup = $user->emp_group;
         $empAuth = $user->approval_authority;
         //dd($empAuth->getAuthorityOneAttribute);
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();
+        $leaveEarn = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
-        return view('user.profile')->with(compact('user','users','authUsers','empType','empGroup','empAuth','leaveTypes','leaveEnt'));
+        return view('user.profile')->with(compact('user','users','authUsers','empType','empGroup','empAuth','leaveTypes','leaveEnt','leaveEarn', 'broughtFwd'));
     }
 }
 

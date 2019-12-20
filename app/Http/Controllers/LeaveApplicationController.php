@@ -130,6 +130,8 @@ class LeaveApplicationController extends Controller
             //else update status to pending 2, 
             else{
                 $leaveApplication->status = 'PENDING_2';
+                //Notify the second approver
+                $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
             }
         }
         //if user id same as approved id 2
@@ -141,6 +143,8 @@ class LeaveApplicationController extends Controller
             //else update status to pending 3
             else{
                 $leaveApplication->status = 'PENDING_3';
+                //Notify the third approver
+                $leaveApplication->approver_three->notify(new NewApplication($leaveApplication));
             }
         }
         //If user id same as approved id 3, update status to approved

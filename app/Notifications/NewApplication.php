@@ -46,7 +46,7 @@ class NewApplication extends Notification
         return (new MailMessage)
                     ->subject('[INFOMINA ELS] New Leave Application- '.$la->user->name)
                     ->greeting('Hi,')
-                    ->line($la->user->name.' has submitted a new leave application:')
+                    ->line('Leave application by '.$la->user->name.' is waiting for your approval:')
                     ->line('Leave type: '.$la->leaveType->name)
                     ->line('From: '.$la->date_from)
                     ->line('To: '.$la->date_to)

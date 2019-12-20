@@ -17,7 +17,7 @@ class CreateLeaveEntitlementsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('leave_type_id')->nullable();
             $table->unsignedBigInteger('emp_type_id')->nullable();
-            $table->integer('no_of_days')->nullable();
+            $table->float('no_of_days', 8,1);
             $table->timestamps();
             $table->foreign('leave_type_id')->references('id')->on('leave_types');
             $table->foreign('emp_type_id')->references('id')->on('emp_types');

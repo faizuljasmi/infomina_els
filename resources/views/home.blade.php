@@ -214,27 +214,41 @@
                       @endforeach
                     </tr>
                     <tr>
-                    <th>Brought Forward</th>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
                     <th>Earned</th>
+                    @if(!isset($leaveEarns))
                       @foreach($leaveEarns as $le)
-                        <td>{{isset($le->no_of_days) ? $le->no_of_days:'NA'}}</td>
+                        @if(isset($le->no_of_days))
+                        <td>{{$le->no_of_days}}</td>
+                        @else
+                        <td>0</td>
+                        @endif
                       @endforeach
+                    @else 
+                    <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    @endif
                     </tr>
                     <tr>
                     <th>Taken</th>
+                    @if(!isset($leaveEarns))
+                      @foreach($leaveEarns as $le)
+                        @if(isset($le->no_of_days))
+                        <td>{{$le->no_of_days}}</td>
+                        @else
+                        <td>0</td>
+                        @endif
+                      @endforeach
+                    @else 
+                    <td>0</td>
                         <td>0</td>
                         <td>0</td>
                         <td>0</td>
@@ -245,10 +259,44 @@
                         <td>0</td>
                         <td>0</td>
                         <td>0</td>
+                    @endif
+                    </tr>
+                    <tr>
+                    <th>Brought Forward</th>
+                    @if(!isset($leaveEarns))
+                      @foreach($leaveEarns as $le)
+                        @if(isset($le->no_of_days))
+                        <td>{{$le->no_of_days}}</td>
+                        @else
                         <td>0</td>
+                        @endif
+                      @endforeach
+                    @else 
+                    <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    @endif
                     </tr>
                     <tr>
                     <th>Burnt</th>
+                    @if(!isset($leaveEarns))
+                      @foreach($leaveEarns as $le)
+                        @if(isset($le->no_of_days))
+                        <td>{{$le->no_of_days}}</td>
+                        @else
+                        <td>0</td>
+                        @endif
+                      @endforeach
+                    @else 
+                    <td>0</td>
                         <td>0</td>
                         <td>0</td>
                         <td>0</td>
@@ -259,21 +307,31 @@
                         <td>0</td>
                         <td>0</td>
                         <td>0</td>
-                        <td>0</td>
+                    @endif
                     </tr>
                     <tr>
                     <th>Balance</th>
-                        <td><strong>1</strong></td>
-                        <td><strong>1</strong></td>
-                        <td><strong>2</strong></td>
-                        <td><strong>5</strong></td>
-                        <td><strong>60</strong></td>
-                        <td><strong>2</strong></td>
-                        <td><strong>60</strong></td>
-                        <td><strong>2</strong></td>
-                        <td><strong>14</strong></td>
-                        <td><strong>5</strong></td>
-                        <td><strong>0</strong></td>  
+                    @if(!isset($leaveEarns))
+                      @foreach($leaveEarns as $le)
+                        @if(isset($le->no_of_days))
+                        <td>{{$le->no_of_days}}</td>
+                        @else
+                        <td>0</td>
+                        @endif
+                      @endforeach
+                    @else 
+                    <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    @endif  
                     </tr>
                  </tbody>
                 </table>

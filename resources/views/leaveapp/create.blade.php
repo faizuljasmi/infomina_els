@@ -181,9 +181,9 @@
                 </div>
 
                 <!-- $leaveAuth->authority_1_id -->
-                <input style="display:none;" type="text" name="approver_id_1" value="{{$leaveAuth->authority_1_id}}" />
-                <input style="display:none;" type="text" name="approver_id_2" value="{{$leaveAuth->authority_2_id}}" />
-                <input style="display:none;" type="text" name="approver_id_3" value="{{$leaveAuth->authority_3_id}}" />
+                <input style="display:none;" type="text" name="approver_id_1" value="{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_1_id:''}}" />
+                <input style="display:none;" type="text" name="approver_id_2" value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
+                <input style="display:none;" type="text" name="approver_id_3" value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-success float-right">Submit</button>

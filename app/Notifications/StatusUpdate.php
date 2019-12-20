@@ -45,75 +45,54 @@ class StatusUpdate extends Notification
         if($la->status == 'PENDING_1'|| $la->status == 'PENDING_2'|| $la->status == 'PENDING_3' ){
 
             if($la->status == 'PENDING_1'){
-                $status = 'Waiting Approval by '.$la->approver_one->name;
+                $currAuth = $la->approver_one->name;
             }
             else if($la->status == 'PENDING_2'){
-                $status = 'Waiting Approval by '.$la->approver_two->name;
+                $currAuth = $la->approver_two->name;
             }
             else if($la->status == 'PENDING_3'){
-                $status = 'Waiting Approval by '.$la->approver_three->name;
+                $currAuth = $la->approver_three->name;
             }
-
-            return (new MailMessage)
-                    ->subject('[INFOMINA ELS] Leave Application Status Update')
-                    ->greeting('Hi,'.$la->user->name)
-                    ->line('Your leave application status has been updated')
-                    ->line('Status: '.$status)
-                    ->line('Leave type: '.$la->leaveType->name)
-                    ->line('From: '.$la->date_from)
-                    ->line('To: '.$la->date_to)
-                    ->line('Total day(s): '.$la->total_days)
-                    ->line('Resume date: '.$la->date_resume)
-                    ->line('Reason: '.$la->reason)
-                    ->line('Relief Personnel: '.$la->relief_personnel->name)
-                    ->line('Emergency Contact: '.$la->emergency_contact)
-                    // ->action('View application', $url)
-                    ->line('Have a nice day!');
+            $subject = 'Leave Application Status Update';
+            $desc = 'Your leave application status has been updated';
+            $stat = 'Waiting approval by '.$currAuth;  
         }
         else if($la->status == 'DENIED_1'|| $la->status == 'DENIED_2'|| $la->status == 'DENIED_3' ){
             
             if($la->status == 'DENIED_1'){
-                $status = 'Denied by '.$la->approver_one->name;
+                $currAuth = $la->approver_one->name;
             }
             else if($la->status == 'DENIED_2'){
-                $status = 'Denied by '.$la->approver_two->name;
+                $currAuth = $la->approver_two->name;
             }
             else if($la->status == 'DENIED_3'){
-                $status = 'Denied by '.$la->approver_three->name;
+                $currAuth = $la->approver_three->name;
             }
-            return (new MailMessage)
-                    ->subject('[INFOMINA ELS] Leave Application Denied')
-                    ->greeting('Hi,'.$la->user->name)
-                    ->line('Your leave application has been denied.')
-                    ->line('Status: '.$status)
-                    ->line('Leave type: '.$la->leaveType->name)
-                    ->line('From: '.$la->date_from)
-                    ->line('To: '.$la->date_to)
-                    ->line('Total day(s): '.$la->total_days)
-                    ->line('Resume date: '.$la->date_resume)
-                    ->line('Reason: '.$la->reason)
-                    ->line('Relief Personnel: '.$la->relief_personnel->name)
-                    ->line('Emergency Contact: '.$la->emergency_contact)
-                    // ->action('View application', $url)
-                    ->line('Have a nice day!');
+            $subject = 'Leave Application Denied';
+            $desc = 'Your leave application has been denied';
+            $stat = 'Denied by '.$currAuth;
         }
         else{
-            return (new MailMessage)
-                    ->subject('[INFOMINA ELS] Leave Application Approved')
-                    ->greeting('Hi,'.$la->user->name)
-                    ->line('Your leave application has been approved.')
-                    ->line('Status: Approved')
-                    ->line('Leave type: '.$la->leaveType->name)
-                    ->line('From: '.$la->date_from)
-                    ->line('To: '.$la->date_to)
-                    ->line('Total day(s): '.$la->total_days)
-                    ->line('Resume date: '.$la->date_resume)
-                    ->line('Reason: '.$la->reason)
-                    ->line('Relief Personnel: '.$la->relief_personnel->name)
-                    ->line('Emergency Contact: '.$la->emergency_contact)
-                    // ->action('View application', $url)
-                    ->line('Have a nice day!');
+            $subject = 'Leave Application Approved';
+            $desc = 'Your leave application has been approved';
+            $stat = 'Approved';
         }
+
+        return (new MailMessage)
+        ->subject('[INFOMINA ELS] '.$subject)
+        ->greeting('Hi,'.$la->user->name)
+        ->line($desc)
+        ->line('Status: '.$stat)
+        ->line('Leave type: '.$la->leaveType->name)
+        ->line('From: '.$la->date_from)
+        ->line('To: '.$la->date_to)
+        ->line('Total day(s): '.$la->total_days)
+        ->line('Resume date: '.$la->date_resume)
+        ->line('Reason: '.$la->reason)
+        ->line('Relief Personnel: '.$la->relief_personnel->name)
+        ->line('Emergency Contact: '.$la->emergency_contact)
+        // ->action('View application', $url)
+        ->line('Have a nice day!');
     }
 
     /**
