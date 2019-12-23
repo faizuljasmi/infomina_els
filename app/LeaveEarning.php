@@ -21,6 +21,6 @@ class LeaveEarning extends Model
      }
 
     public function brought_forward(){
-        return $this->hasOne(BroughtForwardLeave::class,'leave_type_id');
+        return $this->hasOne(BroughtForwardLeave::class,'leave_type_id', 'user_id');
     }
 }

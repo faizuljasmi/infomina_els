@@ -32,9 +32,17 @@ class LeaveController extends Controller
             $key = trim($key,"leave_");
 
             //Check for duplicate leave earning
-            $dupcheck = LeaveEarning::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            // $dupcheck = LeaveEarning::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            $dupcheck = LeaveEarning::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
+                $query->where('leave_type_id', (int)$key)
+                    ->where('user_id', $user->id);
+            })->first();
             //Check for duplicate leave balance
-            $lbCheck = LeaveBalance::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            $lbCheck = LeaveBalance::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
+                $query->where('leave_type_id', (int)$key)
+                    ->where('user_id', $user->id);
+            })->first();
+        
 
             //If there is no duplicate,save as new one
             if($dupcheck == null){
@@ -79,7 +87,7 @@ class LeaveController extends Controller
         }
 
         //update balance
-
+        
         return back()->with('message','Nice, earnings updated');
     }
 
@@ -99,11 +107,20 @@ class LeaveController extends Controller
             $key = trim($key,"leave_");
 
             //Check for duplicate
-            $dupcheck = BroughtForwardLeave::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            $dupcheck = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
+                $query->where('leave_type_id', (int)$key)
+                    ->where('user_id', $user->id);
+            })->first();
             //Check leave earning for similar leave type
-            $leCheck = LeaveEarning::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            $leCheck = LeaveEarning::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
+                $query->where('leave_type_id', (int)$key)
+                    ->where('user_id', $user->id);
+            })->first();
             //Check leave balance of similar leave type
-            $lbCheck = LeaveBalance::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            $lbCheck = LeaveBalance::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
+                $query->where('leave_type_id', (int)$key)
+                    ->where('user_id', $user->id);
+            })->first();
 
             //If there is no duplicate,save as new one
             if($dupcheck == null){

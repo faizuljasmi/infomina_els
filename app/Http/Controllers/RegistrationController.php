@@ -36,7 +36,7 @@ class RegistrationController extends Controller
         ]);        
         $user = User::create(request(['name','email','password','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title']));
 
-        return redirect()->to('/create')->with('message', 'User created succesfully');
+        return redirect()->route('user_view', ['user' => $user])->with('message', 'User created succesfully');
     }
 
     public function edit(User $user){
@@ -50,9 +50,13 @@ class RegistrationController extends Controller
         $empAuth = $user->approval_authority;
         //dd($empAuth);
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();
+        $leaveEarn = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
-        return view('user.edit')->with(compact('user','users','authUsers','empType','empTypes','empGroup','empGroups','empAuth','leaveTypes','leaveEnt'));
+        return view('user.edit')->with(compact('user','users','authUsers','empType','empTypes','empGroup','empGroups','empAuth','leaveTypes','leaveEnt','leaveEarn','broughtFwd','leaveBal','leaveTak'));
     }
 
     public function update(Request $request, User $user){
@@ -72,6 +76,7 @@ class RegistrationController extends Controller
         //dd($empAuth->getAuthorityOneAttribute);
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();
         $leaveEarn = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        //dd($leaveEarn[1]->brought_forward);
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();

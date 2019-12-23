@@ -37,6 +37,7 @@ class HomeController extends Controller
         //$leaveApps = $user->leave_applications;
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
         $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where('user_id', '=', $user->id)->paginate(3);
         return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak'));

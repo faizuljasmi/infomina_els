@@ -177,7 +177,11 @@
                     <tr>
                     <th>Earned <small><a href="" data-toggle="modal" data-target="#setEarnings">Edit</a></small></th>
                     @foreach($leaveEarn as $le)
-                            <td data-toggle="tooltip" title="{{$le->no_of_days - $le->brought_forward->no_of_days}} (Earned) + {{$le->brought_forward->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
+                        @foreach($broughtFwd as $bf)
+                            @if($le->leave_type_id == $bf->leave_type_id)
+                            <td data-toggle="tooltip" title="{{$le->no_of_days - $bf->no_of_days}} (Earned) + {{$bf->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
+                            @endif
+                        @endforeach
                     @endforeach
                     </tr>
                     <tr>

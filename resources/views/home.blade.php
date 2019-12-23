@@ -76,7 +76,8 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>2</h3>
+                <?php $rl = $user->taken_leaves()->where('leave_type_id',12)->first();?>
+                <h3>{{isset($rl->no_of_days) ? $rl->no_of_days: '0'}}</h3>
 
                 <p>Replacement Leave</p>
               </div>
@@ -222,7 +223,11 @@
                     <tr>
                     <th>Earned</th>
                     @foreach($leaveEarns as $le)
-                            <td data-toggle="tooltip" title="{{$le->no_of_days - $le->brought_forward->no_of_days}}(Earned) + {{$le->brought_forward->no_of_days}}(Brought Forward)">{{$le->no_of_days}}</td>
+                        @foreach($broughtFwd as $bf)
+                            @if($le->leave_type_id == $bf->leave_type_id)
+                            <td data-toggle="tooltip" title="{{$le->no_of_days - $bf->no_of_days}} (Earned) + {{$bf->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
+                            @endif
+                        @endforeach
                     @endforeach
                     </tr>
                     <tr>
