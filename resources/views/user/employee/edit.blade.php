@@ -80,20 +80,20 @@
                     </tr>
                     <tr>
                     <th>Brought Forward</th>
-                    @foreach($leaveEnt as $le)
-                        <td>0</td>
+                    @foreach($broughtFwd as $bf)
+                        <td>{{isset($bf->no_of_days) ? $bf->no_of_days:'NA'}}</td>
                         @endforeach
                     </tr>
                     <tr>
                     <th>Earned</th>
-                    @foreach($leaveEnt as $le)
-                        <td>0</td>
-                        @endforeach
+                    @foreach($leaveEarn as $le)
+                            <td data-toggle="tooltip" title="{{$le->no_of_days - $le->brought_forward->no_of_days}} (Earned) + {{$le->brought_forward->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
+                    @endforeach
                     </tr>
                     <tr>
                     <th>Taken</th>
-                    @foreach($leaveEnt as $le)
-                        <td>0</td>
+                    @foreach($leaveTak as $lt)
+                        <td>{{$lt->no_of_days}}</td>
                         @endforeach
                     </tr>
                     <tr>
@@ -104,13 +104,13 @@
                     </tr>
                     <tr>
                     <th>Balance</th>
-                    @foreach($leaveEnt as $le)
-                        <td>0</td>
+                    @foreach($leaveBal as $lb)
+                        <td>{{$lb->no_of_days}}</td>
                         @endforeach
                     </tr>
                  </tbody>
                 </table>
-                <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" >Edit</button></div>
+
             </div>
         </div>
     </div>

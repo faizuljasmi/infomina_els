@@ -165,7 +165,11 @@
                         @endforeach
                     </tr>
                     <tr>
-                    <th>Brought Forward <small><a href="" data-toggle="modal" data-target="#setBroughtForward">Edit</a></small></th>
+                    <th>Brought Forward 
+                    @if ($leaveEarn->count() == 0)<small><a href="" onclick="return alert('Please set this years leave earnings before setting carry forward leaves')">Edit</a></small>
+                    @else <small><a href="" data-toggle="modal" data-target="#setBroughtForward">Edit</a></small>
+                    @endif
+                    </th>
                     @foreach($broughtFwd as $bf)
                         <td>{{isset($bf->no_of_days) ? $bf->no_of_days:'NA'}}</td>
                         @endforeach
@@ -173,17 +177,13 @@
                     <tr>
                     <th>Earned <small><a href="" data-toggle="modal" data-target="#setEarnings">Edit</a></small></th>
                     @foreach($leaveEarn as $le)
-                        @foreach($broughtFwd as $bf)
-                            @if($le->leave_type_id == $bf->leave_type_id)
-                            <td data-toggle="tooltip" title="{{$le->no_of_days}}(Earned) + {{$bf->no_of_days}}(Brought Fwd)">{{$le->no_of_days + $bf->no_of_days}}</td>
-                            @endif
-                        @endforeach
+                            <td data-toggle="tooltip" title="{{$le->no_of_days - $le->brought_forward->no_of_days}} (Earned) + {{$le->brought_forward->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
                     @endforeach
                     </tr>
                     <tr>
                     <th>Taken</th>
-                    @foreach($leaveEnt as $le)
-                        <td>0</td>
+                    @foreach($leaveTak as $lt)
+                        <td>{{$lt->no_of_days}}</td>
                         @endforeach
                     </tr>
                     <tr>
@@ -194,8 +194,8 @@
                     </tr>
                     <tr>
                     <th>Balance</th>
-                    @foreach($leaveEnt as $le)
-                        <td>0</td>
+                    @foreach($leaveBal as $lb)
+                        <td>{{$lb->no_of_days}}</td>
                         @endforeach
                     </tr>
                  </tbody>
@@ -206,7 +206,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle">Set Leave Earnings for {{$user->name}} <i class="fas fa-info-circle" data-toggle="tooltip" title="All fields must be filled out, even if the assigned days is 0"></i></h5>
+                            <h5 class="modal-title" id="exampleModalLongTitle">Set Leave Earnings for {{$user->name}}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>

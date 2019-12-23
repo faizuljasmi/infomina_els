@@ -59,7 +59,7 @@ class LeaveEntitlementController extends Controller
         foreach ($input as $key=>$val) {
             
             //To eliminate first entry which is token__
-            if(strpos($key,'leave_') === false || $val == '0'){
+            if(strpos($key,'leave_') === false){
                 continue;
             }
             //Trim, only in get the id

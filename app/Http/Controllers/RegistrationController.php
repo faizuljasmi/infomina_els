@@ -9,6 +9,8 @@ use App\EmpGroup;
 use App\LeaveType;
 use App\LeaveEntitlement;
 use App\LeaveEarning;
+use App\LeaveBalance;
+use App\TakenLeave;
 use App\BroughtForwardLeave;
 
 
@@ -71,9 +73,11 @@ class RegistrationController extends Controller
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();
         $leaveEarn = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
-        return view('user.profile')->with(compact('user','users','authUsers','empType','empGroup','empAuth','leaveTypes','leaveEnt','leaveEarn', 'broughtFwd'));
+        return view('user.profile')->with(compact('user','users','authUsers','empType','empGroup','empAuth','leaveTypes','leaveEnt','leaveEarn', 'broughtFwd','leaveBal','leaveTak'));
     }
 }
 

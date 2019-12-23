@@ -94,7 +94,7 @@ foreach ($leaveEnt->toArray() as $row) {
                     ?>
                     <div id="{{$leaveTypeName}}" class="collapse">
                         <label for="{{$type->name}}">{{$type->name}} Leave Entitlement:</label>
-                        <input class="form-control" type = "number" name="leave_{{$type->id}}" value="0" />
+                        <input class="form-control" type = "number" name="leave_{{$type->id}}" value="{{array_key_exists($type->id, $leaveEntMap) ? $leaveEntMap[$type->id]['no_of_days'] : 0}}" />
                     </div>
                     @endforeach
                     <button type="submit" class="btn btn-success">Submit</button>

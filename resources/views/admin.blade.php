@@ -113,9 +113,10 @@
                         </tr>
                       </thead>
                       <tbody>
+                        @php $count = ($leaveApps->currentPage()-1) * $leaveApps->perPage(); @endphp
                         @foreach($leaveApps as $la)
                         <tr>
-                          <th scope="row">1</th>
+                          <th scope="row">{{++$count}}</th>
                           <td>{{$la->user->name}}</td>
                           <td>{{$la->leaveType->name}}</td>
                           <td>{{ \Carbon\Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YY')}}</td>
@@ -232,222 +233,32 @@
     </tr>
   </thead>
   <tbody>
+  @php $count = ($leaveHist->currentPage()-1) * $leaveHist->perPage(); @endphp
+    @foreach($leaveHist as $lh)
     <tr>
-      <th scope="row">1</th>
-      <td>Employee One</td>
-      <td>Annual</td>
-      <td>3 days</td>
-      <td>2 Dec 2019</td>
-      <td>4 Dec 2019</td>
+      <th scope="row">{{++$count}}</th>
+      <td>{{$lh->user->name}}</td>
+      <td>{{$lh->leaveType->name}}</td>
+      <td>{{$lh->total_days}} day(s)</td>
+      <td>{{ \Carbon\Carbon::parse($lh->date_from)->isoFormat('ddd, D MMM YY')}}</td>
+      <td>{{ \Carbon\Carbon::parse($lh->date_to)->isoFormat('ddd, D MMM YY')}}</td>
       <td>
         <button type="button" class="btn btn-success btn-sm">View</i></button>
       </td>
     </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Employee Four</td>
-      <td>Medical</td>
-      <td>1 Day</td>
-      <td>4 Dec 2019</td>
-      <td>4 Dec 2019</td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Employee Three</td>
-      <td>Annual</td>
-      <td>2 Days</td>
-      <td>4 Dec 2019</td>
-      <td>5 Dec 2019</td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">4</th>
-      <td>Employee Two</td>
-      <td>Medical</td>
-      <td>1 Day</td>
-      <td>7 Dec 2019</td>
-      <td>7 Dec 2019</td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">5</th>
-      <td>Employee Six</td>
-      <td>Medical</td>
-      <td>1 Day</td>
-      <td>10 Dec 2019</td>
-      <td>10 Dec 2019</td>
-      <td>
-        <button type="button" class="btn btn-success btn-sm">View</i></button>
-      </td>
-    </tr>
+    @endforeach
   </tbody>
 </table>
-<nav aria-label="Page navigation example">
-  <ul class="pagination justify-content-end">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1">Previous</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
-</nav>
+{{$leaveHist->links()}}
                   </div>
-                  <div class="card-pane-right bg-success pt-2 pb-2 pl-4 pr-4">
-                      <strong>Filter:</strong>
-                    <div class="description-block ">
-                    <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Employee Type
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        @foreach($empTypes as $et)
-                        <a class="dropdown-item" href="#">{{$et->name}}</a>
-                        @endforeach
-                    </div>
-                    </div>
-                    
-                    </div>
-                    <!-- /.description-block -->
-                    <div class="description-block">
-                    <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Location
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">HQ</a>
-                        <a class="dropdown-item" href="#">Putrajaya</a>
-                    </div>
-                    </div>
-                    </div>
-                    <!-- /.description-block -->
-                    <div class="description-block">
-                    <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Leave Type
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        @foreach($leaveTypes as $lt)
-                        <a class="dropdown-item" href="#">{{$lt->name}}</a>
-                        @endforeach
-                    </div>
-                    </div>
-                    </div>
-                    <!-- /.description-block -->
-                  </div><!-- /.card-pane-right -->
-                </div><!-- /.d-md-flex -->
+                  
               </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
 
 
-            <!-- TABLE: LATEST ORDERS -->
-            <div class="card">
-              <div class="card-header border-transparent">
-                <h3 class="card-title">Latest Orders</h3>
-
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table m-0">
-                    <thead>
-                    <tr>
-                      <th>Order ID</th>
-                      <th>Item</th>
-                      <th>Status</th>
-                      <th>Popularity</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                      <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                      <td>Call of Duty IV</td>
-                      <td><span class="badge badge-success">Shipped</span></td>
-                      <td>
-                        <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                      <td>Samsung Smart TV</td>
-                      <td><span class="badge badge-warning">Pending</span></td>
-                      <td>
-                        <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                      <td>iPhone 6 Plus</td>
-                      <td><span class="badge badge-danger">Delivered</span></td>
-                      <td>
-                        <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                      <td>Samsung Smart TV</td>
-                      <td><span class="badge badge-info">Processing</span></td>
-                      <td>
-                        <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                      <td>Samsung Smart TV</td>
-                      <td><span class="badge badge-warning">Pending</span></td>
-                      <td>
-                        <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                      <td>iPhone 6 Plus</td>
-                      <td><span class="badge badge-danger">Delivered</span></td>
-                      <td>
-                        <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                      <td>Call of Duty IV</td>
-                      <td><span class="badge badge-success">Shipped</span></td>
-                      <td>
-                        <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.table-responsive -->
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer clearfix">
-                <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Place New Order</a>
-                <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
-              </div>
-              <!-- /.card-footer -->
-            </div>
-            <!-- /.card -->
+           
           </div>
           <!-- /.col -->
         </div>

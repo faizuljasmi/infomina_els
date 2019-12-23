@@ -14,7 +14,7 @@
 
 
 <section id="leaveapp-create">
-  <h3>Apply Leave</h3>
+  <h3>Apply Replacement Leave</h3>
   <section class="content">
     <div class="container-fluid">
 
@@ -41,9 +41,8 @@
                       </span>
                     </div>
                     <select class="form-control" name="leave_type_id">
-                      <option value="">Choose Leave</option>
                       @foreach($leaveType as $lt)
-                      <option value="{{$lt->id}}">{{$lt->name}}</option>
+                      <option value="{{$lt->id}}" selected>{{$lt->name}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -135,6 +134,24 @@
                   </div>
                 </div>
 
+                  <!-- Approval Authority -->
+                  <div class="form-group">
+                  <label>Approval Authority</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-user"></i>
+                      </span>
+                    </div>
+                    <select class="form-control" name="approver_id_1">
+                      <option selected>Choose Person</option>
+                      @foreach($leaveAuth as $la)
+                      <option value="{{$la->id}}">{{$la->name}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
                 <!-- Relief Personel -->
                 <div class="form-group">
                   <label>Relief Personel</label>
@@ -150,7 +167,6 @@
                       <option value="{{$emp->id}}">{{$emp->name}}</option>
                       @endforeach
                     </select>
-
                   </div>
                 </div>
 
@@ -181,7 +197,6 @@
                 </div>
 
                 <!-- $leaveAuth->authority_1_id -->
-                <input style="display:none;" type="text" name="approver_id_1" value="{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_1_id:''}}" />
                 <input style="display:none;" type="text" name="approver_id_2" value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
                 <input style="display:none;" type="text" name="approver_id_3" value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
 
@@ -203,56 +218,6 @@
                   <strong>Calendar</strong>
                 </div>
                 <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
-              </div>
-            </div>
-            <div class="col-lg-12 connectedSortable ui-sortable">
-                            <!-- Approval Authorities -->
-                            <div class="card">
-                <div class="card-header bg-teal">
-                  <strong>Approval Authorities</strong>
-                </div>
-                <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
-                  <div class="card-body">
-                    <table class="table table-bordered">
-                      <tr>
-                        <th>Level</th>
-                        <th>Name</th>
-                      </tr>
-                      <tr>
-                        <td>1</td>
-                        <td>{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_one->name:'NA'}}</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_two->name:'NA'}}</td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td>{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_three->name:'NA'}}</td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-6 connectedSortable ui-sortable">
-              <!-- Leaves Balance -->
-              <div class="card">
-                <div class="card-header bg-teal">
-                  <strong>Leave Balances</strong>
-                </div>
-                <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
-                  <div class="card-body">
-                    <table class="table table-bordered">
-                      @foreach($leaveBal as $lb)
-                      <tr>
-                        <th>{{$lb->leave_type->name}}</th>
-                        <td>{{$lb->no_of_days}}</td>
-                      </tr>
-                      @endforeach
-                    </table>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

@@ -10,6 +10,9 @@ use App\LeaveType;
 use App\LeaveApplication;
 use App\LeaveEntitlement;
 use App\LeaveEarning;
+use App\BroughtForwardLeave;
+use App\LeaveBalance;
+use App\TakenLeave;
 
 class HomeController extends Controller
 {
@@ -32,8 +35,11 @@ class HomeController extends Controller
         //dd($leaveEnts);
         $leaveEarns = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         //$leaveApps = $user->leave_applications;
+        $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where('user_id', '=', $user->id)->paginate(3);
-        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns'));
+        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak'));
     }
 
     /**
@@ -58,8 +64,21 @@ class HomeController extends Controller
             $query->where('status', 'PENDING_3')
                 ->where('approver_id_3', $user->id);
         })->simplePaginate(3);
+
+        $leaveHist = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_1', $user->id);
+        })->orWhere(function($query) use ($user){
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_2', $user->id);	
+        })->orWhere(function($query)use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_3', $user->id);
+        })->simplePaginate(5);
+
+        
         //dd($leaveApps);
-        return view('admin')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps'));
+        return view('admin')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps','leaveHist'));
     }
 
     public function getProfile() {

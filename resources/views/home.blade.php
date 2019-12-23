@@ -34,7 +34,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>1</h3>
+                <h3>{{isset($leaveBal[0]->no_of_days) ? $leaveBal[0]->no_of_days: '0'}}</h3>
 
                 <p>Annual Leave</p>
               </div>
@@ -48,7 +48,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>14<sup style="font-size: 20px"></sup></h3>
+                <h3>{{isset($leaveBal[2]->no_of_days) ? $leaveBal[2]->no_of_days: '0'}}<sup style="font-size: 20px"></sup></h3>
 
                 <p>Medical Leave</p>
               </div>
@@ -62,7 +62,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>5</h3>
+                <h3>{{isset($leaveBal[5]->no_of_days) ? $leaveBal[5]->no_of_days: '0'}}</h3>
 
                 <p>Emergency Leave</p>
               </div>
@@ -209,132 +209,43 @@
                     </tr>
                     <tr>
                     <th>Entitled</th>
-                      @foreach($leaveEnts as $le)
-                        <td>{{isset($le->no_of_days) ? $le->no_of_days:'NA'}}</td>
-                      @endforeach
-                    </tr>
-                    <tr>
-                    <th>Earned</th>
-                    @if(!isset($leaveEarns))
-                      @foreach($leaveEarns as $le)
-                        @if(isset($le->no_of_days))
+                    @foreach($leaveEnts as $le)
                         <td>{{$le->no_of_days}}</td>
-                        @else
-                        <td>0</td>
-                        @endif
-                      @endforeach
-                    @else 
-                    <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    @endif
-                    </tr>
-                    <tr>
-                    <th>Taken</th>
-                    @if(!isset($leaveEarns))
-                      @foreach($leaveEarns as $le)
-                        @if(isset($le->no_of_days))
-                        <td>{{$le->no_of_days}}</td>
-                        @else
-                        <td>0</td>
-                        @endif
-                      @endforeach
-                    @else 
-                    <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    @endif
+                        @endforeach
                     </tr>
                     <tr>
                     <th>Brought Forward</th>
-                    @if(!isset($leaveEarns))
-                      @foreach($leaveEarns as $le)
-                        @if(isset($le->no_of_days))
-                        <td>{{$le->no_of_days}}</td>
-                        @else
-                        <td>0</td>
-                        @endif
-                      @endforeach
-                    @else 
-                    <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    @endif
+                    @foreach($broughtFwd as $bf)
+                        <td>{{isset($bf->no_of_days) ? $bf->no_of_days:'NA'}}</td>
+                        @endforeach
+                    </tr>
+                    <tr>
+                    <th>Earned</th>
+                    @foreach($leaveEarns as $le)
+                            <td data-toggle="tooltip" title="{{$le->no_of_days - $le->brought_forward->no_of_days}}(Earned) + {{$le->brought_forward->no_of_days}}(Brought Forward)">{{$le->no_of_days}}</td>
+                    @endforeach
+                    </tr>
+                    <tr>
+                    <th>Taken</th>
+                    @foreach($leaveTak as $lt)
+                        <td>{{$lt->no_of_days}}</td>
+                        @endforeach
                     </tr>
                     <tr>
                     <th>Burnt</th>
-                    @if(!isset($leaveEarns))
-                      @foreach($leaveEarns as $le)
-                        @if(isset($le->no_of_days))
-                        <td>{{$le->no_of_days}}</td>
-                        @else
+                    @foreach($leaveEnts as $le)
                         <td>0</td>
-                        @endif
-                      @endforeach
-                    @else 
-                    <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    @endif
+                        @endforeach
                     </tr>
                     <tr>
                     <th>Balance</th>
-                    @if(!isset($leaveEarns))
-                      @foreach($leaveEarns as $le)
-                        @if(isset($le->no_of_days))
-                        <td>{{$le->no_of_days}}</td>
-                        @else
-                        <td>0</td>
-                        @endif
-                      @endforeach
-                    @else 
-                    <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    @endif  
+                    @foreach($leaveBal as $lb)
+                        <td>{{$lb->no_of_days}}</td>
+                        @endforeach
                     </tr>
                  </tbody>
                 </table>
+
             </div>
         </div>
     </div>

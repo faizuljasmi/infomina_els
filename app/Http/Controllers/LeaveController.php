@@ -31,8 +31,10 @@ class LeaveController extends Controller
             //Trim, only in get the id
             $key = trim($key,"leave_");
 
-            //Check for duplicate
+            //Check for duplicate leave earning
             $dupcheck = LeaveEarning::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            //Check for duplicate leave balance
+            $lbCheck = LeaveBalance::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
 
             //If there is no duplicate,save as new one
             if($dupcheck == null){
@@ -41,6 +43,32 @@ class LeaveController extends Controller
                 $le->leave_type_id = (int)$key;
                 $le->no_of_days = (int)$val;
                 $le->save();
+
+                $lt = new TakenLeave;
+                $lt->user_id = $user->id;
+                $lt->leave_type_id = (int)$key;
+                $lt->no_of_days = 0;
+                $lt->save();
+
+                $bf = new BroughtForwardLeave;
+                $bf->user_id = $user->id;
+                $bf->leave_type_id = (int)$key;
+                $bf->no_of_days = 0;
+                $bf->save();
+
+                //Add earning to balance
+                if($lbCheck == null){
+                    $lb = new LeaveBalance;
+                    $lb->user_id = $user->id;
+                    $lb->leave_type_id = (int)$key;
+                    $lb->no_of_days = (int)$val;
+                    $lb->save();
+                }
+                //If got existing balance, just update.
+                else{
+                    $lbCheck->no_of_days += (int)$val;
+                    $lbCheck->save();
+                }
             }
             //If not, update.
             else{
@@ -49,6 +77,9 @@ class LeaveController extends Controller
             }
 
         }
+
+        //update balance
+
         return back()->with('message','Nice, earnings updated');
     }
 
@@ -69,6 +100,10 @@ class LeaveController extends Controller
 
             //Check for duplicate
             $dupcheck = BroughtForwardLeave::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            //Check leave earning for similar leave type
+            $leCheck = LeaveEarning::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
+            //Check leave balance of similar leave type
+            $lbCheck = LeaveBalance::where('leave_type_id', '=', (int)$key, 'AND', 'user_id', '=', $user->id)->first();
 
             //If there is no duplicate,save as new one
             if($dupcheck == null){
@@ -77,9 +112,63 @@ class LeaveController extends Controller
                 $bf->leave_type_id = (int)$key;
                 $bf->no_of_days = (int)$val;
                 $bf->save();
+
+                //Add brought forward to leave earning
+                if($leCheck == null){
+                    $le = new LeaveEarning;
+                    $le->user_id = $user->id;
+                    $le->leave_type_id = (int)$key;
+                    $le->no_of_days = (int)$val;
+                    $le->save();
+
+                    $lb = new LeaveBalance;
+                    $lb->user_id = $user->id;
+                    $lb->leave_type_id = (int)$key;
+                    $lb->no_of_days = (int)$val;
+                    $lb->save();
+                }
+                //If got existing earning, just update.
+                else{
+                    $leCheck->no_of_days += (int)$val;
+                    $lbCheck->no_of_days = $leCheck->no_of_days;
+                    $leCheck->save();
+                    $lbCheck->save();
+                }
             }
-            //If not, update.
+            //If got existing broughtforward, update existing
             else{
+                
+                //Add brought forward to leave earning
+                if($leCheck == null){
+                    $le = new LeaveEarning;
+                    $le->user_id = $user->id;
+                    $le->leave_type_id = (int)$key;
+                    $le->no_of_days = (int)$val;
+                    $le->save();
+
+                    $lb = new LeaveBalance;
+                    $lb->user_id = $user->id;
+                    $lb->leave_type_id = (int)$key;
+                    $lb->no_of_days = (int)$val;
+                    $lb->save();
+                }
+                //If got existing earning, just update.
+                else{
+                    //If the new value is less than old value
+                    if($dupcheck->no_of_days > (int)$val){
+                        //Minus the diff from the earning
+                        $diff = $dupcheck->no_of_days - (int)$val;
+                        $leCheck->no_of_days -= $diff;
+                        $lbCheck->no_of_days = $leCheck->no_of_days;
+                    }
+                    else{
+                        $diff = (int)$val - $dupcheck->no_of_days;
+                        $leCheck->no_of_days += $diff;
+                        $lbCheck->no_of_days = $leCheck->no_of_days;
+                    }
+                    $leCheck->save();
+                    $lbCheck->save();
+                }
                 $dupcheck->no_of_days = (int)$val;
                 $dupcheck->save();
             }

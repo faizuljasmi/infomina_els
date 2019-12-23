@@ -10,6 +10,10 @@ use App\EmpType;
 use App\EmpGroup;
 use App\LeaveType;
 use App\LeaveEntitlement;
+use App\LeaveEarning;
+use App\LeaveBalance;
+use App\BroughtForwardLeave;
+use App\TakenLeave;
 
 
 class UserController extends Controller
@@ -29,9 +33,13 @@ class UserController extends Controller
 
         //Get his leave entitlements
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();
+        $leaveEarn = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         //Get all leave types, for display
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
-        return view('user.employee.profile')->with(compact('user','empType','empGroup','empAuth','leaveEnt','leaveTypes'));
+        return view('user.employee.profile')->with(compact('user','empType','empGroup','empAuth','leaveEnt','leaveTypes','leaveEnt','leaveEarn','broughtFwd','leaveBal','leaveTak'));
     }
 
     public function edit(){
@@ -42,9 +50,12 @@ class UserController extends Controller
         $empAuth = $user->approval_authority;
         //dd($empAuth);
         $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $empType->id)->get();
-        //dd($leaveEnt);
+        $leaveEarn = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
-        return view('user.employee.edit')->with(compact('user','empType','empGroup','empAuth','leaveTypes','leaveEnt'));
+        return view('user.employee.edit')->with(compact('user','empType','empGroup','empAuth','leaveTypes','leaveEnt','leaveEarn','broughtFwd','leaveBal','leaveTak'));
     }
 
     public function update(Request $request){

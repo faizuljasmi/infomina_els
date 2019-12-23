@@ -19,4 +19,8 @@ class BroughtForwardLeave extends Model
     public function leave_type(){
         return $this->belongsTo(LeaveType::class, 'leave_type_id');
      }
+
+    public function leave_earning(){
+        return $this->belongsTo(LeaveEarning::class,'leave_type_id');
+    }
 }

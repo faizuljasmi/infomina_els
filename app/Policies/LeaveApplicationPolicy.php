@@ -22,4 +22,9 @@ class LeaveApplicationPolicy
         return $user->user_type == 'Admin' || $user->id == $leaveApplication->user_id;
     }
 
+    public function approve(User $user,LeaveApplication $leaveApplication)
+    {
+        return $user->user_type == 'Admin';
+    }
+
 }

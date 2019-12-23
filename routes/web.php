@@ -85,3 +85,5 @@ Route::post('leave/apply','LeaveApplicationController@store')->name('leaveapp_st
 Route::get('/leave/apply/view/{leaveApplication}','LeaveApplicationController@view')->name('view_application')->middleware('auth');
 Route::get('/leave/apply/approve/{leaveApplication}','LeaveApplicationController@approve')->name('approve_application')->middleware('auth');
 Route::get('/leave/apply/deny/{leaveApplication}','LeaveApplicationController@deny')->name('deny_application')->middleware('auth');
+
+Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->middleware('auth');

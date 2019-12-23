@@ -27,17 +27,17 @@ class LeaveApplicationController extends Controller
 
         //Get THIS user id
         $user = auth()->user();
-        $leaveAuth = $user->approval_authority;
         //Get employees who are in the same group (for relieve personnel).
         $groupMates = User::orderBy('id','ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
         //dd($groupMate->name);
 
         //Get approval authorities of THIS user
-        //ONLY CAN GET ID, HOW TO GET NAME?
+        $leaveAuth = $user->approval_authority;
 
         //TODO: Get leave balance of THIS employee
+        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
 
-        return view('leaveapp.create')->with(compact('user','leaveType', 'groupMates','leaveAuth'));
+        return view('leaveapp.create')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal'));
     }
 
 
@@ -73,9 +73,10 @@ class LeaveApplicationController extends Controller
         //get emergency contact
         $leaveApp->emergency_contact = $request->emergency_contact_no;
 
+
         //Attachment validation
         $validator = Validator::make($request->all(),
-        ['attachment' => 'required|mimes:jpeg,png,jpg,pdf|max:2048']);
+        ['attachment' => 'required_if:leave_type_id,3|mimes:jpeg,png,jpg,pdf|max:2048']);
 
         // if validation fails
         if($validator->fails()) {
@@ -97,6 +98,7 @@ class LeaveApplicationController extends Controller
         $leaveApp->save();
         //Send email notification
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
+        
         $leaveApp->approver_one->notify(new NewApplication($leaveApp));
 
         //STORE
@@ -156,6 +158,68 @@ class LeaveApplicationController extends Controller
         //If the application is approved
         if($leaveApplication->status == 'APPROVED'){
 
+            //If the approved leave is a Replacement leave, assign taken to Replacement, and add day balance to Annual
+            if($leaveApplication->leaveType->name == 'Replacement'){
+                $lt = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lt->no_of_days += $leaveApplication->total_days;
+                
+                $lt->save();
+
+                //Add balance to annual;
+                $lb = LeaveBalance::where('leave_type_id', '=', '1', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lb->no_of_days += $leaveApplication->total_days;
+                $lb->save();
+
+                //Send status update email
+                $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                return redirect()->to('/admin')->with('message','Replacement Leave application status updated succesfully');
+            }
+            
+            //If the approved leave is a Sick leave, deduct the amount taken in both sick leave and hospitalization balance
+            if($leaveApplication->leaveType->name == 'Sick'){
+                //Add in amount sick leave taken
+                $lt = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lt->no_of_days += $leaveApplication->total_days;
+                $lt->save();
+
+                //Deduct balance in sick leave balance
+                $sickBalance = LeaveBalance::where('leave_type_id', '=', '3', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $sickBalance->no_of_days -= $leaveApplication->total_days;
+                $sickBalance->save();
+
+                //Deduct balance in hosp leave balance
+                $hospBalance = LeaveBalance::where('leave_type_id', '=', '4', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $hospBalance->no_of_days -= $leaveApplication->total_days;
+                $hospBalance->save();
+
+                 //Send status update email
+                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                 return redirect()->to('/admin')->with('message','Sick Leave application status updated succesfully');
+            }
+
+            //If the approved leave is an emergency leave, deduct the taken amount to Annual Leave
+            if($leaveApplication->leaveType->name == 'Emergency'){
+                //Add in amount emergency leave taken
+                $lt = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lt->no_of_days += $leaveApplication->total_days;
+                $lt->save();
+
+                //Deduct balance in emergency leave balance
+                $emBalance = LeaveBalance::where('leave_type_id', '=', '6', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $emBalance->no_of_days -= $leaveApplication->total_days;
+                $emBalance->save();
+
+                //Deduct balance in annual leave
+                $annBalance = LeaveBalance::where('leave_type_id', '=', '1', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $annBalance->no_of_days -= $leaveApplication->total_days;
+                $annBalance->save();
+                //dd($annBalance->no_of_days);
+
+                 //Send status update email
+                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                 return redirect()->to('/admin')->with('message','Emergency Leave application status updated succesfully');
+            }
+
             //Update leave taken table
             //Check for existing record
             $dupcheck = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
@@ -194,7 +258,6 @@ class LeaveApplicationController extends Controller
             }
         }
         
-        
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
 
@@ -232,6 +295,7 @@ class LeaveApplicationController extends Controller
 
     public function view(LeaveApplication $leaveApplication){
 
+        
         $leaveApp = $leaveApplication;
         //Get all leave types. TODO: show only entitled leave types instead of all leave types
         $leaveType = LeaveType::orderBy('id','ASC')->get();
@@ -241,6 +305,9 @@ class LeaveApplicationController extends Controller
         //Get employees who are in the same group (for relieve personnel).
         $groupMates = User::orderBy('id','ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
 
-        return view('leaveapp.view')->with(compact('leaveApp','leaveType','user','leaveAuth','groupMates'));
+         //TODO: Get leave balance of THIS employee
+         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+
+        return view('leaveapp.view')->with(compact('leaveApp','leaveType','user','leaveAuth','groupMates','leaveBal'));
     }
 }

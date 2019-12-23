@@ -206,6 +206,11 @@ return [
             'url'  => '/leave/apply',
             'icon' => 'fas fa-fw fa-calendar-alt',
         ],
+        [
+            'text' => 'Apply Replacement Leave',
+            'url'  => '/leave/replacement/apply',
+            'icon' => 'fas fa-fw fa-calendar-plus',
+        ],
         ['header' => ' System Settings', 'can' => 'admin-dashboard'],
         [
             'text' => 'User',

@@ -369,7 +369,7 @@ let VanillaCalendar = (function() {
             return date1 < date2;
         };
 
-        this.isDateSame = function(date1, date2) {
+        this.isDateEqual = function(date1, date2) {
             date1 = this.getDateDb(date1);
             date2 = this.getDateDb(date2);
             return date1 == date2;
@@ -409,6 +409,10 @@ let VanillaCalendar = (function() {
 
             return total;
         };
+
+        this.today = function(){
+            return new Date();
+        }
         /**
          * @return dateObj
          */

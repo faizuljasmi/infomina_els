@@ -26,12 +26,14 @@
             <div class="card card-primary">
               <div class="card-header bg-teal">
                 <strong>Application Details 
-                    @if($leaveApp->user_id == auth()->user()->id)
-                    <button type="submit" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Delete. Can only be done while on pending lvl 1"><i class="fa fa-trash-alt"></i></i></button><button type="submit" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Edit leave application"><i class="fa fa-pencil-alt"></i></button>
-                    @else
+                    @if($leaveApp->user_id == auth()->user()->id && $leaveApp->status == 'PENDING_1')
+                    <a href="" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Deny Application">Delete</a>
+                    <a href="" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Edit</a>
+                    @endif
+                    @can('approve',$leaveApp)
                     <a href="{{route('deny_application', $leaveApp->id)}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Deny Application">Deny</a>
                     <a href="{{route('approve_application', $leaveApp->id)}}" class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Approve</a>
-                    @endif
+                    @endcan
                 </strong>
               </div>
               <div class="card-body">
@@ -189,9 +191,15 @@
                 </div>
                 <fieldset>
                 <!-- $leaveAuth->authority_1_id -->
+                @if($leaveApp->leaveType->name != 'Replacement')
                 <input style="display:none;" type="text" name="approver_id_1" value="{{$leaveAuth->authority_1_id}}" />
                 <input style="display:none;" type="text" name="approver_id_2" value="{{$leaveAuth->authority_2_id}}" />
-                <input style="display:none;" type="text" name="approver_id_3" value="{{$leaveAuth->authority_3_id}}" />     
+                <input style="display:none;" type="text" name="approver_id_3" value="{{$leaveAuth->authority_3_id}}" />
+                @else
+                <input style="display:none;" type="text" name="approver_id_1" value="{{$leaveApp->approver_one->id}}" />
+                <input style="display:none;" type="text" name="approver_id_2" value="" />
+                <input style="display:none;" type="text" name="approver_id_3" value="" />
+                @endif    
               </div>
             </div>
           </form>
@@ -226,9 +234,9 @@
                       </tr>
                       <tr>
                         <td>1</td>
-                        <td>{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_one->name:'NA'}}</td>
+                        <td>{{isset($leaveApp->approver_one) ? $leaveApp->approver_one->name:'NA'}}</td>
                         <td>
-                            @if(!isset($leaveAuth->authority_1_id))
+                            @if(!isset($leaveApp->approver_one))
                             NA
                             @elseif($leaveApp->status == 'PENDING_1')
                             <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
@@ -286,19 +294,19 @@
                 </div>
             </div>
             
-            <div class="col-lg-6 connectedSortable ui-sortable">
+            <div class="col-lg-8 connectedSortable ui-sortable">
               <!-- Leaves Balance -->
               <div class="card">
                 <div class="card-header bg-teal">
-                  <strong>Leaves Balance</strong>
+                  <strong>{{$user->name}}'s Leave Balances</strong>
                 </div>
                 <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
-                  <div class="card-body">
+                <div class="card-body">
                     <table class="table table-bordered">
-                      @foreach($leaveType as $lt)
+                      @foreach($leaveBal as $lb)
                       <tr>
-                        <th>{{$lt->name}}</th>
-                        <td>-</td>
+                        <th>{{$lb->leave_type->name}}</th>
+                        <td>{{$lb->no_of_days}}</td>
                       </tr>
                       @endforeach
                     </table>

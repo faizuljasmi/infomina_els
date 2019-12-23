@@ -19,7 +19,7 @@ class LeaveTypesTableSeeder extends Seeder
                 'name' => 'Calamity',
               ),
               array(
-                'name' => 'Medical',
+                'name' => 'Sick',
               ),
               array(
                 'name' => 'Hospitalization',
@@ -44,6 +44,9 @@ class LeaveTypesTableSeeder extends Seeder
               ),
               array(
                 'name' => 'Unpaid',
+              ),
+              array(
+                'name' => 'Replacement',
               ),
             
           ));
