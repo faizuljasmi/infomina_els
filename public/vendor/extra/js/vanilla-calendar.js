@@ -19,6 +19,7 @@ let VanillaCalendar = (function() {
         let opts = {
             applied : [],
             holiday: [],
+            approved:[],
             selector: null,
             datesFilter: false,
             pastDates: true,
@@ -125,6 +126,18 @@ let VanillaCalendar = (function() {
             return opts.holiday.indexOf(dateDb) >= 0;
         };
 
+        //Added by Faizul
+        const isApplied = function(dateObj) {
+            let dateDb = getDateDb(dateObj);
+            return opts.applied.indexOf(dateDb) >= 0;
+        };
+
+        //Added by Faizul
+        const isApproved = function(dateObj) {
+            let dateDb = getDateDb(dateObj);
+            return opts.approved.indexOf(dateDb) >= 0;
+        };
+
         const createDay = function(date) {
             let newDayElem = document.createElement("div");
             let dateElem = document.createElement("span");
@@ -200,6 +213,9 @@ let VanillaCalendar = (function() {
             let dateDb = getDateDb(date);
             if (opts.applied.indexOf(dateDb) >= 0) {
                 newDayElem.classList.add("vanilla-calendar-date--applied");
+            }
+            if (opts.approved.indexOf(dateDb) >= 0) {
+                newDayElem.classList.add("vanilla-calendar-date--approved");
             }
             if (opts.holiday.indexOf(dateDb) >= 0) {
                 newDayElem.classList.add("vanilla-calendar-date--holiday");
@@ -278,10 +294,16 @@ let VanillaCalendar = (function() {
             </div>
             <div class="vanilla-calendar-legend">
                 <div class="vanilla-calendar-legend-item">
-                    <div class="legend legend-holiday"></div>Holiday
+                    <div class="legend legend-holiday"></div><small>Holiday</small>
                 </div>
                 <div class="vanilla-calendar-legend-item">
-                    <div class="legend legend-weekend"></div>Weekend
+                    <div class="legend legend-weekend"></div><small>Weekend</small>
+                </div>
+                <div class="vanilla-calendar-legend-item">
+                    <div class="legend legend-applied"></div><small>Applied</small>
+                </div>
+                <div class="vanilla-calendar-legend-item">
+                    <div class="legend legend-approved"></div><small>Approved</small>
                 </div>
             </div>
             <div class="vanilla-calendar-week"></div>
@@ -385,6 +407,17 @@ let VanillaCalendar = (function() {
             return isHoliday(dateObj);
         };
 
+        //Added by Faizul
+        this.isApplied = function(dateStr) {
+            let dateObj = getDateObj(dateStr);
+            return isApplied(dateObj);
+        };
+
+        this.isApproved = function(dateStr) {
+            let dateObj = getDateObj(dateStr);
+            return isApproved(dateObj);
+        };
+
         this.getTotalWorkingDay = function(dateFrom, dateTo) {
             dateFrom = this.getDateDb(dateFrom);
             dateTo = this.getDateDb(dateTo);
@@ -436,6 +469,39 @@ let VanillaCalendar = (function() {
                 }
             }
             return null;
+        };
+
+        /**
+         * @return dateObj
+         */
+        this.getThreePrevWorkingDay = function(date){
+            date = this.getDateDb(date);
+            let attempt = 20;
+            let count = 0;
+            let prevDateDb = date;
+            for(let i = 0; i < attempt; i++){
+                let prevDay = this.prevDay(prevDateDb);
+                prevDateDb = getDateDb(prevDay);
+                if(isWeekend(prevDay)){
+                    continue;
+                } else if(isHoliday(prevDay)){
+                    continue;
+                } else{
+                    count++;
+                    if(count == 3){
+                        return prevDay
+                    }
+                    else{
+                        continue;
+                    }
+                }
+            }
+        };
+
+        this.prevDay = function(dateDb){
+            return moment(dateDb, "YYYYMMDD")
+                .subtract(1,"days")
+                .toDate();
         };
 
         /**

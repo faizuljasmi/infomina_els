@@ -46,7 +46,7 @@
                         </div>
                         <div class="form-group col-md-3">
                         <label for="type">Employee Group</label>
-                        <input type="text" class="form-control" id="type" placeholder="{{$empGroup->name}}">
+                        <input type="text" class="form-control" id="type" placeholder="{{isset($empGroup->name) ? $empGroup->name:'Unassigned'}}">
                         </div>
                         <div class="form-group col-md-3">
                         <label for="type">Job Title</label>

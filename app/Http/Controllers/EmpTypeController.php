@@ -51,7 +51,7 @@ class EmpTypeController extends Controller
         //Create employee type
         $emptype = EmpType::create(request(['name']));
 
-        return redirect()->to('/emptype/create')->with('message', 'Employee Type created succesfully');
+        return redirect()->to('/emptype/create')->with('message', 'Employee type created succesfully');
     }
 
     /**
@@ -87,7 +87,7 @@ class EmpTypeController extends Controller
     public function update(Request $request, EmpType $empType)
     {
         $empType->update($request->only('name'));
-        return redirect()->to('/emptype/create')->with('message', 'Employee Type updated succesfully');
+        return redirect()->to('/emptype/create')->with('message', 'Employee type updated succesfully');
     }
 
     /**

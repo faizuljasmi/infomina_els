@@ -14,7 +14,7 @@ class AddUserTypeToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('user_type', ['Admin','Employee'])->nullable();
+            $table->enum('user_type', ['Admin','Authority','Employee'])->nullable();
         });
     }
 

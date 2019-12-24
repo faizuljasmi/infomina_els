@@ -75,7 +75,15 @@ Route::middleware('can:edit_settings')->group(function() {
     //Approval authority
     Route::post('/create/approval_authority/{user}','ApprovalAuthorityController@store')->name('approval_auth_create')->middleware('auth');
     Route::post('update/approval_authority/{approvalAuthority}','ApprovalAuthorityController@update')->name('approval_auth_update')->middleware('auth');
+
+    //Holiday 
+    Route::get('/holiday/view','HolidayController@index')->middleware('auth');
+    Route::post('/holiday/create','HolidayController@store')->name('holiday_create')->middleware('auth');
+    Route::get('/holiday/edit/{holiday}','HolidayController@edit')->name('holiday_edit')->middleware('auth');
+    Route::post('/holiday/update/{holiday}','HolidayController@update')->name('holiday_update')->middleware('auth');
+    Route::get('/holiday/delete/{holiday}','HolidayController@delete')->name('holiday_delete')->middleware('auth');
 });
+
 
 
 
@@ -86,4 +94,5 @@ Route::get('/leave/apply/view/{leaveApplication}','LeaveApplicationController@vi
 Route::get('/leave/apply/approve/{leaveApplication}','LeaveApplicationController@approve')->name('approve_application')->middleware('auth');
 Route::get('/leave/apply/deny/{leaveApplication}','LeaveApplicationController@deny')->name('deny_application')->middleware('auth');
 
+//Replacement leave
 Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->middleware('auth');

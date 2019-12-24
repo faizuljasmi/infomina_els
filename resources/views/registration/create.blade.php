@@ -145,6 +145,7 @@
                 <label for="user_type">User Level:</label>
                     <select class="form-control" id="user_type" name="user_type">
                     <option>Admin</option>
+                    <option>Authority</option>
                     <option>Employee</option>
                     </select>
                 </div>
@@ -161,6 +162,7 @@
                 <div class = "form-group">
                 <label for="employee_type">Employee Group:</label>
                     <select class="form-control" id="emp_group_id" name="emp_group_id">
+                    <option value ='null' selected>Unassigned</option>
                     @foreach($empGroups as $eg)
                         <option value="{{$et->id}}">{{$eg->name}}</option>
                     @endforeach

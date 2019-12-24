@@ -80,7 +80,7 @@ class EmpGroupController extends Controller
     {
         //
         $empGroup->update($request->only('name'));
-        return redirect()->to('/empgroup/create')->with('message', 'Employee Group name updated succesfully');
+        return redirect()->to('/empgroup/create')->with('message', 'Employee group name updated succesfully');
     }
 
     /**

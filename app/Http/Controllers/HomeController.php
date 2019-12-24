@@ -13,6 +13,8 @@ use App\LeaveEarning;
 use App\BroughtForwardLeave;
 use App\LeaveBalance;
 use App\TakenLeave;
+use App\Holiday;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -40,7 +42,47 @@ class HomeController extends Controller
         //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
         $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where('user_id', '=', $user->id)->paginate(3);
-        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak'));
+
+        //Get all holidays dates
+        $holidays = Holiday::all();
+        $all_dates = array();
+        foreach($holidays as $hols){
+            $startDate = new Carbon($hols->date_from);
+            $endDate = new Carbon($hols->date_to);
+            $all_dates = [];
+            while ($startDate->lte($endDate)){
+                $dates = str_replace("-","",$startDate->toDateString());
+                $all_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+
+        //Get all leave applications date
+        $applied_dates = array();
+        $approved_dates = array();
+        foreach($leaveApps as $la){
+            $startDate = new Carbon($la->date_from);
+            $endDate = new Carbon ($la->date_to);
+            $applied_dates = [];
+            $approved_dates = [];
+            if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
+                while ($startDate->lte($endDate)){
+                    $dates = str_replace("-","",$startDate->toDateString());
+                    $applied_dates[] = $dates;
+                    $startDate->addDay();
+                }
+            }
+            if($la->status == 'APPROVED'){
+                while ($startDate->lte($endDate)){
+                    $dates = str_replace("-","",$startDate->toDateString());
+                    $approved_dates[] = $dates;
+                    $startDate->addDay();
+                }
+            }
+        }
+        //dd($approved_dates);
+
+        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak','all_dates','applied_dates','approved_dates'));
     }
 
     /**
@@ -77,9 +119,22 @@ class HomeController extends Controller
                 ->where('approver_id_3', $user->id);
         })->simplePaginate(5);
 
+        $holidays = Holiday::all();
+        $all_dates = array();
+        foreach($holidays as $hols){
+            $startDate = new Carbon($hols->date_from);
+            $endDate = new Carbon($hols->date_to);
+            $all_dates = [];
+            while ($startDate->lte($endDate)){
+                $dates = str_replace("-","",$startDate->toDateString());
+                $all_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+        
         
         //dd($leaveApps);
-        return view('admin')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps','leaveHist'));
+        return view('admin')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps','leaveHist','all_dates'));
     }
 
     public function getProfile() {

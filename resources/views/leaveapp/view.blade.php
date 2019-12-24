@@ -31,8 +31,11 @@
                     <a href="" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Edit</a>
                     @endif
                     @can('approve',$leaveApp)
-                    <a href="{{route('deny_application', $leaveApp->id)}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Deny Application">Deny</a>
-                    <a href="{{route('approve_application', $leaveApp->id)}}" class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Approve</a>
+                      @if($leaveApp->status == 'APPROVED' || $leaveApp->status == 'DENIED_1'||$leaveApp->status == 'DENIED_2'||$leaveApp->status == 'DENIED_3')
+                      @else
+                      <a href="{{route('deny_application', $leaveApp->id)}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Deny Application">Deny</a>
+                      <a href="{{route('approve_application', $leaveApp->id)}}" class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Approve</a>
+                      @endif
                     @endcan
                 </strong>
               </div>
@@ -333,12 +336,13 @@
   $(document).ready(MainLeaveApplicationCreate);
 
   function MainLeaveApplicationCreate() {
+
+    var applied_dates = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
+    var hol_dates = {!! json_encode($hol_dates, JSON_HEX_TAG) !!};
   
     let calendar = new VanillaCalendar({
-        applied : ['20191203'],
-        holiday: [
-          "20191204","20191205","20191206"
-        ],
+        applied : applied_dates,
+        holiday: hol_dates,
         selector: ".myCalendar",
         onSelect: (data, elem) => {
             // console.log(data, elem)

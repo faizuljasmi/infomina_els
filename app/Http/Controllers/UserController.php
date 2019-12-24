@@ -62,7 +62,7 @@ class UserController extends Controller
         //dd($request->emp_group_id);
         $user = auth()->user();
         $user->update($request->only('name','email','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title','emergency_contact_name','emergency_contact_no'));
-        return redirect()->route('view_profile')->with('message', 'Your profile updated succesfully');
+        return redirect()->route('view_profile')->with('message', 'Your profile has been updated succesfully');
 
     }
 }

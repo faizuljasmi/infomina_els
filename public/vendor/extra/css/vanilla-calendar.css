@@ -11,8 +11,11 @@
     --vanilla-calendar-selected-color: #fff;
     --vanilla-calendar-today-color: black;
 
-    --vanilla-calendar-applied-bg-color: blue;
+    --vanilla-calendar-applied-bg-color: rgb(255, 255, 83);
     --vanilla-calendar-applied-color: rgb(5, 4, 4);
+
+    --vanilla-calendar-approved-bg-color: rgb(83, 255, 112);
+    --vanilla-calendar-approved-color: rgb(5, 4, 4);
 
     --vanilla-calendar-holiday-bg-color: #ffbd77;
     --vanilla-calendar-holiday-color: black;
@@ -123,6 +126,10 @@
 .vanilla-calendar .vanilla-calendar-date--applied {
     background-color: var(--vanilla-calendar-applied-bg-color);
 }
+
+.vanilla-calendar .vanilla-calendar-date--approved {
+    background-color: var(--vanilla-calendar-approved-bg-color);
+}
 .vanilla-calendar .vanilla-calendar-date--holiday {
     background-color: var(--vanilla-calendar-holiday-bg-color);
 }
@@ -174,4 +181,12 @@
 
 .vanilla-calendar-legend-item .legend.legend-weekend{
     background-color: var(--vanilla-calendar-weekend-bg-color);
+}
+
+.vanilla-calendar-legend-item .legend.legend-applied{
+    background-color: var(--vanilla-calendar-applied-bg-color);
+}
+
+.vanilla-calendar-legend-item .legend.legend-approved{
+    background-color: var(--vanilla-calendar-approved-bg-color);
 }

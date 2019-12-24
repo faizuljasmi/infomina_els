@@ -16,6 +16,8 @@ use App\LeaveEntitlement;
 use App\LeaveEarning;
 use App\LeaveBalance;
 use App\TakenLeave;
+use App\Holiday;
+use Carbon\Carbon;
 
 class LeaveApplicationController extends Controller
 {
@@ -37,7 +39,20 @@ class LeaveApplicationController extends Controller
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
 
-        return view('leaveapp.create')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal'));
+        $holidays = Holiday::all();
+        $all_dates = array();
+        foreach($holidays as $hols){
+            $startDate = new Carbon($hols->date_from);
+            $endDate = new Carbon($hols->date_to);
+            $all_dates = [];
+            while ($startDate->lte($endDate)){
+                $dates = str_replace("-","",$startDate->toDateString());
+                $all_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+
+        return view('leaveapp.create')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal','all_dates'));
     }
 
 
@@ -172,7 +187,7 @@ class LeaveApplicationController extends Controller
 
                 //Send status update email
                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                return redirect()->to('/admin')->with('message','Replacement Leave application status updated succesfully');
+                return redirect()->to('/admin')->with('message','Replacement leave application status updated succesfully');
             }
             
             //If the approved leave is a Sick leave, deduct the amount taken in both sick leave and hospitalization balance
@@ -194,7 +209,7 @@ class LeaveApplicationController extends Controller
 
                  //Send status update email
                  $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                 return redirect()->to('/admin')->with('message','Sick Leave application status updated succesfully');
+                 return redirect()->to('/admin')->with('message','Sick leave application status updated succesfully');
             }
 
             //If the approved leave is an emergency leave, deduct the taken amount to Annual Leave
@@ -217,7 +232,7 @@ class LeaveApplicationController extends Controller
 
                  //Send status update email
                  $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                 return redirect()->to('/admin')->with('message','Emergency Leave application status updated succesfully');
+                 return redirect()->to('/admin')->with('message','Emergency leave application status updated succesfully');
             }
 
             //Update leave taken table
@@ -308,6 +323,28 @@ class LeaveApplicationController extends Controller
          //TODO: Get leave balance of THIS employee
          $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
 
-        return view('leaveapp.view')->with(compact('leaveApp','leaveType','user','leaveAuth','groupMates','leaveBal'));
+        $applied_dates = array();
+        $startDate = new Carbon($leaveApp->date_from);
+        $endDate = new Carbon($leaveApp->date_to);
+        while ($startDate->lte($endDate)){
+            $dates = str_replace("-","",$startDate->toDateString());
+            $applied_dates[] = $dates;
+            $startDate->addDay();
+        }
+
+        $holidays = Holiday::all();
+        $hol_dates = array();
+        foreach($holidays as $hols){
+            $startDate = new Carbon($hols->date_from);
+            $endDate = new Carbon($hols->date_to);
+            $hol_dates = [];
+            while ($startDate->lte($endDate)){
+                $dates = str_replace("-","",$startDate->toDateString());
+                $hol_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+
+        return view('leaveapp.view')->with(compact('leaveApp','leaveType','user','leaveAuth','groupMates','leaveBal','applied_dates','hol_dates'));
     }
 }

@@ -193,12 +193,12 @@ return [
         [
             'text' => 'Dashboard (Employee)',
             'url'  => '/home',
-            'icon' => 'fas fa-fw fa-home',
+            'icon' => 'fas fa-fw fa-user-tie',
         ],
         [
             'text' => 'Dashboard (Admin)',
             'url'  => '/admin',
-            'icon' => 'fas fa-fw fa-home',
+            'icon' => 'fas fa-fw fa-user-shield',
             'can' => 'admin-dashboard'
         ],
         [
@@ -211,16 +211,16 @@ return [
             'url'  => '/leave/replacement/apply',
             'icon' => 'fas fa-fw fa-calendar-plus',
         ],
-        ['header' => ' System Settings', 'can' => 'admin-dashboard'],
+        ['header' => ' System Settings', 'can' => 'edit_settings'],
         [
             'text' => 'User',
             'url'  => '/create',
             'icon' => 'fas fa-fw fa-user-plus',
-            'can' => 'admin-dashboard'
+            'can' => 'edit_settings'
         ],
         [
             'text'    => 'Employee',
-            'can' => 'admin-dashboard',
+            'can' => 'edit_settings',
             'icon'    => 'fas fa-fw fa-user-cog',
             'submenu' => [  
                 [
@@ -240,7 +240,7 @@ return [
 
         [
             'text'    => 'Leave',
-            'can' => 'admin-dashboard',
+            'can' => 'edit_settings',
             'icon'    => 'fas fa-fw fa-calendar-alt',
             'submenu' => [
                 [
@@ -248,7 +248,13 @@ return [
                     'url'  => '/leavetype/create',
                     'icon' => 'fas fa-fw fa-calendar-plus',
                     'can' => 'admin-dashboard'
-                ],         
+                ], 
+                [
+                    'text' => 'Add Holiday',
+                    'url'  => '/holiday/view',
+                    'icon' => 'fas fa-fw fa-calendar-day',
+                    'can' => 'admin-dashboard'
+                ],           
             ],
         ],
         ['header' => ' My Settings', ],

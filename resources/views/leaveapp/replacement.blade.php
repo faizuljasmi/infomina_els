@@ -251,7 +251,7 @@
 
    
     const validation = {
-      isAnualLeave : function(){
+      isAnnualLeave : function(){
         return _form.get(FC.leave_type_id) == "1";
 
       },
@@ -289,7 +289,7 @@
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
-        if(validation.isAnualLeave()){
+        if(validation.isAnnualLeave()){
           let next2 = calendar.getNextWorkingDay(calendar.today());
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);

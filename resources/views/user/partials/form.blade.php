@@ -14,6 +14,7 @@
                         <label for="type">User Type</label>
                         <select class="form-control" id="user_type" name="user_type">
                         <option {{isset($user->user_type) && $user->user_type == 'Admin' ? 'selected':''}}>Admin</option>
+                        <option {{isset($user->user_type) && $user->user_type == 'Authority' ? 'selected':''}}>Authority</option>
                         <option {{isset($user->user_type) && $user->user_type == 'Employee' ? 'selected':''}}>Employee</option>
                         </select>
                         </div>
@@ -38,6 +39,7 @@
                         <div class="form-group col-md-3">
                         <label for="type">Employee Group</label>
                         <select class="form-control" id="emp_group_id" name="emp_group_id">
+                            <option value="" {{isset($user->emp_group_id) && $user->emp_group_id == $eg->id ? 'selected':''}}>Unassigned</option>
                             @foreach($empGroups as $eg)
                                 <option value="{{$eg->id}}" {{isset($user->emp_group_id) && $user->emp_group_id == $eg->id ? 'selected':''}}>{{$eg->name}}</option>
                             @endforeach

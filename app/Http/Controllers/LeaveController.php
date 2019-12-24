@@ -88,7 +88,7 @@ class LeaveController extends Controller
 
         //update balance
         
-        return back()->with('message','Nice, earnings updated');
+        return back()->with('message','Leave earnings for'.$user->name.' have been updated');
     }
 
     public function setBroughtForward(Request $request, User $user){
@@ -191,6 +191,6 @@ class LeaveController extends Controller
             }
 
         }
-        return back()->with('message','Nice, brought forward updated');
+        return back()->with('message','Brought forward leaves for '.$user->name.' have been updated');
     }
 }

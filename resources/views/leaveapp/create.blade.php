@@ -273,11 +273,11 @@
   $(document).ready(MainLeaveApplicationCreate);
 
   function MainLeaveApplicationCreate() {
+
+    var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
   
     let calendar = new VanillaCalendar({
-        holiday: [
-          "20191204","20191205","20191206"
-        ],
+        holiday: dates,
         selector: ".myCalendar",
         onSelect: (data, elem) => {
             // console.log(data, elem)
@@ -286,12 +286,45 @@
 
    
     const validation = {
-      isAnualLeave : function(){
+      isAnnualLeave : function(){
         return _form.get(FC.leave_type_id) == "1";
-
       },
+      isCalamityLeave : function(){
+        return _form.get(FC.leave_type_id) == "2";
+      },
+       isSickLeave : function(){
+        return _form.get(FC.leave_type_id) == "3";
+      },
+      isHospitalizationLeave : function(){
+        return _form.get(FC.leave_type_id) == "4";
+      },
+      isCompassionateLeave : function(){
+        return _form.get(FC.leave_type_id) == "5";
+      }, 
+      isEmergencyLeave : function(){
+        return _form.get(FC.leave_type_id) == "6";
+      },
+      isMarriageLeave : function(){
+        return _form.get(FC.leave_type_id) == "7";
+      },
+      isMaternityLeave : function(){
+        return _form.get(FC.leave_type_id) == "8";
+      },
+      isPaternityLeave : function(){
+        return _form.get(FC.leave_type_id) == "9";
+      },
+      isTrainingLeave : function(){
+        return _form.get(FC.leave_type_id) == "10";
+      },
+      isUnpaidLeave : function(){
+        return _form.get(FC.leave_type_id) == "11";
+      },
+      isReplacementLeave : function(){
+        return _form.get(FC.leave_type_id) == "12";
+      },
+     
       onchange : function(v, e, fc){
-          console.log("onchange", v, e, fc);
+          //console.log("onchange", v, e, fc);
           let name = fc.name;
 
           if(name == FC.date_from.name || name == FC.date_to.name){
@@ -324,13 +357,23 @@
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
-        if(validation.isAnualLeave()){
+        if(validation.isAnnualLeave()){
           let next2 = calendar.getNextWorkingDay(calendar.today());
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);
-          console.log("next2", next2);
+          //console.log("next2", next2);
           if(calendar.isDateSmaller(date_from, next2) || calendar.isDateEqual(date_from, next2)){
-            return "YOOO";
+            return "Attention: Annual leave must be applied at least 2 days prior to the applied date";
+          }
+        }
+
+        if(validation.isSickLeave()){
+          let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
+          //prev3 = calendar.getThreePrevWorkingDay(prev3);
+          prev3 = calendar.getDateDb(prev3);
+          console.log("Prev 3", prev3);
+          if(calendar.isDateBigger(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+            return "Attention: Sick leave must be applied within 3 days after the day of leave";
           }
         }
       
@@ -339,22 +382,22 @@
           || 
           (name == FC.date_to.name && calendar.isWeekend(date_to))
         ){
-          return `Selected date is a WEEKEND. Please select another date.`;
+          return `Selected date is a Weekend day. Please select another date.`;
         }
         if(
           (name == FC.date_from.name && calendar.isHoliday(date_from)) 
           || 
           (name == FC.date_to.name && calendar.isHoliday(date_to))
         ){
-          return `Selected date is a HOLIDAY. Please select another date.`;
+          return `Selected date is an announced Public Holiday. Please select another date.`;
         }
 
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
           if(calendar.isDateSmaller(date_to, date_from)){
             if(name == FC.date_from.name){
-              return "[Date From] cannot be bigger than [Date To]";
+              return "Starting date cannot be bigger than end date";
             } else if(name == FC.date_to.name){
-              return "[Date To] cannot be smaller than [Date From]";
+              return "End date cannot be smaller than starting date";
             }
           }
         }
