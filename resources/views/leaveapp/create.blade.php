@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 @section('content')
 
+@section('content_header')
 @if(session()->has('message'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <i class="icon fa fa-check"></i>
@@ -10,11 +11,11 @@
             </button>
         </div>
     @endif
-
+    <h1 class="m-0 text-dark">Apply Leave</h1>
+@endsection
 
 
 <section id="leaveapp-create">
-  <h3>Apply Leave</h3>
   <section class="content">
     <div class="container-fluid">
 
@@ -577,5 +578,3 @@
 
 
 @endsection
-@section('css')
-<link rel="stylesheet" href="{{asset('')}}" @endsection

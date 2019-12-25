@@ -43,6 +43,7 @@
     <link rel="icon" href="{{ URL::asset('/css/favicon.png') }}" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/app.css')  }}">
 
+
 </head>
 <body class="@yield('classes_body')" @yield('body_data')>
 
@@ -59,5 +60,7 @@
 @else
 <script src="{{ asset('js/app.js') }}"></script>
 @endif
+
 </body>
+
 </html>

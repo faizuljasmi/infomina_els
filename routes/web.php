@@ -34,11 +34,13 @@ Route::post('/change-password', 'ChangePasswordController@store')->name('change.
 
 //Create, Edit, Delete User
 Route::middleware('can:edit_users')->group(function(){
-    Route::get('/create', 'RegistrationController@create')->middleware('auth');
+    Route::get('/create', 'RegistrationController@create')->name('user_create')->middleware('auth');
     Route::post('create', 'RegistrationController@store')->middleware('auth');
     Route::get('/edit/{user}','RegistrationController@edit')->name('user_edit')->middleware('auth');
     Route::post('/update/{user}','RegistrationController@update')->name('user_update')->middleware('auth');
     Route::get('/user/{user}','RegistrationController@profile')->name('user_view')->middleware('auth');
+    Route::get('/user/delete/{user}','RegistrationController@destroy')->name('user_delete')->middleware('auth');
+    Route::get('/user/deactivate/{user}','RegistrationController@deactivate')->name('user_deactivate')->middleware('auth');
 });
 
 

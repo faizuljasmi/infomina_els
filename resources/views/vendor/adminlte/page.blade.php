@@ -168,12 +168,15 @@
             @endif
         </div>
 
-        @hasSection('footer')
+      
         <footer class="main-footer">
-
-            @yield('footer')
+            <strong>Copyright &copy; 2019 <a href="http://infomina.com.my/">Infomina Sdn. Bhd.</a></strong>
+            All rights reserved.
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Version</b> 1.0.0
+            </div>
         </footer>
-        @endif
+    
 
         @if(config('adminlte.right_sidebar'))
             <aside class="control-sidebar control-sidebar-{{config('adminlte.right_sidebar_theme')}}">

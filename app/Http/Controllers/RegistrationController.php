@@ -18,7 +18,7 @@ class RegistrationController extends Controller
 {
     
     public function create(){
-        $users = User::orderBy('id', 'ASC')->simplePaginate(15);
+        $users = User::orderBy('staff_id', 'ASC')->simplePaginate(15);
         //dd($users);
         $empTypes = EmpType::orderBy('id','ASC')->get();
         //dd($empTypes);
@@ -29,12 +29,13 @@ class RegistrationController extends Controller
     public function store(Request $request){
         $this->validate(request(),[
             'name' => ['required', 'string', 'max:255'],
+            'staff_id' => ['required','string','min:4','max:5','unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'join_date' => ['required'],
             'job_title' => ['required','string'],   
         ]);        
-        $user = User::create(request(['name','email','password','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title']));
+        $user = User::create(request(['name','staff_id','email','password','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title']));
 
         return redirect()->route('user_view', ['user' => $user])->with('message', 'User created succesfully');
     }
@@ -60,8 +61,13 @@ class RegistrationController extends Controller
     }
 
     public function update(Request $request, User $user){
-        //dd($request->emp_group_id);
-        $user->update($request->only('name','email','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title','emergency_contact_name','emergency_contact_no'));
+        try {
+            $user->update($request->only('name','staff_id','email','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title','emergency_contact_name','emergency_contact_no'));
+         } catch (\Exception $e) { // It's actually a QueryException but this works too
+            if ($e->getCode() == 23000) {
+                return redirect()->route('user_view', ['user' => $user])->with('message', 'Staff ID has already been taken. User details not updated.');
+            }
+         }
         return redirect()->route('user_view', ['user' => $user])->with('message', 'User profile updated succesfully');
 
     }
@@ -83,6 +89,16 @@ class RegistrationController extends Controller
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
         return view('user.profile')->with(compact('user','users','authUsers','empType','empGroup','empAuth','leaveTypes','leaveEnt','leaveEarn', 'broughtFwd','leaveBal','leaveTak'));
+    }
+
+    public function deactivate(User $user){
+        $user->status = 'Inactive';
+        $user->update();
+        return redirect()->route('user_create')->with('message', 'User has been deactivated');
+    }
+    public function destroy(User $user){
+        $user->delete();
+        return back();
     }
 }
 

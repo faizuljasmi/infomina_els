@@ -27,6 +27,10 @@
                         <input type="name" class="form-control" id="name" placeholder="{{$user->name}}">
                         </div>
                         <div class="form-group col-md-3">
+                        <label for="staff_id">Staff ID</label>
+                        <input type="text" class="form-control" id="staff_id" placeholder="{{$user->staff_id}}">
+                        </div>
+                        <div class="form-group col-md-3">
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" placeholder="{{$user->email}}">
                         </div>
@@ -68,7 +72,7 @@
                     </fieldset>
                 </form>
                 <div class="float-sm-right"><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit user profile and leave">
-                                <a href="{{route('user_edit', $user->id)}}" class="btn btn-info">Edit</a>
+                                <a href="{{route('user_edit', $user->id)}}" class="btn btn-primary">Edit</a>
                             </span></div>
             </div>
         </div>
@@ -166,7 +170,7 @@
                     </tr>
                     <tr>
                     <th>Brought Forward 
-                    @if ($leaveEarn->count() == 0)<small><a href="" onclick="return alert('Please set this years leave earnings before setting carry forward leaves')">Edit</a></small>
+                    @if ($leaveEarn->count() == 0)<small><a href="" onclick="return alert('Please set this year\'s\ leave earnings before setting carry forward leaves')">Edit</a></small>
                     @else <small><a href="" data-toggle="modal" data-target="#setBroughtForward">Edit</a></small>
                     @endif
                     </th>

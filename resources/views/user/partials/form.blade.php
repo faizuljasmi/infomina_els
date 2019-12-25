@@ -3,11 +3,15 @@
                     <div class="form-row">
                         <div class="form-group col-md-3">
                         <label for="name">Name</label>
-                        <input type="name" class="form-control" id="name" value="{{$user->name}}">
+                        <input type="name" class="form-control" id="name" name ="name" value="{{$user->name}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                        <label for="staff_id">Staff ID</label>
+                        <input type="text" class="form-control" id="staff_id" name="staff_id" value="{{$user->staff_id}}">
                         </div>
                         <div class="form-group col-md-3">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" value="{{$user->email}}">
+                        <input type="email" class="form-control" id="email" name="email "value="{{$user->email}}">
                         </div>
                         @if (Gate::forUser(Auth::user())->allows('admin-dashboard'))
                         <div class="form-group col-md-3">
@@ -39,7 +43,7 @@
                         <div class="form-group col-md-3">
                         <label for="type">Employee Group</label>
                         <select class="form-control" id="emp_group_id" name="emp_group_id">
-                            <option value="" {{isset($user->emp_group_id) && $user->emp_group_id == $eg->id ? 'selected':''}}>Unassigned</option>
+                            <option value="" {{isset($user->emp_group_id) ? 'selected':''}}>Unassigned</option>
                             @foreach($empGroups as $eg)
                                 <option value="{{$eg->id}}" {{isset($user->emp_group_id) && $user->emp_group_id == $eg->id ? 'selected':''}}>{{$eg->name}}</option>
                             @endforeach

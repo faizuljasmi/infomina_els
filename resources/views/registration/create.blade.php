@@ -23,7 +23,8 @@
         </button>
     </div>
 
-    <div class="mt-2 col-md-12">
+<!-- ACTIVE USERS LIST -->
+<div class="mt-2 col-md-12">
         <div class="card">
             <div class="card-header bg-teal">
                 <strong>Users List</strong>
@@ -33,19 +34,27 @@
                 <table class="table table-sm table-bordered">
                         <thead>
                             <tr>
-                            <th style ="width: 7%" scope="col">ID</th>
+                            <th style ="width: 7%" scope="col">Staff ID</th>
                             <th scope="col">Name</th>
                             <th style="width: 10%" scope="col">User Type</th>
+                            <th style="width: 5%" scope="col">Status</th>
                             <th style="width: 10%" scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                         @foreach($users as $u)
-                        @if($u->id != auth()->user()->id)
+                        @if($u->id != auth()->user()->id && $u->status == 'Active')
                             <tr>
-                            <td>{{$u->id}}</td>
+                            <td>{{$u->staff_id}}</td>
                             <td>{{$u->name}}</td>
                             <td>{{$u->user_type}}</td>
+                            <td>
+                                @if($u->status == 'Active')
+                                <span class="badge badge-success">Active</span>
+                                @else
+                                <span class="badge badge-danger">Inactive</span>
+                                @endif
+                            </td>
                             <td>
                             <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="View user profile">
                                 <a href="{{route('user_view', $u->id)}}" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a>
@@ -53,7 +62,64 @@
                             <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit user profile and leave">
                                 <a href="{{route('user_edit', $u->id)}}" class="btn btn-info btn-sm"><i class="fa fa-pencil-alt"></i></a>
                             </span>
-                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash-alt"></i></button>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Delete user permanently" onclick="return confirm('Warning: Are you sure you want to delete this user? Deleting this user will also delete all users associated with it. Make sure you have detach all of its dependencies.')">
+                                <a href="{{route('user_delete', $u->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-trash-alt"></i></a>
+                            </span>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Deactivate user from the system">
+                                <a href="{{route('user_deactivate', $u->id)}}" class="btn btn-warning btn-sm"><i class="fas fa-user-slash"></i></a>
+                            </span>
+                            </td>
+                            </tr>
+                            @endif
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+</div>
+
+<!-- INACTIVE USERS LIST -->
+<div class="mt-2 col-md-12">
+        <div class="card">
+            <div class="card-header bg-teal">
+                <strong>Inactive Users List</strong>
+            </div>
+                <div class="card-body">
+                {{ $users->links() }}
+                <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                            <th style ="width: 7%" scope="col">Staff ID</th>
+                            <th scope="col">Name</th>
+                            <th style="width: 10%" scope="col">User Type</th>
+                            <th style="width: 5%" scope="col">Status</th>
+                            <th style="width: 10%" scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($users as $u)
+                        @if($u->id != auth()->user()->id && $u->status == 'Inactive')
+                            <tr>
+                            <td>{{$u->staff_id}}</td>
+                            <td>{{$u->name}}</td>
+                            <td>{{$u->user_type}}</td>
+                            <td>
+                                @if($u->status == 'Active')
+                                <span class="badge badge-success">Active</span>
+                                @else
+                                <span class="badge badge-danger">Inactive</span>
+                                @endif
+                            </td>
+                            <td>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="View user profile">
+                                <a href="{{route('user_view', $u->id)}}" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a>
+                            </span>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit user profile and leave">
+                                <a href="{{route('user_edit', $u->id)}}" class="btn btn-info btn-sm"><i class="fa fa-pencil-alt"></i></a>
+                            </span>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Delete user permanently" onclick="return confirm('Warning: Are you sure you want to delete this user? Deleting this user will also delete all users associated with it. Make sure you have detach all of its dependencies.')">
+                                <a href="{{route('user_delete', $u->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-trash-alt"></i></a>
+                            </span>
                             </td>
                             </tr>
                             @endif
@@ -77,6 +143,23 @@
       <div class="modal-body">
       <form method="POST" action="/create">
                     {{ csrf_field() }}
+                    <label for="staff_id">Staff ID:</label>
+                    <div class="input-group mb-3">
+                    <input type="text" name="staff_id" class="form-control {{ $errors->has('staff_id') ? 'is-invalid' : '' }}" value="IF##"
+                           placeholder="{{ __('adminlte::adminlte.staff_id') }}" autofocus>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-id-card"></span>
+                        </div>
+                    </div>
+
+                    @if ($errors->has('staff_id'))
+                        <div class="invalid-feedback">
+                            <strong>{{ $errors->first('staff_id') }}</strong>
+                        </div>
+                    @endif
+                </div>
+                <label for="name">Full Name:</label>
                     <div class="input-group mb-3">
                     <input type="text" name="name" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" value="{{ old('name') }}"
                            placeholder="{{ __('adminlte::adminlte.full_name') }}" autofocus>
@@ -92,6 +175,7 @@
                         </div>
                     @endif
                 </div>
+                <label for="email">Email:</label>
                 <div class="input-group mb-3">
                     <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" value="{{ old('email') }}"
                            placeholder="{{ __('adminlte::adminlte.email') }}">
@@ -106,6 +190,7 @@
                         </div>
                     @endif
                 </div>
+                <label for="password">Password:</label>
                 <div class="input-group mb-3">
                     <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
                            placeholder="{{ __('adminlte::adminlte.password') }}">
@@ -120,6 +205,7 @@
                         </div>
                     @endif
                 </div>
+                <label for="password_confirmation">Retype Password:</label>
                 <div class="input-group mb-3">
                     <input type="password" name="password_confirmation" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}"
                            placeholder="{{ __('adminlte::adminlte.retype_password') }}">
