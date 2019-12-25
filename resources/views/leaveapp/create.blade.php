@@ -43,7 +43,10 @@
                     <select class="form-control" name="leave_type_id">
                       <option value="">Choose Leave</option>
                       @foreach($leaveType as $lt)
+                      @if($lt->name == 'Replacement')
+                      @else
                       <option value="{{$lt->id}}">{{$lt->name}}</option>
+                      @endif
                       @endforeach
                     </select>
                   </div>
@@ -357,25 +360,78 @@
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
-        if(validation.isAnnualLeave()){
+
+        //ANNUAL POLICY
+        if(validation.isAnnualLeave() || validation.isTrainingLeave()){
           let next2 = calendar.getNextWorkingDay(calendar.today());
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);
           //console.log("next2", next2);
           if(calendar.isDateSmaller(date_from, next2) || calendar.isDateEqual(date_from, next2)){
-            return "Attention: Annual leave must be applied at least 2 days prior to the applied date";
+            return "Attention: Leave cannot be applied on passed dates and must be applied at least 2 days prior to the leave date.";
+          }
+          if(calendar.isDateSmaller(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied on passed dates.";
           }
         }
 
-        if(validation.isSickLeave()){
+        //SICK, EMERGENCY, PATERNITY, COMPASSIONATE, CALAMITY POLICY
+        if(validation.isSickLeave() || validation.isEmergencyLeave() || validation.isPaternityLeave() || validation.isCompassionateLeave() || validation.isCalamityLeave()){
           let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
           //prev3 = calendar.getThreePrevWorkingDay(prev3);
           prev3 = calendar.getDateDb(prev3);
           console.log("Prev 3", prev3);
-          if(calendar.isDateBigger(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
-            return "Attention: Sick leave must be applied within 3 days after the day of leave";
+          if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+            return "Attention: Leave must be applied within 3 days after the day of leave.";
+          }
+          if(calendar.isDateBigger(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied in advance.";
           }
         }
+
+        // MATERNITY POLICY
+        if(validation.isMaternityLeave()){
+          let monthFwd = calendar.nextMonth(calendar.today());
+          monthFwd = calendar.getDateDb(monthFwd);
+          console.log("A month fwd", monthFwd);
+          if(calendar.isDateSmaller(date_from,monthFwd) || calendar.isDateEqual(date_from,monthFwd)){
+            return "Attention: Maternity leave application shall be made not less than one (1) month prior to the date on which it is desired that maternity leave commences."
+          }
+          if(calendar.isDateSmaller(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied in advance.";
+          }
+        }
+
+        //HOSPITALIZATION POLICY
+        if(validation.isHospitalizationLeave()){
+          let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
+          prev7 = calendar.getDateDb(prev7);
+          console.log("A week bfr", prev7);
+          if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
+            return "Attention: Leave must be applied within 7 days after the day of leave.";
+          }
+          if(calendar.isDateBigger(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied in advance.";
+          }
+        }
+
+        //UNPAID POLICY
+        if(validation.isUnpaidLeave()){
+          let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
+          prev3 = calendar.getDateDb(prev3);
+
+          let next2 = calendar.getNextWorkingDay(calendar.today());
+          next2 = calendar.getNextWorkingDay(next2);
+          next2 = calendar.getDateDb(next2);
+
+          if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+            return "Attention: Leave must be applied within 3 days after the day of leave.";
+          }
+          if(calendar.isDateBigger(date_from,next2) || calendar.isDateEqual(date_from,next2)){
+            return "Attention: Leave must be applied 2 days prior.";
+          }
+        }
+
       
         if(
           (name == FC.date_from.name && calendar.isWeekend(date_from)) 

@@ -498,6 +498,39 @@ let VanillaCalendar = (function() {
             }
         };
 
+         /**
+         * @return dateObj
+         */
+        this.getPrevWeekWorkingDay = function(date){
+            date = this.getDateDb(date);
+            let attempt = 20;
+            let count = 0;
+            let prevDateDb = date;
+            for(let i = 0; i < attempt; i++){
+                let prevDay = this.prevDay(prevDateDb);
+                prevDateDb = getDateDb(prevDay);
+                if(isWeekend(prevDay)){
+                    continue;
+                } else if(isHoliday(prevDay)){
+                    continue;
+                } else{
+                    count++;
+                    if(count == 7){
+                        return prevDay
+                    }
+                    else{
+                        continue;
+                    }
+                }
+            }
+        };
+
+        this.nextMonth = function(dateDb){
+            return moment(dateDb, "YYYYMMDD")
+                .add(30,"days")
+                .toDate();
+        };
+
         this.prevDay = function(dateDb){
             return moment(dateDb, "YYYYMMDD")
                 .subtract(1,"days")
