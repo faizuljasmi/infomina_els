@@ -268,10 +268,15 @@ $(document).ready(HolidayCreate);
 function HolidayCreate() {
 
   var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
+  var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
+  var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
+
   console.log(dates);
 
   let calendar = new VanillaCalendar({
       holiday : dates,
+      applied: applied,
+      approved: approved,
       selector: ".myCalendar",
       onSelect: (data, elem) => {
           // console.log(data, elem)

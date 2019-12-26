@@ -29,7 +29,7 @@ class RegistrationController extends Controller
     public function store(Request $request){
         $this->validate(request(),[
             'name' => ['required', 'string', 'max:255'],
-            'staff_id' => ['required','string','min:4','max:5','unique:users'],
+            'staff_id' => ['required','string','min:4','unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'join_date' => ['required'],
@@ -88,6 +88,7 @@ class RegistrationController extends Controller
         $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id','ASC')->get();
+        //dd($user->name);
         return view('user.profile')->with(compact('user','users','authUsers','empType','empGroup','empAuth','leaveTypes','leaveEnt','leaveEarn', 'broughtFwd','leaveBal','leaveTak'));
     }
 

@@ -204,7 +204,7 @@
               <!-- Vanilla Calendar -->
               <div class="card">
                 <div class="card-header bg-teal">
-                  <strong>Calendar</strong>
+                  <strong>Calendar </strong><i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="For your reference, other than the holidays, this calendar shows your groupmates' applied & approved leaves."></i>
                 </div>
                 <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
               </div>
@@ -279,9 +279,13 @@
   function MainLeaveApplicationCreate() {
 
     var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
+    var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
+    var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
   
     let calendar = new VanillaCalendar({
         holiday: dates,
+        applied: applied,
+        approved: approved,
         selector: ".myCalendar",
         onSelect: (data, elem) => {
             // console.log(data, elem)

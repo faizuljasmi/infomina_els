@@ -45,17 +45,18 @@ class HomeController extends Controller
 
         //Get all holidays dates
         $holidays = Holiday::all();
+        $holsPaginated = Holiday::orderBy('date_from','ASC')->simplePaginate(3);
         $all_dates = array();
         foreach($holidays as $hols){
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            $all_dates = [];
             while ($startDate->lte($endDate)){
                 $dates = str_replace("-","",$startDate->toDateString());
                 $all_dates[] = $dates;
                 $startDate->addDay();
             }
         }
+        
 
         //Get all leave applications date
         $applied_dates = array();
@@ -63,8 +64,6 @@ class HomeController extends Controller
         foreach($leaveApps as $la){
             $startDate = new Carbon($la->date_from);
             $endDate = new Carbon ($la->date_to);
-            $applied_dates = [];
-            $approved_dates = [];
             if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
                 while ($startDate->lte($endDate)){
                     $dates = str_replace("-","",$startDate->toDateString());
@@ -82,7 +81,7 @@ class HomeController extends Controller
         }
         //dd($approved_dates);
 
-        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak','all_dates','applied_dates','approved_dates'));
+        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak','all_dates','applied_dates','approved_dates','holidays','holsPaginated'));
     }
 
     /**
@@ -106,7 +105,9 @@ class HomeController extends Controller
         })->orWhere(function($query)use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('approver_id_3', $user->id);
-        })->simplePaginate(3);
+        })->simplePaginate(5);
+
+        $allLeaveApps = LeaveApplication::orderBy('date_from','ASC')->get();
 
         $leaveHist = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
@@ -122,19 +123,45 @@ class HomeController extends Controller
         $holidays = Holiday::all();
         $all_dates = array();
         foreach($holidays as $hols){
+          
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            $all_dates = [];
             while ($startDate->lte($endDate)){
                 $dates = str_replace("-","",$startDate->toDateString());
                 $all_dates[] = $dates;
                 $startDate->addDay();
             }
         }
+    
+
+        //Get all leave applications date
+        $applied_dates = array();
+        $approved_dates = array();
+        foreach($allLeaveApps as $la){
+            
+            $startDate = new Carbon($la->date_from);
+            $endDate = new Carbon ($la->date_to);
+            if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
+                while ($startDate->lte($endDate)){
+                    $dates = str_replace("-","",$startDate->toDateString());
+                    $applied_dates[] = $dates;
+                    $startDate->addDay();
+                }
+            }
+            if($la->status == 'APPROVED'){
+                while ($startDate->lte($endDate)){
+                    $dates = str_replace("-","",$startDate->toDateString());
+                    $approved_dates[] = $dates;
+                    $startDate->addDay();
+                }
+            }
+        }
+
+      
         
         
         //dd($leaveApps);
-        return view('admin')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps','leaveHist','all_dates'));
+        return view('admin')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps','leaveHist','all_dates','applied_dates','approved_dates','holidays'));
     }
 
     public function getProfile() {

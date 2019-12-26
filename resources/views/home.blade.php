@@ -169,9 +169,30 @@
              <!-- Vanilla Calendar -->
             <div class="card">
               <div class="card-header bg-teal">
-                <strong>Calendar</strong>
+                <strong>Calendar </strong><i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="For your reference, this calendar shows your applied & approved leaves."></i>
               </div>
             <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
+            <div class="card-header bg-teal">
+                <strong>Holidays</strong>
+            </div>
+            <div class="card-body">
+              <table class = "table table-sm table-bordered">
+                <tr>
+                  <th>Holiday Name</th>
+                  <th>From</th>
+                  <th>To</th>
+                </tr>
+                
+                @foreach($holsPaginated as $hl)
+                <tr>
+                  <td>{{$hl->name}}</td>
+                  <td>{{ \Carbon\Carbon::parse($hl->date_from)->isoFormat('ddd, D MMM \'YY')}}</td>
+                  <td>{{ \Carbon\Carbon::parse($hl->date_to)->isoFormat('ddd, D MMM \'YY')}}</td>
+                  </tr>
+                @endforeach
+              </table>
+              {{$holsPaginated->links()}}
+            </div>
             </div>
             <!-- /.card -->
           </section>

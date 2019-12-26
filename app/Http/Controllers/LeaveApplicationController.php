@@ -39,12 +39,14 @@ class LeaveApplicationController extends Controller
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
 
+        //Get leave applications from same group
+        $leaveApps = LeaveApplication::orderBy('date_from','ASC')->get();
+
         $holidays = Holiday::all();
         $all_dates = array();
         foreach($holidays as $hols){
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            $all_dates = [];
             while ($startDate->lte($endDate)){
                 $dates = str_replace("-","",$startDate->toDateString());
                 $all_dates[] = $dates;
@@ -52,7 +54,31 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.create')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal','all_dates'));
+          //Get all leave applications date
+          $applied_dates = array();
+          $approved_dates = array();
+          foreach($leaveApps as $la){
+              if($la->user->emp_group_id == $user->emp_group_id){
+              $startDate = new Carbon($la->date_from);
+              $endDate = new Carbon ($la->date_to);
+              if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
+                  while ($startDate->lte($endDate)){
+                      $dates = str_replace("-","",$startDate->toDateString());
+                      $applied_dates[] = $dates;
+                      $startDate->addDay();
+                  }
+              }
+              if($la->status == 'APPROVED'){
+                  while ($startDate->lte($endDate)){
+                      $dates = str_replace("-","",$startDate->toDateString());
+                      $approved_dates[] = $dates;
+                      $startDate->addDay();
+                  }
+              }
+          }
+        }
+
+        return view('leaveapp.create')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal','all_dates','applied_dates','approved_dates'));
     }
 
 
@@ -62,6 +88,13 @@ class LeaveApplicationController extends Controller
         //dd($request->emergency_contact_no);
         //Get user id
         $user = auth()->user();
+        //Check Balance
+        $leaveBal = LeaveBalance::where('leave_type_id', '=', $request->leave_type_id, 'AND', 'user_id', '=', $request->user_id)->first();
+        //dd($leaveBal->no_of_days);
+        // if($request->total_days > $leaveBal->no_of_days){
+        //     return redirect()->to('/leave/apply')->with('message','Your have insufficient leave balance. Please contact HR for more info.');
+        // }
+
         $leaveApp = new LeaveApplication;
         //get user id, leave type id
         $leaveApp->user_id = $user->id;

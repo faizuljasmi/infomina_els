@@ -1,5 +1,4 @@
 @extends('adminlte::page')
-@section('content')
 
 @section('content_header')
 @if(session()->has('message'))
@@ -12,8 +11,9 @@
         </div>
     @endif
     <h1 class="m-0 text-dark">Apply Replacement Leave</h1>
-@endsection
+@stop
 
+@section('content')
 
 <section id="leaveapp-create">
   <section class="content">
@@ -223,27 +223,18 @@
             </div>
           </div>
       </div>
-
   </section>
-
-  <!-- Empty Col -->
-  <section class="col-lg-1 connectedSortable ui-sortable">
-  </section>
-
-  </div>
-
-  </div>
 </section>
 
 <script>
   $(document).ready(MainLeaveApplicationCreate);
 
   function MainLeaveApplicationCreate() {
+
+    var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
   
     let calendar = new VanillaCalendar({
-        holiday: [
-          "20191204","20191205","20191206"
-        ],
+        holiday: dates,
         selector: ".myCalendar",
         onSelect: (data, elem) => {
             // console.log(data, elem)
@@ -254,10 +245,43 @@
     const validation = {
       isAnnualLeave : function(){
         return _form.get(FC.leave_type_id) == "1";
-
       },
+      isCalamityLeave : function(){
+        return _form.get(FC.leave_type_id) == "2";
+      },
+       isSickLeave : function(){
+        return _form.get(FC.leave_type_id) == "3";
+      },
+      isHospitalizationLeave : function(){
+        return _form.get(FC.leave_type_id) == "4";
+      },
+      isCompassionateLeave : function(){
+        return _form.get(FC.leave_type_id) == "5";
+      }, 
+      isEmergencyLeave : function(){
+        return _form.get(FC.leave_type_id) == "6";
+      },
+      isMarriageLeave : function(){
+        return _form.get(FC.leave_type_id) == "7";
+      },
+      isMaternityLeave : function(){
+        return _form.get(FC.leave_type_id) == "8";
+      },
+      isPaternityLeave : function(){
+        return _form.get(FC.leave_type_id) == "9";
+      },
+      isTrainingLeave : function(){
+        return _form.get(FC.leave_type_id) == "10";
+      },
+      isUnpaidLeave : function(){
+        return _form.get(FC.leave_type_id) == "11";
+      },
+      isReplacementLeave : function(){
+        return _form.get(FC.leave_type_id) == "12";
+      },
+     
       onchange : function(v, e, fc){
-          console.log("onchange", v, e, fc);
+          //console.log("onchange", v, e, fc);
           let name = fc.name;
 
           if(name == FC.date_from.name || name == FC.date_to.name){
@@ -290,37 +314,100 @@
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
-        if(validation.isAnnualLeave()){
+
+        //ANNUAL POLICY
+        if(validation.isAnnualLeave() || validation.isTrainingLeave()){
           let next2 = calendar.getNextWorkingDay(calendar.today());
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);
-          console.log("next2", next2);
+          //console.log("next2", next2);
           if(calendar.isDateSmaller(date_from, next2) || calendar.isDateEqual(date_from, next2)){
-            return "YOOO";
+            return "Attention: Leave cannot be applied on passed dates and must be applied at least 2 days prior to the leave date.";
+          }
+          if(calendar.isDateSmaller(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied on passed dates.";
           }
         }
+
+        //SICK, EMERGENCY, PATERNITY, COMPASSIONATE, CALAMITY POLICY
+        if(validation.isSickLeave() || validation.isEmergencyLeave() || validation.isPaternityLeave() || validation.isCompassionateLeave() || validation.isCalamityLeave()){
+          let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
+          //prev3 = calendar.getThreePrevWorkingDay(prev3);
+          prev3 = calendar.getDateDb(prev3);
+          console.log("Prev 3", prev3);
+          if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+            return "Attention: Leave must be applied within 3 days after the day of leave.";
+          }
+          if(calendar.isDateBigger(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied in advance.";
+          }
+        }
+
+        // MATERNITY POLICY
+        if(validation.isMaternityLeave()){
+          let monthFwd = calendar.nextMonth(calendar.today());
+          monthFwd = calendar.getDateDb(monthFwd);
+          console.log("A month fwd", monthFwd);
+          if(calendar.isDateSmaller(date_from,monthFwd) || calendar.isDateEqual(date_from,monthFwd)){
+            return "Attention: Maternity leave application shall be made not less than one (1) month prior to the date on which it is desired that maternity leave commences."
+          }
+          if(calendar.isDateSmaller(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied in advance.";
+          }
+        }
+
+        //HOSPITALIZATION POLICY
+        if(validation.isHospitalizationLeave()){
+          let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
+          prev7 = calendar.getDateDb(prev7);
+          console.log("A week bfr", prev7);
+          if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
+            return "Attention: Leave must be applied within 7 days after the day of leave.";
+          }
+          if(calendar.isDateBigger(date_from, calendar.today())){
+            return "Attention: Leave cannot be applied in advance.";
+          }
+        }
+
+        //UNPAID POLICY
+        if(validation.isUnpaidLeave()){
+          let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
+          prev3 = calendar.getDateDb(prev3);
+
+          let next2 = calendar.getNextWorkingDay(calendar.today());
+          next2 = calendar.getNextWorkingDay(next2);
+          next2 = calendar.getDateDb(next2);
+
+          if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+            return "Attention: Leave must be applied within 3 days after the day of leave.";
+          }
+          if(calendar.isDateBigger(date_from,next2) || calendar.isDateEqual(date_from,next2)){
+            return "Attention: Leave must be applied 2 days prior.";
+          }
+        }
+
       
         if(
           (name == FC.date_from.name && calendar.isWeekend(date_from)) 
           || 
           (name == FC.date_to.name && calendar.isWeekend(date_to))
         ){
-          return `Selected date is a WEEKEND. Please select another date.`;
+          return `Selected date is a Weekend day. Please select another date.`;
         }
         if(
           (name == FC.date_from.name && calendar.isHoliday(date_from)) 
           || 
           (name == FC.date_to.name && calendar.isHoliday(date_to))
         ){
-          return `Selected date is a HOLIDAY. Please select another date.`;
+          return `Selected date is an announced Public Holiday. Please select another date.`;
         }
 
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
           if(calendar.isDateSmaller(date_to, date_from)){
             if(name == FC.date_from.name){
-              return "[Date From] cannot be bigger than [Date To]";
+              return "Starting date cannot be bigger than end date";
             } else if(name == FC.date_to.name){
-              return "[Date To] cannot be smaller than [Date From]";
+              return "End date cannot be smaller than starting date";
             }
           }
         }

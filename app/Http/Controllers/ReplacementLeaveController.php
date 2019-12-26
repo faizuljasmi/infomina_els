@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\LeaveType;
 use App\User;
 use App\LeaveBalance;
+use App\Holiday;
 
 class ReplacementLeaveController extends Controller
 {
@@ -26,7 +27,19 @@ class ReplacementLeaveController extends Controller
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
 
-        return view('leaveapp.replacement')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal'));
+        $holidays = Holiday::all();
+        $all_dates = array();
+        foreach($holidays as $hols){
+            $startDate = new Carbon($hols->date_from);
+            $endDate = new Carbon($hols->date_to);
+            while ($startDate->lte($endDate)){
+                $dates = str_replace("-","",$startDate->toDateString());
+                $all_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+
+        return view('leaveapp.replacement')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal','all_dates'));
     }
 
     public function store(){

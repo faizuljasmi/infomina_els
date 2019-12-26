@@ -31,7 +31,14 @@ class UsersTableSeeder extends Seeder
           'password' => 'password',
           'user_type' => 'admin'
         ]);
-        factory('App\User')->times(30)->create();
+        factory('App\User')->create([
+          'email'=> 'vanimalar@infomina.com.my',
+          'name' => 'Vani',
+          'password' => 'password',
+          'user_type' => 'Admin',
+          'staff_id' => 'IF072'
+        ]);
+        factory('App\User')->times(10)->create();
         Schema::enableForeignKeyConstraints();
     }
 }

@@ -1,7 +1,6 @@
 @extends('adminlte::page')
  
-@section('content')
- 
+@section('content_header')
 @if(session()->has('message'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="icon fa fa-check"></i>
@@ -11,9 +10,11 @@
             </button>
         </div>
     @endif
-    <h2>Employee Group</h2>
+    <h1>Employee Group</h1>
+@stop
 
-    
+@section('content')
+     
 <div class="row">
     
 <div class ="col-md-6">
@@ -90,6 +91,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 @endsection
 

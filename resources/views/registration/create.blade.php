@@ -1,7 +1,8 @@
 @extends('adminlte::page')
  
-@section('content')
 
+
+@section('content_header')
  @if(session()->has('message'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="icon fa fa-check"></i>
@@ -12,8 +13,9 @@
         </div>
     @endif
  
-    <h2>User Settings</h2>
-
+    <h1>User Settings</h1>
+@stop
+@section('content')
     <div class = "row">
     
     <div class ="col-md-6">
@@ -31,14 +33,14 @@
             </div>
                 <div class="card-body">
                 {{ $users->links() }}
-                <table class="table table-sm table-bordered">
+                <table class="table table-sm table-bordered table-striped">
                         <thead>
                             <tr>
                             <th style ="width: 7%" scope="col">Staff ID</th>
                             <th scope="col">Name</th>
                             <th style="width: 10%" scope="col">User Type</th>
                             <th style="width: 5%" scope="col">Status</th>
-                            <th style="width: 10%" scope="col">Actions</th>
+                            <th style="width: 13%" scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -272,6 +274,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 @endsection
 
