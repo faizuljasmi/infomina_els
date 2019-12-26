@@ -25,7 +25,7 @@ class LeaveApplicationController extends Controller
     public function create(){
 
         //Get all leave types. TODO: show only entitled leave types instead of all leave types
-        $leaveType = LeaveType::orderBy('id','ASC')->get();
+        $leaveType = LeaveType::orderBy('id','ASC')->get()->except('leave_type_id','=','12');
 
         //Get THIS user id
         $user = auth()->user();
@@ -91,10 +91,10 @@ class LeaveApplicationController extends Controller
         //Check Balance
         $leaveBal = LeaveBalance::where('leave_type_id', '=', $request->leave_type_id, 'AND', 'user_id', '=', $request->user_id)->first();
         //dd($leaveBal->no_of_days);
-        // if($request->total_days > $leaveBal->no_of_days){
-        //     return redirect()->to('/leave/apply')->with('message','Your have insufficient leave balance. Please contact HR for more info.');
-        // }
-
+        if($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12'){
+            return redirect()->to('/leave/apply')->with('message','Your have insufficient leave balance. Please contact HR for more info.');
+        }
+        
         $leaveApp = new LeaveApplication;
         //get user id, leave type id
         $leaveApp->user_id = $user->id;
@@ -155,11 +155,131 @@ class LeaveApplicationController extends Controller
     }
 
     public function edit(LeaveApplication $leaveApplication){
+        //Get all leave types. TODO: show only entitled leave types instead of all leave types
+        $leaveType = LeaveType::orderBy('id','ASC')->get();
 
+        //Get THIS user id
+        $user = auth()->user();
+        //Get employees who are in the same group (for relieve personnel).
+        $groupMates = User::orderBy('id','ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
+        //dd($groupMate->name);
+
+        //Get approval authorities of THIS user
+        $leaveAuth = $user->approval_authority;
+        //Get approval authorities for this user
+        $leaveAuthReplacement = User::orderBy('id','ASC')->get()->except($user->id);
+
+        //TODO: Get leave balance of THIS employee
+        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+
+        //Get leave applications from same group
+        $leaveApps = LeaveApplication::orderBy('date_from','ASC')->get();
+
+        $holidays = Holiday::all();
+        $all_dates = array();
+        foreach($holidays as $hols){
+            $startDate = new Carbon($hols->date_from);
+            $endDate = new Carbon($hols->date_to);
+            while ($startDate->lte($endDate)){
+                $dates = str_replace("-","",$startDate->toDateString());
+                $all_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+
+          //Get all leave applications date
+          $applied_dates = array();
+          $approved_dates = array();
+          foreach($leaveApps as $la){
+              if($la->user->emp_group_id == $user->emp_group_id){
+              $startDate = new Carbon($la->date_from);
+              $endDate = new Carbon ($la->date_to);
+              if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
+                  while ($startDate->lte($endDate)){
+                      $dates = str_replace("-","",$startDate->toDateString());
+                      $applied_dates[] = $dates;
+                      $startDate->addDay();
+                  }
+              }
+              if($la->status == 'APPROVED'){
+                  while ($startDate->lte($endDate)){
+                      $dates = str_replace("-","",$startDate->toDateString());
+                      $approved_dates[] = $dates;
+                      $startDate->addDay();
+                  }
+              }
+          }
+        }
+       
+        return view('leaveapp.edit')->with(compact('leaveApplication', 'user','leaveType', 'groupMates','leaveAuth','leaveBal','all_dates','applied_dates','approved_dates','leaveAuthReplacement'));
     }
 
     public function update(Request $request, LeaveApplication $leaveApplication){
+        //dd($request->emergency_contact_no);
+        //Get user id
+        $user = auth()->user();
+        //Check Balance
+        $leaveBal = LeaveBalance::where('leave_type_id', '=', $request->leave_type_id, 'AND', 'user_id', '=', $request->user_id)->first();
+        //dd($leaveBal->no_of_days);
+        if($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12'){
+            dd('here');
+            return redirect()->to('/leave/apply')->with('message','Your have insufficient leave balance. Please contact HR for more info.');
+        }
+        
+        $leaveApp = $leaveApplication;
+        //get user id, leave type id
+        $leaveApp->user_id = $user->id;
+        $leaveApp->leave_type_id = $request->leave_type_id;
+        //status set pending 1
+        //get all authorities id
+        $leaveApp->approver_id_1 = $request->approver_id_1;
+        $leaveApp->approver_id_2 = $request->approver_id_2;
+        $leaveApp->approver_id_3 = $request->approver_id_3;
 
+
+        //get date from
+        $leaveApp->date_from = $request->date_from;
+        //get date to
+        $leaveApp->date_to = $request->date_to;
+        //get date resume
+        $leaveApp->date_resume = $request->date_resume;
+        //get total days
+        $leaveApp->total_days = $request->total_days;
+        //get reason
+        $leaveApp->reason = $request->reason;
+        //get relief personel id
+        $leaveApp->relief_personnel_id = $request->relief_personnel_id;
+        //get emergency contact
+        $leaveApp->emergency_contact = $request->emergency_contact_no;
+
+
+        //Attachment validation
+        $validator = Validator::make($request->all(),
+        ['attachment' => 'required_if:leave_type_id,3|mimes:jpeg,png,jpg,pdf|max:2048']);
+
+        // if validation fails
+        if($validator->fails()) {
+            return redirect()->to('/leave/apply')->with('message','Your file attachment format is invalid. Application is not submitted');
+        }
+        //If validation passes and has a file. Not necessary to check but just to be safe
+        if($request->hasFile('attachment')){
+            $att = $request->file('attachment');
+            $uploaded_file = $att->store('public');
+            //Pecahkan
+            $paths = explode('/',$uploaded_file);
+            $filename = $paths[1];
+            //dd($uploaded_file);
+            //Save attachment filenam into leave application table
+            $leaveApp->attachment = $filename;
+      }
+        
+
+        $leaveApp->save();
+        //Send email notification
+        //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
+        
+        $leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        return redirect()->to('/home')->with('message','Leave application edited succesfully');
     }
 
     public function approve(LeaveApplication $leaveApplication){
@@ -379,5 +499,11 @@ class LeaveApplicationController extends Controller
         }
 
         return view('leaveapp.view')->with(compact('leaveApp','leaveType','user','leaveAuth','groupMates','leaveBal','applied_dates','hol_dates'));
+    }
+
+    public function cancel(LeaveApplication $leaveApplication){
+        $leaveApplication->status = "CANCELLED";
+        $leaveApplication->save();
+        return redirect()->to('/home')->with('message','Leave application cancelled succesfully');
     }
 }

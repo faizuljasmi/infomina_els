@@ -443,6 +443,26 @@ let VanillaCalendar = (function() {
             return total;
         };
 
+        this.getTotalDays = function(dateFrom, dateTo) {
+            dateFrom = this.getDateDb(dateFrom);
+            dateTo = this.getDateDb(dateTo);
+            if (dateFrom == dateTo) {
+                return 1;
+            }
+            let attempt = 61;
+            let nextDateDb = dateFrom;
+            let total = 1;
+            for (let i = 0; i < attempt; i++) {
+                let nextDay = this.nextDay(nextDateDb);
+                nextDateDb = getDateDb(nextDay);
+                total++;
+                if (nextDateDb == dateTo) {
+                    return total;
+                }
+            }
+            return total;
+        };
+
         this.today = function(){
             return new Date();
         }

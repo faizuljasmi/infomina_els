@@ -42,49 +42,73 @@ class LeaveController extends Controller
                 $query->where('leave_type_id', (int)$key)
                     ->where('user_id', $user->id);
             })->first();
-        
+            //Check for  Brought Forward duplicate
+            $bfcheck = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
+                $query->where('leave_type_id', (int)$key)
+                    ->where('user_id', $user->id);
+            })->first();
 
-            //If there is no duplicate,save as new one
+    
+            //If there is no  existing earning,save as new one
             if($dupcheck == null){
+
+                //Set new leave earning
                 $le = new LeaveEarning;
                 $le->user_id = $user->id;
                 $le->leave_type_id = (int)$key;
                 $le->no_of_days = (int)$val;
                 $le->save();
 
+                //Set new leave taken
                 $lt = new TakenLeave;
                 $lt->user_id = $user->id;
                 $lt->leave_type_id = (int)$key;
                 $lt->no_of_days = 0;
                 $lt->save();
 
+                //Set new brough forward
                 $bf = new BroughtForwardLeave;
                 $bf->user_id = $user->id;
                 $bf->leave_type_id = (int)$key;
                 $bf->no_of_days = 0;
                 $bf->save();
 
-                //Add earning to balance
-                if($lbCheck == null){
-                    $lb = new LeaveBalance;
-                    $lb->user_id = $user->id;
-                    $lb->leave_type_id = (int)$key;
-                    $lb->no_of_days = (int)$val;
-                    $lb->save();
-                }
-                //If got existing balance, just update.
-                else{
-                    $lbCheck->no_of_days += (int)$val;
-                    $lbCheck->save();
-                }
-            }
-            //If not, update.
-            else{
-                $dupcheck->no_of_days = (int)$val;
-                $dupcheck->save();
-            }
-
+                //Set new leave balance
+                $lb = new LeaveBalance;
+                $lb->user_id = $user->id;
+                $lb->leave_type_id = (int)$key;
+                $lb->no_of_days = (int)$val;
+                $lb->save(); 
         }
+
+        //If the new set earn is lower than brought forward leave
+        if((int) $val < $bfcheck->no_of_days){
+            return back()->with('message','Fail to set new earning. Make sure the value is not lower than existing brought forward leaves');
+        }
+        //Else, find the difference between old and new earning, subtract from balance and earning
+        else{
+            if($dupcheck->no_of_days > (int)$val){
+                //Decreasing, minus from leave earning
+                $diff = $dupcheck->no_of_days - (int)$val;
+                $dupcheck->no_of_days -= $diff;
+
+                //Decreasing, minus from balance
+                $lbCheck->no_of_days -= $diff;               
+            }
+            else{
+                //Increasing, add to leave earning
+                $diff = (int)$val - $dupcheck->no_of_days;
+                $dupcheck->no_of_days += $diff;
+
+                //Increasing, add to balance
+                $lbCheck->no_of_days += $diff;
+                // $lbCheck->no_of_days += $bfcheck->no_of_days;
+            }
+            $dupcheck->save();
+        $lbCheck->save();
+        }
+        
+    }
 
         //update balance
         
@@ -106,11 +130,12 @@ class LeaveController extends Controller
             //Trim, only in get the id
             $key = trim($key,"leave_");
 
-            //Check for duplicate
+            //Check for  Brought Forward duplicate
             $dupcheck = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
                 $query->where('leave_type_id', (int)$key)
                     ->where('user_id', $user->id);
             })->first();
+
             //Check leave earning for similar leave type
             $leCheck = LeaveEarning::orderBy('leave_type_id','ASC')->where(function ($query) use ($user , $key) {
                 $query->where('leave_type_id', (int)$key)

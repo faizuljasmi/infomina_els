@@ -22,7 +22,7 @@ class ReplacementLeaveController extends Controller
         //dd($groupMate->name);
 
         //Get approval authorities for this user
-        $leaveAuth = User::orderBy('id','ASC')->where('user_type', '=', 'Admin')->get()->except($user->id);
+        $leaveAuth = User::orderBy('id','ASC')->get()->except($user->id);
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();

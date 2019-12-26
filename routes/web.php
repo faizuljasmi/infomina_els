@@ -93,8 +93,11 @@ Route::middleware('can:edit_settings')->group(function() {
 Route::get('/leave/apply','LeaveApplicationController@create')->middleware('auth');
 Route::post('leave/apply','LeaveApplicationController@store')->name('leaveapp_store')->middleware('auth');
 Route::get('/leave/apply/view/{leaveApplication}','LeaveApplicationController@view')->name('view_application')->middleware('auth');
+Route::get('/leave/apply/edit/{leaveApplication}','LeaveApplicationController@edit')->name('edit_application')->middleware('auth');
+Route::post('/leave/apply/update/{leaveApplication}','LeaveApplicationController@update')->name('update_application')->middleware('auth');
 Route::get('/leave/apply/approve/{leaveApplication}','LeaveApplicationController@approve')->name('approve_application')->middleware('auth');
 Route::get('/leave/apply/deny/{leaveApplication}','LeaveApplicationController@deny')->name('deny_application')->middleware('auth');
+Route::get('/leave/apply/cancel/{leaveApplication}','LeaveApplicationController@cancel')->name('cancel_application')->middleware('auth');
 
 //Replacement leave
 Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->middleware('auth');

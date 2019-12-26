@@ -18,12 +18,11 @@
 <section id="leaveapp-create">
   <section class="content">
     <div class="container-fluid">
-
+    @if($leaveApplication->leave_type_id != '12')
       <div class="row">
-
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
-          <form method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data">
+          <form method="POST" action="{{route('update_application', $leaveApplication)}}" enctype="multipart/form-data">
           @csrf
             <!-- Application Form -->
             <div class="card card-primary">
@@ -33,25 +32,24 @@
               <div class="card-body">
 
                 <!-- Leave Type -->
+                <fieldset disabled>
                 <div class="form-group">
                   <label>Leave Type</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
-                      <span class="input-group-text"> 
+                      <span class="input-group-text">
                         <i class="far fa-star"></i>
                       </span>
                     </div>
                     <select class="form-control" name="leave_type_id">
                       <option value="">Choose Leave</option>
-                      @foreach($leaveType as $lt)
-                      @if($lt->name == 'Replacement')
-                      @else
-                      <option value="{{$lt->id}}">{{$lt->name}}</option>
-                      @endif
+                      @foreach($leaveType as $lt)  
+                      <option value="{{$lt->id}}" {{isset($lt->id) && $leaveApplication->leave_type_id == $lt->id ? 'selected':''}}>{{$lt->name}}</option>
                       @endforeach
                     </select>
                   </div>
                 </div>
+                </fieldset>
 
                 <!-- Leave Variation -->
                 <div class="form-group">
@@ -80,7 +78,7 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_from">
+                    <input type="date" class="form-control float-right" name="date_from" value="{{$leaveApplication->date_from}}">
                   </div>
                 </div>
 
@@ -93,7 +91,7 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_to">
+                    <input type="date" class="form-control float-right" name="date_to" value="{{isset($leaveApplication->date_to) ? $leaveApplication->date_to:''}}">
                   </div>
                 </div>
 
@@ -106,7 +104,7 @@
                         <i class="far fa-calendar-check"></i>
                       </span>
                     </div>
-                    <input type="number" class="form-control float-right" name="total_days">
+                    <input type="number" class="form-control float-right" name="total_days" value="$leaveApplication->total_days">
                   </div>
                 </div>
 
@@ -119,7 +117,7 @@
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_resume">
+                    <input type="date" class="form-control float-right" name="date_resume" value="$leaveApplication->date_resume">
                   </div>
                 </div>
 
@@ -127,14 +125,14 @@
                 <!-- Reason -->
                 <div class="form-group">
                   <label>Reason</label>
-                  <textarea class="form-control" rows="5" name="reason"></textarea>
+                  <textarea class="form-control" rows="5" name="reason" >{{isset($leaveApplication->reason) ? $leaveApplication->reason:''}}</textarea>
                 </div>
 
                 <!-- File Attachment -->
                 <div class="form-group">
                   <label>Attachment <small class="text-muted">Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
                   <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment" id="attachment">
+                    <input type="file" class="form-control-file" name="attachment" id="attachment" value="{{isset($leaveApplication->attachment) ? $leaveApplication->attachment:''}}">
                     <span class="text-danger"> {{ $errors->first('attachment') }}</span>
                   </div>
                 </div>
@@ -151,7 +149,7 @@
                     <select class="form-control" name="relief_personnel_id">
                       <option selected>Choose Person</option>
                       @foreach($groupMates as $emp)
-                      <option value="{{$emp->id}}">{{$emp->name}}</option>
+                      <option value="{{$emp->id}}" {{isset($emp->id) && $leaveApplication->relief_personnel_id == $emp->id ? 'selected':''}}>{{$emp->name}}</option>
                       @endforeach
                     </select>
 
@@ -260,7 +258,215 @@
               </div>
             </div>
           </div>
+      
       </div>
+      @else
+      <div class="row">
+        <!-- Left Col -->
+        <section class="col-lg-6 connectedSortable ui-sortable">
+          <form method="POST" action="{{route('update_application',$leaveApplication)}}" enctype="multipart/form-data">
+          @csrf
+            <!-- Application Form -->
+            <div class="card card-primary">
+              <div class="card-header bg-teal">
+                <strong>Application Form</strong>
+              </div>
+              <div class="card-body">
+
+                <!-- Leave Type -->
+                <div class="form-group">
+                  <label>Leave Type</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-star"></i>
+                      </span>
+                    </div>
+                    <select class="form-control" name="leave_type_id">
+                      @foreach($leaveType as $lt)
+                      @if($lt->id == '12')
+                      <option value="{{$lt->id}}" {{isset($lt->id) && $leaveApplication->leave_type_id == $lt->id ? 'selected':''}}>{{$lt->name}}</option>
+                      @endif
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Leave Variation -->
+                <div class="form-group">
+                  <label>Apply For</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-clock"></i>
+                      </span>
+                    </div>
+                    <select class="form-control" name="apply_for">
+                      <option value="full-day">Full Day</option>
+                      <option value="half-day-am">Half Day AM</option>
+                      <option value="half-day-pm">Half Day PM</option>
+                    </select>
+                  </div>
+                </div>
+
+
+                <!-- Date From -->
+                <div class="form-group">
+                  <label>Date From</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-calendar-day"></i>
+                      </span>
+                    </div>
+                    <input type="date" class="form-control float-right" name="date_from" value="{{$leaveApplication->date_from}}">
+                  </div>
+                </div>
+
+                <!-- Date From -->
+                <div class="form-group">
+                  <label>Date To</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-calendar-day"></i>
+                      </span>
+                    </div>
+                    <input type="date" class="form-control float-right" name="date_to" value="{{isset($leaveApplication->date_to) ? $leaveApplication->date_to:''}}">
+                  </div>
+                </div>
+
+                <!-- Total Days -->
+                <div class="form-group">
+                  <label>Total Days</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-calendar-check"></i>
+                      </span>
+                    </div>
+                    <input type="number" class="form-control float-right" name="total_days">
+                  </div>
+                </div>
+
+                <!-- Date Resume -->
+                <div class="form-group">
+                  <label>Date Resume</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                      </span>
+                    </div>
+                    <input type="date" class="form-control float-right" name="date_resume">
+                  </div>
+                </div>
+
+
+                <!-- Reason -->
+                <div class="form-group">
+                  <label>Reason</label>
+                  <textarea class="form-control" rows="5" name="reason">{{$leaveApplication->reason}}</textarea>
+                </div>
+
+                <!-- File Attachment -->
+                <div class="form-group">
+                  <label>Attachment <small class="text-muted">Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
+                  <div class="input-group">
+                    <input type="file" class="form-control-file" name="attachment" id="attachment">
+                    <span class="text-danger"> {{ $errors->first('attachment') }}</span>
+                  </div>
+                </div>
+
+                  <!-- Approval Authority -->
+                  <div class="form-group">
+                  <label>Approval Authority</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-user"></i>
+                      </span>
+                    </div>
+                    <select class="form-control" name="approver_id_1">
+                      <option selected>Choose Person</option>
+                      @foreach($leaveAuthReplacement as $la)
+                      <option value="{{$la->id}}" {{isset($la->id) && $leaveApplication->approver_id_1 == $la->id ? 'selected':''}}>{{$la->name}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Relief Personel -->
+                <div class="form-group">
+                  <label>Relief Personel</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-user"></i>
+                      </span>
+                    </div>
+                    <select class="form-control" name="relief_personnel_id">
+                      <option selected>Choose Person</option>
+                      @foreach($groupMates as $emp)
+                      <option value="{{$emp->id}}" {{isset($emp->id) && $leaveApplication->user->emp_group_id == $emp->emp_group_id ? 'selected':''}}>{{$emp->name}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Emergency Contact Name-->
+                <div class="form-group">
+                  <label>Emergency Contact Name</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-user"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
+                  </div>
+                </div>
+
+                <!-- Emergency Contact No -->
+                <div class="form-group">
+                  <label>Emergency Contact No</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-phone"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
+                  </div>
+                </div>
+
+                <!-- $leaveAuth->authority_1_id -->
+                <input style="display:none;" type="text" name="approver_id_2" value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
+                <input style="display:none;" type="text" name="approver_id_3" value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-success float-right">Submit</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <!-- Right Col -->
+        <section class="col-lg-5 connectedSortable ui-sortable">
+
+          <div class="row">
+            <div class="col-lg-12 connectedSortable ui-sortable">
+              <!-- Vanilla Calendar -->
+              <div class="card">
+                <div class="card-header bg-teal">
+                  <strong>Calendar</strong>
+                </div>
+                <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
+              </div>
+            </div>
+          </div>
+      </div>
+      @endif
 
   </section>
 
@@ -437,14 +643,13 @@
           }
         }
 
-        if(!(validation.isUnpaidLeave()) && !(validation.isHospitalizationLeave()) && !(validation.isMaternityLeave())){
-          if(
-            (name == FC.date_from.name && calendar.isWeekend(date_from)) 
-            || 
-            (name == FC.date_to.name && calendar.isWeekend(date_to))
-          ){
-            return `Selected date is a Weekend day. Please select another date.`;
-          }
+      
+        if(
+          (name == FC.date_from.name && calendar.isWeekend(date_from)) 
+          || 
+          (name == FC.date_to.name && calendar.isWeekend(date_to))
+        ){
+          return `Selected date is a Weekend day. Please select another date.`;
         }
         if(
           (name == FC.date_from.name && calendar.isHoliday(date_from)) 
@@ -495,14 +700,12 @@
           if(name == FC.apply_for.name){
             _form.set(FC.total_days, "");
           }
+
           if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
             let from = _form.get(FC.date_from);
             let to = _form.get(FC.date_to);
             let total = calendar.getTotalWorkingDay(from, to);
-            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave()){
-              total = calendar.getTotalDays(from, to);
-            }
-            console.log("total",total);
+            console.log("total",total)
             _form.set(FC.total_days, total);
           } else{
             _form.set(FC.total_days, "");

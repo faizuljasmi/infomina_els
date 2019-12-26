@@ -20,7 +20,6 @@
     <div class="container-fluid">
 
       <div class="row">
-
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
           <form method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data">

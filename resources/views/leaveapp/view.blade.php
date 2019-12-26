@@ -27,12 +27,12 @@
               <div class="card-header bg-teal">
                 <strong>Application Details 
                     @if($leaveApp->user_id == auth()->user()->id && $leaveApp->status == 'PENDING_1')
-                    <a href="" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Deny Application">Delete</a>
-                    <a href="" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Edit</a>
+                    <a href="{{route('cancel_application', $leaveApp->id)}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Cancel Application" onclick="return confirm('Are you sure you want to cancel this application?')">Cancel</a>
+                    <a href="{{route('edit_application', $leaveApp->id)}}" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Edit Application">Edit</a>
                     @endif
                     @can('approve',$leaveApp)
-                      @if($leaveApp->status == 'APPROVED' || $leaveApp->status == 'DENIED_1'||$leaveApp->status == 'DENIED_2'||$leaveApp->status == 'DENIED_3')
-                      @else
+                      @if($leaveApp->status == 'APPROVED' || $leaveApp->status == 'DENIED_1'||$leaveApp->status == 'DENIED_2'||$leaveApp->status == 'DENIED_3' ||$leaveApp->status == 'CANCELLED')
+                      @elseif($leaveApp->user_id != auth()->user()->id)
                       <a href="{{route('deny_application', $leaveApp->id)}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Deny Application">Deny</a>
                       <a href="{{route('approve_application', $leaveApp->id)}}" class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip" title="Approve Application">Approve</a>
                       @endif
