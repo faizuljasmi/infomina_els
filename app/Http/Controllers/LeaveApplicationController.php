@@ -425,6 +425,8 @@ class LeaveApplicationController extends Controller
                 $dupcheck2->save();
             }
         }
+
+        //If the approved leave is annual leave, and there is brought forward balance, deduct brought forward and update.
         
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));

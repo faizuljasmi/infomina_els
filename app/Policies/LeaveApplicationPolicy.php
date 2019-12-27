@@ -19,7 +19,7 @@ class LeaveApplicationPolicy
      */
     public function view(User $user, LeaveApplication $leaveApplication)
     {
-        return $user->user_type == 'Admin' || $user->id == $leaveApplication->user_id;
+        return $user->user_type == 'Admin' || $user->id == $leaveApplication->user_id || $user->user_type == 'Authority';
     }
 
     public function approve(User $user,LeaveApplication $leaveApplication)

@@ -81,12 +81,13 @@ class LeaveController extends Controller
                 $lb->save(); 
         }
 
-        //If the new set earn is lower than brought forward leave
+        //Else, find the difference between old and new earning, subtract from balance and earning
+        else{
+            //If the new set earn is lower than brought forward leave
         if((int) $val < $bfcheck->no_of_days){
             return back()->with('message','Fail to set new earning. Make sure the value is not lower than existing brought forward leaves');
         }
-        //Else, find the difference between old and new earning, subtract from balance and earning
-        else{
+
             if($dupcheck->no_of_days > (int)$val){
                 //Decreasing, minus from leave earning
                 $diff = $dupcheck->no_of_days - (int)$val;

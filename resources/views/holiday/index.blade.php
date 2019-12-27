@@ -57,9 +57,10 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $count = 0;?>
                             @foreach($holidays as $hol)
                             <tr>
-                            <td style ="width: 7%" scope="col">1</td>
+                            <td style ="width: 7%" scope="col">{{++$count}}</td>
                             <th style ="width: 40%" scope="col">{{$hol->name}}</th>
                             <td style="width: 15%"scope="col">{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat(' D MMM YY')}}</td>
                             <td style="width: 15%" scope="col">{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat(' D MMM YY')}}</td>

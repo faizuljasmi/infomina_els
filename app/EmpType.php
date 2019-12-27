@@ -27,7 +27,7 @@ class EmpType extends Model
 
     //One Employee type has many users
     public function users(){
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'id');
     }
 
     //One employee type has many entitlements

@@ -24,6 +24,34 @@
 @stop
 
 @section('content')
+
+@if($user->password_changed == 'No')
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#exampleModalCenter').modal('show');
+    });
+</script>
+@endif
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Welcome to your new account!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <strong>First things first</strong> </br>
+        Let's change your default password to your own unique password to secure your account!
+      </div>
+      <div class="modal-footer">
+        <a href="/change-password"><button type="button" class="btn btn-primary">Change Password</button><a>
+      </div>
+    </div>
+  </div>
+</div>
     
 <section class="content">
       <div class="container-fluid">
@@ -226,7 +254,7 @@
                         @endforeach
                     </tr>
                     <tr>
-                    <th>Earned</th>
+                    <th>Earned <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="Showing total amount of earned leave + brought forward leave."></i></th>
                     @foreach($leaveEarns as $le)
                         @foreach($broughtFwd as $bf)
                             @if($le->leave_type_id == $bf->leave_type_id)
@@ -248,9 +276,9 @@
                         @endforeach
                     </tr>
                     <tr>
-                    <th>Balance</th>
+                    <th class="table-primary">Balance <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="(Earned + Brought Forward) - Taken"></i></th>
                     @foreach($leaveBal as $lb)
-                        <td>{{$lb->no_of_days}}</td>
+                        <td class="table-primary">{{$lb->no_of_days}}</td>
                         @endforeach
                     </tr>
                  </tbody>

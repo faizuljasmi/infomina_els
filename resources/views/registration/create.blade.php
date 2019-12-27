@@ -250,9 +250,9 @@
                 <div class = "form-group">
                 <label for="employee_type">Employee Group:</label>
                     <select class="form-control" id="emp_group_id" name="emp_group_id">
-                    <option value ='null' selected>Unassigned</option>
+                    <option value ="" selected>Unassigned</option>
                     @foreach($empGroups as $eg)
-                        <option value="{{$et->id}}">{{$eg->name}}</option>
+                        <option value="{{$eg->id}}">{{$eg->name}}</option>
                     @endforeach
                     </select>
                 </div>

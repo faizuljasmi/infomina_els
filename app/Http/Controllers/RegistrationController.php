@@ -27,6 +27,7 @@ class RegistrationController extends Controller
     }
 
     public function store(Request $request){
+       
         $this->validate(request(),[
             'name' => ['required', 'string', 'max:255'],
             'staff_id' => ['required','string','min:4','unique:users'],
@@ -34,9 +35,22 @@ class RegistrationController extends Controller
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'join_date' => ['required'],
             'job_title' => ['required','string'],   
-        ]);        
-        $user = User::create(request(['name','staff_id','email','password','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title']));
-
+        ]); 
+        $user = new User;
+        $user->name = $request->name;
+        $user->staff_id = $request->staff_id;
+        $user->email = $request->email;
+        $user->password = $request->password;
+        $user->user_type = $request->user_type;
+        $user->join_date = $request->join_date;
+        $user->gender = $request->gender;
+        $user->emp_type_id = $request->emp_type_id;
+        $user->emp_group_id = $request->emp_group_id;
+       
+        $user->job_title = $request->job_title;
+        $user->save();
+        // $user = User::create(request(['name','staff_id','email','password','user_type','join_date', 'gender', 'emp_type_id','emp_group_id','job_title']));
+        
         return redirect()->route('user_view', ['user' => $user])->with('message', 'User created succesfully');
     }
 

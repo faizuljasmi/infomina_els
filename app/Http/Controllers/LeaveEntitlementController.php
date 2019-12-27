@@ -66,10 +66,10 @@ class LeaveEntitlementController extends Controller
             $key = trim($key,"leave_");
 
             //Check for duplicate
-            $dupcheck = LeaveEntitlement::where('leave_type_id', '=', (int)$key, 'AND', 'emp_type_id', '=', $empType->id)->first();
-
+            $dupcheck = LeaveEntitlement::where('leave_type_id', '=', (int)$key)->where('emp_type_id', '=', $empType->id)->first();
             //If there is no duplicate,save as new one
             if($dupcheck == null){
+                
                 $le = new LeaveEntitlement;
                 $le->emp_type_id = $empType->id;
                 $le->leave_type_id = (int)$key;

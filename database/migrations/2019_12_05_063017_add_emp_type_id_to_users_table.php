@@ -15,7 +15,7 @@ class AddEmpTypeIdToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('emp_type_id')->nullable();
-            $table->foreign('emp_type_id')->references('id')->on('emp_types')->onDelete('cascade');;
+            $table->foreign('emp_type_id')->references('id')->on('emp_types')->onDelete('cascade');
         });
     }
 
