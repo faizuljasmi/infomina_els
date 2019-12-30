@@ -207,7 +207,7 @@ return [
             'icon' => 'fas fa-fw fa-calendar-alt',
         ],
         [
-            'text' => 'Apply Replacement Leave',
+            'text' => 'Claim Replacement Leave',
             'url'  => '/leave/replacement/apply',
             'icon' => 'fas fa-fw fa-calendar-plus',
         ],
@@ -224,13 +224,13 @@ return [
             'icon'    => 'fas fa-fw fa-user-cog',
             'submenu' => [  
                 [
-                    'text' => 'Add Employee Type',
+                    'text' => 'Employee Type',
                     'url'  => '/emptype/create',
                     'icon' => 'fas fa-fw fa-user-tag',
                     'can' => 'admin-dashboard'
                 ], 
                 [
-                    'text' => 'Add Employee Group',
+                    'text' => 'Employee Group',
                     'url'  => '/empgroup/create',
                     'icon' => 'fas fa-fw fa-user-tag',
                     'can' => 'admin-dashboard'
@@ -244,13 +244,13 @@ return [
             'icon'    => 'fas fa-fw fa-calendar-alt',
             'submenu' => [
                 [
-                    'text' => 'Add Leave Type',
+                    'text' => 'Leave Type',
                     'url'  => '/leavetype/create',
                     'icon' => 'fas fa-fw fa-calendar-plus',
                     'can' => 'admin-dashboard'
                 ], 
                 [
-                    'text' => 'Add Holiday',
+                    'text' => 'Holiday',
                     'url'  => '/holiday/view',
                     'icon' => 'fas fa-fw fa-calendar-day',
                     'can' => 'admin-dashboard'

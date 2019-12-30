@@ -150,7 +150,7 @@
                     <a href="{{$leaveApp->attachment_url}}" target="_blank">View Attachment</a>
                   </div>
                 </div>
-
+                @if($leaveApp->leave_type_id != '12')
                 <!-- Relief Personel -->
                 <div class="form-group">
                   <label>Relief Personel</label>
@@ -161,7 +161,7 @@
                       </span>
                     </div>
                     <select class="form-control" name="relief_personnel_id">
-                      <option selected value="{{$leaveApp->relief_personnel_id}}">{{$leaveApp->relief_personnel->name}}</option>
+                      <option selected value="{{isset($leaveApp->relief_personnel_id) ? $leaveApp->relief_personnel_id:''}}">{{isset($leaveApp->relief_personnel->name)? $leaveApp->relief_personnel->name: 'NA'}}</option>
                     </select>
 
                   </div>
@@ -192,17 +192,9 @@
                     <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
                   </div>
                 </div>
+                @endif
                 <fieldset>
-                <!-- $leaveAuth->authority_1_id -->
-                @if($leaveApp->leaveType->name != 'Replacement')
-                <input style="display:none;" type="text" name="approver_id_1" value="{{$leaveAuth->authority_1_id}}" />
-                <input style="display:none;" type="text" name="approver_id_2" value="{{$leaveAuth->authority_2_id}}" />
-                <input style="display:none;" type="text" name="approver_id_3" value="{{$leaveAuth->authority_3_id}}" />
-                @else
-                <input style="display:none;" type="text" name="approver_id_1" value="{{$leaveApp->approver_one->id}}" />
-                <input style="display:none;" type="text" name="approver_id_2" value="" />
-                <input style="display:none;" type="text" name="approver_id_3" value="" />
-                @endif    
+               
               </div>
             </div>
           </form>
@@ -252,9 +244,9 @@
                       </tr>
                       <tr>
                         <td>2</td>
-                        <td>{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_two->name:'NA'}}</td>
+                        <td>{{isset($leaveApp->approver_two) ? $leaveApp->approver_two->name:'NA'}}</td>
                         <td>
-                            @if(!isset($leaveAuth->authority_2_id))
+                            @if(!isset($leaveApp->approver_two))
                             NA
                             @elseif($leaveApp->status == 'PENDING_1')
                             <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
@@ -271,9 +263,9 @@
                       </tr>
                       <tr>
                         <td>3</td>
-                        <td>{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_three->name:'NA'}}</td>
+                        <td>{{isset($leaveApp->approver_three) ? $leaveApp->approver_three->name:'NA'}}</td>
                         <td>
-                            @if(!isset($leaveAuth->authority_3_id))
+                            @if(!isset($leaveApp->approver_id_3))
                             NA
                             @elseif($leaveApp->status == 'PENDING_1')
                             <span class="badge badge-warning" ><i class="far fa-clock"></i></span>
@@ -323,9 +315,7 @@
   </section>
   @endcan
 
-  <!-- Empty Col -->
-  <section class="col-lg-1 connectedSortable ui-sortable">
-  </section>
+
 
   </div>
 

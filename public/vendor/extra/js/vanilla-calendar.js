@@ -300,7 +300,7 @@ let VanillaCalendar = (function() {
                     <div class="legend legend-weekend"></div><small>Weekend</small>
                 </div>
                 <div class="vanilla-calendar-legend-item">
-                    <div class="legend legend-applied"></div><small>Applied</small>
+                    <div class="legend legend-applied"></div><small>Pending</small>
                 </div>
                 <div class="vanilla-calendar-legend-item">
                     <div class="legend legend-approved"></div><small>Approved</small>

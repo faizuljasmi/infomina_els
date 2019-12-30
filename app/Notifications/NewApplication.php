@@ -41,6 +41,12 @@ class NewApplication extends Notification
     public function toMail($notifiable)
     {
         $la = $this->leaveApp;
+        if(isset($la->relief_personnel->name)){
+            $reliefName = $la->relief_personnel->name;
+        }
+        else{
+            $reliefName = 'Null';
+        }
         $url = url('/leave/apply/view/'.$la->id);
         //dd($la->user->name);
         return (new MailMessage)
@@ -53,7 +59,7 @@ class NewApplication extends Notification
                     ->line('Total day(s): '.$la->total_days)
                     ->line('Resume date: '.$la->date_resume)
                     ->line('Reason: '.$la->reason)
-                    ->line('Relief Personnel: '.$la->relief_personnel->name)
+                    ->line('Relief Personnel: '.$reliefName)
                     ->line('Emergency Contact: '.$la->emergency_contact)
                     ->action('View application', $url)
                     ->line('Have a nice day!');

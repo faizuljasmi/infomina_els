@@ -26,7 +26,7 @@ class CreateLeaveApplicationsTable extends Migration
             $table->date('date_resume');
             $table->float('total_days', 8,1);
             $table->longText('reason');
-            $table->unsignedBigInteger('relief_personnel_id');
+            $table->unsignedBigInteger('relief_personnel_id')->nullable();
             $table->string('attachment')->nullable();
             $table->string('emergency_contact');
             $table->timestamps();

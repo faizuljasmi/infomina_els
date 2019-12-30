@@ -46,6 +46,10 @@
         <strong>First things first</strong> </br>
         Let's change your default password to your own unique password to secure your account!
       </div>
+      <div class="modal-body">
+      <strong>And,</strong> </br>
+        <p>Don't forget to do the one-time setup of your emergency contact as well. You can do that at <strong>Edit My Profile</strong></p>
+      </div>
       <div class="modal-footer">
         <a href="/change-password"><button type="button" class="btn btn-primary">Change Password</button><a>
       </div>
@@ -233,32 +237,41 @@
                 <strong>Leave Record for 2019</strong>
             </div>
             <div class="card-body">
-                <table class="table table-sm table-bordered">
+            <table class="table table-sm table-bordered">
                 <tbody>
                     <tr>
                     <th>Leave Name</th>
-                        @foreach($leaveTypes as $lt)
-                        <td>{{$lt->name}}</td>
-                        @endforeach
+                    @foreach($leaveTypes as $lt)
+                          @if($lt->name != "Replacement")
+                          <td><strong>{{$lt->name}}</strong></td>
+                          @endif
+                    @endforeach
                     </tr>
                     <tr>
                     <th>Entitled</th>
                     @foreach($leaveEnts as $le)
-                        <td>{{$le->no_of_days}}</td>
-                        @endforeach
+                      @if($le->leave_type_id != '12')
+                        <td class="table-primary">{{$le->no_of_days}}</td>
+                      @endif
+                    @endforeach
                     </tr>
                     <tr>
-                    <th>Brought Forward</th>
+                    <th>Brought Forward 
+                    </th>
                     @foreach($broughtFwd as $bf)
-                        <td>{{isset($bf->no_of_days) ? $bf->no_of_days:'NA'}}</td>
-                        @endforeach
+                      @if($bf->leave_type_id == '1')
+                        <td class="table-success">{{isset($bf->no_of_days) ? $bf->no_of_days:'NA'}}</td>
+                      @elseif($bf->leave_type_id != '12')
+                      <td class="table-secondary"></td>
+                      @endif
+                    @endforeach
                     </tr>
                     <tr>
-                    <th>Earned <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="Showing total amount of earned leave + brought forward leave."></i></th>
+                    <th>Earned <small></th>
                     @foreach($leaveEarns as $le)
                         @foreach($broughtFwd as $bf)
-                            @if($le->leave_type_id == $bf->leave_type_id)
-                            <td data-toggle="tooltip" title="{{$le->no_of_days - $bf->no_of_days}} (Earned) + {{$bf->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
+                            @if($le->leave_type_id == $bf->leave_type_id && $le->leave_type_id != '12')
+                            <td class="table-success" data-toggle="tooltip" title="{{$le->no_of_days - $bf->no_of_days}} (Earned) + {{$bf->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
                             @endif
                         @endforeach
                     @endforeach
@@ -266,20 +279,44 @@
                     <tr>
                     <th>Taken</th>
                     @foreach($leaveTak as $lt)
-                        <td>{{$lt->no_of_days}}</td>
-                        @endforeach
+                      @if($lt->leave_type_id != '12')
+                        <td class="table-danger">{{$lt->no_of_days}}</td>
+                      @endif
+                    @endforeach
+                    </tr>
+                    <tr>
+                    <th>Replacement</th>
+                    @foreach($leaveEarns as $le)
+                      @if($le->leave_type_id == "12")
+                        <td class="table-success">{{$le->no_of_days}}</td>
+                      @endif
+                    @endforeach
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
                     </tr>
                     <tr>
                     <th>Burnt</th>
                     @foreach($leaveEnts as $le)
-                        <td>0</td>
-                        @endforeach
+                      @if($le->leave_type_id != '12')
+                        <td class="table-danger">0</td>
+                      @endif
+                    @endforeach
                     </tr>
                     <tr>
-                    <th class="table-primary">Balance <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="(Earned + Brought Forward) - Taken"></i></th>
+                    <th>Balance</th>
                     @foreach($leaveBal as $lb)
+                      @if($lb->leave_type_id != '12')
                         <td class="table-primary">{{$lb->no_of_days}}</td>
-                        @endforeach
+                      @endif
+                    @endforeach
                     </tr>
                  </tbody>
                 </table>

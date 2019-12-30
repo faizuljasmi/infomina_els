@@ -326,9 +326,9 @@ class LeaveApplicationController extends Controller
         //If the application is approved
         if($leaveApplication->status == 'APPROVED'){
 
-            //If the approved leave is a Replacement leave, assign taken to Replacement, and add day balance to Annual
+            //If the approved leave is a Replacement leave, assign earned to Replacement, and add day balance to Annual
             if($leaveApplication->leaveType->name == 'Replacement'){
-                $lt = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lt = LeaveEarning::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
                 $lt->no_of_days += $leaveApplication->total_days;
                 
                 $lt->save();

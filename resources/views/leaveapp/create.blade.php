@@ -23,7 +23,7 @@
 
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
-          <form method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data">
+          <form method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data" id="createApp">
           @csrf
             <!-- Application Form -->
             <div class="card card-primary">
@@ -41,7 +41,7 @@
                         <i class="far fa-star"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="leave_type_id">
+                    <select class="form-control" name="leave_type_id" onchange="clearDates()">
                       <option value="">Choose Leave</option>
                       @foreach($leaveType as $lt)
                       @if($lt->name == 'Replacement')
@@ -80,7 +80,7 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_from">
+                    <input type="date" class="form-control float-right" name="date_from" id="FromDate">
                   </div>
                 </div>
 
@@ -93,7 +93,7 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_to">
+                    <input type="date" class="form-control float-right" name="date_to" id="ToDate">
                   </div>
                 </div>
 
@@ -119,7 +119,7 @@
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_resume">
+                    <input type="date" class="form-control float-right" name="date_resume" id="ResumeDate">
                   </div>
                 </div>
 
@@ -275,6 +275,12 @@
 
 <script>
   $(document).ready(MainLeaveApplicationCreate);
+
+  function clearDates() {
+    document.getElementById("FromDate").value = " ";
+    document.getElementById("ToDate").value = " ";
+    document.getElementById("ResumeDate").value = " ";
+}
 
   function MainLeaveApplicationCreate() {
 

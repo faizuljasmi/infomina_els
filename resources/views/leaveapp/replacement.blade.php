@@ -10,7 +10,7 @@
             </button>
         </div>
     @endif
-    <h1 class="m-0 text-dark">Apply Replacement Leave</h1>
+    <h1 class="m-0 text-dark">Claim Replacement Leave</h1>
 @stop
 
 @section('content')
@@ -136,7 +136,7 @@
 
                   <!-- Approval Authority -->
                   <div class="form-group">
-                  <label>Approval Authority</label>
+                  <label>Approval Authority 1 (Required)</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
@@ -154,51 +154,29 @@
 
                 <!-- Relief Personel -->
                 <div class="form-group">
-                  <label>Relief Personel</label>
+                  <label>Approval Authority 2 (Optional)</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="fa fa-user"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="relief_personnel_id">
+                    <select class="form-control" name="approver_id_2">
                       <option selected>Choose Person</option>
-                      @foreach($groupMates as $emp)
+                      @foreach($leaveAuth as $emp)
                       <option value="{{$emp->id}}">{{$emp->name}}</option>
                       @endforeach
                     </select>
                   </div>
                 </div>
 
-                <!-- Emergency Contact Name-->
-                <div class="form-group">
-                  <label>Emergency Contact Name</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
-                  </div>
-                </div>
 
-                <!-- Emergency Contact No -->
-                <div class="form-group">
-                  <label>Emergency Contact No</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-phone"></i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
-                  </div>
-                </div>
 
                 <!-- $leaveAuth->authority_1_id -->
-                <input style="display:none;" type="text" name="approver_id_2" value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
-                <input style="display:none;" type="text" name="approver_id_3" value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
+                <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
+                <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
+                <input style="display:none;" type="text" name="approver_id_3" value="2" />
+                <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-success float-right">Submit</button>

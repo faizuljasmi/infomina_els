@@ -97,36 +97,44 @@
                 <strong>Leave Record</strong>
             </div>
             <div class="card-body">
-                <table class="table table-sm table-bordered">
+            <table class="table table-sm table-bordered">
                 <tbody>
                     <tr>
                     <th>Leave Name</th>
-                        @foreach($leaveTypes as $lt)
-                        <td>{{$lt->name}}</td>
-                        @endforeach
+                    @foreach($leaveTypes as $lt)
+                          @if($lt->name != "Replacement")
+                          <td><strong>{{$lt->name}}</strong></td>
+                          @endif
+                    @endforeach
                     </tr>
                     <tr>
                     <th>Entitled</th>
                     @foreach($leaveEnt as $le)
-                        <td>{{$le->no_of_days}}</td>
-                        @endforeach
+                      @if($le->leave_type_id != '12')
+                        <td class="table-primary">{{$le->no_of_days}}</td>
+                      @endif
+                    @endforeach
                     </tr>
                     <tr>
                     <th>Brought Forward 
-                    @if ($leaveEarn->count() == 0)<small><a href="" onclick="return alert('Please set this years leave earnings before setting carry forward leaves')">Edit</a></small>
+                    @if ($leaveEarn->count() == 0)<small><a href="" onclick="return alert('Please set this year\'s\ leave earnings before setting carry forward leaves')">Edit</a></small>
                     @else <small><a href="" data-toggle="modal" data-target="#setBroughtForward">Edit</a></small>
                     @endif
                     </th>
                     @foreach($broughtFwd as $bf)
-                        <td>{{isset($bf->no_of_days) ? $bf->no_of_days:'NA'}}</td>
-                        @endforeach
+                      @if($bf->leave_type_id == '1')
+                        <td class="table-success">{{isset($bf->no_of_days) ? $bf->no_of_days:'NA'}}</td>
+                      @elseif($bf->leave_type_id != '12')
+                      <td class="table-secondary"></td>
+                      @endif
+                    @endforeach
                     </tr>
                     <tr>
                     <th>Earned <small><a href="" data-toggle="modal" data-target="#setEarnings">Edit</a></small></th>
                     @foreach($leaveEarn as $le)
                         @foreach($broughtFwd as $bf)
-                            @if($le->leave_type_id == $bf->leave_type_id)
-                            <td data-toggle="tooltip" title="{{$le->no_of_days - $bf->no_of_days}} (Earned) + {{$bf->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
+                            @if($le->leave_type_id == $bf->leave_type_id && $le->leave_type_id != '12')
+                            <td class="table-success" data-toggle="tooltip" title="{{$le->no_of_days - $bf->no_of_days}} (Earned) + {{$bf->no_of_days}} (Brought Forward)">{{$le->no_of_days}}</td>
                             @endif
                         @endforeach
                     @endforeach
@@ -134,20 +142,44 @@
                     <tr>
                     <th>Taken</th>
                     @foreach($leaveTak as $lt)
-                        <td>{{$lt->no_of_days}}</td>
-                        @endforeach
+                      @if($lt->leave_type_id != '12')
+                        <td class="table-danger">{{$lt->no_of_days}}</td>
+                      @endif
+                    @endforeach
+                    </tr>
+                    <tr>
+                    <th>Replacement</th>
+                    @foreach($leaveEarn as $le)
+                      @if($le->leave_type_id == "12")
+                        <td class="table-success">{{$le->no_of_days}}</td>
+                      @endif
+                    @endforeach
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
                     </tr>
                     <tr>
                     <th>Burnt</th>
                     @foreach($leaveEnt as $le)
-                        <td>0</td>
-                        @endforeach
+                      @if($le->leave_type_id != '12')
+                        <td class="table-danger">0</td>
+                      @endif
+                    @endforeach
                     </tr>
                     <tr>
                     <th>Balance</th>
                     @foreach($leaveBal as $lb)
-                        <td>{{$lb->no_of_days}}</td>
-                        @endforeach
+                      @if($lb->leave_type_id != '12')
+                        <td class="table-primary">{{$lb->no_of_days}}</td>
+                      @endif
+                    @endforeach
                     </tr>
                  </tbody>
                 </table>
