@@ -62,7 +62,7 @@
                     </fieldset>
                 </form>
                 <div class="float-sm-right"><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit user profile and leave">
-                                <a href="/myprofile/edit" class="btn btn-info">Edit</a>
+                                <a href="{{route('edit_profile')}}" class="btn btn-info">Edit</a>
                             </span></div>
             </div>
         </div>

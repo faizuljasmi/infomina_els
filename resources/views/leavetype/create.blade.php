@@ -105,7 +105,7 @@
         </button>
       </div>
       <div class="modal-body">
-      <form method="POST" action="/leavetype/create">
+      <form method="POST" action="{{route('leavetype_create')}}">
                     {{ csrf_field() }}
                     <div class = "form-row">
 

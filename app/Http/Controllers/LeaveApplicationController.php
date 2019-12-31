@@ -101,9 +101,27 @@ class LeaveApplicationController extends Controller
         $leaveApp->leave_type_id = $request->leave_type_id;
         //status set pending 1
         //get all authorities id
-        $leaveApp->approver_id_1 = $request->approver_id_1;
-        $leaveApp->approver_id_2 = $request->approver_id_2;
-        $leaveApp->approver_id_3 = $request->approver_id_3;
+
+        //If it is replacement leave claim
+        if($request->leave_type_id == '12'){
+
+            //If there is no second approver, move the last approver to the 2nd one
+            if($request->approver_id_2 == null){
+                $leaveApp->approver_id_1 = $request->approver_id_1;
+                $leaveApp->approver_id_2 = $request->approver_id_3;
+                $leaveApp->approver_id_3 = null;
+            }
+            else{
+                $leaveApp->approver_id_1 = $request->approver_id_1;
+                $leaveApp->approver_id_2 = $request->approver_id_2;
+                $leaveApp->approver_id_3 = $request->approver_id_3;
+            }
+        }
+        else{
+            $leaveApp->approver_id_1 = $request->approver_id_1;
+            $leaveApp->approver_id_2 = $request->approver_id_2;
+            $leaveApp->approver_id_3 = $request->approver_id_3;
+        }
 
 
         //get date from
@@ -167,7 +185,9 @@ class LeaveApplicationController extends Controller
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
         //Get approval authorities for this user
-        $leaveAuthReplacement = User::orderBy('id','ASC')->get()->except($user->id);
+        //Change id to CYNTHIA'S ID
+        $leaveAuthReplacement = User::orderBy('id','ASC')->where('id','!=','2')->get()->except($user->id);
+
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
@@ -232,9 +252,26 @@ class LeaveApplicationController extends Controller
         $leaveApp->leave_type_id = $request->leave_type_id;
         //status set pending 1
         //get all authorities id
-        $leaveApp->approver_id_1 = $request->approver_id_1;
-        $leaveApp->approver_id_2 = $request->approver_id_2;
-        $leaveApp->approver_id_3 = $request->approver_id_3;
+       //If it is replacement leave claim
+       if($request->leave_type_id == '12'){
+
+            //If there is no second approver, move the last approver to the 2nd one
+            if($request->approver_id_2 == null){
+                $leaveApp->approver_id_1 = $request->approver_id_1;
+                $leaveApp->approver_id_2 = $request->approver_id_3;
+                $leaveApp->approver_id_3 = null;
+            }
+            else{
+                $leaveApp->approver_id_1 = $request->approver_id_1;
+                $leaveApp->approver_id_2 = $request->approver_id_2;
+                $leaveApp->approver_id_3 = $request->approver_id_3;
+            }
+        }
+        else{
+            $leaveApp->approver_id_1 = $request->approver_id_1;
+            $leaveApp->approver_id_2 = $request->approver_id_2;
+            $leaveApp->approver_id_3 = $request->approver_id_3;
+        }
 
 
         //get date from

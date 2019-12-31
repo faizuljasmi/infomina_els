@@ -68,7 +68,7 @@
         </button>
       </div>
       <div class="modal-body">
-      <form method="POST" action="/emptype/create">
+      <form method="POST" action="{{route('emptype_store')}}">
                     {{ csrf_field() }}
                     <div class = "form-row">
 

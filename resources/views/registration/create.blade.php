@@ -143,7 +143,7 @@
         </button>
       </div>
       <div class="modal-body">
-      <form method="POST" action="/create">
+      <form method="POST" action="{{route('user_store')}}">
                     {{ csrf_field() }}
                     <label for="staff_id">Staff ID:</label>
                     <div class="input-group mb-3">

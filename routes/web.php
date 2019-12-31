@@ -25,7 +25,7 @@ Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 Route::get('/admin','HomeController@admin')->name('admin')->middleware('can:admin-dashboard');
 
 Route::get('/myprofile','UserController@index')->name('view_profile')->middleware('auth');
-Route::get('/myprofile/edit','UserController@edit')->middleware('auth');
+Route::get('/myprofile/edit','UserController@edit')->name('edit_profile')->middleware('auth');
 Route::post('/myprofile/update','UserController@update')->name('update_profile')->middleware('auth');
 //Change Password
 Route::get('/change-password', 'ChangePasswordController@index');
@@ -35,7 +35,7 @@ Route::post('/change-password', 'ChangePasswordController@store')->name('change.
 //Create, Edit, Delete User
 Route::middleware('can:edit_users')->group(function(){
     Route::get('/create', 'RegistrationController@create')->name('user_create')->middleware('auth');
-    Route::post('create', 'RegistrationController@store')->middleware('auth');
+    Route::post('create', 'RegistrationController@store')->name('user_store')->middleware('auth');
     Route::get('/edit/{user}','RegistrationController@edit')->name('user_edit')->middleware('auth');
     Route::post('/update/{user}','RegistrationController@update')->name('user_update')->middleware('auth');
     Route::get('/user/{user}','RegistrationController@profile')->name('user_view')->middleware('auth');
@@ -47,27 +47,27 @@ Route::middleware('can:edit_users')->group(function(){
 Route::middleware('can:edit_settings')->group(function() {
     
     //Leave Type
-    Route::get('/leavetype/create', 'LeaveTypeController@create')->middleware('auth');
-    Route::post('leavetype/create', 'LeaveTypeController@store')->middleware('auth');
+    Route::get('/leavetype/create', 'LeaveTypeController@create')->name('leavetype_create')->middleware('auth');
+    Route::post('leavetype/create', 'LeaveTypeController@store')->name('leavetype_store')->middleware('auth');
     Route::get('/delete/leave_type/{leaveType}', 'LeaveTypeController@destroy')->name('leavetype_delete')->middleware('auth');
 
     //Employee Type
     Route::get('/emptype/create', 'EmpTypeController@create')->middleware('auth');
-    Route::post('emptype/create', 'EmpTypeController@store')->middleware('auth');
+    Route::post('emptype/create', 'EmpTypeController@store')->name('emptype_store')->middleware('auth');
     Route::get('/emptype/edit/{empType}','EmpTypeController@edit')->name('emptype_edit')->middleware('auth');
     Route::post('emptype/update/{empType}','EmpTypeController@update')->name('emptype_update')->middleware('auth');
     Route::get('/delete/emp_type/{empType}','EmpTypeController@destroy')->name('emptype_delete')->middleware('auth');
 
     //Employee Group
     Route::get('/empgroup/create','EmpGroupController@create')->middleware('auth');
-    Route::post('empgroup/create','EmpGroupController@store')->middleware('auth');
+    Route::post('empgroup/create','EmpGroupController@store')->name('empgroup_store')->middleware('auth');
     Route::get('/empgroup/edit/{empGroup}','EmpGroupController@edit')->name('empgroup_edit')->middleware('auth');
     Route::post('empgroup/update/{empGroup}','EmpGroupController@update')->name('empgroup_update')->middleware('auth');
     Route::get('/delete/emp_group/{empGroup}','EmpGroupController@destroy')->name('empgroup_delete')->middleware('auth');  
     
     //Leave Entitlement
     Route::get('/entitlement/create/{empType}','LeaveEntitlementController@create')->name('leaveent_create')->middleware('auth');
-    Route::post('entitlement/create/{empType}', 'LeaveEntitlementController@store')->middleware('auth');
+    Route::post('entitlement/create/{empType}', 'LeaveEntitlementController@store')->name('leaveent_store')->middleware('auth');
 
     //Set Leave Earnings amount settings
     Route::post('/leave/earnings/set/{user}','LeaveController@setEarnings')->name('earnings_set')->middleware('auth');
