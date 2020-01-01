@@ -60,13 +60,13 @@ class HomeController extends Controller
             $query->where('status', 'CANCELLED')
                 ->where('user_id', $user->id);	
         })->orWhere(function($query)use ($user) {
-            $query->where('status', 'PENDING_1')
+            $query->where('status', 'DENIED_1')
                 ->where('user_id', $user->id);
             })->orWhere(function($query)use ($user) {
-                $query->where('status', 'PENDING_2')
+                $query->where('status', 'DENIED_2')
                     ->where('user_id', $user->id);
                 })->orWhere(function($query)use ($user) {
-                    $query->where('status', 'PENDING_3')
+                    $query->where('status', 'DENIED_3')
                         ->where('user_id', $user->id);
         })->simplePaginate(5);
 
