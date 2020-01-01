@@ -57,7 +57,10 @@ class RegistrationController extends Controller
     public function edit(User $user){
         $user = $user;
         $users = User::orderBy('id','ASC')->get()->except($user->id);
-        $authUsers = User::where('user_type', '=', 'Admin')->get();
+        $authUsers = User::where(function ($query)  {
+            $query->where('user_type','Admin')
+                ->orWhere('user_type','Authority');
+        })->get();
         $empType = $user->emp_types;
         $empTypes = EmpType::orderBy('id','ASC')->get();
         $empGroup = $user->emp_group;
@@ -89,7 +92,11 @@ class RegistrationController extends Controller
     public function profile(User $user){
         $user = $user;
         $users = User::orderBy('id','ASC')->get()->except($user->id);
-        $authUsers = User::where('user_type', '=', 'Admin')->get();
+      
+        $authUsers = User::where(function ($query)  {
+            $query->where('user_type','Admin')
+                ->orWhere('user_type','Authority');
+        })->get();
         $empType = $user->emp_types;
         $empGroup = $user->emp_group;
         $empAuth = $user->approval_authority;

@@ -345,7 +345,7 @@
                         <i class="far fa-calendar-check"></i>
                       </span>
                     </div>
-                    <input type="number" class="form-control float-right" name="total_days">
+                    <input type="number" class="form-control float-right" name="total_days" value="{{$leaveApplication->total_days}}">
                   </div>
                 </div>
 
@@ -358,7 +358,7 @@
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_resume">
+                    <input type="date" class="form-control float-right" name="date_resume" value="{{$leaveApplication->date_resume}}">
                   </div>
                 </div>
 
@@ -405,8 +405,8 @@
                         <i class="fa fa-user"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="relief_personnel_id">
-                      <option selected>Choose Person</option>
+                    <select class="form-control" name="approver_id_2">
+                      <option value=" "selected>Choose Person</option>
                       @foreach($leaveAuthReplacement as $la)
                       <option value="{{$la->id}}">{{$la->name}}</option>
                       @endforeach
@@ -418,7 +418,7 @@
                <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
                 <!-- CHANGE TO CYNTHIA ID -->
-                <input style="display:none;" type="text" name="approver_id_3" value="2" />
+                <input style="display:none;" type="text" name="approver_id_3" value="1" />
                 <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
 
                 <!-- Submit Button -->

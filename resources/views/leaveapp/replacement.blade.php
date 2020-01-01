@@ -176,7 +176,7 @@
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
                 <!-- CHANGE TO CYNTHIA ID -->
-                <input style="display:none;" type="text" name="approver_id_3" value="2" />
+                <input style="display:none;" type="text" name="approver_id_3" value="1" />
                 <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
 
                 <!-- Submit Button -->

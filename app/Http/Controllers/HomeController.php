@@ -42,6 +42,33 @@ class HomeController extends Controller
         //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
         $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
         $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where('user_id', '=', $user->id)->paginate(3);
+        $pendLeaves = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
+            $query->where('status', 'PENDING_1')
+                ->where('user_id', $user->id);
+        })->orWhere(function($query) use ($user){
+            $query->where('status', 'PENDING_2')
+                ->where('user_id', $user->id);	
+        })->orWhere(function($query)use ($user) {
+            $query->where('status', 'PENDING_3')
+                ->where('user_id', $user->id);
+        })->simplePaginate(5);
+
+        $leaveHist = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('user_id', $user->id);
+        })->orWhere(function($query) use ($user){
+            $query->where('status', 'CANCELLED')
+                ->where('user_id', $user->id);	
+        })->orWhere(function($query)use ($user) {
+            $query->where('status', 'PENDING_1')
+                ->where('user_id', $user->id);
+            })->orWhere(function($query)use ($user) {
+                $query->where('status', 'PENDING_2')
+                    ->where('user_id', $user->id);
+                })->orWhere(function($query)use ($user) {
+                    $query->where('status', 'PENDING_3')
+                        ->where('user_id', $user->id);
+        })->simplePaginate(5);
 
         //Get all holidays dates
         $holidays = Holiday::all();
@@ -81,7 +108,7 @@ class HomeController extends Controller
         }
         //dd($approved_dates);
 
-        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak','all_dates','applied_dates','approved_dates','holidays','holsPaginated'));
+        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak','all_dates','applied_dates','approved_dates','holidays','holsPaginated','pendLeaves','leaveHist'));
     }
 
     /**

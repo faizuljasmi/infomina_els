@@ -89,8 +89,10 @@ class LeaveApplicationController extends Controller
         //Get user id
         $user = auth()->user();
         //Check Balance
-        $leaveBal = LeaveBalance::where('leave_type_id', '=', $request->leave_type_id, 'AND', 'user_id', '=', $request->user_id)->first();
-        //dd($leaveBal->no_of_days);
+        $leaveBal = LeaveBalance::where(function ($query) use ($request, $user) {
+            $query->where('leave_type_id','=', $request->leave_type_id)
+                ->where('user_id','=',$user->id);
+        })->first();
         if($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12'){
             return redirect()->to('/leave/apply')->with('message','Your have insufficient leave balance. Please contact HR for more info.');
         }
@@ -186,7 +188,7 @@ class LeaveApplicationController extends Controller
         $leaveAuth = $user->approval_authority;
         //Get approval authorities for this user
         //Change id to CYNTHIA'S ID
-        $leaveAuthReplacement = User::orderBy('id','ASC')->where('id','!=','2')->get()->except($user->id);
+        $leaveAuthReplacement = User::orderBy('id','ASC')->where('id','!=','1')->get()->except($user->id);
 
 
         //TODO: Get leave balance of THIS employee
@@ -239,7 +241,10 @@ class LeaveApplicationController extends Controller
         //Get user id
         $user = auth()->user();
         //Check Balance
-        $leaveBal = LeaveBalance::where('leave_type_id', '=', $request->leave_type_id, 'AND', 'user_id', '=', $request->user_id)->first();
+        $leaveBal = LeaveBalance::where(function ($query) use ($request, $user) {
+            $query->where('leave_type_id','=', $request->leave_type_id)
+                ->where('user_id','=',$user->id);
+        })->first();
         //dd($leaveBal->no_of_days);
         if($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12'){
             dd('here');
@@ -365,13 +370,21 @@ class LeaveApplicationController extends Controller
 
             //If the approved leave is a Replacement leave, assign earned to Replacement, and add day balance to Annual
             if($leaveApplication->leaveType->name == 'Replacement'){
-                $lt = LeaveEarning::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lt = LeaveEarning::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
+                
                 $lt->no_of_days += $leaveApplication->total_days;
                 
                 $lt->save();
 
                 //Add balance to annual;
-                $lb = LeaveBalance::where('leave_type_id', '=', '1', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lb = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', '1')
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
+                
                 $lb->no_of_days += $leaveApplication->total_days;
                 $lb->save();
 
@@ -383,17 +396,26 @@ class LeaveApplicationController extends Controller
             //If the approved leave is a Sick leave, deduct the amount taken in both sick leave and hospitalization balance
             if($leaveApplication->leaveType->name == 'Sick'){
                 //Add in amount sick leave taken
-                $lt = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lt = TakenLeave::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
                 $lt->no_of_days += $leaveApplication->total_days;
                 $lt->save();
 
                 //Deduct balance in sick leave balance
-                $sickBalance = LeaveBalance::where('leave_type_id', '=', '3', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $sickBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', '3')
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
                 $sickBalance->no_of_days -= $leaveApplication->total_days;
                 $sickBalance->save();
 
                 //Deduct balance in hosp leave balance
-                $hospBalance = LeaveBalance::where('leave_type_id', '=', '4', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $hospBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', '4')
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
                 $hospBalance->no_of_days -= $leaveApplication->total_days;
                 $hospBalance->save();
 
@@ -405,17 +427,26 @@ class LeaveApplicationController extends Controller
             //If the approved leave is an emergency leave, deduct the taken amount to Annual Leave
             if($leaveApplication->leaveType->name == 'Emergency'){
                 //Add in amount emergency leave taken
-                $lt = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $lt = TakenLeave::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
                 $lt->no_of_days += $leaveApplication->total_days;
                 $lt->save();
 
                 //Deduct balance in emergency leave balance
-                $emBalance = LeaveBalance::where('leave_type_id', '=', '6', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $emBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', '6')
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
                 $emBalance->no_of_days -= $leaveApplication->total_days;
                 $emBalance->save();
 
                 //Deduct balance in annual leave
-                $annBalance = LeaveBalance::where('leave_type_id', '=', '1', 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+                $annBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', '1')
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
                 $annBalance->no_of_days -= $leaveApplication->total_days;
                 $annBalance->save();
                 //dd($annBalance->no_of_days);
@@ -427,7 +458,10 @@ class LeaveApplicationController extends Controller
 
             //Update leave taken table
             //Check for existing record
-            $dupcheck = TakenLeave::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+            $dupcheck = TakenLeave::where(function ($query) use ($leaveApplication) {
+                $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                    ->where('user_id',$leaveApplication->user_id);
+            })->first();
 
             //If does not exist, create new
             if($dupcheck == null){
@@ -445,14 +479,20 @@ class LeaveApplicationController extends Controller
 
             //Update leave balance table
             //Check for existing record
-             $dupcheck2 = LeaveBalance::where('leave_type_id', '=', $leaveApplication->leave_type_id, 'AND', 'user_id', '=', $leaveApplication->user_id)->first();
+             $dupcheck2 = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                    ->where('user_id',$leaveApplication->user_id);
+            })->first();
     
             //If does not exist, create new
             if($dupcheck2 == null){
                 $lb = new LeaveBalance;
                 $lb->leave_type_id = $leaveApplication->leave_type_id;
                 $lb->user_id = $leaveApplication->user_id;
-                $le = LeaveEarning::where('leave_type_id','=',$leaveApplication->leave_type_id,'AND','user_id','=',$leaveApplication->user_id)->first();
+                $le = LeaveEarning::where(function ($query) use ($leaveApplication) {
+                    $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                        ->where('user_id',$leaveApplication->user_id);
+                })->first();
                 $lb->no_of_days = $le->no_of_days - $leaveApplication->total_days;
                 $lb->save();
             }
