@@ -72,7 +72,7 @@ class HomeController extends Controller
 
         //Get all holidays dates
         $holidays = Holiday::all();
-        $holsPaginated = Holiday::orderBy('date_from','ASC')->simplePaginate(3);
+        $holsPaginated = Holiday::orderBy('date_from','ASC')->get();
         $all_dates = array();
         foreach($holidays as $hols){
             $startDate = new Carbon($hols->date_from);

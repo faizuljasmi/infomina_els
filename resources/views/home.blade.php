@@ -125,111 +125,93 @@
         <!-- Main row -->
         <div class="row">
           <!-- Left col -->
-          <section class="col-lg-8 connectedSortable ui-sortable">
+          <section class="col-md-8 connectedSortable ui-sortable">
             <!-- Custom tabs (Charts with tabs)-->
             <div class="card">
                 <div class="card-header bg-teal">
-                <strong>Pending Applications</strong>          
-                <button type="button" class="btn btn-box-tool float-right" data-toggle="collapse" href="#collapse-leave" aria-expanded="true" aria-controls="collapse-leave" id="heading-leave" class="d-block"><i class="fa fa-minus"></i>
+                  <strong>Pending Applications</strong>          
+                  <button type="button" class="btn btn-box-tool float-right" data-toggle="collapse" href="#collapse-leave" aria-expanded="true" aria-controls="collapse-leave" id="heading-leave" class="d-block"><i class="fa fa-minus"></i>
                     <i class="fa fa-plus"></i>
-                </button>           
+                  </button>           
             </div>
         <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
+          <div class="card-body">
+          <table class="table table-bordered">
+          @if($pendLeaves->count() > 0)
+            <thead>
+              <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Leave Type</th>
+                <th scope="col">Duration</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Date Submitted</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @php $count = ($pendLeaves->currentPage()-1) * $pendLeaves->perPage(); @endphp
+                @foreach($pendLeaves as $la)
+              <tr>
+                <td>{{++$count}}</td>
+                <td>{{$la->leaveType->name}}</td>
+                <td>{{$la->total_days}} day(s)</td>
+                <td>{{ \Carbon\Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YY')}}</td>
+                <td>{{ \Carbon\Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YY')}}</td>
+                <td>{{ \Carbon\Carbon::parse($la->created_at)->diffForHumans()}}</td>
+                <td>
+                  @if($la->status == 'PENDING_1')
+                  <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 1"><i class="far fa-clock"></i> Lvl 1</span>
+                  @elseif($la->status == 'PENDING_2')
+                  <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 2"><i class="far fa-clock"></i> Lvl 2</span>
+                  @elseif($la->status == 'PENDING_3')
+                  <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 3"><i class="far fa-clock"></i> Lvl 3</span>
+                  @elseif($la->status == 'APPROVED')
+                  <span class="badge badge-success" data-toggle="tooltip" title="Your application has been approved"><i class="far fa-check-circle"></i></span>
+                  @elseif($la->status == 'DENIED_1')
+                  <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 1"><i class="fas fa-ban"></i> Lvl 1</span>
+                  @elseif($la->status == 'DENIED_2')
+                  <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 2"><i class="fas fa-ban"></i> Lvl 2</span>
+                  @elseif($la->status == 'DENIED_3')
+                  <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 3"><i class="fas fa-ban"></i> Lvl 3</span>
+                  @elseif($la->status == 'CANCELLED')
+                  <span class="badge badge-secondary" data-toggle="tooltip" title="This application has been cancelled">Cancelled</span>
+                  @endif
+                </td>
+                <td><a href="{{route('view_application', $la->id)}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="View leave application"><i class="fa fa-eye"></i></a></td>
+              </tr>
+              @endforeach
+              {{$pendLeaves->links()}}
+              @else
+              <th>No Record Found</th>
+              @endif
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <!-- /.card -->
+      </section>
 
-        <div class="card-body">
-        <table class="table table-bordered">
-        @if($pendLeaves->count() > 0)
-          <thead>
-            <tr>
-              <th scope="col">No.</th>
-              <th scope="col">Leave Type</th>
-              <th scope="col">Duration</th>
-              <th scope="col">From</th>
-              <th scope="col">To</th>
-              <th scope="col">Date Submitted</th>
-              <th scope="col">Status</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @php $count = ($pendLeaves->currentPage()-1) * $pendLeaves->perPage(); @endphp
-              @foreach($pendLeaves as $la)
-            <tr>
-              <td>{{++$count}}</td>
-              <td>{{$la->leaveType->name}}</td>
-              <td>{{$la->total_days}} day(s)</td>
-              <td>{{ \Carbon\Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YY')}}</td>
-              <td>{{ \Carbon\Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YY')}}</td>
-              <td>{{ \Carbon\Carbon::parse($la->created_at)->diffForHumans()}}</td>
-              <td>
-                @if($la->status == 'PENDING_1')
-                <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 1"><i class="far fa-clock"></i> Lvl 1</span>
-                @elseif($la->status == 'PENDING_2')
-                <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 2"><i class="far fa-clock"></i> Lvl 2</span>
-                @elseif($la->status == 'PENDING_3')
-                <span class="badge badge-warning" data-toggle="tooltip" title="Your application is pending on lvl 3"><i class="far fa-clock"></i> Lvl 3</span>
-                @elseif($la->status == 'APPROVED')
-                <span class="badge badge-success" data-toggle="tooltip" title="Your application has been approved"><i class="far fa-check-circle"></i></span>
-                @elseif($la->status == 'DENIED_1')
-                <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 1"><i class="fas fa-ban"></i> Lvl 1</span>
-                @elseif($la->status == 'DENIED_2')
-                <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 2"><i class="fas fa-ban"></i> Lvl 2</span>
-                @elseif($la->status == 'DENIED_3')
-                <span class="badge badge-danger" data-toggle="tooltip" title="Your application has been denied by lvl 3"><i class="fas fa-ban"></i> Lvl 3</span>
-                @elseif($la->status == 'CANCELLED')
-                <span class="badge badge-secondary" data-toggle="tooltip" title="This application has been cancelled">Cancelled</span>
-                @endif
-              </td>
-              <td><a href="{{route('view_application', $la->id)}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="View leave application"><i class="fa fa-eye"></i></a></td>
-            </tr>
-            @endforeach
-            {{$pendLeaves->links()}}
-            @else
-            <th>No Record Found</th>
-            @endif
-
-          </tbody>
-        </table>
-            </div>
-            <!-- /.card -->
-
-          </section>
           <!-- /.Left col -->
           <!-- right col (We are only adding the ID to make the widgets sortable)-->
-          <section class="col-lg-4 connectedSortable ui-sortable">
+          <section class="col-md-4 connectedSortable ui-sortable">
             <!-- Calendar -->
              <!-- Vanilla Calendar -->
             <div class="card">
               <div class="card-header bg-teal">
                 <strong>Calendar </strong><i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="For your reference, this calendar shows your applied & approved leaves."></i>
               </div>
-            <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
-            <div class="card-header bg-teal">
-                <strong>Holidays</strong>
+            <div class="myCalendar vanilla-calendar" style="margin: 20px auto">
             </div>
-            <div class="card-body">
-              <table class = "table table-sm table-bordered">
-                <tr>
-                  <th>Holiday Name</th>
-                  <th>From</th>
-                  <th>To</th>
-                </tr>
-                
-                @foreach($holsPaginated as $hl)
-                <tr>
-                  <td>{{$hl->name}}</td>
-                  <td>{{ \Carbon\Carbon::parse($hl->date_from)->isoFormat('ddd, D MMM \'YY')}}</td>
-                  <td>{{ \Carbon\Carbon::parse($hl->date_to)->isoFormat('ddd, D MMM \'YY')}}</td>
-                  </tr>
-                @endforeach
-              </table>
-              {{$holsPaginated->links()}}
-            </div>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewHolidays">
+              View Holidays
+            </button>
             </div>
             <!-- /.card -->
           </section>
           <!-- right col -->
-        </div>
         <!-- Leave Days Form -->
     <div class="col-md-12">
         <div class="card">
@@ -393,6 +375,41 @@
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
     </section>
+
+<!-- Modal -->
+<div class="modal fade" id="viewHolidays" tabindex="-1" role="dialog" aria-labelledby="viewHolidaysLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <table class = "table table-sm table-bordered">
+                <tr>
+                  <th>Holiday Name</th>
+                  <th>From</th>
+                  <th>To</th>
+                </tr>
+                
+                @foreach($holsPaginated as $hl)
+                <tr>
+                  <td>{{$hl->name}}</td>
+                  <td>{{ \Carbon\Carbon::parse($hl->date_from)->isoFormat('ddd, D MMM \'YY')}}</td>
+                  <td>{{ \Carbon\Carbon::parse($hl->date_to)->isoFormat('ddd, D MMM \'YY')}}</td>
+                  </tr>
+                @endforeach
+              </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <script>

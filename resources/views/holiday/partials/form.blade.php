@@ -114,13 +114,7 @@
 
 
       
-        if(
-          (name == FC.date_from.name && calendar.isWeekend(date_from)) 
-          || 
-          (name == FC.date_to.name && calendar.isWeekend(date_to))
-        ){
-          return `Selected date is a WEEKEND. Please select another date.`;
-        }
+      
         if(
           (name == FC.date_from.name && calendar.isHoliday(date_from)) 
           || 
