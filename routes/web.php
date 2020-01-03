@@ -11,8 +11,12 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return view('adminlte::login');
+});
+
+Route::get('/', function () {
+    return redirect('/login');
 });
 
 Auth::routes();
@@ -45,7 +49,7 @@ Route::middleware('can:edit_users')->group(function(){
 
 
 Route::middleware('can:edit_settings')->group(function() {
-    
+
     //Leave Type
     Route::get('/leavetype/create', 'LeaveTypeController@create')->name('leavetype_create')->middleware('auth');
     Route::post('leavetype/create', 'LeaveTypeController@store')->name('leavetype_store')->middleware('auth');
@@ -63,8 +67,8 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::post('empgroup/create','EmpGroupController@store')->name('empgroup_store')->middleware('auth');
     Route::get('/empgroup/edit/{empGroup}','EmpGroupController@edit')->name('empgroup_edit')->middleware('auth');
     Route::post('empgroup/update/{empGroup}','EmpGroupController@update')->name('empgroup_update')->middleware('auth');
-    Route::get('/delete/emp_group/{empGroup}','EmpGroupController@destroy')->name('empgroup_delete')->middleware('auth');  
-    
+    Route::get('/delete/emp_group/{empGroup}','EmpGroupController@destroy')->name('empgroup_delete')->middleware('auth');
+
     //Leave Entitlement
     Route::get('/entitlement/create/{empType}','LeaveEntitlementController@create')->name('leaveent_create')->middleware('auth');
     Route::post('entitlement/create/{empType}', 'LeaveEntitlementController@store')->name('leaveent_store')->middleware('auth');
@@ -78,7 +82,7 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::post('/create/approval_authority/{user}','ApprovalAuthorityController@store')->name('approval_auth_create')->middleware('auth');
     Route::post('update/approval_authority/{approvalAuthority}','ApprovalAuthorityController@update')->name('approval_auth_update')->middleware('auth');
 
-    //Holiday 
+    //Holiday
     Route::get('/holiday/view','HolidayController@index')->middleware('auth');
     Route::post('/holiday/create','HolidayController@store')->name('holiday_create')->middleware('auth');
     Route::get('/holiday/edit/{holiday}','HolidayController@edit')->name('holiday_edit')->middleware('auth');

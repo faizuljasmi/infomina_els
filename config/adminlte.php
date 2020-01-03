@@ -222,19 +222,19 @@ return [
             'text'    => 'Employee',
             'can' => 'edit_settings',
             'icon'    => 'fas fa-fw fa-user-cog',
-            'submenu' => [  
+            'submenu' => [
                 [
                     'text' => 'Employee Type',
                     'url'  => '/emptype/create',
                     'icon' => 'fas fa-fw fa-user-tag',
                     'can' => 'admin-dashboard'
-                ], 
+                ],
                 [
                     'text' => 'Employee Group',
                     'url'  => '/empgroup/create',
                     'icon' => 'fas fa-fw fa-user-tag',
                     'can' => 'admin-dashboard'
-                ],         
+                ],
             ],
         ],
 
@@ -248,13 +248,13 @@ return [
                     'url'  => '/leavetype/create',
                     'icon' => 'fas fa-fw fa-calendar-plus',
                     'can' => 'admin-dashboard'
-                ], 
+                ],
                 [
                     'text' => 'Holiday',
                     'url'  => '/holiday/view',
                     'icon' => 'fas fa-fw fa-calendar-day',
                     'can' => 'admin-dashboard'
-                ],           
+                ],
             ],
         ],
         ['header' => ' My Settings', ],

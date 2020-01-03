@@ -11,56 +11,57 @@ use App\Holiday;
 
 class ReplacementLeaveController extends Controller
 {
-    public function create(){
+    public function create()
+    {
 
         //Get all leave type =  replacement
-        $leaveType = LeaveType::where('name','Replacement')->get();
+        $leaveType = LeaveType::where('name', 'Replacement')->get();
 
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id','ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
+        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
         //dd($groupMate->name);
 
         //Get approval authorities for this user
         //Change id to CYNTHIA'S ID
-        $leaveAuth = User::orderBy('id','ASC')->where('id','!=','1')->get()->except($user->id);
+        $leaveAuth = User::orderBy('id', 'ASC')->where('id', '!=', '1')->get()->except($user->id);
 
         //TODO: Get leave balance of THIS employee
-        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
         $holidays = Holiday::all();
         $all_dates = array();
-        foreach($holidays as $hols){
+        foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            while ($startDate->lte($endDate)){
-                $dates = str_replace("-","",$startDate->toDateString());
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
                 $all_dates[] = $dates;
                 $startDate->addDay();
             }
         }
 
-        return view('leaveapp.replacement')->with(compact('user','leaveType', 'groupMates','leaveAuth','leaveBal','all_dates'));
+        return view('leaveapp.replacement')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates'));
     }
 
-    public function store(){
-
+    public function store()
+    {
     }
 
-    public function edit(){
-
+    public function edit()
+    {
     }
 
-    public function update(){
-
+    public function update()
+    {
     }
 
-    public function approve(){
-
+    public function approve()
+    {
     }
 
-    public function deny(){
-
+    public function deny()
+    {
     }
 }

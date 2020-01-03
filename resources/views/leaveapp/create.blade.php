@@ -23,7 +23,7 @@
 
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
-          <form method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data" id="createApp">
+          <form class="needs-validation" novalidate method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data" id="createApp">
           @csrf
             <!-- Application Form -->
             <div class="card card-primary">
@@ -34,38 +34,44 @@
 
                 <!-- Leave Type -->
                 <div class="form-group">
-                  <label>Leave Type</label>
+                  <label>Leave Type <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
-                      <span class="input-group-text"> 
+                      <span class="input-group-text">
                         <i class="far fa-star"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="leave_type_id" onchange="clearDates()">
+                <select class="form-control" name="leave_type_id"  id="leave_type_id" onchange="clearDates()" required>
                       <option value="">Choose Leave</option>
                       @foreach($leaveType as $lt)
                       @if($lt->name == 'Replacement')
                       @else
-                      <option value="{{$lt->id}}">{{$lt->name}}</option>
+                      <option value="{{$lt->id}}" {{ (old('leave_type_id') == $lt->id ? "selected":"") }}>{{$lt->name}}</option>
                       @endif
                       @endforeach
                     </select>
+                    <div class="invalid-feedback">
+                        Please choose a leave type
+                      </div>
+                      <div class="valid-feedback">
+                        Looks good!
+                      </div>
                   </div>
                 </div>
 
                 <!-- Leave Variation -->
                 <div class="form-group">
-                  <label>Apply For</label>
+                  <label>Full/Half Day <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="far fa-clock"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="apply_for">
-                      <option value="full-day">Full Day</option>
-                      <option value="half-day-am">Half Day AM</option>
-                      <option value="half-day-pm">Half Day PM</option>
+                <select class="form-control" name="apply_for" value="{{old('apply_for')}}">
+                      <option value="full-day"  {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
+                      <option value="half-day-am" {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM</option>
+                      <option value="half-day-pm" {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM</option>
                     </select>
                   </div>
                 </div>
@@ -73,27 +79,27 @@
 
                 <!-- Date From -->
                 <div class="form-group">
-                  <label>Date From</label>
+                  <label>Date From <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_from" id="FromDate">
+                <input type="date" class="form-control float-right" name="date_from" id="FromDate" value="{{old('date_from')}}">
                   </div>
                 </div>
 
                 <!-- Date From -->
                 <div class="form-group">
-                  <label>Date To</label>
+                  <label>Date To <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_to" id="ToDate">
+                    <input type="date" class="form-control float-right" name="date_to" id="ToDate" value="{{old('date_to')}}">
                   </div>
                 </div>
 
@@ -106,7 +112,7 @@
                         <i class="far fa-calendar-check"></i>
                       </span>
                     </div>
-                    <input type="number" class="form-control float-right" name="total_days">
+                    <input type="number" class="form-control float-right" name="total_days" value="{{old('total_days')}}">
                   </div>
                 </div>
 
@@ -119,39 +125,44 @@
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_resume" id="ResumeDate">
+                    <input type="date" class="form-control float-right" name="date_resume" id="ResumeDate" value="{{old('date_resume')}}">
                   </div>
                 </div>
 
 
                 <!-- Reason -->
                 <div class="form-group">
-                  <label>Reason</label>
-                  <textarea class="form-control" rows="5" name="reason"></textarea>
+                  <label>Reason <font color="red">*</font></label>
+                  <textarea class="form-control" rows="5" name="reason" value="{{old('reason')}}" required></textarea>
+                  <div class="invalid-feedback">
+                    Reason is required
+                  </div>
                 </div>
 
                 <!-- File Attachment -->
                 <div class="form-group">
-                  <label>Attachment <small class="text-muted">Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
+                  <label>Attachment <small class="text-muted"><font color="red">Required for Sick & Marriage Leave. </font></br>Format: jpg, jpeg, png, pdf. Max size: 2MB</small></label>
                   <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment" id="attachment">
-                    <span class="text-danger"> {{ $errors->first('attachment') }}</span>
+                    <input type="file" class="form-control-file" name="attachment" id="attachment" value="{{old('attachment')}}">
+                    <div class="invalid-feedback">
+                        Attachment is required for this type of leave
+                      </div>
                   </div>
                 </div>
 
                 <!-- Relief Personel -->
                 <div class="form-group">
-                  <label>Relief Personel</label>
+                  <label>Relief Personel <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="fa fa-user"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="relief_personnel_id">
-                      <option selected>Choose Person</option>
+                    <select class="form-control" name="relief_personnel_id" required>
+                      <option selected value="">Choose Person</option>
                       @foreach($groupMates as $emp)
-                      <option value="{{$emp->id}}">{{$emp->name}}</option>
+                      <option value="{{$emp->id}}" {{ (old('relief_personnel_id') == $emp->id ? "selected":"") }}>{{$emp->name}}</option>
                       @endforeach
                     </select>
 
@@ -167,7 +178,7 @@
                         <i class="fa fa-user"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
+                    <input type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}" readonly>
                   </div>
                 </div>
 
@@ -180,8 +191,12 @@
                         <i class="fa fa-phone"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
+                    <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}" readonly>
                   </div>
+                </div>
+
+                <div class="card-footer">
+                    <strong><font color="red">* </font>Required</strong>
                 </div>
 
                 <!-- $leaveAuth->authority_1_id -->
@@ -238,7 +253,7 @@
                   </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-6 connectedSortable ui-sortable">
               <!-- Leaves Balance -->
               <div class="card">
@@ -264,9 +279,6 @@
 
   </section>
 
-  <!-- Empty Col -->
-  <section class="col-lg-1 connectedSortable ui-sortable">
-  </section>
 
   </div>
 
@@ -276,10 +288,43 @@
 <script>
   $(document).ready(MainLeaveApplicationCreate);
 
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+
   function clearDates() {
-    document.getElementById("FromDate").value = " ";
-    document.getElementById("ToDate").value = " ";
-    document.getElementById("ResumeDate").value = " ";
+
+    //Store the newly selected leave type id
+    var test = document.getElementById("leave_type_id").value
+    //Reset the form
+    document.getElementById("createApp").reset();
+    //Reset the validation
+    var forms = document.getElementsByClassName('needs-validation');
+    console.log(forms);
+    var validation = Array.prototype.filter.call(forms, function(form) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.remove('was-validated');
+    });
+    //Reassign the stored value to the form
+    document.getElementById("leave_type_id").value = test;
 }
 
   function MainLeaveApplicationCreate() {
@@ -287,7 +332,7 @@
     var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
     var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
     var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
-  
+
     let calendar = new VanillaCalendar({
         holiday: dates,
         applied: applied,
@@ -298,7 +343,7 @@
         }
     });
 
-   
+
     const validation = {
       isAnnualLeave : function(){
         return _form.get(FC.leave_type_id) == "1";
@@ -314,7 +359,7 @@
       },
       isCompassionateLeave : function(){
         return _form.get(FC.leave_type_id) == "5";
-      }, 
+      },
       isEmergencyLeave : function(){
         return _form.get(FC.leave_type_id) == "6";
       },
@@ -336,7 +381,7 @@
       isReplacementLeave : function(){
         return _form.get(FC.leave_type_id) == "12";
       },
-     
+
       onchange : function(v, e, fc){
           //console.log("onchange", v, e, fc);
           let name = fc.name;
@@ -355,7 +400,9 @@
 
           validation._totalDay(name);
           validation._dateResume(name);
-        
+
+          validation._attachment(name);
+
       },
       isHalfDayAm : function(){
         return _form.get(FC.apply_for) == "half-day-am";
@@ -367,22 +414,21 @@
         return _form.get(FC.apply_for) == "full-day";
       },
       validateDateFromAndTo : function(name){
-       
+
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
-
 
         //ANNUAL POLICY
         if(validation.isAnnualLeave() || validation.isTrainingLeave()){
           let next2 = calendar.getNextWorkingDay(calendar.today());
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);
-          //console.log("next2", next2);
-          if(calendar.isDateSmaller(date_from, next2) || calendar.isDateEqual(date_from, next2)){
-            return "Attention: Leave cannot be applied on passed dates and must be applied at least 2 days prior to the leave date.";
-          }
+          console.log("next2", next2);
           if(calendar.isDateSmaller(date_from, calendar.today())){
-            return "Attention: Leave cannot be applied on passed dates.";
+            return "Attention: Annual leave cannot be applied on passed dates.";
+          }
+          if(calendar.isDateSmaller(date_from, next2)){
+            return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
           }
         }
 
@@ -409,7 +455,7 @@
             return "Attention: Maternity leave application shall be made not less than one (1) month prior to the date on which it is desired that maternity leave commences."
           }
           if(calendar.isDateSmaller(date_from, calendar.today())){
-            return "Attention: Leave cannot be applied in advance.";
+            return "Attention: Maternity leave cannot be applied in advance.";
           }
         }
 
@@ -419,10 +465,10 @@
           prev7 = calendar.getDateDb(prev7);
           console.log("A week bfr", prev7);
           if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
-            return "Attention: Leave must be applied within 7 days after the day of leave.";
+            return "Attention: Hospitalization leave must be applied within 7 days after the day of leave.";
           }
           if(calendar.isDateBigger(date_from, calendar.today())){
-            return "Attention: Leave cannot be applied in advance.";
+            return "Attention: Hospitalization leave cannot be applied in advance.";
           }
         }
 
@@ -436,25 +482,25 @@
           next2 = calendar.getDateDb(next2);
 
           if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
-            return "Attention: Leave must be applied within 3 days after the day of leave.";
+            return "Attention: Unpaid leave must be applied within 3 days after the day of leave.";
           }
           if(calendar.isDateBigger(date_from,next2) || calendar.isDateEqual(date_from,next2)){
-            return "Attention: Leave must be applied 2 days prior.";
+            return "Attention: Unpaid leave must be applied within 2 days before the day of leave.";
           }
         }
 
-        if(!(validation.isUnpaidLeave()) && !(validation.isHospitalizationLeave()) && !(validation.isMaternityLeave())){
+
           if(
-            (name == FC.date_from.name && calendar.isWeekend(date_from)) 
-            || 
+            (name == FC.date_from.name && calendar.isWeekend(date_from))
+            ||
             (name == FC.date_to.name && calendar.isWeekend(date_to))
           ){
             return `Selected date is a Weekend day. Please select another date.`;
           }
-        }
+
         if(
-          (name == FC.date_from.name && calendar.isHoliday(date_from)) 
-          || 
+          (name == FC.date_from.name && calendar.isHoliday(date_from))
+          ||
           (name == FC.date_to.name && calendar.isHoliday(date_to))
         ){
           return `Selected date is an announced Public Holiday. Please select another date.`;
@@ -508,12 +554,22 @@
             if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave()){
               total = calendar.getTotalDays(from, to);
             }
-            console.log("total",total);
-            _form.set(FC.total_days, total);
+            if(total > 60){
+                _form.set(FC.date_to, "");
+                _form.set(FC.total_days, "");
+            }
+            else if(total > 0 && total <= 60){
+                _form.set(FC.total_days, total);
+            }
           } else{
             _form.set(FC.total_days, "");
           }
         }
+      },
+      _attachment : function(name){
+          if(validation.isMarriageLeave() || validation.isSickLeave()){
+            _form.required(FC.reason);
+          }
       }
     }
 
@@ -567,7 +623,7 @@
       // ####################################
       // ## data generated from controller ##
       // user_id
-      // status 
+      // status
       // approver_id_1
       // approver_id_2
       // approver_id_3
@@ -581,13 +637,12 @@
 
     _form.disabled(FC.date_resume);
     _form.disabled(FC.total_days);
-  
+
 
   }
 
 </script>
 
 </section>
-
 
 @endsection

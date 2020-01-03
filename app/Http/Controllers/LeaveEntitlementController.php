@@ -33,10 +33,9 @@ class LeaveEntitlementController extends Controller
         //dd($allLeaveTypes[0]->name);
         $emp = $empType;
         //dd($emp->id);
-        $leaveEnt = LeaveEntitlement::orderBy('id','ASC')->where('emp_type_id', '=', $emp->id)->get();
+        $leaveEnt = LeaveEntitlement::orderBy('id', 'ASC')->where('emp_type_id', '=', $emp->id)->get();
         //dd($leaveEnt);
-        return view('leaveent.create')->with(compact('empType','allLeaveTypes', 'leaveEnt'));
-
+        return view('leaveent.create')->with(compact('empType', 'allLeaveTypes', 'leaveEnt'));
     }
 
     /**
@@ -56,62 +55,62 @@ class LeaveEntitlementController extends Controller
         $input = $request->all();
         //dd($input);
         //Loop thru each of it
-        foreach ($input as $key=>$val) {
-            
+        foreach ($input as $key => $val) {
+
             //To eliminate first entry which is token__
-            if(strpos($key,'leave_') === false){
+            if (strpos($key, 'leave_') === false) {
                 continue;
             }
             //Trim, only in get the id
-            $key = trim($key,"leave_");
+            $key = trim($key, "leave_");
 
             //Check for duplicate
-            $dupcheck = LeaveEntitlement::where('leave_type_id', '=', (int)$key)->where('emp_type_id', '=', $empType->id)->first();
+            $dupcheck = LeaveEntitlement::where('leave_type_id', '=', (int) $key)->where('emp_type_id', '=', $empType->id)->first();
             //If there is no duplicate,save as new one
-            if($dupcheck == null){
-                
+            if ($dupcheck == null) {
+
                 $le = new LeaveEntitlement;
                 $le->emp_type_id = $empType->id;
-                $le->leave_type_id = (int)$key;
-                $le->no_of_days = (int)$val;
+                $le->leave_type_id = (int) $key;
+                $le->no_of_days = (float) $val;
                 $le->save();
             }
             //If not, update.
-            else{
-                $dupcheck->no_of_days = (int)$val;
+            else {
+                $dupcheck->no_of_days = (float) $val;
                 $dupcheck->save();
                 // $message = 'Entitled leave for '.$empType->name.' updated succesfully';
                 // return redirect()->to('/emptype/create')->with('message', $message);
             }
             // dd($dupcheck->id);
-           
-            
-            
+
+
+
             //echo $key;
             // LeaveEntitlement::create([
             //     'emp_type_id' => (int)$empType->id,
             //     'leave_type_id' => (int)$key,
-            //     'no_of_days' => (int)$val,
+            //     'no_of_days' => (float)$val,
             // ]);
         }
-        
+
         // leave_1 => 4,
         // leave_2 => 5
         // leave_4 => 4
 
         //$leaveEnt = LeaveEntitlement::create(request(['name']));
-        
-        
-    // foreach($input as $in){
-    //      LeaveEntitlement::create([
-    //         'emp_type_id' => $empType->id,
-    //         'leave_type_id' => $request->leave_id[$key],
-    //         'date' => 
-    //         'cost' => $cost,
-    //         'trend' => 0
-    //     ]);
-    // }
-       
+
+
+        // foreach($input as $in){
+        //      LeaveEntitlement::create([
+        //         'emp_type_id' => $empType->id,
+        //         'leave_type_id' => $request->leave_id[$key],
+        //         'date' => 
+        //         'cost' => $cost,
+        //         'trend' => 0
+        //     ]);
+        // }
+
 
         return redirect()->to('/emptype/create')->with('message', 'Leave entitlement added succesfully');
     }
@@ -161,7 +160,8 @@ class LeaveEntitlementController extends Controller
         //
     }
 
-    protected function getAllLeaveTypes(){
+    protected function getAllLeaveTypes()
+    {
         return LeaveType::orderBy('id')->get();
     }
 }

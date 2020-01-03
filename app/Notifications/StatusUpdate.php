@@ -70,7 +70,7 @@ class StatusUpdate extends Notification
             }
             if($la->leave_type_id == "12"){
                 $subject = 'Leave Claim Application Denied';
-                $desc = 'Your replacement leave claim application status has been denied';
+                $desc = 'Your replacement leave claim application has been denied';
             }
             else if($la->status == 'DENIED_2'){
                 $currAuth = $la->approver_two->name;
@@ -85,7 +85,7 @@ class StatusUpdate extends Notification
             $desc = 'Your leave application has been approved';
             if($la->leave_type_id == "12"){
                 $subject = 'Leave Claim Application Approved';
-                $desc = 'Your replacement leave claim application status has been approved';
+                $desc = 'Your replacement leave claim application has been approved';
             }
             $stat = 'Approved';
         }

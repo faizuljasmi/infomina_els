@@ -8,7 +8,7 @@
                             @foreach($leaveEnt as $le)
                                 <div class="form-group col-md-6">
                                 <label for="{{$le->leave_type->name}}">{{$le->leave_type->name}}</label>
-                                <input class="form-control" type = "number" name="leave_{{$le->leave_type_id}}" value="{{isset($l->no_of_days) ? $l->no_of_days: '0'}}" />
+                                <input class="form-control" type = "number" step="0.5" name="leave_{{$le->leave_type_id}}" value="{{isset($l->no_of_days) ? $l->no_of_days: '0'}}" />
                                 </div>
                             @endforeach
                         @else
@@ -17,7 +17,7 @@
                                 @if($le->leave_type_id == $l->leave_type_id)
                                 <div class="form-group col-md-6">
                                 <label for="{{$le->leave_type->name}}">{{$le->leave_type->name}}</label>
-                                <input class="form-control" type = "number" name="leave_{{$le->leave_type_id}}" value="{{isset($l->no_of_days) ? $l->no_of_days: '0'}}" />
+                                <input class="form-control" type = "number" step="0.5" name="leave_{{$le->leave_type_id}}" value="{{isset($l->no_of_days) ? $l->no_of_days: '0'}}" />
                                 </div>
                                 @endif
                                 @endforeach

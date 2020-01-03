@@ -17,10 +17,11 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+        //check if authenticate && second is condition when we need to redirect i.e,
+        if(Auth::guard($guard)->check() && $request->route()->named('login') ) {
+            return redirect()->route('home');
         }
 
-        return $next($request);
+            return $next($request);
     }
 }

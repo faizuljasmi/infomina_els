@@ -45,7 +45,7 @@ class NewApplication extends Notification
             $reliefName = $la->relief_personnel->name;
         }
         else{
-            $reliefName = 'Null';
+            $reliefName = 'NA';
         }
         $url = url('/leave/apply/view/'.$la->id);
         //dd($la->user->name);

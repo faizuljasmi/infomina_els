@@ -11,15 +11,16 @@ let VanillaCalendar = (function() {
             if (el.attachEvent) el.attachEvent("on" + type, handler);
             else el.addEventListener(type, handler);
         }
+
         function removeEvent(el, type, handler) {
             if (!el) return;
             if (el.detachEvent) el.detachEvent("on" + type, handler);
             else el.removeEventListener(type, handler);
         }
         let opts = {
-            applied : [],
+            applied: [],
             holiday: [],
-            approved:[],
+            approved: [],
             selector: null,
             datesFilter: false,
             pastDates: true,
@@ -48,7 +49,8 @@ let VanillaCalendar = (function() {
             ],
             shortWeekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         };
-        for (let k in options) if (opts.hasOwnProperty(k)) opts[k] = options[k];
+        for (let k in options)
+            if (opts.hasOwnProperty(k)) opts[k] = options[k];
 
         let element = document.querySelector(opts.selector);
         if (!element) return;
@@ -147,17 +149,17 @@ let VanillaCalendar = (function() {
 
             let available_week_day = opts.availableWeekDays.filter(
                 f =>
-                    f.day === date.getDay() ||
-                    f.day === getWeekDay(date.getDay())
+                f.day === date.getDay() ||
+                f.day === getWeekDay(date.getDay())
             );
             let available_date = opts.availableDates.filter(
                 f =>
-                    f.date ===
-                    date.getFullYear() +
-                        "-" +
-                        String(date.getMonth() + 1).padStart("2", 0) +
-                        "-" +
-                        String(date.getDate()).padStart("2", 0)
+                f.date ===
+                date.getFullYear() +
+                "-" +
+                String(date.getMonth() + 1).padStart("2", 0) +
+                "-" +
+                String(date.getDate()).padStart("2", 0)
             );
 
             if (date.getDate() === 1) {
@@ -425,7 +427,7 @@ let VanillaCalendar = (function() {
                 return 1;
             }
 
-            let attempt = 20;
+            let attempt = 200;
             let nextDateDb = dateFrom;
             let total = 1;
             for (let i = 0; i < attempt; i++) {
@@ -449,7 +451,7 @@ let VanillaCalendar = (function() {
             if (dateFrom == dateTo) {
                 return 1;
             }
-            let attempt = 61;
+            let attempt = 200;
             let nextDateDb = dateFrom;
             let total = 1;
             for (let i = 0; i < attempt; i++) {
@@ -463,12 +465,12 @@ let VanillaCalendar = (function() {
             return total;
         };
 
-        this.today = function(){
-            return new Date();
-        }
-        /**
-         * @return dateObj
-         */
+        this.today = function() {
+                return new Date();
+            }
+            /**
+             * @return dateObj
+             */
         this.getNextWorkingDay = function(date) {
             date = this.getDateDb(date);
 
@@ -494,66 +496,64 @@ let VanillaCalendar = (function() {
         /**
          * @return dateObj
          */
-        this.getThreePrevWorkingDay = function(date){
+        this.getThreePrevWorkingDay = function(date) {
             date = this.getDateDb(date);
             let attempt = 20;
             let count = 0;
             let prevDateDb = date;
-            for(let i = 0; i < attempt; i++){
+            for (let i = 0; i < attempt; i++) {
                 let prevDay = this.prevDay(prevDateDb);
                 prevDateDb = getDateDb(prevDay);
-                if(isWeekend(prevDay)){
+                if (isWeekend(prevDay)) {
                     continue;
-                } else if(isHoliday(prevDay)){
+                } else if (isHoliday(prevDay)) {
                     continue;
-                } else{
+                } else {
                     count++;
-                    if(count == 3){
+                    if (count == 3) {
                         return prevDay
-                    }
-                    else{
+                    } else {
                         continue;
                     }
                 }
             }
         };
 
-         /**
+        /**
          * @return dateObj
          */
-        this.getPrevWeekWorkingDay = function(date){
+        this.getPrevWeekWorkingDay = function(date) {
             date = this.getDateDb(date);
             let attempt = 20;
             let count = 0;
             let prevDateDb = date;
-            for(let i = 0; i < attempt; i++){
+            for (let i = 0; i < attempt; i++) {
                 let prevDay = this.prevDay(prevDateDb);
                 prevDateDb = getDateDb(prevDay);
-                if(isWeekend(prevDay)){
+                if (isWeekend(prevDay)) {
                     continue;
-                } else if(isHoliday(prevDay)){
+                } else if (isHoliday(prevDay)) {
                     continue;
-                } else{
+                } else {
                     count++;
-                    if(count == 7){
+                    if (count == 7) {
                         return prevDay
-                    }
-                    else{
+                    } else {
                         continue;
                     }
                 }
             }
         };
 
-        this.nextMonth = function(dateDb){
+        this.nextMonth = function(dateDb) {
             return moment(dateDb, "YYYYMMDD")
-                .add(30,"days")
+                .add(30, "days")
                 .toDate();
         };
 
-        this.prevDay = function(dateDb){
+        this.prevDay = function(dateDb) {
             return moment(dateDb, "YYYYMMDD")
-                .subtract(1,"days")
+                .subtract(1, "days")
                 .toDate();
         };
 

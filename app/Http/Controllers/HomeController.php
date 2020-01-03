@@ -18,7 +18,8 @@ use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-    public function __construct(){
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
@@ -26,81 +27,82 @@ class HomeController extends Controller
      * Show application dashboard
      */
 
-    public function index(){
+    public function index()
+    {
 
         //Get current user who is logged in
         $user = auth()->user();
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        $leaveEnts = LeaveEntitlement::orderBy('leave_type_id','ASC')->where('emp_type_id','=',$user->emp_type_id)->get();
+        $leaveEnts = LeaveEntitlement::orderBy('leave_type_id', 'ASC')->where('emp_type_id', '=', $user->emp_type_id)->get();
         //dd($leaveEnts);
-        $leaveEarns = LeaveEarning::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $leaveEarns = LeaveEarning::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //$leaveApps = $user->leave_applications;
-        $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
-        $leaveBal = LeaveBalance::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
+        $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
+        $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
-        $leaveTak = TakenLeave::orderBy('leave_type_id','ASC')->where('user_id','=',$user->id)->get();
-        $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where('user_id', '=', $user->id)->paginate(3);
-        $pendLeaves = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
+        $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
+        $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where('user_id', '=', $user->id)->paginate(3);
+        $pendLeaves = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
                 ->where('user_id', $user->id);
-        })->orWhere(function($query) use ($user){
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_2')
-                ->where('user_id', $user->id);	
-        })->orWhere(function($query)use ($user) {
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('user_id', $user->id);
         })->simplePaginate(5);
 
-        $leaveHist = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
+        $leaveHist = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('user_id', $user->id);
-        })->orWhere(function($query) use ($user){
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'CANCELLED')
-                ->where('user_id', $user->id);	
-        })->orWhere(function($query)use ($user) {
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_1')
                 ->where('user_id', $user->id);
-            })->orWhere(function($query)use ($user) {
-                $query->where('status', 'DENIED_2')
-                    ->where('user_id', $user->id);
-                })->orWhere(function($query)use ($user) {
-                    $query->where('status', 'DENIED_3')
-                        ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'DENIED_2')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'DENIED_3')
+                ->where('user_id', $user->id);
         })->simplePaginate(5);
 
         //Get all holidays dates
         $holidays = Holiday::all();
-        $holsPaginated = Holiday::orderBy('date_from','ASC')->get();
+        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get();
         $all_dates = array();
-        foreach($holidays as $hols){
+        foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            while ($startDate->lte($endDate)){
-                $dates = str_replace("-","",$startDate->toDateString());
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
                 $all_dates[] = $dates;
                 $startDate->addDay();
             }
         }
-        
+
 
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
-        foreach($leaveApps as $la){
+        foreach ($leaveApps as $la) {
             $startDate = new Carbon($la->date_from);
-            $endDate = new Carbon ($la->date_to);
-            if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
-                while ($startDate->lte($endDate)){
-                    $dates = str_replace("-","",$startDate->toDateString());
+            $endDate = new Carbon($la->date_to);
+            if ($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3') {
+                while ($startDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $startDate->toDateString());
                     $applied_dates[] = $dates;
                     $startDate->addDay();
                 }
             }
-            if($la->status == 'APPROVED'){
-                while ($startDate->lte($endDate)){
-                    $dates = str_replace("-","",$startDate->toDateString());
+            if ($la->status == 'APPROVED') {
+                while ($startDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $startDate->toDateString());
                     $approved_dates[] = $dates;
                     $startDate->addDay();
                 }
@@ -108,91 +110,87 @@ class HomeController extends Controller
         }
         //dd($approved_dates);
 
-        return view('home')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps', 'leaveEnts','leaveEarns','broughtFwd','leaveBal','leaveTak','all_dates','applied_dates','approved_dates','holidays','holsPaginated','pendLeaves','leaveHist'));
+        return view('home')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'leaveEnts', 'leaveEarns', 'broughtFwd', 'leaveBal', 'leaveTak', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'holsPaginated', 'pendLeaves', 'leaveHist'));
     }
 
     /**
      * Show admin dashboard
      */
 
-    public function admin(){
+    public function admin()
+    {
         //Get current user who is logged in
         $user = auth()->user();
-        
+
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
         //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
-        $leaveApps = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
+        $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
                 ->where('approver_id_1', $user->id);
-        })->orWhere(function($query) use ($user){
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_2')
-                ->where('approver_id_2', $user->id);	
-        })->orWhere(function($query)use ($user) {
+                ->where('approver_id_2', $user->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('approver_id_3', $user->id);
         })->simplePaginate(5);
 
-        $allLeaveApps = LeaveApplication::orderBy('date_from','ASC')->get();
+        $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
 
-        $leaveHist = LeaveApplication::orderBy('created_at','DESC')->where(function ($query) use ($user) {
+        $leaveHist = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('approver_id_1', $user->id);
-        })->orWhere(function($query) use ($user){
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
-                ->where('approver_id_2', $user->id);	
-        })->orWhere(function($query)use ($user) {
+                ->where('approver_id_2', $user->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('approver_id_3', $user->id);
         })->simplePaginate(5);
 
         $holidays = Holiday::all();
         $all_dates = array();
-        foreach($holidays as $hols){
-          
+        foreach ($holidays as $hols) {
+
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            while ($startDate->lte($endDate)){
-                $dates = str_replace("-","",$startDate->toDateString());
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
                 $all_dates[] = $dates;
                 $startDate->addDay();
             }
         }
-    
+
 
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
-        foreach($allLeaveApps as $la){
-            
+        foreach ($allLeaveApps as $la) {
+
             $startDate = new Carbon($la->date_from);
-            $endDate = new Carbon ($la->date_to);
-            if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
-                while ($startDate->lte($endDate)){
-                    $dates = str_replace("-","",$startDate->toDateString());
+            $endDate = new Carbon($la->date_to);
+            if ($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3') {
+                while ($startDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $startDate->toDateString());
                     $applied_dates[] = $dates;
                     $startDate->addDay();
                 }
             }
-            if($la->status == 'APPROVED'){
-                while ($startDate->lte($endDate)){
-                    $dates = str_replace("-","",$startDate->toDateString());
+            if ($la->status == 'APPROVED') {
+                while ($startDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $startDate->toDateString());
                     $approved_dates[] = $dates;
                     $startDate->addDay();
                 }
             }
         }
 
-      
-        
-        
-        //dd($leaveApps);
-        return view('admin')->with(compact('user','emptype','empTypes','leaveTypes','leaveApps','leaveHist','all_dates','applied_dates','approved_dates','holidays'));
-    }
 
-    public function getProfile() {
-        $user = Auth::user();
-        return view("admin_panel.info_views.users.user_profile")->with("user", $user);
-      }
+
+
+        //dd($leaveApps);
+        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays'));
+    }
 }

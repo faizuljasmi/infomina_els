@@ -7,6 +7,7 @@
 @section('adminlte_css')
     @stack('css')
     @yield('css')
+
 @stop
 
 @section('classes_body', 'login-page')
@@ -87,6 +88,12 @@
             </div>
         </div>
     </div>
+<style>
+    .login-page {
+background: url("images/background.gif") no-repeat center center fixed;
+background-size: cover;
+}
+</style>
 @stop
 
 @section('adminlte_js')
@@ -94,3 +101,4 @@
     @stack('js')
     @yield('js')
 @stop
+

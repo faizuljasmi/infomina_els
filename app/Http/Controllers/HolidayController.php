@@ -17,18 +17,18 @@ class HolidayController extends Controller
     {
         $holidays = Holiday::all();
         $all_dates = array();
-        foreach($holidays as $hols){
+        foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
             $all_dates = [];
-            while ($startDate->lte($endDate)){
-                $dates = str_replace("-","",$startDate->toDateString());
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
                 $all_dates[] = $dates;
                 $startDate->addDay();
             }
         }
         //dd($all_dates);
-        return view('holiday.index')->with(compact('holidays','all_dates'));
+        return view('holiday.index')->with(compact('holidays', 'all_dates'));
     }
 
 
@@ -48,7 +48,7 @@ class HolidayController extends Controller
         $hol->total_days = $request->total_days;
         $hol->save();
 
-        return redirect()->to('/holiday/view')->with('message',$hol->name.' created succesfully.');
+        return redirect()->to('/holiday/view')->with('message', $hol->name . ' created succesfully.');
     }
 
     /**
@@ -77,7 +77,7 @@ class HolidayController extends Controller
         $holiday->total_days = $request->total_days;
         $holiday->update();
 
-        return redirect()->to('/holiday/view')->with('message', $holiday->name.' updated succesfully.');
+        return redirect()->to('/holiday/view')->with('message', $holiday->name . ' updated succesfully.');
     }
 
     /**
@@ -90,6 +90,6 @@ class HolidayController extends Controller
     {
         $holName = $holiday->name;
         $holiday->delete();
-        return back()->with('message', $holName.' deleted succesfully');
+        return back()->with('message', $holName . ' deleted succesfully');
     }
 }
