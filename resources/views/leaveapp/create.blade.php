@@ -3,290 +3,347 @@
 
 @section('content_header')
 @if(session()->has('message'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="icon fa fa-check"></i>
-            {{ session()->get('message') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-             <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-    <h1 class="m-0 text-dark">Apply Leave</h1>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="icon fa fa-check"></i>
+    {{ session()->get('message') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+<h1 class="m-0 text-dark">Apply Leave</h1>
 @endsection
 
 
 <section id="leaveapp-create">
-  <section class="content">
-    <div class="container-fluid">
+    <section class="content">
+        <div class="container-fluid">
 
-      <div class="row">
+            <div class="row">
 
-        <!-- Left Col -->
-        <section class="col-lg-6 connectedSortable ui-sortable">
-          <form class="needs-validation" novalidate method="POST" action="{{route('leaveapp_store')}}" enctype="multipart/form-data" id="createApp">
-          @csrf
-            <!-- Application Form -->
-            <div class="card card-primary">
-              <div class="card-header bg-teal">
-                <strong>Application Form</strong>
-              </div>
-              <div class="card-body">
+                <!-- Left Col -->
+                <section class="col-lg-6 connectedSortable ui-sortable">
+                    <form class="needs-validation" novalidate method="POST" action="{{route('leaveapp_store')}}"
+                        enctype="multipart/form-data" id="createApp">
+                        @csrf
+                        <!-- Application Form -->
+                        <div class="card card-primary">
+                            <div class="card-header bg-teal">
+                                <strong>Application Form</strong>
+                            </div>
+                            <div class="card-body">
 
-                <!-- Leave Type -->
-                <div class="form-group">
-                  <label>Leave Type <font color="red">*</font></label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-star"></i>
-                      </span>
-                    </div>
-                <select class="form-control" name="leave_type_id"  id="leave_type_id" onchange="clearDates()" required>
-                      <option value="">Choose Leave</option>
-                      @foreach($leaveType as $lt)
-                      @if($lt->name == 'Replacement')
-                      @else
-                      <option value="{{$lt->id}}" {{ (old('leave_type_id') == $lt->id ? "selected":"") }}>{{$lt->name}}</option>
-                      @endif
-                      @endforeach
-                    </select>
-                    <div class="invalid-feedback">
-                        Please choose a leave type
-                      </div>
-                      <div class="valid-feedback">
-                        Looks good!
-                      </div>
-                  </div>
-                </div>
+                                <!-- Leave Type -->
+                                <div class="form-group">
+                                    <label>Leave Type <font color="red">*</font></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="far fa-star"></i>
+                                            </span>
+                                        </div>
+                                        <select class="form-control" name="leave_type_id" id="leave_type_id"
+                                            onchange="clearDates()" required>
+                                            <option value="">Choose Leave</option>
+                                            @foreach($leaveType as $lt)
+                                            @if($lt->name == 'Replacement')
+                                            @else
+                                            <option value="{{$lt->id}}"
+                                                {{ (old('leave_type_id') == $lt->id ? "selected":"") }}>{{$lt->name}}
+                                            </option>
+                                            @endif
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please choose a leave type
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                </div>
 
-                <!-- Leave Variation -->
-                <div class="form-group">
-                  <label>Full/Half Day <font color="red">*</font></label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-clock"></i>
-                      </span>
-                    </div>
-                <select class="form-control" name="apply_for" value="{{old('apply_for')}}">
-                      <option value="full-day"  {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
-                      <option value="half-day-am" {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM</option>
-                      <option value="half-day-pm" {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM</option>
-                    </select>
-                  </div>
-                </div>
-
-
-                <!-- Date From -->
-                <div class="form-group">
-                  <label>Date From <font color="red">*</font></label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-calendar-day"></i>
-                      </span>
-                    </div>
-                <input type="date" class="form-control float-right" name="date_from" id="FromDate" value="{{old('date_from')}}">
-                  </div>
-                </div>
-
-                <!-- Date From -->
-                <div class="form-group">
-                  <label>Date To <font color="red">*</font></label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-calendar-day"></i>
-                      </span>
-                    </div>
-                    <input type="date" class="form-control float-right" name="date_to" id="ToDate" value="{{old('date_to')}}">
-                  </div>
-                </div>
-
-                <!-- Total Days -->
-                <div class="form-group">
-                  <label>Total Days</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-check"></i>
-                      </span>
-                    </div>
-                    <input type="number" class="form-control float-right" name="total_days" value="{{old('total_days')}}">
-                  </div>
-                </div>
-
-                <!-- Date Resume -->
-                <div class="form-group">
-                  <label>Date Resume</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
-                    </div>
-                    <input type="date" class="form-control float-right" name="date_resume" id="ResumeDate" value="{{old('date_resume')}}">
-                  </div>
-                </div>
+                                <!-- Leave Variation -->
+                                <div class="form-group">
+                                    <label>Full/Half Day <font color="red">*</font></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="far fa-clock"></i>
+                                            </span>
+                                        </div>
+                                        <select class="form-control" name="apply_for" value="{{old('apply_for')}}">
+                                            <option value="full-day"
+                                                {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
+                                            <option value="half-day-am"
+                                                {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM
+                                            </option>
+                                            <option value="half-day-pm"
+                                                {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
 
 
-                <!-- Reason -->
-                <div class="form-group">
-                  <label>Reason <font color="red">*</font></label>
-                  <textarea class="form-control" rows="5" name="reason" value="{{old('reason')}}" required></textarea>
-                  <div class="invalid-feedback">
-                    Reason is required
-                  </div>
-                </div>
+                                <!-- Date From -->
+                                <div class="form-group">
+                                    <label>Date From <font color="red">*</font></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar-day"></i>
+                                            </span>
+                                        </div>
+                                        <input type="date" class="form-control float-right" name="date_from"
+                                            id="FromDate" value="{{old('date_from')}}">
+                                    </div>
+                                </div>
 
-                <!-- File Attachment -->
-                <div class="form-group">
-                  <label>Attachment <small class="text-muted"><font color="red">Required for Sick & Marriage Leave. </font></br>Format: jpg, jpeg, png, pdf. Max size: 2MB</small></label>
-                  <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment" id="attachment" value="{{old('attachment')}}">
-                    <div class="invalid-feedback">
-                        Attachment is required for this type of leave
-                      </div>
-                  </div>
-                </div>
+                                <!-- Date From -->
+                                <div class="form-group">
+                                    <label>Date To <font color="red">*</font></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar-day"></i>
+                                            </span>
+                                        </div>
+                                        <input type="date" class="form-control float-right" name="date_to" id="ToDate"
+                                            value="{{old('date_to')}}">
+                                    </div>
+                                </div>
 
-                <!-- Relief Personel -->
-                <div class="form-group">
-                  <label>Relief Personel <font color="red">*</font></label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
-                    </div>
-                    <select class="form-control" name="relief_personnel_id" required>
-                      <option selected value="">Choose Person</option>
-                      @foreach($groupMates as $emp)
-                      <option value="{{$emp->id}}" {{ (old('relief_personnel_id') == $emp->id ? "selected":"") }}>{{$emp->name}}</option>
-                      @endforeach
-                    </select>
+                                <!-- Total Days -->
+                                <div class="form-group">
+                                    <label>Total Days</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="far fa-calendar-check"></i>
+                                            </span>
+                                        </div>
+                                        <input type="number" class="form-control float-right" name="total_days"
+                                            value="{{old('total_days')}}">
+                                    </div>
+                                </div>
 
-                  </div>
-                </div>
+                                <!-- Date Resume -->
+                                <div class="form-group">
+                                    <label>Date Resume</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="far fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                        <input type="date" class="form-control float-right" name="date_resume"
+                                            id="ResumeDate" value="{{old('date_resume')}}">
+                                    </div>
+                                </div>
 
-                <!-- Emergency Contact Name-->
-                <div class="form-group">
-                  <label>Emergency Contact Name</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}" readonly>
-                  </div>
-                </div>
 
-                <!-- Emergency Contact No -->
-                <div class="form-group">
-                  <label>Emergency Contact No</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-phone"></i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}" readonly>
-                  </div>
-                </div>
+                                <!-- Reason -->
+                                <div class="form-group">
+                                    <label>Reason <font color="red">*</font></label>
+                                    <textarea class="form-control" rows="5" name="reason" id="reason"
+                                        value="{{old('reason')}}" minlength="5" required></textarea>
+                                    <h6 class="float-right" id="count_reason"></h6>
+                                    <div class="invalid-feedback">
+                                        Reason is required
+                                    </div>
+                                </div>
 
-                <div class="card-footer">
-                    <strong><font color="red">* </font>Required</strong>
-                </div>
+                                <!-- File Attachment -->
+                                <div class="form-group">
+                                    <label>Attachment <small class="text-muted">
+                                            <font color="red">Required for Sick & Marriage Leave. </font></br>Format:
+                                            jpg, jpeg, png, pdf. Max size: 2MB
+                                        </small></label>
+                                    <div class="input-group">
+                                        <input type="file" class="form-control-file" name="attachment" id="attachment"
+                                            value="{{old('attachment')}}">
+                                        <div class="invalid-feedback">
+                                            Attachment is required for this type of leave
+                                        </div>
+                                    </div>
+                                </div>
 
-                <!-- $leaveAuth->authority_1_id -->
-                <input style="display:none;" type="text" name="approver_id_1" value="{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_1_id:''}}" />
-                <input style="display:none;" type="text" name="approver_id_2" value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
-                <input style="display:none;" type="text" name="approver_id_3" value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
+                                <!-- Relief Personel -->
+                                <div class="form-group">
+                                    <label>Relief Personel <font color="red">*</font></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-user"></i>
+                                            </span>
+                                        </div>
+                                        <select class="form-control" name="relief_personnel_id" required>
+                                            <option selected value="">Choose Person</option>
+                                            @foreach($groupMates as $emp)
+                                            <option value="{{$emp->id}}"
+                                                {{ (old('relief_personnel_id') == $emp->id ? "selected":"") }}>
+                                                {{$emp->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please select a relief personnel
+                                         </div>
+                                    </div>
+                                </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-success float-right">Submit</button>
-              </div>
-            </div>
-          </form>
-        </section>
+                                <!-- Emergency Contact Name-->
+                                <div class="form-group">
+                                    <label>Emergency Contact Name</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-user"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text" class="form-control float-right"
+                                            name="emergency_contact_name" value="{{$user->emergency_contact_name}}" required
+                                            {{isset($user->emergency_contact_name) ? "readonly":''}}>
+                                            <div class="invalid-feedback">
+                                                Please update your emergency contact at "Edit My Profile" or fill it in here
+                                            </div>
+                                    </div>
+                                </div>
 
-        <!-- Right Col -->
-        <section class="col-lg-5 connectedSortable ui-sortable">
+                                <!-- Emergency Contact No -->
+                                <div class="form-group">
+                                    <label>Emergency Contact No</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-phone"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text" class="form-control float-right" name="emergency_contact_no"
+                                            value="{{$user->emergency_contact_no}}" required
+                                            {{isset($user->emergency_contact_no) ? "readonly":''}}>
+                                            <div class="invalid-feedback">
+                                                Please update your emergency contact at "Edit My Profile" or fill it in here
+                                            </div>
+                                    </div>
+                                </div>
 
-          <div class="row">
-            <div class="col-lg-12 connectedSortable ui-sortable">
-              <!-- Vanilla Calendar -->
-              <div class="card">
-                <div class="card-header bg-teal">
-                  <strong>Calendar </strong><i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="For your reference, other than the holidays, this calendar shows your groupmates' applied & approved leaves."></i>
-                </div>
-                <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
-              </div>
-            </div>
-            <div class="col-lg-12 connectedSortable ui-sortable">
+                                <div class="card-footer">
+                                    <strong>
+                                        <font color="red">* </font>Required
+                                    </strong>
+                                </div>
+
+                                <!-- $leaveAuth->authority_1_id -->
+                                <input style="display:none;" type="text" name="approver_id_1"
+                                    value="{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_1_id:''}}" />
+                                <input style="display:none;" type="text" name="approver_id_2"
+                                    value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
+                                <input style="display:none;" type="text" name="approver_id_3"
+                                    value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-success float-right">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Right Col -->
+                <section class="col-lg-5 connectedSortable ui-sortable">
+
+                    <div class="row">
+                        <div class="col-lg-12 connectedSortable ui-sortable">
+                            <!-- Vanilla Calendar -->
+                            <div class="card">
+                                <div class="card-header bg-teal">
+                                    <strong>Calendar </strong><i class="fas fa-info-circle" data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="For your reference, other than the holidays, this calendar shows your groupmates' applied & approved leaves."></i>
+                                </div>
+                                <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 connectedSortable ui-sortable">
                             <!-- Approval Authorities -->
                             <div class="card">
-                <div class="card-header bg-teal">
-                  <strong>Approval Authorities</strong>
-                </div>
-                <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
-                  <div class="card-body">
-                    <table class="table table-bordered">
-                      <tr>
-                        <th>Level</th>
-                        <th>Name</th>
-                      </tr>
-                      <tr>
-                        <td>1</td>
-                        <td>{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_one->name:'NA'}}</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_two->name:'NA'}}</td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td>{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_three->name:'NA'}}</td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
+                                <div class="card-header bg-teal">
+                                    <strong>Approval Authorities</strong>
+                                </div>
+                                <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
+                                    <div class="card-body">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>Level</th>
+                                                <th>Name</th>
+                                            </tr>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_one->name:'NA'}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_two->name:'NA'}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_three->name:'NA'}}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 connectedSortable ui-sortable">
+                                <!-- Leaves Balance -->
+                                <div class="card">
+                                    <div class="card-header bg-teal">
+                                        <strong>Leave Balances</strong>
+                                    </div>
+                                    <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                @foreach($leaveBal as $lb)
+                                                <tr>
+                                                    <th>{{$lb->leave_type->name}}</th>
+                                                    <td>{{$lb->no_of_days}}</td>
+                                                </tr>
+                                                @endforeach
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+
             </div>
 
-            <div class="col-lg-6 connectedSortable ui-sortable">
-              <!-- Leaves Balance -->
-              <div class="card">
-                <div class="card-header bg-teal">
-                  <strong>Leave Balances</strong>
-                </div>
-                <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
-                  <div class="card-body">
-                    <table class="table table-bordered">
-                      @foreach($leaveBal as $lb)
-                      <tr>
-                        <th>{{$lb->leave_type->name}}</th>
-                        <td>{{$lb->no_of_days}}</td>
-                      </tr>
-                      @endforeach
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-      </div>
+        </div>
+    </section>
 
-  </section>
+    <script>
+        $(document).ready(MainLeaveApplicationCreate);
 
+  var text_max = 5;
+$('#count_reason').html(text_max + ' remaining');
 
-  </div>
-
-  </div>
-</section>
-
-<script>
-  $(document).ready(MainLeaveApplicationCreate);
+$('#reason').keyup(function() {
+  var text_length = $('#reason').val().length;
+  var text_remaining = text_max - text_length;
+    if(text_remaining < 0){
+        $('#count_reason').html('Looks good!');
+    }
+    else{
+  $('#count_reason').html(text_remaining + ' remaining');
+    }
+});
 
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (function() {
@@ -641,7 +698,7 @@
 
   }
 
-</script>
+    </script>
 
 </section>
 

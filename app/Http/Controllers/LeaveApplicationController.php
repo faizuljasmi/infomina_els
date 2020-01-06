@@ -36,6 +36,9 @@ class LeaveApplicationController extends Controller
 
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
+        if($leaveAuth == null){
+            return redirect('home')->with('error','Your approval authorities have not been set yet by the HR Admin. Please contact the HR Admin.');
+        }
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
@@ -96,9 +99,13 @@ class LeaveApplicationController extends Controller
             $query->where('leave_type_id', '=', $request->leave_type_id)
                 ->where('user_id', '=', $user->id);
         })->first();
+
+        //If insufficient balance
         if ($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12') {
             return redirect()->to('/leave/apply')->with('message', 'Your have insufficient leave balance. Please contact HR for more info.');
         }
+
+       //Check leave authority
 
         $appCheck = LeaveApplication::where('user_id',$user->id)->get();
         //Get all leave applications date
@@ -177,7 +184,7 @@ class LeaveApplicationController extends Controller
 
         // if validation fails
         if ($validator->fails()) {
-            return redirect()->to('/leave/apply')->with('message', 'Your file attachment format is invalid. Application is not submitted');
+            return redirect()->to('/leave/apply')->with('message', 'Your file attachment is invalid. Application is not submitted');
         }
         //If validation passes and has a file. Not necessary to check but just to be safe
         if ($request->hasFile('attachment')) {

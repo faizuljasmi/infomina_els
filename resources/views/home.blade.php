@@ -12,6 +12,16 @@
   </button>
 </div>
 @endif
+
+@if(session()->has('error'))
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="icon fa fa-exclamation-triangle"></i>
+    {{ session()->get('error') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
 <h6 class="float-right">Hello, <strong>{{$user->name}}</strong>
   @if($user->user_type == 'Admin')
   <span class="badge badge-info">{{$user->user_type}}</span>
