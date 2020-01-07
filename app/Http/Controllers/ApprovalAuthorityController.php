@@ -1,6 +1,15 @@
 <?php
 
+
 namespace App\Http\Controllers;
+
+/**
+ * @author Faizul Jasmi
+ * @email faizul.jasmi@infomina.com.my
+ * @create date 2020-01-07 09:03:50
+ * @modify date 2020-01-07 09:03:50
+ * @desc [description]
+ */
 
 use App\ApprovalAuthority;
 use Illuminate\Http\Request;
@@ -25,7 +34,7 @@ class ApprovalAuthorityController extends Controller
      */
     public function create(User $user)
     {
-        
+
     }
 
     /**
@@ -40,7 +49,7 @@ class ApprovalAuthorityController extends Controller
         $user_id = $user->id;
         //dd($request->authority_1_id);
         //$approvalAuth = ApprovalAuthority::create(request(['user_id','authority_1_id','authority_2_id','authority_3_id']));
-        
+
         //Create new instance of ApprvAuth
         $aa = new ApprovalAuthority;
         //Assign all attributes

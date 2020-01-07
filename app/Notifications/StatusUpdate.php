@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @author Faizul Jasmi
+ * @email faizul.jasmi@infomina.com.my
+ * @create date 2020-01-07 09:03:50
+ * @modify date 2020-01-07 09:03:50
+ * @desc [description]
+ */
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -46,12 +54,12 @@ class StatusUpdate extends Notification
 
             $subject = 'Leave Application Status Update';
             $desc = 'Your leave application status has been updated';
-            if($la->status == 'PENDING_1'){
-                $currAuth = $la->approver_one->name;
-            }
             if($la->leave_type_id == "12"){
                 $subject = 'Leave Claim Application Status Update';
                 $desc = 'Your replacement leave claim application status has been updated';
+            }
+            if($la->status == 'PENDING_1'){
+                $currAuth = $la->approver_one->name;
             }
             else if($la->status == 'PENDING_2'){
                 $currAuth = $la->approver_two->name;
@@ -59,18 +67,19 @@ class StatusUpdate extends Notification
             else if($la->status == 'PENDING_3'){
                 $currAuth = $la->approver_three->name;
             }
-            $stat = 'Waiting approval by '.$currAuth;  
+            $stat = 'Waiting approval by '.$currAuth;
         }
         else if($la->status == 'DENIED_1'|| $la->status == 'DENIED_2'|| $la->status == 'DENIED_3' ){
-            
+
             $subject = 'Leave Application Denied';
             $desc = 'Your leave application has been denied';
-            if($la->status == 'DENIED_1'){
-                $currAuth = $la->approver_one->name;
-            }
+
             if($la->leave_type_id == "12"){
                 $subject = 'Leave Claim Application Denied';
                 $desc = 'Your replacement leave claim application has been denied';
+            }
+            if($la->status == 'DENIED_1'){
+                $currAuth = $la->approver_one->name;
             }
             else if($la->status == 'DENIED_2'){
                 $currAuth = $la->approver_two->name;
@@ -102,7 +111,7 @@ class StatusUpdate extends Notification
             ->line('Total day(s): '.$la->total_days)
             ->line('Reason: '.$la->reason)
             // ->action('View application', $url)
-            ->line('Note: Your claimed replacement leave will be added to your total balance of Annual Leave')
+            ->line('Note: Once approved, your claimed replacement leave will be added to your total balance of Annual Leave')
             ->line('Have a nice day!');
         }
 
@@ -121,7 +130,7 @@ class StatusUpdate extends Notification
         ->line('Emergency Contact: '.$la->emergency_contact)
         // ->action('View application', $url)
         ->line('Have a nice day!');
-    
+
     }
 
     /**

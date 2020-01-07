@@ -16,7 +16,7 @@ class CreateApprovalAuthoritiesTable extends Migration
         Schema::create('approval_authorities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->unique();
-            $table->unsignedBigInteger('authority_1_id')->nullable();
+            $table->unsignedBigInteger('authority_1_id');
             $table->unsignedBigInteger('authority_2_id')->nullable();
             $table->unsignedBigInteger('authority_3_id')->nullable();
             $table->timestamps();

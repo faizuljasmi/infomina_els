@@ -18,180 +18,235 @@
 <section id="leaveapp-create">
   <section class="content">
     <div class="container-fluid">
+
     @if($leaveApplication->leave_type_id != '12')
       <div class="row">
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
-          <form method="POST" action="{{route('update_application', $leaveApplication)}}" enctype="multipart/form-data">
-          @csrf
+          <form class="needs-validation" novalidate method="POST" action="{{route('update_application', $leaveApplication)}}" enctype="multipart/form-data" id ="createApp">
+            @csrf
             <!-- Application Form -->
             <div class="card card-primary">
-              <div class="card-header bg-teal">
-                <strong>Application Form</strong>
-              </div>
-              <div class="card-body">
+                <div class="card-header bg-teal">
+                    <strong>Application Form</strong>
+                </div>
+                <div class="card-body">
 
-                <!-- Leave Type -->
-                <fieldset disabled>
-                <div class="form-group">
-                  <label>Leave Type</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-star"></i>
-                      </span>
+                    <!-- Leave Type -->
+                    <div class="form-group">
+                        <label>Leave Type <font color="red">*</font></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-star"></i>
+                                </span>
+                            </div>
+                            <select class="form-control" name="leave_type_id" id="leave_type_id"
+                                onchange="clearDates()" required>
+                                <option value="">Choose Leave</option>
+                                @foreach($leaveType as $lt)
+                                @if($lt->name == 'Replacement')
+                                @else
+                                <option value="{{$lt->id}}"
+                                    {{ ($leaveApplication->leave_type_id == $lt->id ? "selected":"") }}>{{$lt->name}}
+                                </option>
+                                @endif
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Please choose a leave type
+                            </div>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        </div>
                     </div>
-                    <select class="form-control" name="leave_type_id">
-                      <option value="">Choose Leave</option>
-                      @foreach($leaveType as $lt)  
-                      <option value="{{$lt->id}}" {{isset($lt->id) && $leaveApplication->leave_type_id == $lt->id ? 'selected':''}}>{{$lt->name}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-                </fieldset>
 
-                <!-- Leave Variation -->
-                <div class="form-group">
-                  <label>Apply For</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-clock"></i>
-                      </span>
+                    <!-- Leave Variation -->
+                    <div class="form-group">
+                        <label>Full/Half Day <font color="red">*</font></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-clock"></i>
+                                </span>
+                            </div>
+                            <select class="form-control" name="apply_for" value="{{old('apply_for')}}">
+                                <option value="full-day"
+                                    {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
+                                <option value="half-day-am"
+                                    {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM
+                                </option>
+                                <option value="half-day-pm"
+                                    {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM
+                                </option>
+                            </select>
+                        </div>
                     </div>
-                    <select class="form-control" name="apply_for">
-                      <option value="full-day">Full Day</option>
-                      <option value="half-day-am">Half Day AM</option>
-                      <option value="half-day-pm">Half Day PM</option>
-                    </select>
-                  </div>
-                </div>
 
 
-                <!-- Date From -->
-                <div class="form-group">
-                  <label>Date From</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-calendar-day"></i>
-                      </span>
+                    <!-- Date From -->
+                    <div class="form-group">
+                        <label>Date From <font color="red">*</font></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fa fa-calendar-day"></i>
+                                </span>
+                            </div>
+                            <input type="date" class="form-control float-right" name="date_from"
+                                id="FromDate" value="{{$leaveApplication->date_from}}">
+                        </div>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_from" value="{{$leaveApplication->date_from}}">
-                  </div>
-                </div>
 
-                <!-- Date From -->
-                <div class="form-group">
-                  <label>Date To</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-calendar-day"></i>
-                      </span>
+                    <!-- Date From -->
+                    <div class="form-group">
+                        <label>Date To <font color="red">*</font></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fa fa-calendar-day"></i>
+                                </span>
+                            </div>
+                            <input type="date" class="form-control float-right" name="date_to" id="ToDate"
+                                value="{{$leaveApplication->date_to}}">
+                        </div>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_to" value="{{isset($leaveApplication->date_to) ? $leaveApplication->date_to:''}}">
-                  </div>
-                </div>
 
-                <!-- Total Days -->
-                <div class="form-group">
-                  <label>Total Days</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-check"></i>
-                      </span>
+                    <!-- Total Days -->
+                    <div class="form-group">
+                        <label>Total Days</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-check"></i>
+                                </span>
+                            </div>
+                            <input type="number" class="form-control float-right" name="total_days"
+                                value="{{$leaveApplication->total_days}}">
+                        </div>
                     </div>
-                    <input type="number" class="form-control float-right" name="total_days" value="$leaveApplication->total_days">
-                  </div>
-                </div>
 
-                <!-- Date Resume -->
-                <div class="form-group">
-                  <label>Date Resume</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
+                    <!-- Date Resume -->
+                    <div class="form-group">
+                        <label>Date Resume</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
+                            </div>
+                            <input type="date" class="form-control float-right" name="date_resume"
+                                id="ResumeDate" value="{{$leaveApplication->date_resume}}">
+                        </div>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_resume" value="$leaveApplication->date_resume">
-                  </div>
-                </div>
 
 
-                <!-- Reason -->
-                <div class="form-group">
-                  <label>Reason</label>
-                  <textarea class="form-control" rows="5" name="reason" >{{isset($leaveApplication->reason) ? $leaveApplication->reason:''}}</textarea>
-                </div>
-
-                <!-- File Attachment -->
-                <div class="form-group">
-                  <label>Attachment <small class="text-muted">Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
-                  <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment" id="attachment" value="{{isset($leaveApplication->attachment) ? $leaveApplication->attachment:''}}">
-                    <span class="text-danger"> {{ $errors->first('attachment') }}</span>
-                  </div>
-                </div>
-
-                <!-- Relief Personel -->
-                <div class="form-group">
-                  <label>Relief Personel</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
+                    <!-- Reason -->
+                    <div class="form-group">
+                        <label>Reason <font color="red">*</font></label>
+                        <textarea class="form-control" rows="5" name="reason" id="reason"
+                            value="{{$leaveApplication->reason}}" minlength="5" required></textarea>
+                        <h6 class="float-right" id="count_reason"></h6>
+                        <div class="invalid-feedback">
+                            Reason is required
+                        </div>
                     </div>
-                    <select class="form-control" name="relief_personnel_id">
-                      <option selected>Choose Person</option>
-                      @foreach($groupMates as $emp)
-                      <option value="{{$emp->id}}" {{isset($emp->id) && $leaveApplication->relief_personnel_id == $emp->id ? 'selected':''}}>{{$emp->name}}</option>
-                      @endforeach
-                    </select>
 
-                  </div>
-                </div>
-
-                <!-- Emergency Contact Name-->
-                <div class="form-group">
-                  <label>Emergency Contact Name</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
+                    <!-- File Attachment -->
+                    <div class="form-group">
+                        <label>Attachment <small class="text-muted">
+                                <font color="red">Required for Sick & Marriage Leave. </font></br>Format:
+                                jpg, jpeg, png, pdf. Max size: 2MB
+                            </small></label>
+                        <div class="input-group">
+                            <input type="file" class="form-control-file" name="attachment" id="attachment"
+                                value="{{isset($leaveApplication->attachment_url)? $leaveApplication->attachemnt_url:''}}">
+                                <a href="{{$leaveApplication->attachment_url}}" target="_blank">View Attachment</a>
+                            <div class="invalid-feedback">
+                                Attachment is required for this type of leave
+                            </div>
+                        </div>
                     </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
-                  </div>
-                </div>
 
-                <!-- Emergency Contact No -->
-                <div class="form-group">
-                  <label>Emergency Contact No</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-phone"></i>
-                      </span>
+                    <!-- Relief Personel -->
+                    <div class="form-group">
+                        <label>Relief Personel <font color="red">*</font></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                            </div>
+                            <select class="form-control" name="relief_personnel_id" required>
+                                <option selected value="">Choose Person</option>
+                                @foreach($groupMates as $emp)
+                                <option value="{{$emp->id}}"
+                                    {{ ($leaveApplication->relief_personnel_id == $emp->id ? "selected":"") }}>
+                                    {{$emp->name}}</option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a relief personnel
+                             </div>
+                        </div>
                     </div>
-                    <input type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
-                  </div>
+
+                    <!-- Emergency Contact Name-->
+                    <div class="form-group">
+                        <label>Emergency Contact Name</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control float-right"
+                                name="emergency_contact_name" value="{{$user->emergency_contact_name}}" required
+                                {{isset($user->emergency_contact_name) ? "readonly":''}}>
+                                <div class="invalid-feedback">
+                                    Please update your emergency contact at "Edit My Profile" or fill it in here
+                                </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact No -->
+                    <div class="form-group">
+                        <label>Emergency Contact No</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fa fa-phone"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control float-right" name="emergency_contact_no"
+                                value="{{$user->emergency_contact_no}}" required
+                                {{isset($user->emergency_contact_no) ? "readonly":''}}>
+                                <div class="invalid-feedback">
+                                    Please update your emergency contact at "Edit My Profile" or fill it in here
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <strong>
+                            <font color="red">* </font>Required
+                        </strong>
+                    </div>
+
+                    <!-- $leaveAuth->authority_1_id -->
+                    <input style="display:none;" type="text" name="approver_id_1"
+                        value="{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_1_id:''}}" />
+                    <input style="display:none;" type="text" name="approver_id_2"
+                        value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
+                    <input style="display:none;" type="text" name="approver_id_3"
+                        value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-success float-right">Submit</button>
                 </div>
-
-                <!-- $leaveAuth->authority_1_id -->
-                <input style="display:none;" type="text" name="approver_id_1" value="{{isset($leaveAuth->authority_1_id) ? $leaveAuth->authority_1_id:''}}" />
-                <input style="display:none;" type="text" name="approver_id_2" value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
-                <input style="display:none;" type="text" name="approver_id_3" value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-success float-right">Submit</button>
-              </div>
             </div>
-          </form>
+        </form>
         </section>
 
         <!-- Right Col -->
@@ -236,7 +291,7 @@
                   </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-6 connectedSortable ui-sortable">
               <!-- Leaves Balance -->
               <div class="card">
@@ -258,174 +313,175 @@
               </div>
             </div>
           </div>
-      
+
       </div>
       @else
       <div class="row">
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
-          <form method="POST" action="{{route('update_application',$leaveApplication)}}" enctype="multipart/form-data">
-          @csrf
-            <!-- Application Form -->
-            <div class="card card-primary">
-              <div class="card-header bg-teal">
-                <strong>Application Form</strong>
-              </div>
-              <div class="card-body">
-
-                <!-- Leave Type -->
-                <div class="form-group">
-                  <label>Leave Type</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-star"></i>
-                      </span>
+          <form class="needs-validation" novalidate method="POST" action="{{route('update_application',$leaveApplication)}}" enctype="multipart/form-data">
+                @csrf
+                  <!-- Application Form -->
+                  <div class="card card-primary">
+                    <div class="card-header bg-teal">
+                      <strong>Application Form</strong>
                     </div>
-                    <select class="form-control" name="leave_type_id">
-                      @foreach($leaveType as $lt)
-                      @if($lt->id == '12')
-                      <option value="{{$lt->id}}" {{isset($lt->id) && $leaveApplication->leave_type_id == $lt->id ? 'selected':''}}>{{$lt->name}}</option>
-                      @endif
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
+                    <div class="card-body">
 
-                <!-- Leave Variation -->
-                <div class="form-group">
-                  <label>Apply For</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-clock"></i>
-                      </span>
+                      <!-- Leave Type -->
+                      <div class="form-group">
+                        <label>Leave Type</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="far fa-star"></i>
+                            </span>
+                          </div>
+                          <select class="form-control" disabled>
+                            <option value="12" selected>Replacement</option>
+                          </select>
+                          <input style="display:none;" type="text" class="form-control float-right" name="leave_type_id" value="12">
+                        </div>
+                      </div>
+
+                      <!-- Leave Variation -->
+                      <div class="form-group">
+                        <label>Full/Half Day <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="far fa-clock"></i>
+                            </span>
+                          </div>
+                          <select class="form-control" name="apply_for">
+                              <option value="full-day"  {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
+                              <option value="half-day-am" {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM</option>
+                              <option value="half-day-pm" {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM</option>
+                          </select>
+                        </div>
+                      </div>
+
+
+                      <!-- Date From -->
+                      <div class="form-group">
+                        <label>Date From <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-calendar-day"></i>
+                            </span>
+                          </div>
+                        <input type="date" class="form-control float-right" name="date_from" value="{{$leaveApplication->date_from}}">
+                        </div>
+                      </div>
+
+                      <!-- Date From -->
+                      <div class="form-group">
+                        <label>Date To <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-calendar-day"></i>
+                            </span>
+                          </div>
+                          <input type="date" class="form-control float-right" name="date_to" value="{{$leaveApplication->date_to}}">
+                        </div>
+                      </div>
+
+                      <!-- Total Days -->
+                      <div class="form-group">
+                        <label>Total Days</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="far fa-calendar-check"></i>
+                            </span>
+                          </div>
+                        <input type="number" class="form-control float-right" name="total_days" value="{{$leaveApplication->total_days}}">
+                        </div>
+                      </div>
+
+                      <!-- Date Resume -->
+                      <div class="form-group" style="display:none">
+                        <label>Date Resume</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="far fa-calendar-alt"></i>
+                            </span>
+                          </div>
+                          <input type="date" class="form-control float-right" name="date_resume">
+                        </div>
+                      </div>
+
+
+                      <!-- Reason -->
+                      <div class="form-group">
+                        <label>Replacement Reason <font color="red">*</font></label>
+                      <textarea class="form-control" rows="5" name="reason" value="{{$leaveApplication->reason}}" required></textarea>
+                        <h6 class="float-right" id="count_reason"></h6>
+                      </div>
+
+                      <!-- File Attachment -->
+                      <div class="form-group">
+                        <label>Attachment <small class="text-muted">Optional. Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
+                        <div class="input-group">
+                          <input type="file" class="form-control-file" name="attachment" id="attachment" value="{{$leaveApplication->attachment_url}}">
+                          <span class="text-danger"> {{ $errors->first('attachment') }}</span>
+                          <a href="{{$leaveApplication->attachment_url}}" target="_blank">View Attachment</a>
+                        </div>
+                      </div>
+
+                        <!-- Approval Authority -->
+                        <div class="form-group">
+                        <label>Approval Authority 1 <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-user"></i>
+                            </span>
+                          </div>
+                          <select class="form-control" name="approver_id_1" required>
+                            <option selected value="">Choose Person</option>
+                            @foreach($userAuth as $ua)
+                            <option value="{{$ua->id}}"  {{ ($leaveApplication->approver_id_1 == $ua->id ? "selected":"") }}>{{$ua->name}}</option>
+                            @endforeach
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Approval Authority 2 -->
+                      <div class="form-group">
+                        <label>Approval Authority 2</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-user"></i>
+                            </span>
+                          </div>
+                          <select class="form-control" name="approver_id_2">
+                            <option value=""selected>Choose Person (Optional)</option>
+                            @foreach($userAuth as $ua)
+                            <option value="{{$ua->id}}" {{ ($leaveApplication->approver_id_2 == $ua->id ? "selected":"") }}>{{$ua->name}}</option>
+                            @endforeach
+                          </select>
+                        </div>
+                      </div>
+
+
+
+                      <!-- $leaveAuth->authority_1_id -->
+                      <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
+                      <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
+                      <!-- CHANGE TO CYNTHIA ID -->
+                      <input style="display:none;" type="text" name="approver_id_3" value="1" />
+                      <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
+
+                      <!-- Submit Button -->
+                      <button type="submit" class="btn btn-success float-right">Submit</button>
                     </div>
-                    <select class="form-control" name="apply_for">
-                      <option value="full-day">Full Day</option>
-                      <option value="half-day-am">Half Day AM</option>
-                      <option value="half-day-pm">Half Day PM</option>
-                    </select>
                   </div>
-                </div>
-
-
-                <!-- Date From -->
-                <div class="form-group">
-                  <label>Date From</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-calendar-day"></i>
-                      </span>
-                    </div>
-                    <input type="date" class="form-control float-right" name="date_from" value="{{$leaveApplication->date_from}}">
-                  </div>
-                </div>
-
-                <!-- Date From -->
-                <div class="form-group">
-                  <label>Date To</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-calendar-day"></i>
-                      </span>
-                    </div>
-                    <input type="date" class="form-control float-right" name="date_to" value="{{isset($leaveApplication->date_to) ? $leaveApplication->date_to:''}}">
-                  </div>
-                </div>
-
-                <!-- Total Days -->
-                <div class="form-group">
-                  <label>Total Days</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-check"></i>
-                      </span>
-                    </div>
-                    <input type="number" class="form-control float-right" name="total_days" value="{{$leaveApplication->total_days}}">
-                  </div>
-                </div>
-
-                <!-- Date Resume -->
-                <div class="form-group">
-                  <label>Date Resume</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
-                    </div>
-                    <input type="date" class="form-control float-right" name="date_resume" value="{{$leaveApplication->date_resume}}">
-                  </div>
-                </div>
-
-
-                <!-- Reason -->
-                <div class="form-group">
-                  <label>Reason</label>
-                  <textarea class="form-control" rows="5" name="reason">{{$leaveApplication->reason}}</textarea>
-                </div>
-
-                <!-- File Attachment -->
-                <div class="form-group">
-                  <label>Attachment <small class="text-muted">Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
-                  <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment" id="attachment">
-                    <span class="text-danger"> {{ $errors->first('attachment') }}</span>
-                  </div>
-                </div>
-
-                  <!-- Approval Authority 1-->
-                  <div class="form-group">
-                  <label>Approval Authority One (Required)</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
-                    </div>
-                    <select class="form-control" name="approver_id_1">
-                      <option selected>Choose Person</option>
-                      @foreach($leaveAuthReplacement as $la)
-                      <option value="{{$la->id}}" {{isset($la->id) && $leaveApplication->approver_id_1 == $la->id ? 'selected':''}}>{{$la->name}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Approval Authority 2 -->
-                <div class="form-group">
-                  <label>Approval Authority Two (Optional)</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
-                    </div>
-                    <select class="form-control" name="approver_id_2">
-                      <option value=" "selected>Choose Person</option>
-                      @foreach($leaveAuthReplacement as $la)
-                      <option value="{{$la->id}}">{{$la->name}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-
-               <!-- $leaveAuth->authority_1_id -->
-               <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
-                <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
-                <!-- CHANGE TO CYNTHIA ID -->
-                <input style="display:none;" type="text" name="approver_id_3" value="1" />
-                <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-success float-right">Submit</button>
-              </div>
-            </div>
-          </form>
+                </form>
         </section>
 
         <!-- Right Col -->
@@ -459,12 +515,47 @@
 <script>
   $(document).ready(MainLeaveApplicationCreate);
 
+  var text_max = 5;
+$('#count_reason').html(text_max + ' remaining');
+
+$('#reason').keyup(function() {
+  var text_length = $('#reason').val().length;
+  var text_remaining = text_max - text_length;
+    if(text_remaining < 0){
+        $('#count_reason').html('Looks good!');
+    }
+    else{
+  $('#count_reason').html(text_remaining + ' remaining');
+    }
+});
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+
+
+
   function MainLeaveApplicationCreate() {
 
     var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
     var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
     var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
-  
+
     let calendar = new VanillaCalendar({
         holiday: dates,
         applied: applied,
@@ -475,7 +566,7 @@
         }
     });
 
-   
+
     const validation = {
       isAnnualLeave : function(){
         return _form.get(FC.leave_type_id) == "1";
@@ -491,7 +582,7 @@
       },
       isCompassionateLeave : function(){
         return _form.get(FC.leave_type_id) == "5";
-      }, 
+      },
       isEmergencyLeave : function(){
         return _form.get(FC.leave_type_id) == "6";
       },
@@ -513,7 +604,7 @@
       isReplacementLeave : function(){
         return _form.get(FC.leave_type_id) == "12";
       },
-     
+
       onchange : function(v, e, fc){
           //console.log("onchange", v, e, fc);
           let name = fc.name;
@@ -532,7 +623,7 @@
 
           validation._totalDay(name);
           validation._dateResume(name);
-        
+
       },
       isHalfDayAm : function(){
         return _form.get(FC.apply_for) == "half-day-am";
@@ -544,7 +635,7 @@
         return _form.get(FC.apply_for) == "full-day";
       },
       validateDateFromAndTo : function(name){
-       
+
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
@@ -620,17 +711,17 @@
           }
         }
 
-      
+
         if(
-          (name == FC.date_from.name && calendar.isWeekend(date_from)) 
-          || 
+          (name == FC.date_from.name && calendar.isWeekend(date_from))
+          ||
           (name == FC.date_to.name && calendar.isWeekend(date_to))
         ){
           return `Selected date is a Weekend day. Please select another date.`;
         }
         if(
-          (name == FC.date_from.name && calendar.isHoliday(date_from)) 
-          || 
+          (name == FC.date_from.name && calendar.isHoliday(date_from))
+          ||
           (name == FC.date_to.name && calendar.isHoliday(date_to))
         ){
           return `Selected date is an announced Public Holiday. Please select another date.`;
@@ -741,7 +832,7 @@
       // ####################################
       // ## data generated from controller ##
       // user_id
-      // status 
+      // status
       // approver_id_1
       // approver_id_2
       // approver_id_3
@@ -755,7 +846,7 @@
 
     _form.disabled(FC.date_resume);
     _form.disabled(FC.total_days);
-  
+
 
   }
 

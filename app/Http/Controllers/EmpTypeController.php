@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @author Faizul Jasmi
+ * @email faizul.jasmi@infomina.com.my
+ * @create date 2020-01-07 09:03:50
+ * @modify date 2020-01-07 09:03:50
+ * @desc [description]
+ */
+
 namespace App\Http\Controllers;
 
 use App\EmpType;
@@ -16,7 +24,7 @@ class EmpTypeController extends Controller
      */
     public function index()
     {
-    
+
     }
 
     /**

@@ -2,8 +2,21 @@
 @section('content')
 
 @section('content_header')
-@if(session()->has('message'))
+
+{{-- ERROR POPUP --}}
+@if(session()->has('error'))
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="icon fa fa-exclamation-triangle"></i>
+    {{ session()->get('error') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
+{{-- MESSAGE POPUP --}}
+@if(session()->has('message'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
     <i class="icon fa fa-check"></i>
     {{ session()->get('message') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -11,6 +24,7 @@
     </button>
 </div>
 @endif
+
 <h1 class="m-0 text-dark">Apply Leave</h1>
 @endsection
 
@@ -42,8 +56,7 @@
                                                 <i class="far fa-star"></i>
                                             </span>
                                         </div>
-                                        <select class="form-control" name="leave_type_id" id="leave_type_id"
-                                            onchange="clearDates()" required>
+                                        <select class="form-control" name="leave_type_id" id="leave_type_id" required>
                                             <option value="">Choose Leave</option>
                                             @foreach($leaveType as $lt)
                                             @if($lt->name == 'Replacement')
@@ -188,7 +201,7 @@
                                         </select>
                                         <div class="invalid-feedback">
                                             Please select a relief personnel
-                                         </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -202,11 +215,11 @@
                                             </span>
                                         </div>
                                         <input type="text" class="form-control float-right"
-                                            name="emergency_contact_name" value="{{$user->emergency_contact_name}}" required
-                                            {{isset($user->emergency_contact_name) ? "readonly":''}}>
-                                            <div class="invalid-feedback">
-                                                Please update your emergency contact at "Edit My Profile" or fill it in here
-                                            </div>
+                                            name="emergency_contact_name" value="{{$user->emergency_contact_name}}"
+                                            required {{isset($user->emergency_contact_name) ? "readonly":''}}>
+                                        <div class="invalid-feedback">
+                                            Please update your emergency contact at "Edit My Profile" or fill it in here
+                                        </div>
                                     </div>
                                 </div>
 
@@ -222,9 +235,9 @@
                                         <input type="text" class="form-control float-right" name="emergency_contact_no"
                                             value="{{$user->emergency_contact_no}}" required
                                             {{isset($user->emergency_contact_no) ? "readonly":''}}>
-                                            <div class="invalid-feedback">
-                                                Please update your emergency contact at "Edit My Profile" or fill it in here
-                                            </div>
+                                        <div class="invalid-feedback">
+                                            Please update your emergency contact at "Edit My Profile" or fill it in here
+                                        </div>
                                     </div>
                                 </div>
 
@@ -259,7 +272,7 @@
                                 <div class="card-header bg-teal">
                                     <strong>Calendar </strong><i class="fas fa-info-circle" data-toggle="tooltip"
                                         data-placement="top"
-                                        title="For your reference, other than the holidays, this calendar shows your groupmates' applied & approved leaves."></i>
+                                        title="This calendar shows the holidays, your groupmates' applied & approved leaves."></i>
                                 </div>
                                 <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
                             </div>
@@ -331,7 +344,7 @@
     <script>
         $(document).ready(MainLeaveApplicationCreate);
 
-  var text_max = 5;
+var text_max = 5;
 $('#count_reason').html(text_max + ' remaining');
 
 $('#reason').keyup(function() {
@@ -364,31 +377,15 @@ $('#reason').keyup(function() {
   }, false);
 })();
 
-  function clearDates() {
-
-    //Store the newly selected leave type id
-    var test = document.getElementById("leave_type_id").value
-    //Reset the form
-    document.getElementById("createApp").reset();
-    //Reset the validation
-    var forms = document.getElementsByClassName('needs-validation');
-    console.log(forms);
-    var validation = Array.prototype.filter.call(forms, function(form) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.remove('was-validated');
-    });
-    //Reassign the stored value to the form
-    document.getElementById("leave_type_id").value = test;
-}
-
   function MainLeaveApplicationCreate() {
 
     var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
     var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
     var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
+    var balances= {!! json_encode($leaveBal, JSON_HEX_TAG) !!};
+    var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
+
+    //console.log("MY APP:",myapplications);
 
     let calendar = new VanillaCalendar({
         holiday: dates,
@@ -475,12 +472,17 @@ $('#reason').keyup(function() {
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
+        for (index = 0; index < myapplications.length; index++) {
+            if( myapplications[index] == calendar.getDateDb(date_from)){
+                return "You already have a Pending/Approved application during this date.";
+            }
+        }
+
         //ANNUAL POLICY
         if(validation.isAnnualLeave() || validation.isTrainingLeave()){
           let next2 = calendar.getNextWorkingDay(calendar.today());
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);
-          console.log("next2", next2);
           if(calendar.isDateSmaller(date_from, calendar.today())){
             return "Attention: Annual leave cannot be applied on passed dates.";
           }
@@ -494,7 +496,6 @@ $('#reason').keyup(function() {
           let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
           //prev3 = calendar.getThreePrevWorkingDay(prev3);
           prev3 = calendar.getDateDb(prev3);
-          console.log("Prev 3", prev3);
           if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
             return "Attention: Leave must be applied within 3 days after the day of leave.";
           }
@@ -507,7 +508,8 @@ $('#reason').keyup(function() {
         if(validation.isMaternityLeave()){
           let monthFwd = calendar.nextMonth(calendar.today());
           monthFwd = calendar.getDateDb(monthFwd);
-          console.log("A month fwd", monthFwd);
+
+
           if(calendar.isDateSmaller(date_from,monthFwd) || calendar.isDateEqual(date_from,monthFwd)){
             return "Attention: Maternity leave application shall be made not less than one (1) month prior to the date on which it is desired that maternity leave commences."
           }
@@ -520,7 +522,7 @@ $('#reason').keyup(function() {
         if(validation.isHospitalizationLeave()){
           let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
           prev7 = calendar.getDateDb(prev7);
-          console.log("A week bfr", prev7);
+
           if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
             return "Attention: Hospitalization leave must be applied within 7 days after the day of leave.";
           }
@@ -610,6 +612,13 @@ $('#reason').keyup(function() {
             let total = calendar.getTotalWorkingDay(from, to);
             if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave()){
               total = calendar.getTotalDays(from, to);
+            }
+            var leaveId = _form.get(FC.leave_type_id);
+            var i = leaveId - 1;
+            if(total > balances[i]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
+                alert('You have insufficient leave balance');
+                _form.set(FC.date_to, "");
+                _form.set(FC.total_days, "");
             }
             if(total > 60){
                 _form.set(FC.date_to, "");

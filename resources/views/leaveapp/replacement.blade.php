@@ -34,17 +34,16 @@
                 <!-- Leave Type -->
                 <div class="form-group">
                   <label>Leave Type</label>
-                  <div class="input-group" >
+                  <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="far fa-star"></i>
                       </span>
                     </div>
-                    <select class="form-control" name="leave_type_id" disabled>
-                      @foreach($leaveType as $lt)
-                      <option value="{{$lt->id}}" selected>{{$lt->name}}</option>
-                      @endforeach
+                    <select class="form-control" disabled>
+                      <option value="12" selected>Replacement</option>
                     </select>
+                    <input style="display:none;" type="text" class="form-control float-right" name="leave_type_id" value="12">
                   </div>
                 </div>
 
@@ -106,7 +105,7 @@
                 </div>
 
                 <!-- Date Resume -->
-                <div class="form-group">
+                <div class="form-group" style="display:none">
                   <label>Date Resume</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
@@ -123,6 +122,7 @@
                 <div class="form-group">
                   <label>Replacement Reason <font color="red">*</font></label>
                   <textarea class="form-control" rows="5" name="reason" required></textarea>
+                  <h6 class="float-right" id="count_reason"></h6>
                 </div>
 
                 <!-- File Attachment -->
@@ -206,6 +206,20 @@
 
 <script>
   $(document).ready(MainLeaveApplicationCreate);
+
+  var text_max = 5;
+$('#count_reason').html(text_max + ' remaining');
+
+$('#reason').keyup(function() {
+  var text_length = $('#reason').val().length;
+  var text_remaining = text_max - text_length;
+    if(text_remaining < 0){
+        $('#count_reason').html('Looks good!');
+    }
+    else{
+  $('#count_reason').html(text_remaining + ' remaining');
+    }
+});
 
   (function() {
   'use strict';

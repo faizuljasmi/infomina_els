@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @author Faizul Jasmi
+ * @email faizul.jasmi@infomina.com.my
+ * @create date 2020-01-07 09:03:50
+ * @modify date 2020-01-07 09:03:50
+ * @desc [description]
+ */
+
 namespace App\Http\Controllers;
 
 use App\LeaveEntitlement;
@@ -105,7 +113,7 @@ class LeaveEntitlementController extends Controller
         //      LeaveEntitlement::create([
         //         'emp_type_id' => $empType->id,
         //         'leave_type_id' => $request->leave_id[$key],
-        //         'date' => 
+        //         'date' =>
         //         'cost' => $cost,
         //         'trend' => 0
         //     ]);

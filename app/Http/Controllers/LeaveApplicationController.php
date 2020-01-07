@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @author Faizul Jasmi
+ * @email faizul.jasmi@infomina.com.my
+ * @create date 2020-01-07 09:02:58
+ * @modify date 2020-01-07 09:02:58
+ * @desc [description]
+ */
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -61,7 +68,19 @@ class LeaveApplicationController extends Controller
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
+        $myApplication = array();
         foreach ($leaveApps as $la) {
+            //Get the user applied and approved application
+            if($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENIED_2' || $la->status == 'PENDING_3')){
+                $stardDate = new Carbon($la->date_from);
+                $endDate = new Carbon ($la->date_to);
+
+                while($stardDate->lte($endDate)){
+                    $dates = str_replace("-","", $stardDate->toDateString());
+                    $myApplication[] = $dates;
+                    $stardDate->addDay();
+                }
+            }
             if ($la->user->emp_group_id == $user->emp_group_id) {
                 $startDate = new Carbon($la->date_from);
                 $endDate = new Carbon($la->date_to);
@@ -82,7 +101,7 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates'));
+        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates','myApplication'));
     }
 
 
@@ -101,8 +120,8 @@ class LeaveApplicationController extends Controller
         })->first();
 
         //If insufficient balance
-        if ($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12') {
-            return redirect()->to('/leave/apply')->with('message', 'Your have insufficient leave balance. Please contact HR for more info.');
+        if ($leaveBal == null || $request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12') {
+            return redirect()->to('/leave/apply')->with('error', 'Your have insufficient leave balance. Please contact HR for more info.');
         }
 
        //Check leave authority
@@ -129,9 +148,6 @@ class LeaveApplicationController extends Controller
                     }
                 }
             }
-
-
-
 
         $leaveApp = new LeaveApplication;
         //get user id, leave type id
@@ -160,6 +176,7 @@ class LeaveApplicationController extends Controller
         }
 
 
+
         //get date from
         $leaveApp->date_from = $request->date_from;
         //get date to
@@ -179,12 +196,12 @@ class LeaveApplicationController extends Controller
         //Attachment validation
         $validator = Validator::make(
             $request->all(),
-            ['attachment' => 'required_if:leave_type_id,3|mimes:jpeg,png,jpg,pdf|max:2048']
+            ['attachment' => 'required_if:leave_type_id,3|required_if:leave_type_id,7|mimes:jpeg,png,jpg,pdf|max:2048']
         );
 
         // if validation fails
         if ($validator->fails()) {
-            return redirect()->to('/leave/apply')->with('message', 'Your file attachment is invalid. Application is not submitted');
+            return redirect()->to('/leave/apply')->with('error', 'Your file attachment is invalid. Application is not submitted');
         }
         //If validation passes and has a file. Not necessary to check but just to be safe
         if ($request->hasFile('attachment')) {
@@ -222,6 +239,8 @@ class LeaveApplicationController extends Controller
 
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
+        //Get all authorities
+        $userAuth = User::orderBy('id', 'ASC')->where('id', '!=', '1')->where('user_type','Authority')->get()->except($user->id);
         //Get approval authorities for this user
         //Change id to CYNTHIA'S ID
         $leaveAuthReplacement = User::orderBy('id', 'ASC')->where('id', '!=', '1')->get()->except($user->id);
@@ -268,8 +287,8 @@ class LeaveApplicationController extends Controller
                 }
             }
         }
-
-        return view('leaveapp.edit')->with(compact('leaveApplication', 'user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'leaveAuthReplacement'));
+        //dd($leaveApplication->approver_id_1);
+        return view('leaveapp.edit')->with(compact('leaveApplication', 'user', 'leaveType', 'groupMates','userAuth', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'leaveAuthReplacement'));
     }
 
     public function update(Request $request, LeaveApplication $leaveApplication)
@@ -285,7 +304,7 @@ class LeaveApplicationController extends Controller
         //dd($leaveBal->no_of_days);
         if ($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12') {
             dd('here');
-            return redirect()->to('/leave/apply')->with('message', 'Your have insufficient leave balance. Please contact HR for more info.');
+            return redirect()->to('/leave/apply')->with('error', 'Your have insufficient leave balance. Please contact HR for more info.');
         }
 
         $leaveApp = $leaveApplication;
@@ -333,23 +352,35 @@ class LeaveApplicationController extends Controller
         //Attachment validation
         $validator = Validator::make(
             $request->all(),
-            ['attachment' => 'required_if:leave_type_id,3|mimes:jpeg,png,jpg,pdf|max:2048']
+            ['attachment' => 'required_if:leave_type_id,3|required_if:leave_type_id,7|mimes:jpeg,png,jpg,pdf|max:2048']
         );
 
         // if validation fails
         if ($validator->fails()) {
-            return redirect()->to('/leave/apply')->with('message', 'Your file attachment format is invalid. Application is not submitted');
+            return redirect()->to('/leave/apply')->with('error', 'Your file attachment format is invalid. Application is not submitted');
         }
         //If validation passes and has a file. Not necessary to check but just to be safe
-        if ($request->hasFile('attachment')) {
+        // if ($request->hasFile('attachment')) {
+        //     $att = $request->file('attachment');
+        //     $uploaded_file = $att->store('public');
+        //     //Pecahkan
+        //     $paths = explode('/', $uploaded_file);
+        //     $filename = $paths[1];
+        //     //dd($uploaded_file);
+        //     //Save attachment filenam into leave application table
+        //     $leaveApp->attachment = $filename;
+        // }
+
+        //Upload image
+        if($request->hasFile('attachment')){
             $att = $request->file('attachment');
             $uploaded_file = $att->store('public');
             //Pecahkan
-            $paths = explode('/', $uploaded_file);
+            $paths = explode('/',$uploaded_file);
             $filename = $paths[1];
             //dd($uploaded_file);
-            //Save attachment filenam into leave application table
-            $leaveApp->attachment = $filename;
+            //Save filename into Database
+            $leaveApp->update(['attachment' => $filename]);
         }
 
 
