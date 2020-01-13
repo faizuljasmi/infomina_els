@@ -23,7 +23,7 @@ class CreateBroughtForwardLeavesTable extends Migration
             $table->foreign('leave_type_id')->references('id')->on('leave_types');
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->unique(['leave_type_id', 'user_id']);
+           $table->unique(['leave_type_id', 'user_id']);
         });
     }
 

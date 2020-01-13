@@ -225,6 +225,7 @@
                     <th scope="col">Duration</th>
                     <th scope="col">From</th>
                     <th scope="col">To</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
@@ -239,8 +240,9 @@
                     <td>{{ \Carbon\Carbon::parse($lh->date_from)->isoFormat('ddd, D MMM YY')}}</td>
                     <td>{{ \Carbon\Carbon::parse($lh->date_to)->isoFormat('ddd, D MMM YY')}}</td>
                     <td>
-                    <td><a href="{{route('view_application', $lh->id)}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="View leave application">View</a></td>
+                        <span class="badge badge-pill badge-success">Approved</span>
                     </td>
+                    <td><a href="{{route('view_application', $lh->id)}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="View leave application">View</a></td>
                   </tr>
                   @endforeach
                 </tbody>

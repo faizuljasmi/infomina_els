@@ -28,6 +28,36 @@
 <h1 class="m-0 text-dark">Apply Leave</h1>
 @endsection
 
+@if($user->emergency_contact_name == null || $user->emergency_contact_no == null)
+<script type="text/javascript">
+    $(window).on('load', function() {
+    $('#emergencyReminderCenter').modal('show');
+  });
+</script>
+@endif
+
+<div class="modal fade" id="emergencyReminderCenter" tabindex="-1" role="dialog"
+    aria-labelledby="emergencyReminderCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="emergencyReminderLongTitle">Uh oh! We don't know your emergency contact.
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <strong>Before you submit your application,</strong> </br>
+                Let's set your emergency contact details! This will make the application process much easier.
+            </div>
+            <div class="modal-footer">
+                <a href="/myprofile/edit"><button type="button" class="btn btn-primary">Set Emergency
+                        Contact</button><a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <section id="leaveapp-create">
     <section class="content">
@@ -264,7 +294,6 @@
 
                 <!-- Right Col -->
                 <section class="col-lg-5 connectedSortable ui-sortable">
-
                     <div class="row">
                         <div class="col-lg-12 connectedSortable ui-sortable">
                             <!-- Vanilla Calendar -->
@@ -275,6 +304,14 @@
                                         title="This calendar shows the holidays, your groupmates' applied & approved leaves."></i>
                                 </div>
                                 <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-warning" data-toggle="modal"
+                                        data-target="#viewColleague">Colleague's Applications</button>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#viewHolidays">Holidays</button>
+                                    <button type="button" class="btn btn-success"  data-toggle="modal"
+                                    data-target="#viewApplication">My Applications</button>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-12 connectedSortable ui-sortable">
@@ -332,17 +369,139 @@
                             </div>
                         </div>
                     </div>
-
                 </section>
-
-
             </div>
+        </div>
 
+        <!-- VIEW HOLIDAYS Modal -->
+        <div class="modal fade" id="viewHolidays" tabindex="-1" role="dialog" aria-labelledby="viewHolidaysLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-sm table-bordered table-striped">
+                            <tr class="bg-primary">
+                                <th>Holiday Name</th>
+                                <th>From</th>
+                                <th>To</th>
+                            </tr>
+
+                            @foreach($holsPaginated as $hl)
+                            <tr>
+                                <td><strong>{{$hl->name}}</strong></td>
+                                <td>{{ \Carbon\Carbon::parse($hl->date_from)->isoFormat('ddd, D MMM')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($hl->date_to)->isoFormat('ddd, D MMM')}}</td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW COLLEAGUES APPLICATION Modal -->
+        <div class="modal fade" id="viewColleague" tabindex="-1" role="dialog" aria-labelledby="viewColleagueLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewColleagueLabel">Your colleague's applications</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-sm table-bordered table-striped">
+                            <tr class="bg-primary">
+                                <th>Colleague Name</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Status</th>
+                            </tr>
+
+                            @foreach($groupLeaveApps as $gla)
+                            <tr>
+                                <td><strong>{{$gla->user->name}}</strong></td>
+                                <td>{{ \Carbon\Carbon::parse($gla->date_from)->isoFormat('ddd, D MMM')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($gla->date_to)->isoFormat('ddd, D MMM')}}</td>
+                                <td>
+                                    @if($gla->status == 'APPROVED')
+                                    <span class="badge badge-success"><i class="far fa-check-circle"></i></span>
+                                    @else
+                                    <span class="badge badge-warning"><i class="far fa-clock"></i></span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW NY APPLICATION Modal -->
+        <div class="modal fade" id="viewApplication" tabindex="-1" role="dialog" aria-labelledby="viewApplicationLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewApplicationLabel">Your applications</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-sm table-bordered table-striped">
+                            <tr class="bg-primary">
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Status</th>
+                            </tr>
+
+                            @foreach($myApps as $ma)
+                            <tr>
+                                <td><strong>{{$ma->leaveType->name}}</strong></td>
+                                <td>{{ \Carbon\Carbon::parse($ma->date_from)->isoFormat('ddd, D MMM')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($ma->date_to)->isoFormat('ddd, D MMM')}}</td>
+                                <td>
+                                    @if($ma->status == 'APPROVED')
+                                    <span class="badge badge-success"><i class="far fa-check-circle"></i></span>
+                                    @else
+                                    <span class="badge badge-warning"><i class="far fa-clock"></i></span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <script>
         $(document).ready(MainLeaveApplicationCreate);
+
+$("#leave_type_id").change(function() {
+            $("#FromDate").val("");
+            $("#ToDate").val("");
+        });
 
 var text_max = 5;
 $('#count_reason').html(text_max + ' remaining');

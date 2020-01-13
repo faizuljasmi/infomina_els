@@ -50,10 +50,26 @@ class LeaveApplicationController extends Controller
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
-        //Get leave applications from same group
+        //Get all leave applications
         $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
+        //Get leave applications of same group
+        $groupLeaveApps = collect([]);
+        foreach($leaveApps as $la){
+            if($la->user->emp_group_id == $user->emp_group_id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')){
+                $groupLeaveApps->add($la);
+            }
+        }
+        //Get my applications
+        $myApps = collect([]);
+        foreach($leaveApps as $la){
+            if($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')){
+                $myApps->add($la);
+            }
+        }
+       //dd($groupLeaveApps);
 
         $holidays = Holiday::all();
+        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get();
         $all_dates = array();
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
@@ -71,7 +87,7 @@ class LeaveApplicationController extends Controller
         $myApplication = array();
         foreach ($leaveApps as $la) {
             //Get the user applied and approved application
-            if($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENIED_2' || $la->status == 'PENDING_3')){
+            if($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')){
                 $stardDate = new Carbon($la->date_from);
                 $endDate = new Carbon ($la->date_to);
 
@@ -101,7 +117,7 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates','myApplication'));
+        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates','myApplication', 'holidays','groupLeaveApps', 'holsPaginated','myApps'));
     }
 
 
@@ -627,12 +643,23 @@ class LeaveApplicationController extends Controller
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
         $applied_dates = array();
+        $approved_dates = array();
         $startDate = new Carbon($leaveApp->date_from);
         $endDate = new Carbon($leaveApp->date_to);
-        while ($startDate->lte($endDate)) {
-            $dates = str_replace("-", "", $startDate->toDateString());
-            $applied_dates[] = $dates;
-            $startDate->addDay();
+
+        if($leaveApp->status == 'APPROVED'){
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
+                $approved_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+        else{
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
+                $applied_dates[] = $dates;
+                $startDate->addDay();
+            }
         }
 
         $holidays = Holiday::all();
@@ -640,7 +667,6 @@ class LeaveApplicationController extends Controller
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            $hol_dates = [];
             while ($startDate->lte($endDate)) {
                 $dates = str_replace("-", "", $startDate->toDateString());
                 $hol_dates[] = $dates;
@@ -648,7 +674,7 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.view')->with(compact('leaveApp', 'leaveType', 'user', 'leaveAuth', 'groupMates', 'leaveBal', 'applied_dates', 'hol_dates'));
+        return view('leaveapp.view')->with(compact('leaveApp', 'leaveType', 'user', 'leaveAuth', 'groupMates', 'leaveBal', 'applied_dates','approved_dates', 'hol_dates'));
     }
 
     public function cancel(LeaveApplication $leaveApplication)

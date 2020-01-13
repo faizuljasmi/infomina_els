@@ -196,7 +196,7 @@ return [
             'icon' => 'fas fa-fw fa-user-tie',
         ],
         [
-            'text' => 'Dashboard (Admin)',
+            'text' => 'Dashboard (Authority)',
             'url'  => '/admin',
             'icon' => 'fas fa-fw fa-user-shield',
             'can' => 'admin-dashboard'

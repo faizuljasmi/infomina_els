@@ -19,13 +19,13 @@
       <div class="row">
         <!-- Left Col -->
         <section class="col-lg-6 connectedSortable ui-sortable">
-       
+
           <form method="POST" action="{{route('leaveapp_store')}}">
           @csrf
             <!-- Application Form -->
             <div class="card card-primary">
               <div class="card-header bg-teal">
-                <strong>Application Details 
+                <strong>Application Details
                     @if($leaveApp->user_id == auth()->user()->id && $leaveApp->status == 'PENDING_1')
                     <a href="{{route('cancel_application', $leaveApp->id)}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" title="Cancel Application" onclick="return confirm('Are you sure you want to cancel this application?')">Cancel</a>
                     <a href="{{route('edit_application', $leaveApp->id)}}" class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip" title="Edit Application">Edit</a>
@@ -194,7 +194,7 @@
                 </div>
                 @endif
                 <fieldset>
-               
+
               </div>
             </div>
           </form>
@@ -288,7 +288,7 @@
                   </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-8 connectedSortable ui-sortable">
               <!-- Leaves Balance -->
               <div class="card">
@@ -328,10 +328,12 @@
   function MainLeaveApplicationCreate() {
 
     var applied_dates = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
+    var approved_dates = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
     var hol_dates = {!! json_encode($hol_dates, JSON_HEX_TAG) !!};
-  
+
     let calendar = new VanillaCalendar({
         applied : applied_dates,
+        approved : approved_dates,
         holiday: hol_dates,
         selector: ".myCalendar",
         onSelect: (data, elem) => {
@@ -339,7 +341,7 @@
         }
     });
 
-   
+
     const validation = {
       onchange : function(v, e, fc){
           console.log("onchange", v, e, fc);
@@ -359,7 +361,7 @@
 
           validation._totalDay(name);
           validation._dateResume(name);
-        
+
       },
       isHalfDayAm : function(){
         return _form.get(FC.apply_for) == "half-day-am";
@@ -374,15 +376,15 @@
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
         if(
-          (name == FC.date_from.name && calendar.isWeekend(date_from)) 
-          || 
+          (name == FC.date_from.name && calendar.isWeekend(date_from))
+          ||
           (name == FC.date_to.name && calendar.isWeekend(date_to))
         ){
           return `Selected date is a WEEKEND. Please select another date.`;
         }
         if(
-          (name == FC.date_from.name && calendar.isHoliday(date_from)) 
-          || 
+          (name == FC.date_from.name && calendar.isHoliday(date_from))
+          ||
           (name == FC.date_to.name && calendar.isHoliday(date_to))
         ){
           return `Selected date is a HOLIDAY. Please select another date.`;
@@ -493,7 +495,7 @@
       // ####################################
       // ## data generated from controller ##
       // user_id
-      // status 
+      // status
       // approver_id_1
       // approver_id_2
       // approver_id_3
@@ -507,7 +509,7 @@
 
     _form.disabled(FC.date_resume);
     _form.disabled(FC.total_days);
-  
+
 
   }
 

@@ -90,8 +90,9 @@
     </div>
 <style>
     .login-page {
-background: url("images/background.gif") no-repeat center center fixed;
-background-size: cover;
+background: url("images/bgrd2.gif") no-repeat right bottom;
+background-size: 910.5px 500.3px;
+/* background-color: #ededed; */
 }
 </style>
 @stop

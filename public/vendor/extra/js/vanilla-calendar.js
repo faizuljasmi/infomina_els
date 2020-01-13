@@ -222,7 +222,7 @@ let VanillaCalendar = (function() {
             if (opts.holiday.indexOf(dateDb) >= 0) {
                 newDayElem.classList.add("vanilla-calendar-date--holiday");
             }
-            if (isWeekend(date)) {
+            if (isWeekend(date) && opts.holiday.indexOf(dateDb) <= 0) {
                 newDayElem.classList.add("vanilla-calendar-date--weekend");
             }
 

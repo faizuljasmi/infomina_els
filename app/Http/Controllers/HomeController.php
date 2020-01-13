@@ -175,25 +175,30 @@ class HomeController extends Controller
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
-        foreach ($allLeaveApps as $la) {
+        foreach ($leaveApps as $la) {
 
             $startDate = new Carbon($la->date_from);
             $endDate = new Carbon($la->date_to);
-            if ($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3') {
+
                 while ($startDate->lte($endDate)) {
                     $dates = str_replace("-", "", $startDate->toDateString());
                     $applied_dates[] = $dates;
                     $startDate->addDay();
                 }
             }
-            if ($la->status == 'APPROVED') {
+         foreach ($leaveHist as $lh) {
+
+            $startDate = new Carbon($lh->date_from);
+            $endDate = new Carbon($lh->date_to);
+
                 while ($startDate->lte($endDate)) {
                     $dates = str_replace("-", "", $startDate->toDateString());
                     $approved_dates[] = $dates;
                     $startDate->addDay();
                 }
             }
-        }
+
+
 
 
 

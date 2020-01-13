@@ -162,15 +162,13 @@
                       </span>
                     </div>
                     <select class="form-control" name="approver_id_2">
-                      <option value=""selected>Choose Personn (Optional)</option>
+                      <option value=""selected>Choose Person (Optional)</option>
                       @foreach($leaveAuth as $emp)
                       <option value="{{$emp->id}}">{{$emp->name}}</option>
                       @endforeach
                     </select>
                   </div>
                 </div>
-
-
 
                 <!-- $leaveAuth->authority_1_id -->
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
@@ -207,7 +205,7 @@
 <script>
   $(document).ready(MainLeaveApplicationCreate);
 
-  var text_max = 5;
+var text_max = 5;
 $('#count_reason').html(text_max + ' remaining');
 
 $('#reason').keyup(function() {

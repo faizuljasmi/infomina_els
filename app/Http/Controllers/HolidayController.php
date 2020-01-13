@@ -28,7 +28,6 @@ class HolidayController extends Controller
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
             $endDate = new Carbon($hols->date_to);
-            $all_dates = [];
             while ($startDate->lte($endDate)) {
                 $dates = str_replace("-", "", $startDate->toDateString());
                 $all_dates[] = $dates;
