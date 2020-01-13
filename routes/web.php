@@ -105,3 +105,11 @@ Route::get('/leave/apply/cancel/{leaveApplication}','LeaveApplicationController@
 
 //Replacement leave
 Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->middleware('auth');
+
+//Excel Import & Export
+//Route::get('import-excel', 'ExcelController@index');
+//Route::post('import-excel', 'ExcelController@import');
+
+Route::get('transfer', 'ExcelController@index');
+Route::post('transfer/import', 'ExcelController@import');
+Route::get('transfer/export', 'ExcelController@export');
