@@ -114,8 +114,9 @@ class RegistrationController extends Controller
         $empAuth = $user->approval_authority;
         //dd($empAuth->getAuthorityOneAttribute);
         $leaveEnt = LeaveEntitlement::orderBy('id', 'ASC')->where('emp_type_id', '=', $empType->id)->get();
+        //dd($leaveEnt);  
         $leaveEarn = LeaveEarning::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
-        //dd($leaveEarn[1]->brought_forward);
+        //dd($leaveEarn);
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
