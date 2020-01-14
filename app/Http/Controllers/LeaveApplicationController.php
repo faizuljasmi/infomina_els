@@ -38,7 +38,7 @@ class LeaveApplicationController extends Controller
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
+        $groupMates = User::orderBy('id', 'ASC')->get()->except($user->id);
         //dd($groupMate->name);
 
         //Get approval authorities of THIS user
@@ -201,12 +201,15 @@ class LeaveApplicationController extends Controller
         $leaveApp->date_resume = $request->date_resume;
         //get total days
         $leaveApp->total_days = $request->total_days;
+        //get apply for
+        $leaveApp->apply_for = $request->apply_for;
         //get reason
         $leaveApp->reason = $request->reason;
         //get relief personel id
         $leaveApp->relief_personnel_id = $request->relief_personnel_id;
         //get emergency contact
-        $leaveApp->emergency_contact = $request->emergency_contact_no;
+        $leaveApp->emergency_contact_name = $request->emergency_contact_name;
+        $leaveApp->emergency_contact_no = $request->emergency_contact_no;
 
 
         //Attachment validation
@@ -250,7 +253,7 @@ class LeaveApplicationController extends Controller
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
+        $groupMates = User::orderBy('id', 'ASC')->get()->except($user->id);
         //dd($groupMate->name);
 
         //Get approval authorities of THIS user
@@ -362,7 +365,8 @@ class LeaveApplicationController extends Controller
         //get relief personel id
         $leaveApp->relief_personnel_id = $request->relief_personnel_id;
         //get emergency contact
-        $leaveApp->emergency_contact = $request->emergency_contact_no;
+        $leaveApp->emergency_contact_name = $request->emergency_contact_name;
+        $leaveApp->emergency_contact_no = $request->emergency_contact_no;
 
 
         //Attachment validation
@@ -637,7 +641,7 @@ class LeaveApplicationController extends Controller
         $user = $leaveApp->user;
         $leaveAuth = $user->approval_authority;
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', '=', $user->emp_group_id)->get()->except($user->id);
+        $groupMates = User::orderBy('id', 'ASC')->get()->except($user->id);
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();

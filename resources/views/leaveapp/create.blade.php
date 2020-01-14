@@ -309,8 +309,8 @@
                                         data-target="#viewColleague">Colleague's Applications</button>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#viewHolidays">Holidays</button>
-                                    <button type="button" class="btn btn-success"  data-toggle="modal"
-                                    data-target="#viewApplication">My Applications</button>
+                                    <button type="button" class="btn btn-success" data-toggle="modal"
+                                        data-target="#viewApplication">My Applications</button>
                                 </div>
                             </div>
                         </div>
@@ -699,12 +699,16 @@ $('#reason').keyup(function() {
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);
 
-          if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+          if(calendar.isDateSmaller(date_from,calendar.today())){
+          if(calendar.isDateSmaller(date_from, prev3)){
             return "Attention: Unpaid leave must be applied within 3 days after the day of leave.";
           }
-          if(calendar.isDateBigger(date_from,next2) || calendar.isDateEqual(date_from,next2)){
+        }
+        if(calendar.isDateBigger(date_from,calendar.today())){
+          if(calendar.isDateSmaller(date_from,next2)){
             return "Attention: Unpaid leave must be applied within 2 days before the day of leave.";
           }
+        }
         }
 
 
@@ -755,7 +759,12 @@ $('#reason').keyup(function() {
           let dateTo = _form.get(FC.date_to);
           let nextWorkingDay = calendar.getNextWorkingDay(dateTo);
           nextWorkingDay = calendar.getDateInput(nextWorkingDay);
-          _form.set(FC.date_resume, nextWorkingDay)
+          if(validation.isHalfDayAm()){
+          _form.set(FC.date_resume, calendar.getDateInput(dateTo));
+        }
+        else{
+          _form.set(FC.date_resume, nextWorkingDay);
+        }
         }
       },
       _totalDay : function(name){

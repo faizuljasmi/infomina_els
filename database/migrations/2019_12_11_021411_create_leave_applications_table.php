@@ -23,12 +23,15 @@ class CreateLeaveApplicationsTable extends Migration
             $table->unsignedBigInteger('approver_id_3')->nullable();
             $table->date('date_from');
             $table->date('date_to');
+            $table->string('apply_for');
             $table->date('date_resume');
             $table->float('total_days', 8,1);
             $table->longText('reason');
             $table->unsignedBigInteger('relief_personnel_id')->nullable();
             $table->string('attachment')->nullable();
-            $table->string('emergency_contact');
+            $table->string('emergency_contact_name');
+            $table->string('emergency_contact_no');
+            $table->longText('remarks')->nullable();
             $table->timestamps();
 
             //Foreign keys
@@ -38,7 +41,7 @@ class CreateLeaveApplicationsTable extends Migration
             $table->foreign('approver_id_2')->references('id')->on('users');
             $table->foreign('approver_id_3')->references('id')->on('users');
             $table->foreign('relief_personnel_id')->references('id')->on('users');
-            
+
         });
     }
 

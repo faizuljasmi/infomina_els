@@ -14,6 +14,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Carbon\Carbon;
 
 class NewApplication extends Notification
 {
@@ -62,13 +63,14 @@ class NewApplication extends Notification
                     ->greeting('Hi,')
                     ->line('Leave application by '.$la->user->name.' is waiting for your approval:')
                     ->line('Leave type: '.$la->leaveType->name)
-                    ->line('From: '.$la->date_from)
-                    ->line('To: '.$la->date_to)
+                    ->line('From: '.Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YYYY'))
+                    ->line('To: '.Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YYYY'))
                     ->line('Total day(s): '.$la->total_days)
-                    ->line('Resume date: '.$la->date_resume)
+                    ->line('Resume date: '.Carbon::parse($la->date_resume)->isoFormat('ddd, D MMM YYYY'))
                     ->line('Reason: '.$la->reason)
                     ->line('Relief Personnel: '.$reliefName)
-                    ->line('Emergency Contact: '.$la->emergency_contact)
+                    ->line('Emergency Contact Name: '.$la->emergency_contact_name)
+                    ->line('Emergency Contact No: '.$la->emergency_contact_no)
                     ->action('View application', $url)
                     ->line('Have a nice day!');
     }

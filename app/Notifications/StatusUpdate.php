@@ -127,7 +127,8 @@ class StatusUpdate extends Notification
         ->line('Resume date: '.$la->date_resume)
         ->line('Reason: '.$la->reason)
         ->line('Relief Personnel: '.$la->relief_personnel->name)
-        ->line('Emergency Contact: '.$la->emergency_contact)
+        ->line('Emergency Contact Name: '.$la->emergency_contact_name)
+        ->line('Emergency Contact No: '.$la->emergency_contact_no)
         // ->action('View application', $url)
         ->line('Have a nice day!');
 
