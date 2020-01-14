@@ -256,7 +256,13 @@ return [
                     'can' => 'admin-dashboard'
                 ],
             ],
+        ],[
+            'text' => 'Import Data',
+            'url'  => 'transfer',
+            'icon' => 'fas fa-fw fa-user-plus',
+            'can' => 'edit_settings'
         ],
+
         ['header' => ' My Settings', ],
         [
             'text' => 'Edit My Profile',

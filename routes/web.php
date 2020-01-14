@@ -88,6 +88,11 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::get('/holiday/edit/{holiday}','HolidayController@edit')->name('holiday_edit')->middleware('auth');
     Route::post('/holiday/update/{holiday}','HolidayController@update')->name('holiday_update')->middleware('auth');
     Route::get('/holiday/delete/{holiday}','HolidayController@delete')->name('holiday_delete')->middleware('auth');
+
+    //Import Export Excel
+    Route::get('transfer', 'ExcelController@index')->name('excel_transfer')->middleware('auth');
+    Route::post('transfer/import', 'ExcelController@import')->name('excel_import')->middleware('auth');
+    Route::get('transfer/export', 'ExcelController@export')->name('excel_export')->middleware('auth');
 });
 
 
@@ -110,6 +115,4 @@ Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->midd
 //Route::get('import-excel', 'ExcelController@index');
 //Route::post('import-excel', 'ExcelController@import');
 
-Route::get('transfer', 'ExcelController@index');
-Route::post('transfer/import', 'ExcelController@import');
-Route::get('transfer/export', 'ExcelController@export');
+
