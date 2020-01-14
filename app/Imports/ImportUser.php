@@ -51,8 +51,8 @@ class ImportUser implements ToModel, WithValidation, WithHeadingRow
         $user->join_date = $date;
         $user->job_title = $row['job_title'];
         $user->gender = $row['gender'];
+        $user->emp_group_id = $row['group_type'];
         return $user;
-        //'emp_group_id' => $row['emp_group_id'], //// NOT IN USE
         //'emergency_contact_name' => $row['emergency_contact_name'], //// NOT IN USE
         //'emergency_contact_no' => $row['emergency_contact_no'], //// NOT IN USE   
     }

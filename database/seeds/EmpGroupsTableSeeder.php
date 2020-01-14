@@ -13,19 +13,58 @@ class EmpGroupsTableSeeder extends Seeder
     {
         DB::table('emp_groups')->insert(array(
             array(
-              'name' => 'Group1',
+              'name' => 'Front End',
             ),
             array(
-                'name' => 'Group2',
+                'name' => 'Back End',
               ),
               array(
-                'name' => 'Group3',
+                'name' => 'Top Management',
               ),
               array(
-                'name' => 'Group4',
+                'name' => 'Middle Management',
               ),
               array(
-                'name' => 'Group5',
+                'name' => 'Admin',
+              ),
+              array(
+                'name' => 'Finance',
+              ),
+              array(
+                'name' => 'Helpdesk',
+              ),
+              array(
+                'name' => 'PMO',
+              ),
+              array(
+                'name' => 'DBA',
+              ),
+              array(
+                'name' => 'MyKAD ICSC',
+              ),
+              array(
+                'name' => 'HOST & DR Support',
+              ),
+              array(
+                'name' => 'Support Engineer',
+              ),
+              array(
+                'name' => 'Sales',
+              ),
+              array(
+                'name' => 'Business Analyst',
+              ),
+              array(
+                'name' => 'MyKAD',
+              ),
+              array(
+                'name' => 'Non MyKAD',
+              ),
+              array(
+                'name' => 'HR',
+              ),
+              array(
+                'name' => 'Testing Unit',
               ),
             
           ));
