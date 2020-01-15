@@ -59,8 +59,10 @@ class ImportLeaveApp implements ToModel, WithHeadingRow
             $lapp->date_resume = $dateres;
             $lapp->total_days = @$row['total_days'];
             $lapp->reason = @$row['reason'];
-            $lapp->emergency_contact = @$row['emergency_contact'];//PENDING_1,2,3
+            $lapp->emergency_contact_name = @$row['emergency_contact'];
+            $lapp->emergency_contact_no = @$row['emergency_contact_no'];
             $lapp->relief_personnel_id = @$row['relief_personnel_id'];
+            $lapp->apply_for = @$row['apply_for'];
             $lapp->status = @$row['status'];
             return $lapp;
     }
