@@ -66,6 +66,18 @@ class EmpGroupsTableSeeder extends Seeder
               array(
                 'name' => 'Testing Unit',
               ),
+              array(
+                'name' => 'Application Maintenance',
+              ),
+              array(
+                'name' => 'Technical',
+              ),
+              array(
+                'name' => 'Transformation',
+              ),
+              array(
+                'name' => 'ICSC',
+              ),
             
           ));
     }
