@@ -44,7 +44,7 @@
                         <tr>
                             <td>{{$ag->id}}</td>
                             <td>{{$ag->name}}</td>
-                            <td>{{$ag->leader->name}}</td>
+                            <td>{{isset($ag->leader)? $ag->leader->name:"Group leader has not been set"}}</td>
                             <td>
                                 <a href="{{route('empgroup_edit',$ag)}}" class="btn btn-info btn-sm"><i
                                         class="fa fa-pencil-alt"></i></a>
