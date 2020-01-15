@@ -16,7 +16,10 @@ class CreateEmpGroupsTable extends Migration
         Schema::create('emp_groups', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->unsignedBigInteger('group_leader_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('group_leader_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

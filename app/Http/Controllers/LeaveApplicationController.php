@@ -38,7 +38,7 @@ class LeaveApplicationController extends Controller
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id', 'ASC')->get()->except($user->id);
+        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id);
         //dd($groupMate->name);
 
         //Get approval authorities of THIS user
@@ -253,7 +253,7 @@ class LeaveApplicationController extends Controller
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id', 'ASC')->get()->except($user->id);
+        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id);
         //dd($groupMate->name);
 
         //Get approval authorities of THIS user

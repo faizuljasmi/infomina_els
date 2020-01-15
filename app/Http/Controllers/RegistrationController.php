@@ -75,6 +75,10 @@ class RegistrationController extends Controller
         $empType = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $empGroup = $user->emp_group;
+        $empGroup2 = $user->emp_group_two;
+        $empGroup3 = $user->emp_group_three;
+        $empGroup4 = $user->emp_group_four;
+        $empGroup5 = $user->emp_group_five;
         $empGroups = EmpGroup::orderBy('id', 'ASC')->get();
         $empAuth = $user->approval_authority;
         //dd($empAuth);
@@ -85,13 +89,13 @@ class RegistrationController extends Controller
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        return view('user.edit')->with(compact('user', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
+        return view('user.edit')->with(compact('user', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
     }
 
     public function update(Request $request, User $user)
     {
         try {
-            $user->update($request->only('name', 'staff_id', 'email', 'user_type', 'join_date', 'gender', 'emp_type_id', 'emp_group_id', 'job_title', 'emergency_contact_name', 'emergency_contact_no'));
+            $user->update($request->only('name', 'staff_id', 'email', 'user_type', 'join_date', 'gender', 'emp_type_id', 'emp_group_id','emp_group_two_id','emp_group_three_id','emp_group_four_id','emp_group_five_id', 'job_title', 'emergency_contact_name', 'emergency_contact_no'));
         } catch (\Exception $e) { // It's actually a QueryException but this works too
             if ($e->getCode() == 23000) {
                 return redirect()->route('user_view', ['user' => $user])->with('message', 'Staff ID has already been taken. User details not updated.');
@@ -111,10 +115,14 @@ class RegistrationController extends Controller
         })->get();
         $empType = $user->emp_types;
         $empGroup = $user->emp_group;
+        $empGroup2 = $user->emp_group_two;
+        $empGroup3 = $user->emp_group_three;
+        $empGroup4 = $user->emp_group_four;
+        $empGroup5 = $user->emp_group_five;
         $empAuth = $user->approval_authority;
         //dd($empAuth->getAuthorityOneAttribute);
         $leaveEnt = LeaveEntitlement::orderBy('id', 'ASC')->where('emp_type_id', '=', $empType->id)->get();
-        //dd($leaveEnt);  
+        //dd($leaveEnt);
         $leaveEarn = LeaveEarning::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //dd($leaveEarn);
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
@@ -123,7 +131,7 @@ class RegistrationController extends Controller
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
         //dd($user->name);
-        return view('user.profile')->with(compact('user', 'users', 'authUsers', 'empType', 'empGroup', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
+        return view('user.profile')->with(compact('user', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
     }
 
     public function deactivate(User $user)

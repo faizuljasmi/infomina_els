@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name','staff_id', 'email', 'password', 'user_type', 'emp_type_id', 'emp_group_id', 'join_date','gender',
+        'name','staff_id', 'email', 'password', 'user_type', 'emp_type_id', 'emp_group_id','emp_group_two_id','emp_group_three_id','emp_group_four_id','emp_group_five_id', 'join_date','gender',
         'job_title','emergency_contact_name','emergency_contact_no',
     ];
 
@@ -29,7 +29,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-    
+
 
     /**
      * The attributes that should be cast to native types.
@@ -56,6 +56,22 @@ class User extends Authenticatable
     //One User has one employee group
     public function emp_group(){
         return $this->belongsTo(EmpGroup::class, 'emp_group_id');
+    }
+    //One User has one employee group
+    public function emp_group_two(){
+        return $this->belongsTo(EmpGroup::class, 'emp_group_two_id');
+    }
+    //One User has one employee group
+    public function emp_group_three(){
+        return $this->belongsTo(EmpGroup::class, 'emp_group_three_id');
+    }
+    //One User has one employee group
+    public function emp_group_four(){
+        return $this->belongsTo(EmpGroup::class, 'emp_group_four_id');
+    }
+    //One User has one employee group
+    public function emp_group_five(){
+        return $this->belongsTo(EmpGroup::class, 'emp_group_five_id');
     }
 
     //One User has many leave applications

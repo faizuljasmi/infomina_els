@@ -45,10 +45,10 @@
                         <div class="form-group col-md-3">
                         <label for="type">Job Title</label>
                         <input type="text" class="form-control" id="type" placeholder="{{$user->job_title}}">
-                        </div>  
+                        </div>
                         <div class="form-group col-md-3">
                         <label for="type">Join Date</label>
-                        <input type="text" class="form-control" id="type" placeholder="{{$user->join_date}}">
+                        <input type="text" class="form-control" id="type" placeholder="{{ \Carbon\Carbon::parse($user->join_date)->format('d/m/Y')}}">
                         </div>
                         <div class="form-group col-md-3">
                         <label for="type">Emergency Contact Name</label>
@@ -66,8 +66,8 @@
                             </span></div>
             </div>
         </div>
-    </div> 
-    
+    </div>
+
     <div class="col-md-4">
         <div class="card">
             <div class = "card-header bg-teal">
@@ -130,7 +130,7 @@
                     @endforeach
                     </tr>
                     <tr>
-                    <th>Brought Forward 
+                    <th>Brought Forward
                     </th>
                     @foreach($broughtFwd as $bf)
                       @if($bf->leave_type_id == '1')
