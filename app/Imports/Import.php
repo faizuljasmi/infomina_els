@@ -10,9 +10,9 @@ class Import implements WithMultipleSheets
     {
         return [
             'User' => new ImportUser(),
-            'Approval Auth' => new ImportApprovalAuth(),
-            'Leave Application' => new ImportLeaveApp(),
-            'Leave Earning' => new ImportLeaveEarn(),
+            'ApprovalAuth' => new ImportApprovalAuth(),
+            'LeaveApplication' => new ImportLeaveApp(),
+            'LeaveEarning' => new ImportLeaveEarn(),
         ];
     }
 }
