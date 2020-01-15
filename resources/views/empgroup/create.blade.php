@@ -35,6 +35,7 @@
                         <tr>
                             <th style="width: 7%" scope="col">Type ID</th>
                             <th scope="col">Name</th>
+                            <th scope="col">Group Leader</th>
                             <th style="width: 20%" scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -43,6 +44,7 @@
                         <tr>
                             <td>{{$ag->id}}</td>
                             <td>{{$ag->name}}</td>
+                            <td>{{$ag->leader->name}}</td>
                             <td>
                                 <a href="{{route('empgroup_edit',$ag)}}" class="btn btn-info btn-sm"><i
                                         class="fa fa-pencil-alt"></i></a>

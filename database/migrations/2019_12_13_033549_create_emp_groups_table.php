@@ -19,7 +19,7 @@ class CreateEmpGroupsTable extends Migration
             $table->unsignedBigInteger('group_leader_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('group_leader_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('group_leader_id')->references('id')->on('users');
         });
     }
 

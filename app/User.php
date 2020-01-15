@@ -74,6 +74,11 @@ class User extends Authenticatable
         return $this->belongsTo(EmpGroup::class, 'emp_group_five_id');
     }
 
+    //One User can lead one group
+    public function group_lead(){
+        return $this->belongsTo(EmpGroup::class);
+    }
+
     //One User has many leave applications
     public function leave_applications(){
         return $this->hasMany(LeaveApplication::class);

@@ -20,11 +20,11 @@ class AddEmpGroupIdToUsersTable extends Migration
             $table->unsignedBigInteger('emp_group_four_id')->nullable();
             $table->unsignedBigInteger('emp_group_five_id')->nullable();
 
-            $table->foreign('emp_group_id')->references('id')->on('emp_groups')->onDelete('cascade');
-            $table->foreign('emp_group_two_id')->references('id')->on('emp_groups')->onDelete('cascade');
-            $table->foreign('emp_group_three_id')->references('id')->on('emp_groups')->onDelete('cascade');
-            $table->foreign('emp_group_four_id')->references('id')->on('emp_groups')->onDelete('cascade');
-            $table->foreign('emp_group_five_id')->references('id')->on('emp_groups')->onDelete('cascade');
+            $table->foreign('emp_group_id')->references('id')->on('emp_groups');
+            $table->foreign('emp_group_two_id')->references('id')->on('emp_groups');
+            $table->foreign('emp_group_three_id')->references('id')->on('emp_groups');
+            $table->foreign('emp_group_four_id')->references('id')->on('emp_groups');
+            $table->foreign('emp_group_five_id')->references('id')->on('emp_groups');
         });
     }
 

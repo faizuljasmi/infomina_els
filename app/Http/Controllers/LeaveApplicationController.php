@@ -24,6 +24,7 @@ use App\LeaveEarning;
 use App\LeaveBalance;
 use App\TakenLeave;
 use App\Holiday;
+use App\EmpGroup;
 use Carbon\Carbon;
 
 class LeaveApplicationController extends Controller
@@ -38,8 +39,39 @@ class LeaveApplicationController extends Controller
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id);
-        //dd($groupMate->name);
+        $groupMates = collect([]);
+
+        $group1 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_id)->first();
+        if(isset($group1)){
+            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates1);
+        }
+
+        $group2 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_two_id)->first();
+        if(isset($group2)){
+            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_two_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates2);
+        }
+
+        $group3 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_three_id)->first();
+        if(isset($group3)){
+            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_three_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates3);
+        }
+
+        $group4 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_four_id)->first();
+        if(isset($group4)){
+            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_four_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates4);
+        }
+
+        $group5 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_five_id)->first();
+        if(isset($group5)){
+            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates5);
+        }
+        $groupMates = $groupMates->unique()->values()->all();
+        //dd($groupMates->unique()->values()->all());
 
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
@@ -253,7 +285,38 @@ class LeaveApplicationController extends Controller
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
-        $groupMates = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id);
+        $groupMates = collect([]);
+
+        $group1 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_id)->first();
+        if(isset($group1)){
+            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates1);
+        }
+
+        $group2 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_two_id)->first();
+        if(isset($group2)){
+            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_two_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates2);
+        }
+
+        $group3 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_three_id)->first();
+        if(isset($group3)){
+            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_three_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates3);
+        }
+
+        $group4 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_four_id)->first();
+        if(isset($group4)){
+            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_four_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates4);
+        }
+
+        $group5 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_five_id)->first();
+        if(isset($group5)){
+            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates5);
+        }
+        $groupMates = $groupMates->unique()->values()->all();
         //dd($groupMate->name);
 
         //Get approval authorities of THIS user
