@@ -58,6 +58,24 @@ class NewApplication extends Notification
         }
         $url = url('/leave/apply/view/'.$la->id);
         //dd($la->user->name);
+
+        if($la->leave_type_id == '12'){
+
+            return (new MailMessage)
+                    ->subject('[INFOMINA ELS] New Leave Application- '.$la->user->name)
+                    ->greeting('Hi,')
+                    ->line('Leave application by '.$la->user->name.' is waiting for your approval:')
+                    ->line('Leave type: '.$la->leaveType->name)
+                    ->line('From: '.Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YYYY'))
+                    ->line('To: '.Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YYYY'))
+                    ->line('Total day(s): '.$la->total_days)
+                    ->line('Reason: '.$la->reason)
+                    ->line('Approval Authority 1: '.(isset($la->approver_one->name) ? $la->approver_one->name:'NA'))
+                    ->line('Approval Authority 2: '.(isset($la->approver_two->name) ? $la->approver_two->name:'NA'))
+                    ->line('Approval Authority 3: '.(isset($la->approver_three->name) ? $la->approver_three->name:'NA'))
+                    ->action('View application', $url)
+                    ->line('Have a nice day!');
+        }
         return (new MailMessage)
                     ->subject('[INFOMINA ELS] New Leave Application- '.$la->user->name)
                     ->greeting('Hi,')

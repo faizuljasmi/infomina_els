@@ -11,6 +11,7 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -106,8 +107,8 @@ class StatusUpdate extends Notification
             ->line($desc)
             ->line('Status: '.$stat)
             ->line('Leave type: '.$la->leaveType->name)
-            ->line('From: '.$la->date_from)
-            ->line('To: '.$la->date_to)
+            ->line('From: '.Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YYYY'))
+            ->line('To: '.Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YYYY'))
             ->line('Total day(s): '.$la->total_days)
             ->line('Reason: '.$la->reason)
             // ->action('View application', $url)
@@ -121,10 +122,10 @@ class StatusUpdate extends Notification
         ->line($desc)
         ->line('Status: '.$stat)
         ->line('Leave type: '.$la->leaveType->name)
-        ->line('From: '.$la->date_from)
-        ->line('To: '.$la->date_to)
+        ->line('From: '.Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YYYY'))
+        ->line('To: '.Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YYYY'))
         ->line('Total day(s): '.$la->total_days)
-        ->line('Resume date: '.$la->date_resume)
+        ->line('Resume date: '.Carbon::parse($la->date_resume)->isoFormat('ddd, D MMM YYYY'))
         ->line('Reason: '.$la->reason)
         ->line('Relief Personnel: '.$la->relief_personnel->name)
         ->line('Emergency Contact Name: '.$la->emergency_contact_name)

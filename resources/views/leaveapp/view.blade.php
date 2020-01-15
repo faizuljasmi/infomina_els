@@ -68,7 +68,7 @@
 
                 <!-- Leave Variation -->
                 <div class="form-group">
-                  <label>Apply For</label>
+                  <label>Full/Half Day</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
@@ -76,9 +76,9 @@
                       </span>
                     </div>
                     <select class="form-control" name="apply_for">
-                      <option value="full-day">Full Day</option>
-                      <option value="half-day-am">Half Day AM</option>
-                      <option value="half-day-pm">Half Day PM</option>
+                      <option value="full-day"  {{ ($leaveApp->apply_for == "full-day" ? "selected":"") }}>Full Day</option>
+                      <option value="half-day-am"  {{ ($leaveApp->apply_for == "half-day-am" ? "selected":"") }}>Half Day AM</option>
+                      <option value="half-day-pm"  {{ ($leaveApp->apply_for == "half-day-pm" ? "selected":"") }}>Half Day PM</option>
                     </select>
                   </div>
                 </div>

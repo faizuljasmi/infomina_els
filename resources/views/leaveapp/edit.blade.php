@@ -73,12 +73,12 @@
                             </div>
                             <select class="form-control" name="apply_for" value="{{old('apply_for')}}">
                                 <option value="full-day"
-                                    {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
+                                    {{ ($leaveApplication->apply_for == 'full-day' ? "selected":"") }}>Full Day</option>
                                 <option value="half-day-am"
-                                    {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM
+                                    {{ ($leaveApplication->apply_for == 'half-day-am' ? "selected":"") }}>Half Day AM
                                 </option>
                                 <option value="half-day-pm"
-                                    {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM
+                                    {{ ($leaveApplication->apply_for == 'half-day-pm' ? "selected":"") }}>Half Day PM
                                 </option>
                             </select>
                         </div>

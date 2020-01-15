@@ -633,4 +633,4 @@
         display: none;
     }
 </style>
-@stop
+@endsection
