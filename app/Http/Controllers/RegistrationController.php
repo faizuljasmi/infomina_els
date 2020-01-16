@@ -27,12 +27,13 @@ class RegistrationController extends Controller
 
     public function create()
     {
-        $users = User::orderBy('staff_id', 'ASC')->simplePaginate(15);
+        $activeUsers = User::where('status','Active')->sortable(['staff_id'])->paginate(15,['*'],'active');
+        $inactiveUsers = User::where('status','Inactive')->sortable(['staff_id'])->paginate(15,['*'],'inactive');
         //dd($users);
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         //dd($empTypes);
         $empGroups = EmpGroup::orderBy('id', 'ASC')->get();
-        return view('registration.create')->with(compact('users', 'empTypes', 'empGroups'));
+        return view('registration.create')->with(compact('activeUsers','inactiveUsers','empTypes', 'empGroups'));
     }
 
     public function store(Request $request)
