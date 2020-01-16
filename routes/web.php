@@ -45,6 +45,7 @@ Route::middleware('can:edit_users')->group(function(){
     Route::get('/user/{user}','RegistrationController@profile')->name('user_view')->middleware('auth');
     Route::get('/user/delete/{user}','RegistrationController@destroy')->name('user_delete')->middleware('auth');
     Route::get('/user/deactivate/{user}','RegistrationController@deactivate')->name('user_deactivate')->middleware('auth');
+    Route::get('/search', 'RegistrationController@search')->name('user_search')->middleware('auth');
 });
 
 

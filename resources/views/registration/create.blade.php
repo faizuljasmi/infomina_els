@@ -3,6 +3,10 @@
 
 
 @section('content_header')
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 @if(session()->has('message'))
 <div class="alert alert-success alert-dismissible fade show" role="alert">
     <i class="icon fa fa-check"></i>
@@ -31,6 +35,17 @@
             <div class="card-header bg-teal">
                 <strong>Users List</strong>
             </div>
+                <div>
+                    <form action ="{{ route('user_search') }}" method ="get">
+                        <div class="input-group">
+                            <input type ="search" name ="search" class ="form-control">
+                            <span class ="input-group-prepend">
+                                <button type ="submit" class ="btn btn-primary">Search</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            <div class="table-responsive">
             <div class="card-body">
                 {{-- {{ $activeUsers->appends(['active' => $activeUsers->currentPage()])->links() }} --}}
                 {!! $activeUsers->appends(\Request::except('page'),['active' => $activeUsers->currentPage()])->render() !!}
@@ -89,6 +104,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
                 <div class="col-md-12 mt-3">
                     {{-- {{ $activeUsers->appends(['active' => $activeUsers->currentPage()])->links() }} --}}
                     {!! $activeUsers->appends(\Request::except('page'),['active' => $activeUsers->currentPage()])->render() !!}

@@ -20,6 +20,8 @@ use App\LeaveEarning;
 use App\LeaveBalance;
 use App\TakenLeave;
 use App\BroughtForwardLeave;
+use Redirect,Response,DB,Config;
+use Datatables;
 
 
 class RegistrationController extends Controller
@@ -145,5 +147,22 @@ class RegistrationController extends Controller
     {
         $user->delete();
         return back();
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->get('search');
+        //dd($search);
+        $activeUsers = User::where('status','Active')->where('name','like','%'.$search.'%')->paginate(15,['*'],'active');
+        //$activeUsers = User::where('status','Active')->sortable(['staff_id'])->paginate(15,['*'],'active');
+        //dd($users[0]->name);
+       
+        $inactiveUsers = User::where('status','Inactive')->sortable(['staff_id'])->paginate(15,['*'],'inactive');
+        //dd($users);
+        $empTypes = EmpType::orderBy('id', 'ASC')->get();
+        //dd($empTypes);
+        $empGroups = EmpGroup::orderBy('id', 'ASC')->get();
+
+        return view('registration.create', ['users' => $activeUsers])->with(compact('activeUsers','inactiveUsers','empTypes', 'empGroups'));
     }
 }
