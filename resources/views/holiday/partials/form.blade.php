@@ -85,9 +85,9 @@
         }
     });
 
-   
+
     const validation = {
-      
+
       onchange : function(v, e, fc){
           console.log("onchange", v, e, fc);
           let name = fc.name;
@@ -105,19 +105,19 @@
           validation._dateTo(name);
 
           validation._totalDay(name);
-        
+
       },
       validateDateFromAndTo : function(name){
-       
+
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
 
-      
-      
+
+
         if(
-          (name == FC.date_from.name && calendar.isHoliday(date_from)) 
-          || 
+          (name == FC.date_from.name && calendar.isHoliday(date_from))
+          ||
           (name == FC.date_to.name && calendar.isHoliday(date_to))
         ){
           return `Selected date is a HOLIDAY. Please select another date.`;
@@ -139,16 +139,16 @@
       _dateFrom : function(name){
       },
       _dateTo : function(name){
-       
-    
+
+
       },
       _totalDay : function(name){
-   
+
 
           if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
             let from = _form.get(FC.date_from);
             let to = _form.get(FC.date_to);
-            let total = calendar.getTotalWorkingDay(from, to);
+            let total = calendar.getTotalDays(from, to);
             console.log("total",total)
             _form.set(FC.total_days, total);
           } else{
@@ -176,7 +176,7 @@
         name : "total_days",
         type : MyFormType.NUMBER
       },
-      
+
     }
 
     _form = new MyForm({parent_id : parent_id, items : FC, onchange : validation.onchange});
@@ -186,7 +186,7 @@
     _form.required(FC.date_to);
 
     _form.disabled(FC.total_days);
-  
+
 
   }
 

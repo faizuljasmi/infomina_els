@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
  */
 
 use App\EmpGroup;
+use App\User;
 use Illuminate\Http\Request;
 
 class EmpGroupController extends Controller
@@ -33,7 +34,8 @@ class EmpGroupController extends Controller
     public function create()
     {
         $allGroups = $this->getAllEmpGroups();
-        return view('empgroup.create')->with(compact('allGroups'));
+        $allUsers = User::all();
+        return view('empgroup.create')->with(compact('allGroups','allUsers'));
     }
 
     /**
@@ -49,7 +51,7 @@ class EmpGroupController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $empgroup = EmpGroup::create(request(['name']));
+        $empgroup = EmpGroup::create(request(['name','group_leader_id']));
 
         return redirect()->to('/empgroup/create')->with('message', 'Employee group created succesfully');
     }
@@ -73,8 +75,8 @@ class EmpGroupController extends Controller
      */
     public function edit(EmpGroup $empGroup)
     {
-        //
-        return view('empgroup.edit')->with(compact('empGroup'));
+        $allUsers = User::all();
+        return view('empgroup.edit')->with(compact('empGroup','allUsers'));
     }
 
     /**
@@ -87,7 +89,7 @@ class EmpGroupController extends Controller
     public function update(Request $request, EmpGroup $empGroup)
     {
         //
-        $empGroup->update($request->only('name'));
+        $empGroup->update($request->only('name','group_leader_id'));
         return redirect()->to('/empgroup/create')->with('message', 'Employee group name updated succesfully');
     }
 

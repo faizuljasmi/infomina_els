@@ -76,18 +76,32 @@
                         {{ csrf_field() }}
                         <div class="form-row">
 
-                            <!-- Employee Type Name -->
-                            <label for="typename">Employee Group Name</label>
-                            <input type="text" name="name"
-                                class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}"
-                                value="{{ old('name') }}" id="typename" placeholder="Ex: IT1" autofocus>
-
-
-                            @if ($errors->has('name'))
-                            <div class="invalid-feedback">
-                                <strong>{{ $errors->first('name') }}</strong>
+                            <div class="form-group">
+                                <!-- Employee Type Name -->
+                                <label for="typename">Employee Group Name</label>
+                                <input type="text" name="name"
+                                    class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}"
+                                    value="{{ old('name') }}" id="typename" placeholder="Ex: IT1" autofocus>
+                                @if ($errors->has('name'))
+                                <div class="invalid-feedback">
+                                    <strong>{{ $errors->first('name') }}</strong>
+                                </div>
+                                @endif
                             </div>
-                            @endif
+
+                            <div class="form-group">
+                                <select class="form-control" name="group_leader_id" required>
+                                    <option selected value="">Choose Group Leader</option>
+                                    @foreach($allUsers as $au)
+                                    <option value="{{$au->id}}"
+                                        {{ (old('group_leader_id') == $au->id ? "selected":"") }}>
+                                        {{$au->name}}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a group leader
+                                </div>
+                            </div>
 
 
 

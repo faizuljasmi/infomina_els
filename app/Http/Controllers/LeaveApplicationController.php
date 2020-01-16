@@ -7,6 +7,7 @@
  * @modify date 2020-01-07 09:02:58
  * @desc [description]
  */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -41,33 +42,37 @@ class LeaveApplicationController extends Controller
         //Get employees who are in the same group (for relieve personnel).
         $groupMates = collect([]);
 
-        $group1 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_id)->first();
-        if(isset($group1)){
+        $group1 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_id)->first();
+        if (isset($group1)) {
             $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
             $groupMates = $groupMates->merge($groupMates1);
         }
 
-        $group2 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_two_id)->first();
-        if(isset($group2)){
-            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_two_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
+        $group2 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_two_id)->first();
+        if (isset($group2)) {
+            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_two_id)->orWhere('emp_group_two_id', $user->emp_group_two_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_two_id)->orWhere('emp_group_four_id', $user->emp_group_two_id)->orWhere('emp_group_five_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
             $groupMates = $groupMates->merge($groupMates2);
         }
 
-        $group3 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_three_id)->first();
-        if(isset($group3)){
-            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_three_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
+        $group3 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_three_id)->first();
+        if (isset($group3)) {
+            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_three_id)->orWhere('emp_group_two_id', $user->emp_group_three_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_three_id)->orWhere('emp_group_four_id', $user->emp_group_three_id)->orWhere('emp_group_five_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
             $groupMates = $groupMates->merge($groupMates3);
         }
 
-        $group4 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_four_id)->first();
-        if(isset($group4)){
-            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_four_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
+        $group4 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_four_id)->first();
+        if (isset($group4)) {
+            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_four_id)->orWhere('emp_group_two_id', $user->emp_group_four_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_four_id)->orWhere('emp_group_four_id', $user->emp_group_four_id)->orWhere('emp_group_five_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
             $groupMates = $groupMates->merge($groupMates4);
         }
 
-        $group5 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_five_id)->first();
-        if(isset($group5)){
-            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
+        $group5 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_five_id)->first();
+        if (isset($group5)) {
+            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_five_id)->orWhere('emp_group_two_id', $user->emp_group_five_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_five_id)->orWhere('emp_group_four_id', $user->emp_group_five_id)->orWhere('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
             $groupMates = $groupMates->merge($groupMates5);
         }
         $groupMates = $groupMates->unique()->values()->all();
@@ -75,8 +80,8 @@ class LeaveApplicationController extends Controller
 
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
-        if($leaveAuth == null){
-            return redirect('home')->with('error','Your approval authorities have not been set yet by the HR Admin. Please contact the HR Admin.');
+        if ($leaveAuth == null) {
+            return redirect('home')->with('error', 'Your approval authorities have not been set yet by the HR Admin. Please contact the HR Admin.');
         }
 
         //TODO: Get leave balance of THIS employee
@@ -86,19 +91,36 @@ class LeaveApplicationController extends Controller
         $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
         //Get leave applications of same group
         $groupLeaveApps = collect([]);
-        foreach($leaveApps as $la){
-            if($la->user->emp_group_id == $user->emp_group_id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')){
+        foreach ($leaveApps as $la) {
+            $groupIndex = ["_", "_two_", "_three_", "_four_", "_five_"];
+
+            $isUserLaGroupSameUserGroup = false;
+            foreach ($groupIndex as $gI_1) {
+                foreach ($groupIndex as $gI_2) {
+                    $gLa = $la->user["emp_group" . $gI_1 . "id"];
+                    $gUser = $user["emp_group" . $gI_2 . "id"];
+
+                    if ($gUser != "" && $gUser != null && $gLa != "" && $gLa != null) {
+                        if ($gLa == $gUser) {
+                            $isUserLaGroupSameUserGroup = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if ($isUserLaGroupSameUserGroup && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')
+            && ($la->user_id != $user->id)) {
                 $groupLeaveApps->add($la);
             }
         }
         //Get my applications
         $myApps = collect([]);
-        foreach($leaveApps as $la){
-            if($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')){
+        foreach ($leaveApps as $la) {
+            if ($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')) {
                 $myApps->add($la);
             }
         }
-       //dd($groupLeaveApps);
+        //dd($groupLeaveApps);
 
         $holidays = Holiday::all();
         $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get();
@@ -119,12 +141,12 @@ class LeaveApplicationController extends Controller
         $myApplication = array();
         foreach ($leaveApps as $la) {
             //Get the user applied and approved application
-            if($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')){
+            if ($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')) {
                 $stardDate = new Carbon($la->date_from);
-                $endDate = new Carbon ($la->date_to);
+                $endDate = new Carbon($la->date_to);
 
-                while($stardDate->lte($endDate)){
-                    $dates = str_replace("-","", $stardDate->toDateString());
+                while ($stardDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $stardDate->toDateString());
                     $myApplication[] = $dates;
                     $stardDate->addDay();
                 }
@@ -149,7 +171,7 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates','myApplication', 'holidays','groupLeaveApps', 'holsPaginated','myApps'));
+        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'myApplication', 'holidays', 'groupLeaveApps', 'holsPaginated', 'myApps'));
     }
 
 
@@ -172,30 +194,30 @@ class LeaveApplicationController extends Controller
             return redirect()->to('/leave/apply')->with('error', 'Your have insufficient leave balance. Please contact HR for more info.');
         }
 
-       //Check leave authority
+        //Check leave authority
 
-        $appCheck = LeaveApplication::where('user_id',$user->id)->get();
+        $appCheck = LeaveApplication::where('user_id', $user->id)->get();
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
         foreach ($appCheck as $la) {
-                $startDate = new Carbon($la->date_from);
-                $endDate = new Carbon($la->date_to);
-                if ($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3') {
-                    while ($startDate->lte($endDate)) {
-                        $dates = str_replace("-", "", $startDate->toDateString());
-                        $applied_dates[] = $dates;
-                        $startDate->addDay();
-                    }
-                }
-                if ($la->status == 'APPROVED') {
-                    while ($startDate->lte($endDate)) {
-                        $dates = str_replace("-", "", $startDate->toDateString());
-                        $approved_dates[] = $dates;
-                        $startDate->addDay();
-                    }
+            $startDate = new Carbon($la->date_from);
+            $endDate = new Carbon($la->date_to);
+            if ($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3') {
+                while ($startDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $startDate->toDateString());
+                    $applied_dates[] = $dates;
+                    $startDate->addDay();
                 }
             }
+            if ($la->status == 'APPROVED') {
+                while ($startDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $startDate->toDateString());
+                    $approved_dates[] = $dates;
+                    $startDate->addDay();
+                }
+            }
+        }
 
         $leaveApp = new LeaveApplication;
         //get user id, leave type id
@@ -287,32 +309,32 @@ class LeaveApplicationController extends Controller
         //Get employees who are in the same group (for relieve personnel).
         $groupMates = collect([]);
 
-        $group1 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_id)->first();
-        if(isset($group1)){
+        $group1 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_id)->first();
+        if (isset($group1)) {
             $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
             $groupMates = $groupMates->merge($groupMates1);
         }
 
-        $group2 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_two_id)->first();
-        if(isset($group2)){
+        $group2 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_two_id)->first();
+        if (isset($group2)) {
             $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_two_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
             $groupMates = $groupMates->merge($groupMates2);
         }
 
-        $group3 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_three_id)->first();
-        if(isset($group3)){
+        $group3 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_three_id)->first();
+        if (isset($group3)) {
             $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_three_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
             $groupMates = $groupMates->merge($groupMates3);
         }
 
-        $group4 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_four_id)->first();
-        if(isset($group4)){
+        $group4 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_four_id)->first();
+        if (isset($group4)) {
             $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_four_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
             $groupMates = $groupMates->merge($groupMates4);
         }
 
-        $group5 = EmpGroup::orderby('id','ASC')->where('id',$user->emp_group_five_id)->first();
-        if(isset($group5)){
+        $group5 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_five_id)->first();
+        if (isset($group5)) {
             $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
             $groupMates = $groupMates->merge($groupMates5);
         }
@@ -322,7 +344,7 @@ class LeaveApplicationController extends Controller
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
         //Get all authorities
-        $userAuth = User::orderBy('id', 'ASC')->where('id', '!=', '1')->where('user_type','Authority')->get()->except($user->id);
+        $userAuth = User::orderBy('id', 'ASC')->where('id', '!=', '1')->where('user_type', 'Authority')->get()->except($user->id);
         //Get approval authorities for this user
         //Change id to CYNTHIA'S ID
         $leaveAuthReplacement = User::orderBy('id', 'ASC')->where('id', '!=', '1')->get()->except($user->id);
@@ -370,7 +392,7 @@ class LeaveApplicationController extends Controller
             }
         }
         //dd($leaveApplication->approver_id_1);
-        return view('leaveapp.edit')->with(compact('leaveApplication', 'user', 'leaveType', 'groupMates','userAuth', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'leaveAuthReplacement'));
+        return view('leaveapp.edit')->with(compact('leaveApplication', 'user', 'leaveType', 'groupMates', 'userAuth', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'leaveAuthReplacement'));
     }
 
     public function update(Request $request, LeaveApplication $leaveApplication)
@@ -455,11 +477,11 @@ class LeaveApplicationController extends Controller
         // }
 
         //Upload image
-        if($request->hasFile('attachment')){
+        if ($request->hasFile('attachment')) {
             $att = $request->file('attachment');
             $uploaded_file = $att->store('public');
             //Pecahkan
-            $paths = explode('/',$uploaded_file);
+            $paths = explode('/', $uploaded_file);
             $filename = $paths[1];
             //dd($uploaded_file);
             //Save filename into Database
@@ -714,14 +736,13 @@ class LeaveApplicationController extends Controller
         $startDate = new Carbon($leaveApp->date_from);
         $endDate = new Carbon($leaveApp->date_to);
 
-        if($leaveApp->status == 'APPROVED'){
+        if ($leaveApp->status == 'APPROVED') {
             while ($startDate->lte($endDate)) {
                 $dates = str_replace("-", "", $startDate->toDateString());
                 $approved_dates[] = $dates;
                 $startDate->addDay();
             }
-        }
-        else{
+        } else {
             while ($startDate->lte($endDate)) {
                 $dates = str_replace("-", "", $startDate->toDateString());
                 $applied_dates[] = $dates;
@@ -741,7 +762,7 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.view')->with(compact('leaveApp', 'leaveType', 'user', 'leaveAuth', 'groupMates', 'leaveBal', 'applied_dates','approved_dates', 'hol_dates'));
+        return view('leaveapp.view')->with(compact('leaveApp', 'leaveType', 'user', 'leaveAuth', 'groupMates', 'leaveBal', 'applied_dates', 'approved_dates', 'hol_dates'));
     }
 
     public function cancel(LeaveApplication $leaveApplication)
