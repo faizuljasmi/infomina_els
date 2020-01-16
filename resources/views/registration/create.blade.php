@@ -42,7 +42,7 @@
                         <tr>
                             <th style="width: 7%" scope="col">@sortablelink('staff_id','Staff Id')</th>
                             <th scope="col">@sortablelink('name','Name')</th>
-                            <th style="width: 10%" scope="col">User Type</th>
+                            <th style="width: 10%" scope="col">@sortablelink('user_type','User Type')</th>
                             <th style="width: 5%" scope="col">Status</th>
                             <th style="width: 13%" scope="col">Actions</th>
                         </tr>
@@ -110,7 +110,7 @@
                         <tr>
                             <th style="width: 7%" scope="col">@sortablelink('staff_id','Staff Id')</th>
                             <th scope="col">@sortablelink('name','Name')</th>
-                            <th style="width: 10%" scope="col">User Type</th>
+                            <th style="width: 10%" scope="col">@sortablelink('user_type','User Type')</th>
                             <th style="width: 5%" scope="col">Status</th>
                             <th style="width: 10%" scope="col">Actions</th>
                         </tr>

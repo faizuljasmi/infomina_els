@@ -24,7 +24,8 @@ class User extends Authenticatable
 
     public $sortable = ['id',
                         'staff_id',
-                        'name'];
+                        'name',
+                        'user_type'];
 
     /**
      * The attributes that should be hidden for arrays.
