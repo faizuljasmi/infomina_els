@@ -26,21 +26,27 @@ class ImportApprovalAuth implements ToModel, WithHeadingRow
         
         $appid1 = User::orderBy('id', 'ASC')->where("name", $row['approval_1'])->first();
         if($appid1 == null){
-            return null;
+            $app1 = null;
         }
+        else{
         $app1 = $appid1->id;
+        }
 
         $appid2 = User::orderBy('id', 'ASC')->where("name", $row['approval_2'])->first();
         if($appid2 == null){
-            return null;
+            $app2 = null;
         }
+        else{
         $app2 = $appid2->id;
-
-         $appid3 = User::orderBy('id', 'ASC')->where("name", $row['approval_3'])->first();
-         if($appid3 == null){
-            return null;
         }
-         $app3 = $appid3->id;
+
+        $appid3 = User::orderBy('id', 'ASC')->where("name", $row['approval_3'])->first();
+        if($appid3 == null){
+            $app3 = null;
+        }
+        else{
+        $app3 = $appid3->id;
+        }
 
         $apau = new ApprovalAuthority();
         $apau->user_id = $user_id;
