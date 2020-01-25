@@ -30,6 +30,10 @@ class LeaveApplicationPolicy
         return $user->user_type == 'Admin' || $user->id == $leaveApplication->user_id || $user->user_type == 'Authority';
     }
 
+    public function cancel(User $user, LeaveApplication $leaveApplication){
+        return ($leaveApplication->user_id == auth()->user()->id && $leaveApplication->status == 'PENDING_1') || auth()->user()->user_type == 'Admin';
+    }
+
     public function approve(User $user,LeaveApplication $leaveApplication)
     {
         return $user->user_type == 'Admin' || $user->user_type == 'Authority';

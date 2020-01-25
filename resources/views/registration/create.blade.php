@@ -35,7 +35,9 @@
             <div class="card-header bg-teal">
                 <strong>Users List</strong>
             </div>
-                <div>
+            <div class="table-responsive">
+                <div class="card-body">
+                    <div class ="col-md-3 float-right">
                     <form action ="{{ route('user_search') }}" method ="get">
                         <div class="input-group">
                             <input type ="search" name ="search" class ="form-control">
@@ -45,69 +47,70 @@
                         </div>
                     </form>
                 </div>
-            <div class="table-responsive">
-            <div class="card-body">
-                {{-- {{ $activeUsers->appends(['active' => $activeUsers->currentPage()])->links() }} --}}
-                {!! $activeUsers->appends(\Request::except('page'),['active' => $activeUsers->currentPage()])->render() !!}
-                <div class="col-md-12">
-                    <h6><strong>Displaying {{$activeUsers->count()}} of {{$activeUsers->total()}} records.</strong></h6>
-                </div>
-                <table class="table table-sm table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th style="width: 10%" scope="col">Staff Id @sortablelink('staff_id','',[],['class' => 'fa fa-fw fa-sort'])</th>
-                            <th scope="col">Name @sortablelink('name','',[],['class' => 'fa fa-fw fa-sort'])</th>
-                            <th style="width: 10%" scope="col">User Type @sortablelink('user_type','',[],['class' => 'fa fa-fw fa-sort'])</th>
-                            <th style="width: 5%" scope="col">Status</th>
-                            <th style="width: 13%" scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($activeUsers as $u)
-                        @if($u->id != auth()->user()->id && $u->status == 'Active')
-                        <tr>
-                            <td>{{$u->staff_id}}</td>
-                            <td>{{$u->name}}</td>
-                            <td>{{$u->user_type}}</td>
-                            <td>
-                                @if($u->status == 'Active')
-                                <span class="badge badge-success">Active</span>
-                                @else
-                                <span class="badge badge-danger">Inactive</span>
-                                @endif
-                            </td>
-                            <td>
-                                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                                    title="View user profile">
-                                    <a href="{{route('user_view', $u->id)}}" class="btn btn-success btn-sm"><i
-                                            class="fa fa-eye"></i></a>
-                                </span>
-                                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                                    title="Edit user profile and leave">
-                                    <a href="{{route('user_edit', $u->id)}}" class="btn btn-info btn-sm"><i
-                                            class="fa fa-pencil-alt"></i></a>
-                                </span>
-                                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                                    title="Delete user permanently"
-                                    onclick="return confirm('Warning: Are you sure you want to delete this user? Deleting this user will also delete all users associated with it. Make sure you have detach all of its dependencies.')">
-                                    <a href="{{route('user_delete', $u->id)}}" class="btn btn-danger btn-sm"><i
-                                            class="fa fa-trash-alt"></i></a>
-                                </span>
-                                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                                    title="Deactivate user from the system">
-                                    <a href="{{route('user_deactivate', $u->id)}}" class="btn btn-warning btn-sm"><i
-                                            class="fas fa-user-slash"></i></a>
-                                </span>
-                            </td>
-                        </tr>
-                        @endif
-                        @endforeach
-                    </tbody>
-                </table>
+                    {{-- {{ $activeUsers->appends(['active' => $activeUsers->currentPage()])->links() }} --}}
+                    {!! $activeUsers->appends(\Request::except('page'),['active' =>
+                    $activeUsers->currentPage()])->render() !!}
+                    <div class="col-md-12">
+                        <h6><strong>Displaying {{$activeUsers->count()}} of {{$activeUsers->total()}} records.</strong>
+                        </h6>
+                    </div>
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%" scope="col">Staff Id @sortablelink('staff_id','',[])</th>
+                                <th scope="col">Name @sortablelink('name','',[])</th>
+                                <th style="width: 10%" scope="col">User Type @sortablelink('user_type','',[])</th>
+                                <th style="width: 5%" scope="col">Status</th>
+                                <th style="width: 13%" scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($activeUsers as $u)
+                            @if($u->id != auth()->user()->id && $u->status == 'Active')
+                            <tr>
+                                <td>{{$u->staff_id}}</td>
+                                <td>{{$u->name}}</td>
+                                <td>{{$u->user_type}}</td>
+                                <td>
+                                    @if($u->status == 'Active')
+                                    <span class="badge badge-success">Active</span>
+                                    @else
+                                    <span class="badge badge-danger">Inactive</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                        title="View user profile">
+                                        <a href="{{route('user_view', $u->id)}}" class="btn btn-success btn-sm"><i
+                                                class="fa fa-eye"></i></a>
+                                    </span>
+                                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                        title="Edit user profile and leave">
+                                        <a href="{{route('user_edit', $u->id)}}" class="btn btn-info btn-sm"><i
+                                                class="fa fa-pencil-alt"></i></a>
+                                    </span>
+                                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                        title="Delete user permanently"
+                                        onclick="return confirm('Warning: Are you sure you want to delete this user? Deleting this user will also delete all users associated with it. Make sure you have detach all of its dependencies.')">
+                                        <a href="{{route('user_delete', $u->id)}}" class="btn btn-danger btn-sm"><i
+                                                class="fa fa-trash-alt"></i></a>
+                                    </span>
+                                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                        title="Deactivate user from the system">
+                                        <a href="{{route('user_deactivate', $u->id)}}" class="btn btn-warning btn-sm"><i
+                                                class="fas fa-user-slash"></i></a>
+                                    </span>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
                 <div class="col-md-12 mt-3">
                     {{-- {{ $activeUsers->appends(['active' => $activeUsers->currentPage()])->links() }} --}}
-                    {!! $activeUsers->appends(\Request::except('page'),['active' => $activeUsers->currentPage()])->render() !!}
+                    {!! $activeUsers->appends(\Request::except('page'),['active' =>
+                    $activeUsers->currentPage()])->render() !!}
                 </div>
             </div>
         </div>
@@ -121,12 +124,15 @@
             </div>
             <div class="card-body">
                 {{ $inactiveUsers->appends(['inactive' => $inactiveUsers->currentPage()])->links() }}
+                <h6><strong>Displaying {{$inactiveUsers->count()}} of {{$inactiveUsers->total()}} records.</strong>
+                </h6>
                 <table class="table table-sm table-bordered">
+                    @if($inactiveUsers->count() > 0)
                     <thead>
                         <tr>
-                            <th style="width: 7%" scope="col">@sortablelink('staff_id','Staff Id')</th>
-                            <th scope="col">@sortablelink('name','Name')</th>
-                            <th style="width: 10%" scope="col">@sortablelink('user_type','User Type')</th>
+                            <th style="width: 10%" scope="col">Staff Id @sortablelink('staff_id','',[])</th>
+                            <th scope="col">Name @sortablelink('name','',[])</th>
+                            <th style="width: 10%" scope="col">User Type @sortablelink('user_type','',[])</th>
                             <th style="width: 5%" scope="col">Status</th>
                             <th style="width: 10%" scope="col">Actions</th>
                         </tr>
@@ -166,6 +172,9 @@
                         </tr>
                         @endif
                         @endforeach
+                        @else
+                        <th>No Record Found</th>
+                        @endif
                     </tbody>
                 </table>
             </div>

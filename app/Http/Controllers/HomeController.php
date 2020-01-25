@@ -52,7 +52,7 @@ class HomeController extends Controller
         //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where('user_id', '=', $user->id)->paginate(3);
-        $pendLeaves = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
+        $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
                 ->where('user_id', $user->id);
         })->orWhere(function ($query) use ($user) {
@@ -61,9 +61,9 @@ class HomeController extends Controller
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('user_id', $user->id);
-        })->simplePaginate(5);
+        })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
-        $leaveHist = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
+        $leaveHist = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('user_id', $user->id);
         })->orWhere(function ($query) use ($user) {
@@ -78,11 +78,14 @@ class HomeController extends Controller
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_3')
                 ->where('user_id', $user->id);
-        })->simplePaginate(5);
+        })->sortable(['date_from'])->paginate(5, ['*'], 'history');
 
         //Get all holidays dates
         $holidays = Holiday::all();
-        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get();
+        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get()->groupBy(function($val) {
+            return Carbon::parse($val->date_from)->format('F');
+      });
+
         $all_dates = array();
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
@@ -134,7 +137,7 @@ class HomeController extends Controller
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
         //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
-        $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
+        $leaveApps = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
                 ->where('approver_id_1', $user->id);
         })->orWhere(function ($query) use ($user) {
@@ -143,20 +146,29 @@ class HomeController extends Controller
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('approver_id_3', $user->id);
-        })->simplePaginate(5);
+        })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
         $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
 
-        $leaveHist = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user) {
+        $leaveHist = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
+                ->where('approver_id_1', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
                 ->where('approver_id_1', $user->id);
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('approver_id_2', $user->id);
         })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_2', $user->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('approver_id_3', $user->id);
-        })->simplePaginate(5);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_3', $user->id);
+        })->sortable(['updated_at'])->paginate(5, ['*'], 'history');
 
         $holidays = Holiday::all();
         $all_dates = array();
@@ -171,7 +183,6 @@ class HomeController extends Controller
             }
         }
 
-
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
@@ -180,30 +191,54 @@ class HomeController extends Controller
             $startDate = new Carbon($la->date_from);
             $endDate = new Carbon($la->date_to);
 
-                while ($startDate->lte($endDate)) {
-                    $dates = str_replace("-", "", $startDate->toDateString());
-                    $applied_dates[] = $dates;
-                    $startDate->addDay();
-                }
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
+                $applied_dates[] = $dates;
+                $startDate->addDay();
             }
-         foreach ($leaveHist as $lh) {
+        }
+        foreach ($leaveHist as $lh) {
 
             $startDate = new Carbon($lh->date_from);
             $endDate = new Carbon($lh->date_to);
 
-                while ($startDate->lte($endDate)) {
-                    $dates = str_replace("-", "", $startDate->toDateString());
-                    $approved_dates[] = $dates;
-                    $startDate->addDay();
-                }
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
+                $approved_dates[] = $dates;
+                $startDate->addDay();
             }
+        }
 
+              //Get leave applications of same group
+              $groupLeaveApps = collect([]);
+              foreach ($allLeaveApps as $la) {
+                  $groupIndex = ["_", "_two_", "_three_", "_four_", "_five_"];
 
+                  $isUserLaGroupSameUserGroup = false;
+                  foreach ($groupIndex as $gI_1) {
+                      foreach ($groupIndex as $gI_2) {
+                          $gLa = $la->user["emp_group" . $gI_1 . "id"];
+                          $gUser = $user["emp_group" . $gI_2 . "id"];
 
+                          if ($gUser != "" && $gUser != null && $gLa != "" && $gLa != null) {
+                              if ($gLa == $gUser) {
+                                  $isUserLaGroupSameUserGroup = true;
+                                  break;
+                              }
+                          }
+                      }
+                  }
+                  if ($isUserLaGroupSameUserGroup && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')
+                  && ($la->user_id != $user->id)) {
+                      $groupLeaveApps->add($la);
+                  }
+              }
 
+        //Group user's group applications by months. Starting from the start of the week until end of year.
+        $groupLeaveApps = $groupLeaveApps->whereBetween('date_from',array(now()->startOfMonth()->format('Y-m-d'),now()->endOfYear()->format('Y-m-d')))->groupBy(function($val) {
+            return Carbon::parse($val->date_from)->format('F');
+      });
 
-
-        //dd($leaveApps);
-        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays'));
+        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps','groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays'));
     }
 }

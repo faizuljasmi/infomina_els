@@ -72,7 +72,8 @@
                     <strong>Edit My Profile</strong></p>
             </div>
             <div class="modal-footer">
-                <a href="/change-password"><button type="button" class="btn btn-primary">Change Password</button><a>
+                <a href="{{route('change.password')}}"><button type="button" class="btn btn-primary">Change
+                        Password</button><a>
             </div>
         </div>
     </div>
@@ -155,7 +156,9 @@
                 <!-- Custom tabs (Charts with tabs)-->
                 <div class="card">
                     <div class="card-header bg-teal">
-                        <strong>Pending Applications</strong>
+                        <strong>Pending Applications <i class="fas fa-info-circle" data-toggle="tooltip"
+                                data-placement="top"
+                                title="This table shows your pending leave applications."></i></strong>
                         <button type="button" class="btn btn-box-tool float-right" data-toggle="collapse"
                             href="#collapse-leave" aria-expanded="true" aria-controls="collapse-leave"
                             id="heading-leave" class="d-block"><i class="fa fa-minus"></i>
@@ -164,16 +167,19 @@
                     </div>
                     <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
                         <div class="card-body">
+                            <h6><strong>Displaying {{$pendLeaves->count()}} of {{$pendLeaves->total()}}
+                                    records.</strong>
+                            </h6>
                             <table class="table table-bordered">
                                 @if($pendLeaves->count() > 0)
                                 <thead>
                                     <tr>
                                         <th scope="col">No.</th>
-                                        <th scope="col">Leave Type</th>
-                                        <th scope="col">Duration</th>
-                                        <th scope="col">From</th>
-                                        <th scope="col">To</th>
-                                        <th scope="col">Date Submitted</th>
+                                        <th scope="col">Leave Type @sortablelink('leaveType.name','',[])</th>
+                                        <th scope="col">Duration @sortablelink('total_days','',[])</th>
+                                        <th scope="col">From @sortablelink('date_from','',[])</th>
+                                        <th scope="col">To @sortablelink('date_to','',[])</th>
+                                        <th scope="col">Date Submitted @sortablelink('created_at','',[])</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -233,6 +239,8 @@
                                     @endif
                                 </tbody>
                             </table>
+                            {!! $pendLeaves->appends(\Request::except('page'),['pending' =>
+                            $pendLeaves->currentPage()])->render() !!}
                         </div>
                     </div>
                     <!-- /.card -->
@@ -246,8 +254,7 @@
                 <div class="card">
                     <div class="card-header bg-teal">
                         <strong>Calendar </strong><i class="fas fa-info-circle" data-toggle="tooltip"
-                            data-placement="top"
-                            title="For your reference, this calendar shows your applied & approved leaves."></i>
+                            data-placement="top" title="This calendar shows your applied & approved leaves."></i>
                     </div>
                     <div class="myCalendar vanilla-calendar" style="margin: 20px auto">
                     </div>
@@ -264,20 +271,24 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header bg-teal">
-                        <strong>Applications History</strong>
+                        <strong>Applications History <i class="fas fa-info-circle" data-toggle="tooltip"
+                                data-placement="top"
+                                title="This table shows you leave applications history"></i></strong>
                     </div>
                     <div class="card-body">
+                        <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
+                        </h6>
                         <table class="table table-bordered">
                             @if($leaveHist->count() > 0)
                             <thead>
 
                                 <tr>
                                     <th scope="col">No.</th>
-                                    <th scope="col">Leave Type</th>
-                                    <th scope="col">Duration</th>
-                                    <th scope="col">From</th>
-                                    <th scope="col">To</th>
-                                    <th scope="col">Date Submitted</th>
+                                    <th scope="col">Leave Type @sortablelink('leaveType.name','',[])</th>
+                                    <th scope="col">Duration @sortablelink('total_days','',[])</th>
+                                    <th scope="col">From @sortablelink('date_from','',[])</th>
+                                    <th scope="col">To @sortablelink('date_to','',[])</th>
+                                    <th scope="col">Date Submitted @sortablelink('created_at','',[])</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Actions</th>
                                 </tr>
@@ -340,6 +351,8 @@
 
                             </tbody>
                         </table>
+                        {!! $leaveHist->appends(\Request::except('page'),['history' =>
+                        $leaveHist->currentPage()])->render() !!}
                     </div>
                 </div>
             </div>
@@ -385,9 +398,14 @@
                                     @foreach($leaveEarns as $le)
                                     @foreach($broughtFwd as $bf)
                                     @if($le->leave_type_id == $bf->leave_type_id && $le->leave_type_id != '12')
+                                    @if($le->leave_type_id == '1')
                                     <td class="table-success" data-toggle="tooltip"
                                         title="{{$le->no_of_days - $bf->no_of_days}} (Earned) + {{$bf->no_of_days}} (Brought Forward)">
+                                        <a href="#leaveRecord"><u>{{$le->no_of_days}}</u></a></td>
+                                    @else
+                                    <td class="table-success">
                                         {{$le->no_of_days}}</td>
+                                    @endif
                                     @endif
                                     @endforeach
                                     @endforeach
@@ -396,7 +414,19 @@
                                     <th>Taken</th>
                                     @foreach($leaveTak as $lt)
                                     @if($lt->leave_type_id != '12')
+                                    @if($lt->leave_type_id == '1')
+                                    <?php $taken = $lt->no_of_days;
+                                          $bfwd =  $broughtFwd[0]->no_of_days;
+                                          $frmBfwd = 0;
+                                          $frmAnnual = 0;
+                                        if($taken <= $bfwd){$frmBwd = $taken; $frmAnnual = 0;}
+                                        elseif($taken > $bfwd){ $frmBwd = $bfwd; $frmAnnual = $taken - $bfwd;} ?>
+                                    <td class="table-danger" data-toggle="tooltip"
+                                        title="{{$frmBwd}} from Brought Forward + {{$frmAnnual}} from Annual Leave"><a
+                                            href="#leaveRecord"><u>{{$lt->no_of_days}}</u></a></td>
+                                    @else
                                     <td class="table-danger">{{$lt->no_of_days}}</td>
+                                    @endif
                                     @endif
                                     @endforeach
                                 </tr>
@@ -460,21 +490,23 @@
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-sm table-bordered">
-                    <tr>
-                        <th>Holiday Name</th>
+                @foreach ($holsPaginated as $hp => $hols)
+                <h5><span class="badge badge-dark">{{$hp}}</span></h5>
+                <table class="table table-sm table-bordered table-striped">
+                    <tr class="bg-primary">
+                        <th style="width: 60%">Holiday Name</th>
                         <th>From</th>
                         <th>To</th>
                     </tr>
-
-                    @foreach($holsPaginated as $hl)
+                    @foreach ($hols as $hol)
                     <tr>
-                        <td><strong>{{$hl->name}}</strong></td>
-                        <td>{{ \Carbon\Carbon::parse($hl->date_from)->isoFormat('ddd, D MMM')}}</td>
-                        <td>{{ \Carbon\Carbon::parse($hl->date_to)->isoFormat('ddd, D MMM')}}</td>
+                        <td><strong>{{$hol->name}}</strong></td>
+                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('ddd, D MMM')}}</td>
+                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('ddd, D MMM')}}</td>
                     </tr>
                     @endforeach
                 </table>
+                @endforeach
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

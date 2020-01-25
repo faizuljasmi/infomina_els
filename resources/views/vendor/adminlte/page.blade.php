@@ -168,15 +168,15 @@
             @endif
         </div>
 
-      
+
         <footer class="main-footer">
             <strong>Copyright &copy; 2020 <a href="http://infomina.com.my/">Infomina Sdn. Bhd.</a></strong>
             All rights reserved.
             <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 1.0.0
+                <b>Version</b> 1.1.0
             </div>
         </footer>
-    
+
 
         @if(config('adminlte.right_sidebar'))
             <aside class="control-sidebar control-sidebar-{{config('adminlte.right_sidebar_theme')}}">

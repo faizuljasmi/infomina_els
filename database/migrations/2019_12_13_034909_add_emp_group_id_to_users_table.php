@@ -37,10 +37,14 @@ class AddEmpGroupIdToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign('users_emp_group_id_foreign');
-            $table->dropColumn('emp_group_one_id');
+            $table->dropColumn('emp_group_id');
+            $table->dropForeign('users_emp_group_two_id_foreign');
             $table->dropColumn('emp_group_two_id');
+            $table->dropForeign('users_emp_group_three_id_foreign');
             $table->dropColumn('emp_group_three_id');
+            $table->dropForeign('users_emp_group_four_id_foreign');
             $table->dropColumn('emp_group_four_id');
+            $table->dropForeign('users_emp_group_five_id_foreign');
             $table->dropColumn('emp_group_five_id');
         });
     }

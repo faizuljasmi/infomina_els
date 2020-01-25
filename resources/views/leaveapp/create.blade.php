@@ -51,7 +51,7 @@
                 Let's set your emergency contact details! This will make the application process much easier.
             </div>
             <div class="modal-footer">
-                <a href="/myprofile/edit"><button type="button" class="btn btn-primary">Set Emergency
+                <a href="{{route('edit_profile')}}"><button type="button" class="btn btn-primary">Set Emergency
                         Contact</button><a>
             </div>
         </div>
@@ -143,7 +143,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Date From -->
+                                <!-- Date To -->
                                 <div class="form-group">
                                     <label>Date To <font color="red">*</font></label>
                                     <div class="input-group">
@@ -188,7 +188,9 @@
 
                                 <!-- Reason -->
                                 <div class="form-group">
-                                    <label>Reason <font color="red">*</font></label>
+                                    <label>Reason <small>(5 characters minimum)</small>
+                                        <font color="red">*</font>
+                                    </label>
                                     <textarea class="form-control" rows="5" name="reason" id="reason"
                                         value="{{old('reason')}}" minlength="5" required></textarea>
                                     <h6 class="float-right" id="count_reason"></h6>
@@ -200,7 +202,8 @@
                                 <!-- File Attachment -->
                                 <div class="form-group">
                                     <label>Attachment <small class="text-muted">
-                                            <font color="red">Required for Sick & Marriage Leave. </font></br>Format:
+                                            <font color="red">Required for Sick, Hospitalization, Marriage, Paternity &
+                                                Maternity Leave. </font></br>Format:
                                             jpg, jpeg, png, pdf. Max size: 2MB
                                         </small></label>
                                     <div class="input-group">
@@ -376,30 +379,32 @@
         <!-- VIEW HOLIDAYS Modal -->
         <div class="modal fade" id="viewHolidays" tabindex="-1" role="dialog" aria-labelledby="viewHolidaysLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-info">
                         <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        @foreach ($holsPaginated as $hp => $hols)
+                        <h5><span class="badge badge-dark">{{$hp}}</span></h5>
                         <table class="table table-sm table-bordered table-striped">
                             <tr class="bg-primary">
-                                <th>Holiday Name</th>
+                                <th style="width: 60%">Holiday Name</th>
                                 <th>From</th>
                                 <th>To</th>
                             </tr>
-
-                            @foreach($holsPaginated as $hl)
+                            @foreach ($hols as $hol)
                             <tr>
-                                <td><strong>{{$hl->name}}</strong></td>
-                                <td>{{ \Carbon\Carbon::parse($hl->date_from)->isoFormat('ddd, D MMM')}}</td>
-                                <td>{{ \Carbon\Carbon::parse($hl->date_to)->isoFormat('ddd, D MMM')}}</td>
+                                <td><strong>{{$hol->name}}</strong></td>
+                                <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('ddd, D MMM')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('ddd, D MMM')}}</td>
                             </tr>
                             @endforeach
                         </table>
+                        @endforeach
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -411,30 +416,31 @@
         <!-- VIEW COLLEAGUES APPLICATION Modal -->
         <div class="modal fade" id="viewColleague" tabindex="-1" role="dialog" aria-labelledby="viewColleagueLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-info">
                         <h5 class="modal-title" id="viewColleagueLabel">Your colleague's applications</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        @foreach ($groupLeaveApps as $gla => $apps)
+                        <h5><span class="badge badge-dark">{{$gla}}</span></h5>
                         <table class="table table-sm table-bordered table-striped">
                             <tr class="bg-primary">
-                                <th>Colleague Name</th>
+                                <th style="width: 60%">Colleague Name</th>
                                 <th>From</th>
                                 <th>To</th>
-                                <th>Status</th>
+                                <th style="width: 5%">Status</th>
                             </tr>
-
-                            @foreach($groupLeaveApps as $gla)
+                            @foreach ($apps as $app)
                             <tr>
-                                <td><strong>{{$gla->user->name}}</strong></td>
-                                <td>{{ \Carbon\Carbon::parse($gla->date_from)->isoFormat('ddd, D MMM')}}</td>
-                                <td>{{ \Carbon\Carbon::parse($gla->date_to)->isoFormat('ddd, D MMM')}}</td>
+                                <td><strong>{{$app->user->name}}</strong></td>
+                                <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}</td>
                                 <td>
-                                    @if($gla->status == 'APPROVED')
+                                    @if($app->status == 'APPROVED')
                                     <span class="badge badge-success"><i class="far fa-check-circle"></i></span>
                                     @else
                                     <span class="badge badge-warning"><i class="far fa-clock"></i></span>
@@ -443,6 +449,12 @@
                             </tr>
                             @endforeach
                         </table>
+                        @endforeach
+                        <div class="float-right"><strong>Legends:</strong>
+                            <span class="badge badge-success"><i class="far fa-check-circle"></i>
+                                Approved</span>
+                            <span class="badge badge-warning"><i class="far fa-clock"></i>Pending</span>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -454,30 +466,31 @@
         <!-- VIEW NY APPLICATION Modal -->
         <div class="modal fade" id="viewApplication" tabindex="-1" role="dialog" aria-labelledby="viewApplicationLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="viewApplicationLabel">Your applications</h5>
+                    <div class="modal-header bg-info">
+                        <h5 class="modal-title" id="viewApplicationLabel">Your leave applications</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        @foreach ($myApps as $ma => $apps)
+                        <h5><span class="badge badge-dark">{{$ma}}</span></h5>
                         <table class="table table-sm table-bordered table-striped">
                             <tr class="bg-primary">
-                                <th>Leave Type</th>
+                                <th style="width: 60%">Leave Type</th>
                                 <th>From</th>
                                 <th>To</th>
-                                <th>Status</th>
+                                <th style="width: 5%">Status</th>
                             </tr>
-
-                            @foreach($myApps as $ma)
+                            @foreach ($apps as $app)
                             <tr>
-                                <td><strong>{{$ma->leaveType->name}}</strong></td>
-                                <td>{{ \Carbon\Carbon::parse($ma->date_from)->isoFormat('ddd, D MMM')}}</td>
-                                <td>{{ \Carbon\Carbon::parse($ma->date_to)->isoFormat('ddd, D MMM')}}</td>
+                                <td><strong>{{$app->LeaveType->name}}</strong></td>
+                                <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}</td>
                                 <td>
-                                    @if($ma->status == 'APPROVED')
+                                    @if($app->status == 'APPROVED')
                                     <span class="badge badge-success"><i class="far fa-check-circle"></i></span>
                                     @else
                                     <span class="badge badge-warning"><i class="far fa-clock"></i></span>
@@ -486,6 +499,12 @@
                             </tr>
                             @endforeach
                         </table>
+                        @endforeach
+                        <div class="float-right"><strong>Legends:</strong>
+                            <span class="badge badge-success"><i class="far fa-check-circle"></i>
+                                Approved</span>
+                            <span class="badge badge-warning"><i class="far fa-clock"></i>Pending</span>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -504,16 +523,18 @@ $("#leave_type_id").change(function() {
         });
 
 var text_max = 5;
-$('#count_reason').html(text_max + ' remaining');
+$('#count_reason').html(text_max + ' characters remaining');
 
 $('#reason').keyup(function() {
   var text_length = $('#reason').val().length;
   var text_remaining = text_max - text_length;
+  $('#count_reason').css("color", "red");
     if(text_remaining < 0){
         $('#count_reason').html('Looks good!');
+        $('#count_reason').css("color", "green");
     }
     else{
-  $('#count_reason').html(text_remaining + ' remaining');
+  $('#count_reason').html(text_remaining + ' characters remaining');
     }
 });
 
@@ -543,6 +564,8 @@ $('#reason').keyup(function() {
     var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
     var balances= {!! json_encode($leaveBal, JSON_HEX_TAG) !!};
     var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
+    var userGroup = {!! json_encode($user->emp_group->name, JSON_HEX_TAG) !!};
+    console.log((userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'));
 
     //console.log("MY APP:",myapplications);
 
@@ -638,7 +661,7 @@ $('#reason').keyup(function() {
         }
 
         //ANNUAL POLICY
-        if(validation.isAnnualLeave() || validation.isTrainingLeave()){
+        if(validation.isAnnualLeave()){
           let next2 = calendar.getNextWorkingDay(calendar.today());
           next2 = calendar.getNextWorkingDay(next2);
           next2 = calendar.getDateDb(next2);
@@ -650,13 +673,24 @@ $('#reason').keyup(function() {
           }
         }
 
+        if(validation.isTrainingLeave()){
+            let nextMonth = calendar.nextMonth(calendar.today());
+            let prevWeek = calendar.getPrevWeekWorkingDay(calendar.today());
+            if(calendar.isDateSmaller(date_from,prevWeek)){
+                return "Attention: Training Leave must be applied within 7 days after the training day."
+            }
+            if(calendar.isDateBigger(date_from,nextMonth)){
+                return "Attention: Training Leave cannot be applied more than a month in advance."
+            }
+        }
+
         //SICK, EMERGENCY, PATERNITY, COMPASSIONATE, CALAMITY POLICY
         if(validation.isSickLeave() || validation.isEmergencyLeave() || validation.isPaternityLeave() || validation.isCompassionateLeave() || validation.isCalamityLeave()){
-          let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
+          let prev3 = calendar.getPrevWeekWorkingDay(calendar.today());
           //prev3 = calendar.getThreePrevWorkingDay(prev3);
           prev3 = calendar.getDateDb(prev3);
           if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
-            return "Attention: Leave must be applied within 3 days after the day of leave.";
+            return "Attention: Leave must be applied within 7 working days after the day of leave.";
           }
           if(calendar.isDateBigger(date_from, calendar.today())){
             return "Attention: Leave cannot be applied in advance.";
@@ -711,15 +745,17 @@ $('#reason').keyup(function() {
         }
         }
 
-
+        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
           if(
-            (name == FC.date_from.name && calendar.isWeekend(date_from))
+            (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()))
             ||
-            (name == FC.date_to.name && calendar.isWeekend(date_to))
+            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()))
           ){
             return `Selected date is a Weekend day. Please select another date.`;
           }
+        }
 
+        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
         if(
           (name == FC.date_from.name && calendar.isHoliday(date_from))
           ||
@@ -727,6 +763,7 @@ $('#reason').keyup(function() {
         ){
           return `Selected date is an announced Public Holiday. Please select another date.`;
         }
+    }
 
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
           if(calendar.isDateSmaller(date_to, date_from)){
@@ -801,7 +838,7 @@ $('#reason').keyup(function() {
         }
       },
       _attachment : function(name){
-          if(validation.isMarriageLeave() || validation.isSickLeave()){
+          if(validation.isMarriageLeave() || validation.isSickLeave() || validation.isHospitalizationLeave() || validation.isPaternityLeave()|| validation.isMaternityLeave()){
             _form.required(FC.reason);
           }
       }

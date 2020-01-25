@@ -28,17 +28,17 @@ return [
     /*
     defines icon set to use when sorted data is none above (alpha nor amount nor numeric)
      */
-    'default_icon_set'              => 'fa fa-sort',
+    'default_icon_set'              => null,
 
     /*
     icon that shows when generating sortable link while column is not sorted
      */
-    'sortable_icon'                 => 'fa fa-sort',
+    'sortable_icon'                 => '',
 
     /*
     generated icon is clickable non-clickable (default)
      */
-    'clickable_icon'                => false,
+    'clickable_icon'                => true,
 
     /*
     icon and text separator (any string)
@@ -59,7 +59,7 @@ return [
     /*
     default anchor class, if value is null none is added
      */
-    'anchor_class'                  => null,
+    'anchor_class'                  => 'fa fa-fw fa-sort',
 
     /*
     default active anchor class, if value is null none is added

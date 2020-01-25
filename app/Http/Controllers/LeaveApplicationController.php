@@ -16,6 +16,7 @@ use Illuminate\Notifications\Notifiable;
 use Notification;
 use App\Notifications\NewApplication;
 use App\Notifications\StatusUpdate;
+use App\Notifications\CancelApplication;
 use App\LeaveType;
 use App\User;
 use App\ApprovalAuthority;
@@ -89,6 +90,8 @@ class LeaveApplicationController extends Controller
 
         //Get all leave applications
         $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
+
+
         //Get leave applications of same group
         $groupLeaveApps = collect([]);
         foreach ($leaveApps as $la) {
@@ -120,10 +123,24 @@ class LeaveApplicationController extends Controller
                 $myApps->add($la);
             }
         }
-        //dd($groupLeaveApps);
+
+        //Group user's applications by months. Starting from the start of current month until end of year
+        $myApps = $myApps->whereBetween('date_from',array(now()->startOfMonth()->format('Y-m-d'),now()->endOfYear()->format('Y-m-d')))->groupBy(function($val) {
+            return Carbon::parse($val->date_from)->format('F');
+      });
+
+        //Group user's group applications by months. Starting from the start of the week until end of year.
+        $groupLeaveApps = $groupLeaveApps->whereBetween('date_from',array(now()->startOfWeek()->format('Y-m-d'),now()->endOfYear()->format('Y-m-d')))->groupBy(function($val) {
+            return Carbon::parse($val->date_from)->format('F');
+      });
+
 
         $holidays = Holiday::all();
-        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get();
+        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get()->groupBy(function($val) {
+            return Carbon::parse($val->date_from)->format('F');
+      });
+
+      //dd($holsPaginated);
         $all_dates = array();
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
@@ -269,7 +286,7 @@ class LeaveApplicationController extends Controller
         //Attachment validation
         $validator = Validator::make(
             $request->all(),
-            ['attachment' => 'required_if:leave_type_id,3|required_if:leave_type_id,7|mimes:jpeg,png,jpg,pdf|max:2048']
+            ['attachment' => 'required_if:leave_type_id,3|required_if:leave_type_id,7|required_if:leave_type_id,4|required_if:leave_type_id,8|required_if:leave_type_id,9|mimes:jpeg,png,jpg,pdf|max:2048']
         );
 
         // if validation fails
@@ -371,7 +388,19 @@ class LeaveApplicationController extends Controller
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
+        $myApplication = array();
         foreach ($leaveApps as $la) {
+             //Get the user applied and approved application
+             if ($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')) {
+                $stardDate = new Carbon($la->date_from);
+                $endDate = new Carbon($la->date_to);
+
+                while ($stardDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $stardDate->toDateString());
+                    $myApplication[] = $dates;
+                    $stardDate->addDay();
+                }
+            }
             if ($la->user->emp_group_id == $user->emp_group_id) {
                 $startDate = new Carbon($la->date_from);
                 $endDate = new Carbon($la->date_to);
@@ -392,7 +421,7 @@ class LeaveApplicationController extends Controller
             }
         }
         //dd($leaveApplication->approver_id_1);
-        return view('leaveapp.edit')->with(compact('leaveApplication', 'user', 'leaveType', 'groupMates', 'userAuth', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'leaveAuthReplacement'));
+        return view('leaveapp.edit')->with(compact('leaveApplication', 'user', 'leaveType', 'groupMates', 'userAuth', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'leaveAuthReplacement','myApplication'));
     }
 
     public function update(Request $request, LeaveApplication $leaveApplication)
@@ -717,8 +746,6 @@ class LeaveApplicationController extends Controller
 
     public function view(LeaveApplication $leaveApplication)
     {
-
-
         $leaveApp = $leaveApplication;
         //Get all leave types. TODO: show only entitled leave types instead of all leave types
         $leaveType = LeaveType::orderBy('id', 'ASC')->get();
@@ -765,10 +792,24 @@ class LeaveApplicationController extends Controller
         return view('leaveapp.view')->with(compact('leaveApp', 'leaveType', 'user', 'leaveAuth', 'groupMates', 'leaveBal', 'applied_dates', 'approved_dates', 'hol_dates'));
     }
 
-    public function cancel(LeaveApplication $leaveApplication)
+    public function cancel(LeaveApplication $leaveApplication, Request $request)
     {
+        $leaveApplication->remarks = $request->remarks;
+        $leaveApplication->remarker_id = auth()->user()->id;
+        $prevStatus = $leaveApplication->status;
         $leaveApplication->status = "CANCELLED";
         $leaveApplication->save();
+
+        if(($leaveApplication->remarker_id == $leaveApplication->approver_id_3)){
+            if(($prevStatus == 'PENDING_2')||($prevStatus == 'PENDING_3') || ($prevStatus == 'APPROVED')){
+                $leaveApplication->approver_two->notify(new CancelApplication($leaveApplication));
+            }
+        }
+
+        $leaveApplication->approver_one->notify(new CancelApplication($leaveApplication));
+        $when = now()->addMinutes(2);
+        $leaveApplication->user->notify((new CancelApplication($leaveApplication))->delay($when));
+
         return redirect()->to('/home')->with('message', 'Leave application cancelled succesfully');
     }
 }

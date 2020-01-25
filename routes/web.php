@@ -19,6 +19,10 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+// Route::get('/linkfiledoooh', function () {
+//     Artisan::call('storage:link');
+//     });
+
 Auth::routes();
 
 // Route::get('/home', function() {
@@ -32,7 +36,7 @@ Route::get('/myprofile','UserController@index')->name('view_profile')->middlewar
 Route::get('/myprofile/edit','UserController@edit')->name('edit_profile')->middleware('auth');
 Route::post('/myprofile/update','UserController@update')->name('update_profile')->middleware('auth');
 //Change Password
-Route::get('/change-password', 'ChangePasswordController@index');
+Route::get('/change-password', 'ChangePasswordController@index')->name('change_password');
 Route::post('/change-password', 'ChangePasswordController@store')->name('change.password');
 
 
@@ -107,7 +111,7 @@ Route::get('/leave/apply/edit/{leaveApplication}','LeaveApplicationController@ed
 Route::post('/leave/apply/update/{leaveApplication}','LeaveApplicationController@update')->name('update_application')->middleware('auth');
 Route::get('/leave/apply/approve/{leaveApplication}','LeaveApplicationController@approve')->name('approve_application')->middleware('auth');
 Route::get('/leave/apply/deny/{leaveApplication}','LeaveApplicationController@deny')->name('deny_application')->middleware('auth');
-Route::get('/leave/apply/cancel/{leaveApplication}','LeaveApplicationController@cancel')->name('cancel_application')->middleware('auth');
+Route::post('/leave/apply/cancel/{leaveApplication}','LeaveApplicationController@cancel')->name('cancel_application')->middleware('auth');
 
 //Replacement leave
 Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->middleware('auth');

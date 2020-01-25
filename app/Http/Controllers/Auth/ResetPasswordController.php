@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use App\User;
 
 class ResetPasswordController extends Controller
 {
@@ -26,4 +28,12 @@ class ResetPasswordController extends Controller
      * @var string
      */
     protected $redirectTo = '/home';
+
+    //Override existing function, no need to hash. Hash is taken care of by User model
+    protected function resetPassword($user, $password){
+        $user->password = $password;
+        $user->save();
+
+        Auth::login($user);
+    }
 }

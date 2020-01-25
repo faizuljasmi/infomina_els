@@ -3,17 +3,29 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class LeaveApplication extends Model
 {
     //use Notifiable;
-    
+    use Sortable;
+
     //Declare Fillable
     protected $fillable = [
         'date_from','date_to', 'date_resume',
         'total_days', 'reason', 'relief_personnel_id',
         'status',
         'attachment','emergency_contact',
+    ];
+
+    public $sortable = [
+        'id',
+        'created_at',
+        'updated_at',
+        'date_from',
+        'date_to',
+        'total_days',
+        'status'
     ];
 
     //One leave app has belongs to one user
@@ -44,6 +56,11 @@ class LeaveApplication extends Model
     //One leave app has one releif personnel
     public function relief_personnel(){
         return $this->hasOne(User::class,'id','relief_personnel_id');
+    }
+
+    //One leave app has one canceller
+    public function remarker(){
+        return $this->hasOne(User::class,'id','remarker_id');
     }
 
     public function getAttachmentUrlAttribute(){
