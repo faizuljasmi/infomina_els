@@ -794,6 +794,21 @@ class LeaveApplicationController extends Controller
 
     public function cancel(LeaveApplication $leaveApplication, Request $request)
     {
+        if($leaveApplication->status == "APPROVED"){
+            $days = $leaveApplication->total_days;
+            $takenLeave = TakenLeave::where('user_id', $leaveApplication->user_id)->where('leave_type_id', $leaveApplication->leave_type_id)->first();
+            $leaveBalance = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', $leaveApplication->leave_type_id)->first();
+
+            $takenLeave->no_of_days -= $days;
+            $leaveBalance->no_of_days += $days;
+            if($leaveApplication->leave_type_id == "3"){
+                $leaveBal2 = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', 4)->first();
+                $leaveBal2->no_of_days += $days;
+                $leaveBal2->save();
+            }
+            $takenLeave->save();
+            $leaveBalance->save();
+        }
         $leaveApplication->remarks = $request->remarks;
         $leaveApplication->remarker_id = auth()->user()->id;
         $prevStatus = $leaveApplication->status;
@@ -806,8 +821,10 @@ class LeaveApplicationController extends Controller
             }
         }
 
+        
+
         $leaveApplication->approver_one->notify(new CancelApplication($leaveApplication));
-        $when = now()->addMinutes(2);
+        $when = now()->addMinutes(5);
         $leaveApplication->user->notify((new CancelApplication($leaveApplication))->delay($when));
 
         return redirect()->to('/home')->with('message', 'Leave application cancelled succesfully');
