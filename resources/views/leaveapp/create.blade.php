@@ -522,6 +522,14 @@ $("#leave_type_id").change(function() {
             $("#ToDate").val("");
         });
 
+$("#FromDate").change(function() {
+        var from = $("#FromDate").val();
+            $("#ToDate").val("");
+            $("#ToDate").attr({
+                 "min" : from          // values (or variables) here
+            });
+        });
+
 var text_max = 5;
 $('#count_reason').html(text_max + ' characters remaining');
 

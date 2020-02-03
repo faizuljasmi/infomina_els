@@ -309,7 +309,10 @@
                                                                     @endif
                                                                     @endforeach
                                                                     @if($count == 0)
-                                                                    <tr><td colspan="5"><strong>No Leave Applications</strong></td></tr>
+                                                                    <tr>
+                                                                        <td colspan="5"><strong>No Leave
+                                                                                Applications</strong></td>
+                                                                    </tr>
                                                                     @endif
                                                                 </table>
                                                                 @endforeach
@@ -369,7 +372,10 @@
                                                                     @endif
                                                                     @endforeach
                                                                     @if($count == 0)
-                                                                    <tr><td colspan="5"><strong>No Leave Applications</strong></td></tr>
+                                                                    <tr>
+                                                                        <td colspan="5"><strong>No Leave
+                                                                                Applications</strong></td>
+                                                                    </tr>
                                                                     @endif
                                                                 </table>
                                                                 @endforeach
@@ -429,7 +435,10 @@
                                                                     @endif
                                                                     @endforeach
                                                                     @if($count == 0)
-                                                                    <tr><td colspan="5"><strong>No Leave Applications</strong></td></tr>
+                                                                    <tr>
+                                                                        <td colspan="5"><strong>No Leave
+                                                                                Applications</strong></td>
+                                                                    </tr>
                                                                     @endif
                                                                 </table>
                                                                 @endforeach
@@ -489,7 +498,10 @@
                                                                     @endif
                                                                     @endforeach
                                                                     @if($count == 0)
-                                                                    <tr><td colspan="5"><strong>No Leave Applications</strong></td></tr>
+                                                                    <tr>
+                                                                        <td colspan="5"><strong>No Leave
+                                                                                Applications</strong></td>
+                                                                    </tr>
                                                                     @endif
                                                                 </table>
                                                                 @endforeach
@@ -549,7 +561,10 @@
                                                                     @endif
                                                                     @endforeach
                                                                     @if($count == 0)
-                                                                    <tr><td colspan="5"><strong>No Leave Applications</strong></td></tr>
+                                                                    <tr>
+                                                                        <td colspan="5"><strong>No Leave
+                                                                                Applications</strong></td>
+                                                                    </tr>
                                                                     @endif
                                                                 </table>
                                                                 @endforeach
@@ -612,6 +627,16 @@
                 <div class="card-body">
                     <div class="d-md-flex">
                         <div class="p-1 flex-fill" style="overflow: hidden">
+                            <div class="col-md-3 float-right mb-3">
+                                <form action="{{ route('admin__leave_search') }}" method="get">
+                                    <div class="input-group">
+                                        <input type="search" name="search" class="form-control">
+                                        <span class="input-group-prepend">
+                                            <button type="submit" class="btn btn-primary">Search</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
                             <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
                             </h6>
                             <table class="table table-striped table-bordered">

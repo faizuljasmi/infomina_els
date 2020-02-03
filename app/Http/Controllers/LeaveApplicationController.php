@@ -322,7 +322,7 @@ class LeaveApplicationController extends Controller
         $leaveType = LeaveType::orderBy('id', 'ASC')->get();
 
         //Get THIS user id
-        $user = auth()->user();
+        $user = $leaveApplication->user;
         //Get employees who are in the same group (for relieve personnel).
         $groupMates = collect([]);
 
@@ -364,14 +364,14 @@ class LeaveApplicationController extends Controller
         $userAuth = User::orderBy('id', 'ASC')->where('id', '!=', '1')->where('user_type', 'Authority')->get()->except($user->id);
         //Get approval authorities for this user
         //Change id to CYNTHIA'S ID
-        $leaveAuthReplacement = User::orderBy('id', 'ASC')->where('id', '!=', '1')->get()->except($user->id);
+        $leaveAuthReplacement = User::orderBy('id', 'ASC')->where('id', '!=', '4')->get()->except($user->id);
 
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
         //Get leave applications from same group
-        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
+        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get()->except($leaveApplication->id);
 
         $holidays = Holiday::all();
         $all_dates = array();
@@ -428,7 +428,7 @@ class LeaveApplicationController extends Controller
     {
         //dd($request->emergency_contact_no);
         //Get user id
-        $user = auth()->user();
+        $user = $leaveApplication->user;
         //Check Balance
         $leaveBal = LeaveBalance::where(function ($query) use ($request, $user) {
             $query->where('leave_type_id', '=', $request->leave_type_id)
@@ -522,7 +522,10 @@ class LeaveApplicationController extends Controller
         //Send email notification
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
-        $leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        if($leaveApp->status == 'PENDING_1'){
+            $leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        }
+
         return redirect()->to('/home')->with('message', 'Leave application edited succesfully');
     }
 
