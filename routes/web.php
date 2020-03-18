@@ -19,9 +19,6 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-// Route::get('/linkfiledoooh', function () {
-//     Artisan::call('storage:link');
-//     });
 
 Auth::routes();
 
@@ -31,6 +28,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 Route::get('/admin','HomeController@admin')->name('admin')->middleware('can:admin-dashboard');
+Route::get('/admin/search', 'HomeController@search')->name('admin__leave_search')->middleware('auth');
 
 Route::get('/myprofile','UserController@index')->name('view_profile')->middleware('auth');
 Route::get('/myprofile/edit','UserController@edit')->name('edit_profile')->middleware('auth');
@@ -50,6 +48,8 @@ Route::middleware('can:edit_users')->group(function(){
     Route::get('/user/delete/{user}','RegistrationController@destroy')->name('user_delete')->middleware('auth');
     Route::get('/user/deactivate/{user}','RegistrationController@deactivate')->name('user_deactivate')->middleware('auth');
     Route::get('/search', 'RegistrationController@search')->name('user_search')->middleware('auth');
+    Route::get('/apply/for/{user}','LeaveApplicationController@applyFor')->name('apply_for')->middleware('auth');
+    Route::post('apply/for/{user}','LeaveApplicationController@submitApplyFor')->name('submit_apply_for')->middleware('auth');
 });
 
 

@@ -371,7 +371,7 @@
                               <i class="fa fa-calendar-day"></i>
                             </span>
                           </div>
-                        <input type="date" class="form-control float-right" name="date_from" value="{{$leaveApplication->date_from}}">
+                        <input type="date" class="form-control float-right" name="date_from" id="date_from" value="{{$leaveApplication->date_from}}">
                         </div>
                       </div>
 
@@ -384,7 +384,7 @@
                               <i class="fa fa-calendar-day"></i>
                             </span>
                           </div>
-                          <input type="date" class="form-control float-right" name="date_to" value="{{$leaveApplication->date_to}}">
+                          <input type="date" class="form-control float-right" name="date_to" id="date_to" value="{{$leaveApplication->date_to}}">
                         </div>
                       </div>
 
@@ -474,7 +474,7 @@
                       <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{$user->emergency_contact_name}}">
                       <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{$user->emergency_contact_no}}">
                       <!-- CHANGE TO CYNTHIA ID -->
-                      <input style="display:none;" type="text" name="approver_id_3" value="1" />
+                      <input style="display:none;" type="text" name="approver_id_3" value="4" />
                       <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
 
                       <!-- Submit Button -->
@@ -520,6 +520,13 @@ $("#leave_type_id").change(function() {
         $("#ToDate").val("");
     });
 
+    $("#FromDate").change(function() {
+        var from = $("#FromDate").val();
+            $("#ToDate").val("");
+            $("#ToDate").attr({
+                 "min" : from          // values (or variables) here
+            });
+        });
 var text_max = 5;
 $('#count_reason').html(text_max + ' remaining');
 
@@ -562,6 +569,7 @@ var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
 var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
 var balances= {!! json_encode($leaveBal, JSON_HEX_TAG) !!};
 var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
+var userGroup = {!! json_encode($user->emp_group->name, JSON_HEX_TAG) !!};
 
 //console.log("MY APP:",myapplications);
 
@@ -649,6 +657,7 @@ const validation = {
 
     let date_from = _form.get(FC.date_from);
     let date_to = _form.get(FC.date_to);
+
 
     for (index = 0; index < myapplications.length; index++) {
         if( myapplications[index] == calendar.getDateDb(date_from)){
@@ -742,20 +751,24 @@ const validation = {
     }
 
 
-      if(
-        (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()))
-        ||
-        (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()))
-      ){
-        return `Selected date is a Weekend day. Please select another date.`;
-      }
+    if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
+          if(
+            (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()))
+            ||
+            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()))
+          ){
+            return `Selected date is a Weekend day. Please select another date.`;
+          }
+        }
 
-    if(
-      (name == FC.date_from.name && calendar.isHoliday(date_from))
-      ||
-      (name == FC.date_to.name && calendar.isHoliday(date_to))
-    ){
-      return `Selected date is an announced Public Holiday. Please select another date.`;
+        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
+        if(
+          (name == FC.date_from.name && calendar.isHoliday(date_from))
+          ||
+          (name == FC.date_to.name && calendar.isHoliday(date_to))
+        ){
+          return `Selected date is an announced Public Holiday. Please select another date.`;
+        }
     }
 
     if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){

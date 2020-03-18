@@ -27,12 +27,12 @@
                             <div class="card-header bg-teal">
                                 <strong>Application Details
                                     @can('cancel',$leaveApp)
-                                    <button type="button" class="btn btn-danger float-right" data-toggle="modal"
-                                        data-target="#cancelModal">
+                                    <button type="button" class="btn btn-secondary btn-sm float-right"
+                                        data-toggle="modal" data-target="#cancelModal">
                                         Cancel
                                     </button>
                                     <a href="{{route('edit_application', $leaveApp->id)}}"
-                                        class="btn btn-primary  float-right mr-1" data-toggle="tooltip"
+                                        class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip"
                                         title="Edit Application">Edit</a>
                                     @endcan
                                     @can('approve',$leaveApp)
@@ -41,7 +41,7 @@
                                     ||$leaveApp->status == 'CANCELLED')
                                     @elseif($leaveApp->user_id != auth()->user()->id)
                                     <a href="{{route('deny_application', $leaveApp->id)}}"
-                                        class="btn btn-danger btn-sm float-right" data-toggle="tooltip"
+                                        class="btn btn-danger btn-sm float-right mr-1" data-toggle="tooltip"
                                         title="Deny Application">Deny</a>
                                     <a href="{{route('approve_application', $leaveApp->id)}}"
                                         class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip"
@@ -51,7 +51,38 @@
                                 </strong>
                             </div>
                             <div class="card-body">
+
                                 <fieldset disabled>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <div class="input-group">
+                                            @if($leaveApp->status == 'PENDING_1')
+                                            <h5><span class="badge badge-warning">This application is pending on
+                                                    {{$leaveApp->approver_one->name}}</span></h5>
+                                            @elseif($leaveApp->status == 'PENDING_2')
+                                            <h5><span class="badge badge-warning">This application is pending on
+                                                    {{$leaveApp->approver_two->name}}</span></h5>
+                                            @elseif($leaveApp->status == 'PENDING_3')
+                                            <h5><span class="badge badge-warning">This application is pending on
+                                                    {{$leaveApp->approver_three->name}}</span></h5>
+                                            @elseif($leaveApp->status == 'DENIED_1')
+                                            <h5><span class="badge badge-danger">This application is denied by
+                                                    {{$leaveApp->approver_one->name}}</span></h5>
+                                            @elseif($leaveApp->status == 'DENIED_2')
+                                            <h5><span class="badge badge-danger">This application is denied by
+                                                    {{$leaveApp->approver_two->name}}</span></h5>
+                                            @elseif($leaveApp->status == 'DENIED_3')
+                                            <h5><span class="badge badge-danger">This application is denied by
+                                                    {{$leaveApp->approver_three->name}}</span></h5>
+                                            @elseif($leaveApp->status == 'APPROVED')
+                                            <h5><span class="badge badge-success">This application has been approved on
+                                                {{ \Carbon\Carbon::parse($leaveApp->updated_at)->isoFormat('ddd, D MMM YYYY')}}</span></h5>
+                                            @elseif($leaveApp->status == 'CANCELLED')
+                                            <h5><span class="badge badge-secondary">This application is cancelled by
+                                                    {{$leaveApp->remarker->name}}</span></h5>
+                                            @endif
+                                        </div>
+                                    </div>
                                     <!-- Applicants Name -->
                                     <div class="form-group">
                                         <label>Applicant Name</label>
@@ -295,6 +326,9 @@
                                                             class="far fa-clock"></i></span>
                                                     @elseif($leaveApp->status == 'DENIED_1' )
                                                     <span class="badge badge-danger"><i class="fas fa-ban"></i></span>
+                                                    @elseif($leaveApp->status == 'CANCELLED' )
+                                                    <span class="badge badge-secondary"><i
+                                                            class="fas fa-ban"></i></span>
                                                     @else
                                                     <span class="badge badge-success"><i
                                                             class="far fa-check-circle"></i></span>
@@ -319,6 +353,9 @@
                                                             class="far fa-clock"></i></span>
                                                     @elseif($leaveApp->status == 'DENIED_2' )
                                                     <span class="badge badge-danger"><i class="fas fa-ban"></i></span>
+                                                    @elseif($leaveApp->status == 'CANCELLED' )
+                                                    <span class="badge badge-secondary"><i
+                                                            class="fas fa-ban"></i></span>
                                                     @else
                                                     <span class="badge badge-success"><i
                                                             class="far fa-check-circle"></i></span>
@@ -348,6 +385,9 @@
                                                     <span class="badge badge-danger"><i class="fas fa-ban"></i></span>
                                                     @elseif($leaveApp->status == 'DENIED_3' )
                                                     <span class="badge badge-danger"><i class="fas fa-ban"></i></span>
+                                                    @elseif($leaveApp->status == 'CANCELLED' )
+                                                    <span class="badge badge-secondary"><i
+                                                            class="fas fa-ban"></i></span>
                                                     @else
                                                     <span class="badge badge-success"><i
                                                             class="far fa-check-circle"></i></span>
@@ -359,7 +399,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-8 connectedSortable ui-sortable">
+                            <div class="col-lg-12 connectedSortable ui-sortable">
                                 <!-- Leaves Balance -->
                                 <div class="card">
                                     <div class="card-header bg-teal">

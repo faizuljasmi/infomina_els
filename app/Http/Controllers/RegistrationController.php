@@ -71,7 +71,7 @@ class RegistrationController extends Controller
     {
         $user = $user;
         $users = User::orderBy('id', 'ASC')->get()->except($user->id);
-        $authUsers = User::where(function ($query) {
+        $authUsers = User::orderBy('name','ASC')->where(function ($query) {
             $query->where('user_type', 'Admin')
                 ->orWhere('user_type', 'Authority');
         })->get();
@@ -112,7 +112,7 @@ class RegistrationController extends Controller
         $user = $user;
         $users = User::orderBy('id', 'ASC')->get()->except($user->id);
 
-        $authUsers = User::where(function ($query) {
+        $authUsers = User::orderBy('name','ASC')->where(function ($query) {
             $query->where('user_type', 'Admin')
                 ->orWhere('user_type', 'Authority');
         })->get();
@@ -156,7 +156,7 @@ class RegistrationController extends Controller
         $activeUsers = User::where('status','Active')->where('name','like','%'.$search.'%')->paginate(15,['*'],'active');
         //$activeUsers = User::where('status','Active')->sortable(['staff_id'])->paginate(15,['*'],'active');
         //dd($users[0]->name);
-       
+
         $inactiveUsers = User::where('status','Inactive')->sortable(['staff_id'])->paginate(15,['*'],'inactive');
         //dd($users);
         $empTypes = EmpType::orderBy('id', 'ASC')->get();

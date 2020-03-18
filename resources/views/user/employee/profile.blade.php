@@ -109,6 +109,7 @@
         <div class="card">
             <div class="card-header bg-teal">
                 <strong>Leave Record</strong>
+		
             </div>
             <div class="card-body">
             <table class="table table-sm table-bordered">

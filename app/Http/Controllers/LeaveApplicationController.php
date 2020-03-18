@@ -45,7 +45,8 @@ class LeaveApplicationController extends Controller
 
         $group1 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_id)->first();
         if (isset($group1)) {
-            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
+            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->orWhere('emp_group_two_id', $user->emp_group_id)
+            ->orWhere('emp_group_three_id', $user->emp_group_id)->orWhere('emp_group_four_id', $user->emp_group_id)->orWhere('emp_group_five_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
             $groupMates = $groupMates->merge($groupMates1);
         }
 
@@ -76,8 +77,8 @@ class LeaveApplicationController extends Controller
                 ->orWhere('emp_group_three_id', $user->emp_group_five_id)->orWhere('emp_group_four_id', $user->emp_group_five_id)->orWhere('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
             $groupMates = $groupMates->merge($groupMates5);
         }
-        $groupMates = $groupMates->unique()->values()->all();
-        //dd($groupMates->unique()->values()->all());
+        $groupMates = $groupMates->unique()->values()->all();        
+	//dd($groupMates->unique()->values()->all());
 
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
@@ -322,41 +323,45 @@ class LeaveApplicationController extends Controller
         $leaveType = LeaveType::orderBy('id', 'ASC')->get();
 
         //Get THIS user id
-        $user = auth()->user();
+        $user = $leaveApplication->user;
         //Get employees who are in the same group (for relieve personnel).
         $groupMates = collect([]);
 
         $group1 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_id)->first();
         if (isset($group1)) {
-            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
+            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->orWhere('emp_group_two_id', $user->emp_group_id)
+            ->orWhere('emp_group_three_id', $user->emp_group_id)->orWhere('emp_group_four_id', $user->emp_group_id)->orWhere('emp_group_five_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
             $groupMates = $groupMates->merge($groupMates1);
         }
 
         $group2 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_two_id)->first();
         if (isset($group2)) {
-            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_two_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
+            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_two_id)->orWhere('emp_group_two_id', $user->emp_group_two_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_two_id)->orWhere('emp_group_four_id', $user->emp_group_two_id)->orWhere('emp_group_five_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
             $groupMates = $groupMates->merge($groupMates2);
         }
 
         $group3 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_three_id)->first();
         if (isset($group3)) {
-            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_three_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
+            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_three_id)->orWhere('emp_group_two_id', $user->emp_group_three_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_three_id)->orWhere('emp_group_four_id', $user->emp_group_three_id)->orWhere('emp_group_five_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
             $groupMates = $groupMates->merge($groupMates3);
         }
 
         $group4 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_four_id)->first();
         if (isset($group4)) {
-            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_four_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
+            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_four_id)->orWhere('emp_group_two_id', $user->emp_group_four_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_four_id)->orWhere('emp_group_four_id', $user->emp_group_four_id)->orWhere('emp_group_five_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
             $groupMates = $groupMates->merge($groupMates4);
         }
 
         $group5 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_five_id)->first();
         if (isset($group5)) {
-            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
+            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_five_id)->orWhere('emp_group_two_id', $user->emp_group_five_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_five_id)->orWhere('emp_group_four_id', $user->emp_group_five_id)->orWhere('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
             $groupMates = $groupMates->merge($groupMates5);
         }
-        $groupMates = $groupMates->unique()->values()->all();
-        //dd($groupMate->name);
+        $groupMates = $groupMates->unique()->values()->all();        
 
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
@@ -364,14 +369,14 @@ class LeaveApplicationController extends Controller
         $userAuth = User::orderBy('id', 'ASC')->where('id', '!=', '1')->where('user_type', 'Authority')->get()->except($user->id);
         //Get approval authorities for this user
         //Change id to CYNTHIA'S ID
-        $leaveAuthReplacement = User::orderBy('id', 'ASC')->where('id', '!=', '1')->get()->except($user->id);
+        $leaveAuthReplacement = User::orderBy('id', 'ASC')->where('id', '!=', '4')->get()->except($user->id);
 
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
         //Get leave applications from same group
-        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
+        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get()->except($leaveApplication->id);
 
         $holidays = Holiday::all();
         $all_dates = array();
@@ -428,15 +433,19 @@ class LeaveApplicationController extends Controller
     {
         //dd($request->emergency_contact_no);
         //Get user id
-        $user = auth()->user();
+        $user = $leaveApplication->user;
         //Check Balance
         $leaveBal = LeaveBalance::where(function ($query) use ($request, $user) {
             $query->where('leave_type_id', '=', $request->leave_type_id)
                 ->where('user_id', '=', $user->id);
         })->first();
+
+        $leaveTaken = TakenLeave::where(function ($query) use ($request, $user) {
+            $query->where('leave_type_id', '=', $request->leave_type_id)
+                ->where('user_id', '=', $user->id);
+        })->first();
         //dd($leaveBal->no_of_days);
         if ($request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12') {
-            dd('here');
             return redirect()->to('/leave/apply')->with('error', 'Your have insufficient leave balance. Please contact HR for more info.');
         }
 
@@ -472,7 +481,32 @@ class LeaveApplicationController extends Controller
         $leaveApp->date_to = $request->date_to;
         //get date resume
         $leaveApp->date_resume = $request->date_resume;
-        //get total days
+
+        //get initial total days
+        $initial_days = $leaveApp->total_days;
+        //If the new set date is more than initial date
+        if($initial_days < $request->total_days && $leaveApp->status == "APPROVED"){
+            $day_dif = $request->total_days - $initial_days;
+            //Minus the day diff to the balance
+            $leaveBal->no_of_days -= $day_dif;
+            $leaveBal->save();
+
+            //Add the day diff to the taken leave
+            $leaveTaken->no_of_days += $day_dif;
+            $leaveTaken->save();
+        }
+        //Else if
+        else if($initial_days > $request->total_days && $leaveApp->status == "APPROVED"){
+            $day_dif = $initial_days - $request->total_days;
+
+            //Add the day diff to the balance
+            $leaveBal->no_of_days += $day_dif;
+            $leaveBal->save();
+
+            //Minus the day diff to taken leave
+            $leaveTaken->no_of_days -= $day_dif;
+            $leaveTaken->save();
+        }
         $leaveApp->total_days = $request->total_days;
         //get reason
         $leaveApp->reason = $request->reason;
@@ -481,7 +515,6 @@ class LeaveApplicationController extends Controller
         //get emergency contact
         $leaveApp->emergency_contact_name = $request->emergency_contact_name;
         $leaveApp->emergency_contact_no = $request->emergency_contact_no;
-
 
         //Attachment validation
         $validator = Validator::make(
@@ -522,7 +555,10 @@ class LeaveApplicationController extends Controller
         //Send email notification
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
-        $leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        if($leaveApp->status == 'PENDING_1'){
+            $leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        }
+
         return redirect()->to('/home')->with('message', 'Leave application edited succesfully');
     }
 
@@ -821,12 +857,343 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        
+
 
         $leaveApplication->approver_one->notify(new CancelApplication($leaveApplication));
         $when = now()->addMinutes(5);
         $leaveApplication->user->notify((new CancelApplication($leaveApplication))->delay($when));
 
         return redirect()->to('/home')->with('message', 'Leave application cancelled succesfully');
+    }
+
+    public function applyFor(User $user){
+        $user = $user;
+
+        //Get all leave types. TODO: show only entitled leave types instead of all leave types
+        $leaveType = LeaveType::orderBy('id', 'ASC')->get()->except('leave_type_id', '=', '12');
+
+        //Get employees who are in the same group (for relieve personnel).
+        $groupMates = collect([]);
+
+        $group1 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_id)->first();
+        if (isset($group1)) {
+            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->orWhere('emp_group_two_id', $user->emp_group_id)
+            ->orWhere('emp_group_three_id', $user->emp_group_id)->orWhere('emp_group_four_id', $user->emp_group_id)->orWhere('emp_group_five_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates1);
+        }
+
+        $group2 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_two_id)->first();
+        if (isset($group2)) {
+            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_two_id)->orWhere('emp_group_two_id', $user->emp_group_two_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_two_id)->orWhere('emp_group_four_id', $user->emp_group_two_id)->orWhere('emp_group_five_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates2);
+        }
+
+        $group3 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_three_id)->first();
+        if (isset($group3)) {
+            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_three_id)->orWhere('emp_group_two_id', $user->emp_group_three_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_three_id)->orWhere('emp_group_four_id', $user->emp_group_three_id)->orWhere('emp_group_five_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates3);
+        }
+
+        $group4 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_four_id)->first();
+        if (isset($group4)) {
+            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_four_id)->orWhere('emp_group_two_id', $user->emp_group_four_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_four_id)->orWhere('emp_group_four_id', $user->emp_group_four_id)->orWhere('emp_group_five_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates4);
+        }
+
+        $group5 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_five_id)->first();
+        if (isset($group5)) {
+            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_five_id)->orWhere('emp_group_two_id', $user->emp_group_five_id)
+                ->orWhere('emp_group_three_id', $user->emp_group_five_id)->orWhere('emp_group_four_id', $user->emp_group_five_id)->orWhere('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
+            $groupMates = $groupMates->merge($groupMates5);
+        }
+        $groupMates = $groupMates->unique()->values()->all();
+        //dd($groupMates->unique()->values()->all());
+
+        //Get approval authorities of THIS user
+        $leaveAuth = $user->approval_authority;
+        if ($leaveAuth == null) {
+            return redirect('home')->with('error', 'Your approval authorities have not been set yet by the HR Admin. Please contact the HR Admin.');
+        }
+
+        //TODO: Get leave balance of THIS employee
+        $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
+
+        //Get all leave applications
+        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->get();
+
+        //Get my applications
+        $myApps = collect([]);
+        foreach ($leaveApps as $la) {
+            if ($la->user->id == $user->id && ($la->status == 'APPROVED' || $la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3')) {
+                $myApps->add($la);
+            }
+        }
+
+        //Group user's applications by months. Starting from the start of current month until end of year
+        $myApps = $myApps->whereBetween('date_from',array(now()->startOfMonth()->format('Y-m-d'),now()->endOfYear()->format('Y-m-d')))->groupBy(function($val) {
+            return Carbon::parse($val->date_from)->format('F');
+      });
+
+      //Get all leave applications date
+      $applied_dates = array();
+      $approved_dates = array();
+      $myApplication = array();
+      foreach ($leaveApps as $la) {
+          //Get the user applied and approved application
+          if ($la->status == 'APPROVED') {
+              $stardDate = new Carbon($la->date_from);
+              $endDate = new Carbon($la->date_to);
+
+              while ($stardDate->lte($endDate)) {
+                  $dates = str_replace("-", "", $stardDate->toDateString());
+                  $myApplication[] = $dates;
+                  $approved_dates[] = $dates;
+                  $stardDate->addDay();
+              }
+          }
+          if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
+            $stardDate = new Carbon($la->date_from);
+            $endDate = new Carbon($la->date_to);
+
+            while ($stardDate->lte($endDate)) {
+                $dates = str_replace("-", "", $stardDate->toDateString());
+                $myApplication[] = $dates;
+                $applied_dates = $dates;
+                $stardDate->addDay();
+            }
+          }
+      }
+
+        return view('leaveapp.applyfor')->with(compact('user','leaveType','groupMates','leaveAuth','leaveBal','myApps','myApplication','applied_dates','approved_dates'));
+    }
+
+    public function submitApplyFor(Request $request, User $user){
+        $request->flash();
+        //dd($request->emergency_contact_no);
+        //Get user id
+        $user = $user;
+        //Check Balance
+        $leaveBal = LeaveBalance::where(function ($query) use ($request, $user) {
+            $query->where('leave_type_id', '=', $request->leave_type_id)
+                ->where('user_id', '=', $user->id);
+        })->first();
+
+        //If insufficient balance
+        if ($leaveBal == null || $request->total_days > $leaveBal->no_of_days && $request->leave_type_id != '12') {
+            return back()->with('error', 'Employee have insufficient leave balance. Please contact HR for more info.');
+        }
+
+        //Check leave authority
+
+        $leaveApp = new LeaveApplication;
+        //get user id, leave type id
+        $leaveApp->user_id = $user->id;
+        $leaveApp->leave_type_id = $request->leave_type_id;
+        //status set pending 1
+        //get all authorities id
+
+        //If it is replacement leave claim
+        if ($request->leave_type_id == '12') {
+
+            //If there is no second approver, move the last approver to the 2nd one
+            if ($request->approver_id_2 == null) {
+                $leaveApp->approver_id_1 = $request->approver_id_1;
+                $leaveApp->approver_id_2 = $request->approver_id_3;
+                $leaveApp->approver_id_3 = null;
+            } else {
+                $leaveApp->approver_id_1 = $request->approver_id_1;
+                $leaveApp->approver_id_2 = $request->approver_id_2;
+                $leaveApp->approver_id_3 = $request->approver_id_3;
+            }
+        } else {
+            $leaveApp->approver_id_1 = $request->approver_id_1;
+            $leaveApp->approver_id_2 = $request->approver_id_2;
+            $leaveApp->approver_id_3 = $request->approver_id_3;
+        }
+
+
+
+        //get date from
+        $leaveApp->date_from = $request->date_from;
+        //get date to
+        $leaveApp->date_to = $request->date_to;
+        //get date resume
+        $leaveApp->date_resume = $request->date_resume;
+        //get total days
+        $leaveApp->total_days = $request->total_days;
+        //get apply for
+        $leaveApp->apply_for = $request->apply_for;
+        //get reason
+        $leaveApp->reason = $request->reason;
+        //get relief personel id
+        $leaveApp->relief_personnel_id = $request->relief_personnel_id;
+        //get emergency contact
+        $leaveApp->emergency_contact_name = $request->emergency_contact_name;
+        $leaveApp->emergency_contact_no = $request->emergency_contact_no;
+
+
+        //Attachment validation
+        $validator = Validator::make(
+            $request->all(),
+            ['attachment' => 'required_if:leave_type_id,3|required_if:leave_type_id,7|required_if:leave_type_id,4|required_if:leave_type_id,8|required_if:leave_type_id,9|mimes:jpeg,png,jpg,pdf|max:2048']
+        );
+
+        // if validation fails
+        if ($validator->fails()) {
+            return back()->with('error', 'Your file attachment is invalid. Application is not submitted');
+        }
+        //If validation passes and has a file. Not necessary to check but just to be safe
+        if ($request->hasFile('attachment')) {
+            $att = $request->file('attachment');
+            $uploaded_file = $att->store('public');
+            //Pecahkan
+            $paths = explode('/', $uploaded_file);
+            $filename = $paths[1];
+            //dd($uploaded_file);
+            //Save attachment filenam into leave application table
+            $leaveApp->attachment = $filename;
+        }
+
+        $leaveApp->status = "Approved";
+        $leaveApp->save();
+
+        //If the approved leave is a Replacement leave, assign earned to Replacement, and add day balance to Annual
+        if ($leaveApp->leaveType->name == 'Replacement') {
+            $lt = LeaveEarning::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', $leaveApp->leave_type_id)
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+
+            $lt->no_of_days += $leaveApp->total_days;
+
+            $lt->save();
+
+            //Add balance to annual;
+            $lb = LeaveBalance::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', '1')
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+
+            $lb->no_of_days += $leaveApp->total_days;
+            $lb->save();
+
+            //Send status update email
+            return back()->with('message', 'Leave Record Added Succesfully');
+        }
+
+        //If the approved leave is a Sick leave, deduct the amount taken in both sick leave and hospitalization balance
+        if ($leaveApp->leaveType->name == 'Sick') {
+            //Add in amount sick leave taken
+            $lt = TakenLeave::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', $leaveApp->leave_type_id)
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+            $lt->no_of_days += $leaveApp->total_days;
+            $lt->save();
+
+            //Deduct balance in sick leave balance
+            $sickBalance = LeaveBalance::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', '3')
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+            $sickBalance->no_of_days -= $leaveApp->total_days;
+            $sickBalance->save();
+
+            //Deduct balance in hosp leave balance
+            $hospBalance = LeaveBalance::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', '4')
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+            $hospBalance->no_of_days -= $leaveApp->total_days;
+            $hospBalance->save();
+
+            return back()->with('message', 'Sick leave application status updated succesfully');
+        }
+
+        //If the approved leave is an emergency leave, deduct the taken amount to Annual Leave
+        if ($leaveApp->leaveType->name == 'Emergency') {
+            //Add in amount emergency leave taken
+            $lt = TakenLeave::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', $leaveApp->leave_type_id)
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+            $lt->no_of_days += $leaveApp->total_days;
+            $lt->save();
+
+            //Deduct balance in emergency leave balance
+            $emBalance = LeaveBalance::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', '6')
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+            $emBalance->no_of_days -= $leaveApp->total_days;
+            $emBalance->save();
+
+            //Deduct balance in annual leave
+            $annBalance = LeaveBalance::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', '1')
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+            $annBalance->no_of_days -= $leaveApp->total_days;
+            $annBalance->save();
+            //dd($annBalance->no_of_days);
+
+            return back()->with('message', 'Emergency leave application status updated succesfully');
+        }
+
+        //Update leave taken table
+        //Check for existing record
+        $dupcheck = TakenLeave::where(function ($query) use ($leaveApp) {
+            $query->where('leave_type_id', $leaveApp->leave_type_id)
+                ->where('user_id', $leaveApp->user_id);
+        })->first();
+
+        //If does not exist, create new
+        if ($dupcheck == null) {
+            $tl = new TakenLeave;
+            $tl->leave_type_id = $leaveApp->leave_type_id;
+            $tl->user_id = $leaveApp->user_id;
+            $tl->no_of_days = $leaveApp->total_days;
+            $tl->save();
+        }
+        //else update existing
+        else {
+            $dupcheck->no_of_days += $leaveApp->total_days;
+            $dupcheck->save();
+        }
+
+        //Update leave balance table
+        //Check for existing record
+        $dupcheck2 = LeaveBalance::where(function ($query) use ($leaveApp) {
+            $query->where('leave_type_id', $leaveApp->leave_type_id)
+                ->where('user_id', $leaveApp->user_id);
+        })->first();
+
+        //If does not exist, create new
+        if ($dupcheck2 == null) {
+            $lb = new LeaveBalance;
+            $lb->leave_type_id = $leaveApp->leave_type_id;
+            $lb->user_id = $leaveApp->user_id;
+            $le = LeaveEarning::where(function ($query) use ($leaveApp) {
+                $query->where('leave_type_id', $leaveApp->leave_type_id)
+                    ->where('user_id', $leaveApp->user_id);
+            })->first();
+            $lb->no_of_days = $le->no_of_days - $leaveApp->total_days;
+            $lb->save();
+        }
+        //else update existing
+        else {
+            $dupcheck2->no_of_days -= $leaveApp->total_days;
+            $dupcheck2->save();
+        }
+        //Send email notification
+        //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
+
+        //$leaveApp->approver_one->notify(new NewApplication($leaveApp));
+
+        //STORE
+        return back()->with('message', 'Leave record submitted succesfully');
     }
 }

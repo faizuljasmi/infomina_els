@@ -74,11 +74,11 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_from">
+                    <input type="date" class="form-control float-right" name="date_from" id="FromDate">
                   </div>
                 </div>
 
-                <!-- Date From -->
+                <!-- Date To -->
                 <div class="form-group">
                   <label>Date To <font color="red">*</font></label>
                   <div class="input-group">
@@ -87,7 +87,7 @@
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_to">
+                    <input type="date" class="form-control float-right" name="date_to" id="ToDate">
                   </div>
                 </div>
 
@@ -174,7 +174,7 @@
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{isset($user->emergency_contact_name) ? $user->emergency_contact_name:'NA'}}">
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{isset($user->emergency_contact_no) ? $user->emergency_contact_no :'NA'}}">
                 <!-- CHANGE TO CYNTHIA ID -->
-                <input style="display:none;" type="text" name="approver_id_3" value="1" />
+                <input style="display:none;" type="text" name="approver_id_3" value="4" />
                 <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
 
                 <!-- Submit Button -->
@@ -205,6 +205,13 @@
 <script>
   $(document).ready(MainLeaveApplicationCreate);
 
+    $("#FromDate").change(function() {
+        var from = $("#FromDate").val();
+            $("#ToDate").val("");
+            $("#ToDate").attr({
+                 "min" : from          // values (or variables) here
+            });
+        });
 var text_max = 5;
 $('#count_reason').html(text_max + ' remaining');
 
