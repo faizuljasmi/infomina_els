@@ -150,8 +150,8 @@
                     <th>@sortablelink('name', 'Name')</th>
                     <th>Day(s)</th>
                     <th>Type</th>
-                    <th width="10%">@sortablelink('date_from', 'To Date')</th>
                     <th width="10%">@sortablelink('date_from', 'From Date')</th>
+                    <th width="10%">@sortablelink('date_from', 'To Date')</th>
                     <th width="10%">@sortablelink('date_from', 'Resume Date')</th>
                     <th>Reason</th>
                     <th>Status</th>
