@@ -27,6 +27,10 @@ class ExcelController extends Controller
         ->where('leave_applications.status','like','%APPROVED%')
         ->count();
 
+        $count_cancel = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
+        ->where('leave_applications.status','like','%CANCELLED%')
+        ->count();
+
         $count_pending = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->where('leave_applications.status','like','%PENDING_1%')
         ->orwhere('leave_applications.status','like','%PENDING_2%')
@@ -39,7 +43,7 @@ class ExcelController extends Controller
         ->orwhere('leave_applications.status','like','%DENIED_3%')
         ->count();
         
-        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject'));
+        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel'));
     }
 
     public function search(Request $request)
@@ -52,6 +56,10 @@ class ExcelController extends Controller
 
         $count_approve = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->where('leave_applications.status','like','%APPROVED%')
+        ->count();
+
+        $count_cancel = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
+        ->where('leave_applications.status','like','%CANCELLED%')
         ->count();
 
         $count_pending = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
@@ -101,7 +109,7 @@ class ExcelController extends Controller
 
         $users = $query->paginate(15);
 
-        return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 'count_approve', 'count_pending', 'count_reject'));
+        return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 'count_approve', 'count_pending', 'count_reject', 'count_cancel'));
     }
 
     public function import(Request $request)

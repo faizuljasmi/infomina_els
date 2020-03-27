@@ -24,7 +24,7 @@
 <div class="mt-2 col-md-12">
     <div class="card">
         <div class="card-header bg-teal">
-            Import Excel
+            Reports
         </div>
         <div class="card-body">
             <div class="panel panel-default">
@@ -34,12 +34,23 @@
                             <form id="btnSearch" class="input-horizontal" action="{{ route('search') }}" method="get">
                                 <div class="form-inline form-group">
                                     <!-- Name -->
+                                    <div class="input-group col-12">
+                                        <input type="search" name="name" id="name" placeholder="Name" value="{{ isset($search_name)? $search_name: '' }}" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-inline form-group">
+                                    <!-- Date From -->
                                     <div class="input-group col-6">
-                                        <input type="search" name="name" placeholder="Name" value="{{ isset($search_name)? $search_name: '' }}" class="form-control">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar-day"></i>
+                                            </span>
+                                        </div>
+                                        <input placeholder="Leave From" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_from)? $date_from: '' }}" name="date_from" id="date_from">
                                     </div>
                                     <!-- Leave Type -->
                                     <div class="input-group col-6">
-                                        <select class="form-control" name="leave_type">
+                                        <select class="form-control" name="leave_type" id="leave_type">
                                             <option value="" disabled selected>Select Leave Type</option>
                                             <option value="1">Annual</option>
                                             <option value="2">Calamity</option>
@@ -57,18 +68,18 @@
                                     </div>
                                 </div>
                                 <div class="form-inline form-group">
-                                    <!-- Date From -->
+                                    <!-- Date To -->
                                     <div class="input-group col-6">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
                                                 <i class="fa fa-calendar-day"></i>
                                             </span>
                                         </div>
-                                        <input placeholder="Leave From" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_from)? $date_from: '' }}" name="date_from">
+                                        <input placeholder="Leave To" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_to)? $date_to: '' }}" name="date_to" id="date_to">
                                     </div>
                                     <!-- Status -->
                                     <div class="input-group col-6">
-                                        <select class="form-control" name="leave_status">
+                                        <select class="form-control" name="leave_status" id="leave_status">
                                             <option value="" disabled selected>Select Status</option>
                                             <option value="PENDING">In Progress</option>
                                             <option value="APPROVED">Approved</option>
@@ -77,24 +88,13 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-inline form-group">
-                                    <!-- Date To -->
-                                    <div class="input-group col-6">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="fa fa-calendar-day"></i>
-                                            </span>
-                                        </div>
-                                        <input placeholder="Leave To" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_to)? $date_to: '' }}" name="date_to">
-                                    </div>
-                                    <div class="d-flex justify-content-end col-6">
-                                        <button onclick="importShow()" class="btn btn-warning mr-1">Import</button>
-                                        <button form="btnExport" type="submit" class="btn btn-warning mr-1">Export</button>
-                                        <button form="btnSearch" type="reset" class="btn btn-primary mr-1">Reset</button>
-                                        <button form="btnSearch" type="submit" class="btn btn-primary">Search</button>
-                                    </div>
-                                </div>
                             </form>
+                            <div class="d-flex justify-content-end col-12">
+                                <button data-toggle="collapse" data-target="#importCard" class="btn btn-warning mr-1">Import</button>
+                                <button form="btnExport" type="submit" class="btn btn-warning mr-1">Export</button>
+                                <button onclick="resetForm()" type="button" class="btn btn-primary mr-1">Reset</button>
+                                <button form="btnSearch" type="submit" class="btn btn-primary">Search</button>
+                            </div>
                             <form id="btnExport" action="{{ route('excel_export') }}" enctype="multipart/form-data">
                                 <input type="hidden" name="excel_name" value="{{isset($search_name)? $search_name: ''}}">
                                 <input type="hidden" name="excel_date_from" value="{{isset($date_from)? $date_from: ''}}">
@@ -125,20 +125,30 @@
                                 <td>Rejected</td>
                                 <td>{{ $count_reject }}</td>
                             </tr>
+                            <tr>
+                                <td>Cancelled</td>
+                                <td>{{ $count_cancel }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Total</b></td>
+                                <td><b>{{ $users->total() }}</b></td>
+                            </tr>
                             </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="card col-12 d-none" id="importCard">
+                <div id="importCard" class="collapse">
+                <div class="card col-12">
                     <div class="card-body">
                         <form class="form-inline" action="{{ route('excel_import') }}" method="post">
                             <div class="form-group">
                                 <input type="file" class="form-control" name="import_file" />
                             </div>
-                            <button style="margin-left: 10px;" class="btn btn-success mr-2" type="submit">Import</button>
+                            <button style="margin-left: 10px;" class="btn btn-success mr-2" type="submit">Upload</button>
                         </form>
                     </div>
+                </div>
                 </div>
                 @if ($users->count() > 0)
                     <h6><strong>Displaying {{$users->count()}} out of {{$users->total()}} records.</strong></h6>
@@ -202,12 +212,18 @@
     </div>
 </div>
 <script>
+
 $(function () {
   $('[data-toggle="popover"]').popover()
 })
 
-function importShow() {
-  $('#importCard').removeClass("d-none");
+function resetForm() {
+    document.getElementById("name").value = '';
+    document.getElementById("date_from").value = '';
+    document.getElementById("date_to").value = '';
+    document.getElementById("leave_type").value = '';
+    document.getElementById("leave_status").value = '';
+    window.location.href = "{{ route('search') }}";
 }
 
 </script>
