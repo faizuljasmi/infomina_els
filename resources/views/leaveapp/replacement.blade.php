@@ -379,7 +379,7 @@ $('#reason').keyup(function() {
           if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
             let from = _form.get(FC.date_from);
             let to = _form.get(FC.date_to);
-            let total = calendar.getTotalWorkingDay(from, to);
+            let total = calendar.getTotalDays(from, to);
             console.log("total",total)
             _form.set(FC.total_days, total);
           } else{

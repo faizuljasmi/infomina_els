@@ -27,6 +27,7 @@ use App\LeaveBalance;
 use App\TakenLeave;
 use App\Holiday;
 use App\EmpGroup;
+use App\History;
 use Carbon\Carbon;
 
 class LeaveApplicationController extends Controller
@@ -425,6 +426,7 @@ class LeaveApplicationController extends Controller
                 }
             }
         }
+
         //dd($leaveApplication->approver_id_1);
         return view('leaveapp.edit')->with(compact('leaveApplication', 'user', 'leaveType', 'groupMates', 'userAuth', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'leaveAuthReplacement','myApplication'));
     }
@@ -559,6 +561,13 @@ class LeaveApplicationController extends Controller
             $leaveApp->approver_one->notify(new NewApplication($leaveApp));
         }
 
+         //Record in activity history
+         $hist = new History;
+         $hist->leave_application_id = $leaveApplication->id;
+         $hist->user_id = auth()->user()->id;
+         $hist->action = "Edited";
+         $hist->save();
+
         return redirect()->to('/home')->with('message', 'Leave application edited succesfully');
     }
 
@@ -581,6 +590,7 @@ class LeaveApplicationController extends Controller
             //else update status to pending 2,
             else {
                 $leaveApplication->status = 'PENDING_2';
+                
                 //Notify the second approver
                 $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
             }
@@ -742,7 +752,14 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        //If the approved leave is annual leave, and there is brought forward balance, deduct brought forward and update.
+        //Record in activity history
+        $hist = new History;
+        $hist->leave_application_id = $leaveApplication->id;
+        $hist->user_id = $user->id;
+        $hist->action = "Approved";
+        $hist->save();
+
+        
 
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
@@ -773,6 +790,14 @@ class LeaveApplicationController extends Controller
             $leaveApplication->status = 'DENIED_3';
         }
         $leaveApplication->update();
+
+         //Record in activity history
+         $hist = new History;
+         $hist->leave_application_id = $leaveApplication->id;
+         $hist->user_id = $user->id;
+         $hist->action = "Denied";
+         $hist->save();
+
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
 
@@ -1188,6 +1213,13 @@ class LeaveApplicationController extends Controller
             $dupcheck2->no_of_days -= $leaveApp->total_days;
             $dupcheck2->save();
         }
+
+         //Record in activity history
+         $hist = new History;
+         $hist->leave_application_id = $leaveApplication->id;
+         $hist->user_id = auth()->user()->id;
+         $hist->action = "Applied on Behalf";
+         $hist->save();
         //Send email notification
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 

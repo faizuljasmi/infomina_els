@@ -33,6 +33,11 @@ class LeaveApplication extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
+    //One leave app has many histories
+    public function histories(){
+        return $this->hasMany(History::class);
+    }
+
     //One leave app has one leave type
     public function leaveType(){
         return $this->hasOne(LeaveType::class,'id','leave_type_id');
