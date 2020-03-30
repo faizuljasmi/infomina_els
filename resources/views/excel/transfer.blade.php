@@ -91,11 +91,13 @@
                             </form>
                             <div class="d-flex justify-content-end col-12">
                                 <button data-toggle="collapse" data-target="#importCard" class="btn btn-warning mr-1">Import</button>
-                                <button form="btnExport" type="submit" class="btn btn-warning mr-1">Export</button>
+                                <button data-toggle="collapse" data-target="#exportCard" class="btn btn-warning mr-1">Export</button>
                                 <button onclick="resetForm()" type="button" class="btn btn-primary mr-1">Reset</button>
                                 <button form="btnSearch" type="submit" class="btn btn-primary">Search</button>
                             </div>
-                            <form id="btnExport" action="{{ route('excel_export') }}" enctype="multipart/form-data">
+                            <form id="btnExportBal" action="{{ route('excel_export_bal') }}" enctype="multipart/form-data"></form>
+                            <form id="btnExportAll" action="{{ route('excel_export_all') }}" enctype="multipart/form-data"></form>
+                            <form id="btnExportSearch" action="{{ route('excel_export_search') }}" enctype="multipart/form-data">
                                 <input type="hidden" name="excel_name" value="{{isset($search_name)? $search_name: ''}}">
                                 <input type="hidden" name="excel_date_from" value="{{isset($date_from)? $date_from: ''}}">
                                 <input type="hidden" name="excel_date_to" value="{{isset($date_to)? $date_to: ''}}">
@@ -140,7 +142,7 @@
                 </div>
                 <div id="importCard" class="collapse">
                 <div class="card col-12">
-                    <div class="card-body">
+                    <div class="card-body d-flex justify-content-center">
                         <form class="form-inline" action="{{ route('excel_import') }}" method="post">
                             <div class="form-group">
                                 <input type="file" class="form-control" name="import_file" />
@@ -150,8 +152,17 @@
                     </div>
                 </div>
                 </div>
+                <div id="exportCard" class="collapse">
+                <div class="card col-12">
+                    <div class="card-body d-flex justify-content-center">
+                        <button form="btnExportSearch" type="submit" class="btn btn-success mr-1">Export Current</button>
+                        <button form="btnExportAll" type="submit" class="btn btn-success mr-1">Export All Applications</button>
+                        <button form="btnExportBal" type="submit" class="btn btn-success mr-1">Export Leave Balance</button>
+                    </div>
+                </div>
+                </div>
                 @if ($users->count() > 0)
-                    <h6><strong>Displaying {{$users->count()}} out of {{$users->total()}} records.</strong></h6>
+                    <h6><strong>Displaying {{$users->count()}} out of {{$users->total()}} leave applications.</strong></h6>
                 @endif
                 <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
