@@ -96,6 +96,7 @@ Route::middleware('can:edit_settings')->group(function() {
 
     //Import Export Excel
     Route::get('transfer', 'ExcelController@index')->name('excel_transfer')->middleware('auth');
+    Route::get('transfer/change-status', 'ExcelController@change_status')->name('change_status')->middleware('auth');
     Route::get('transfer/search', 'ExcelController@search')->name('search')->middleware('auth');
     Route::post('transfer/import', 'ExcelController@import')->name('excel_import')->middleware('auth');
     Route::get('transfer/export-all', 'ExcelController@export_all')->name('excel_export_all')->middleware('auth');

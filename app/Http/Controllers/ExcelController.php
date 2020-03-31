@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Datatables;
 use DB;
 use App\User;
-use App\LeaveApplications;
+use App\LeaveApplication;
 
 class ExcelController extends Controller
 {
@@ -20,7 +20,7 @@ class ExcelController extends Controller
         $users = User::sortable()
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
-        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name')
+        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id')
         ->paginate(15);
 
         $count_approve = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
@@ -44,6 +44,28 @@ class ExcelController extends Controller
         ->count();
         
         return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel'));
+    }
+
+    public function change_status(Request $request)
+    {
+        $new_status = $request->get('change_status');
+        $user_id = $request->get('status_user_id');
+        $app_id = $request->get('status_app_id');
+
+        $update_status = LeaveApplication::where('id', '=', $app_id)
+        ->where('user_id', '=', $user_id)
+        ->first();
+
+        $update_status->status = $new_status;
+        $update_status->save();
+        
+        // $hist = new History;
+        // $hist->leave_application_id = $leaveApplication->id;
+        // $hist->user_id = $user->id;
+        // $hist->action = "Approved";
+        // $hist->save();
+
+        return redirect()->to('/transfer');
     }
 
     public function search(Request $request)

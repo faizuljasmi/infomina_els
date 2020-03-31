@@ -177,6 +177,7 @@
                     <th>Reason</th>
                     <th>Status</th>
                     <th width="10%">@sortablelink('created_at', 'Apply Date')</th>
+                    <th width="10%">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -184,7 +185,7 @@
                 @foreach($users as $row)
                 <tr>
                     <td>{{ ++$count }}</td>
-                    <td>{{ $row->name }}</td>
+                    <td class="user_name">{{ $row->name }}</td>
                     <td>{{ $row->total_days }}</td>
                     <td>{{ $row->leave_type_name }}</td>
                     <td>{{ $row->date_from }}</td>
@@ -206,6 +207,14 @@
                         @endif
                     </td>
                     <td>{{\Carbon\Carbon::parse($row->created_at)->isoFormat('Y-MM-DD')}}</td>
+                    <td align="center">
+                        <button type="button" class="btn btn-info btn-sm use-this" data-toggle="modal" data-target="#change_status_modal">
+                            Change Status
+                        </button>
+                    </td>
+                    <td class="d-none user_leave_status">{{ $row->status }}</td>
+                    <td class="d-none user_id">{{ $row->user_id }}</td>
+                    <td class="d-none leave_app_id">{{ $row->leave_app_id }}</td>
                 </tr>
                 @endforeach
                 @if ($users->count() == 0)
@@ -222,11 +231,67 @@
         </div>
     </div>
 </div>
+
+<!-- Confirmation Status Change -->
+<div class="modal fade" id="change_status_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Change Status</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="change_status_btn" action="{{ route('change_status') }}" method="get">
+                <label for="status_user_name">Employee Name :</label>
+                <input class="form-control" type="text" id="status_user_name" readonly><br>
+                <label for="status_leave_status">Current Leave Status :</label>
+                <input class="form-control" type="text" id="status_leave_status" readonly><br>
+                <label for="change_status">Change Leave Status To :</label>
+                <select class="form-control" name="change_status" id="change_status">
+                    <option value="" disabled selected>Select</option>
+                    <option value="1">PENDING_1</option>
+                    <option value="2">PENDING_2</option>
+                    <option value="3">PENDING_3</option>
+                    <option value="4">APPROVED</option>
+                    <option value="5">DENIED_1</option>
+                    <option value="6">DENIED_2</option>
+                    <option value="7">DENIED_3</option>
+                    <option value="8">CANCELLED</option>
+                </select>
+                <input type="hidden" id="status_user_id" name="status_user_id">
+                <input type="hidden" id="status_app_id" name="status_app_id">
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button form="change_status_btn" type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+        </div>
+    </div>
+</div>
+
 <script>
+
+
 
 $(function () {
   $('[data-toggle="popover"]').popover()
 })
+
+$(".use-this").click(function() {
+    var $row = $(this).closest("tr");    // Find the row
+    var $text = $row.find(".user_name").html(); // Find the text
+    var $status = $row.find(".user_leave_status").html(); // Find the text
+    var $id = $row.find(".user_id").html(); // Find the text
+    var $app_id = $row.find(".leave_app_id").html(); // Find the text
+    // alert($id);
+    $("#status_user_name").val($text);
+    $("#status_leave_status").val($status);
+    $("#status_user_id").val($id);
+    $("#status_app_id").val($app_id);
+});
 
 function resetForm() {
     document.getElementById("name").value = '';
