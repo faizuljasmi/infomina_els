@@ -60,10 +60,10 @@
                                             <option value="6">Emergency</option>
                                             <option value="7">Marriage</option>
                                             <option value="8">Maternity</option>
-                                            <option value="8">Paternity</option>
-                                            <option value="8">Traning</option>
-                                            <option value="8">Unpaid</option>
-                                            <option value="8">Replacement</option>
+                                            <option value="9">Paternity</option>
+                                            <option value="10">Traning</option>
+                                            <option value="11">Unpaid</option>
+                                            <option value="12">Replacement</option>
                                         </select>
                                     </div>
                                 </div>
@@ -133,7 +133,7 @@
                             </tr>
                             <tr>
                                 <td><b>Total</b></td>
-                                <td><b>{{ $users->total() }}</b></td>
+                                <td><b>{{ $count_all }}</b></td>
                             </tr>
                             </tbody>
                             </table>
@@ -177,7 +177,7 @@
                     <th>Reason</th>
                     <th>Status</th>
                     <th width="10%">@sortablelink('created_at', 'Apply Date')</th>
-                    <th width="10%">Action</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -208,9 +208,16 @@
                     </td>
                     <td>{{\Carbon\Carbon::parse($row->created_at)->isoFormat('Y-MM-DD')}}</td>
                     <td align="center">
-                        <button type="button" class="btn btn-info btn-sm use-this" data-toggle="modal" data-target="#change_status_modal">
-                            Change Status
-                        </button>
+                        <span data-toggle="modal" data-target="#change_status_modal">
+                            <button type="button" class="btn btn-primary btn-sm use-this" data-toggle="tooltip" data-placement="left" title="Change Status">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </span>
+                        <span data-toggle="modal" data-target="#history_modal">
+                            <button type="button" class="btn btn-primary btn-sm use-this" data-toggle="tooltip" data-placement="left" title="View History">
+                                <i class="fas fa-history"></i>
+                            </button>
+                        </span>
                     </td>
                     <td class="d-none user_leave_status">{{ $row->status }}</td>
                     <td class="d-none user_id">{{ $row->user_id }}</td>
@@ -232,7 +239,7 @@
     </div>
 </div>
 
-<!-- Confirmation Status Change -->
+<!-- Status Change -->
 <div class="modal fade" id="change_status_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -272,12 +279,31 @@
     </div>
 </div>
 
+<!-- View History -->
+<div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">History</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+
 <script>
-
-
 
 $(function () {
   $('[data-toggle="popover"]').popover()
+  $('[data-toggle="tooltip"]').tooltip()
 })
 
 $(".use-this").click(function() {

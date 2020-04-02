@@ -23,27 +23,25 @@ class ExcelController extends Controller
         ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id')
         ->paginate(15);
 
-        $count_approve = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%APPROVED%')
+        $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')
         ->count();
 
-        $count_cancel = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%CANCELLED%')
+        $count_cancel = LeaveApplication::where('leave_applications.status','like','%CANCELLED%')
         ->count();
 
-        $count_pending = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%PENDING_1%')
+        $count_pending = LeaveApplication::where('leave_applications.status','like','%PENDING_1%')
         ->orwhere('leave_applications.status','like','%PENDING_2%')
         ->orwhere('leave_applications.status','like','%PENDING_3%')
         ->count();
 
-        $count_reject = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%DENIED_1%')
+        $count_reject = LeaveApplication::where('leave_applications.status','like','%DENIED_1%')
         ->orwhere('leave_applications.status','like','%DENIED_2%')
         ->orwhere('leave_applications.status','like','%DENIED_3%')
         ->count();
+
+        $count_all = LeaveApplication::count();
         
-        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel'));
+        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all'));
     }
 
     public function change_status(Request $request)
@@ -51,6 +49,7 @@ class ExcelController extends Controller
         $new_status = $request->get('change_status');
         $user_id = $request->get('status_user_id');
         $app_id = $request->get('status_app_id');
+        // dd($app_id);
 
         $update_status = LeaveApplication::where('id', '=', $app_id)
         ->where('user_id', '=', $user_id)
@@ -65,7 +64,7 @@ class ExcelController extends Controller
         // $hist->action = "Approved";
         // $hist->save();
 
-        return redirect()->to('/transfer');
+        return back();
     }
 
     public function search(Request $request)
@@ -76,30 +75,28 @@ class ExcelController extends Controller
         $leave_type = $request->get('leave_type');
         $leave_status = $request->get('leave_status');
 
-        $count_approve = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%APPROVED%')
+        $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')
         ->count();
 
-        $count_cancel = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%CANCELLED%')
+        $count_cancel = LeaveApplication::where('leave_applications.status','like','%CANCELLED%')
         ->count();
 
-        $count_pending = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%PENDING_1%')
+        $count_pending = LeaveApplication::where('leave_applications.status','like','%PENDING_1%')
         ->orwhere('leave_applications.status','like','%PENDING_2%')
         ->orwhere('leave_applications.status','like','%PENDING_3%')
         ->count();
 
-        $count_reject = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
-        ->where('leave_applications.status','like','%DENIED_1%')
+        $count_reject = LeaveApplication::where('leave_applications.status','like','%DENIED_1%')
         ->orwhere('leave_applications.status','like','%DENIED_2%')
         ->orwhere('leave_applications.status','like','%DENIED_3%')
         ->count();
 
+        $count_all = LeaveApplication::count();
+
         $query = User::sortable()
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
-        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name');
+        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id');
 
         if($request->get('name') != '') {
             $query->where('users.name','like','%'.$search_name.'%');
@@ -131,7 +128,7 @@ class ExcelController extends Controller
 
         $users = $query->paginate(15);
 
-        return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 'count_approve', 'count_pending', 'count_reject', 'count_cancel'));
+        return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all'));
     }
 
     public function import(Request $request)
