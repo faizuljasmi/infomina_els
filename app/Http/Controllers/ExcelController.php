@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Datatables;
 use DB;
 use App\User;
+use App\History;
+use App\LeaveType;
 use App\LeaveApplication;
 
 class ExcelController extends Controller
@@ -23,11 +25,9 @@ class ExcelController extends Controller
         ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id')
         ->paginate(15);
 
-        $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')
-        ->count();
+        $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')->count();
 
-        $count_cancel = LeaveApplication::where('leave_applications.status','like','%CANCELLED%')
-        ->count();
+        $count_cancel = LeaveApplication::where('leave_applications.status','like','%CANCELLED%')->count();
 
         $count_pending = LeaveApplication::where('leave_applications.status','like','%PENDING_1%')
         ->orwhere('leave_applications.status','like','%PENDING_2%')
@@ -41,13 +41,22 @@ class ExcelController extends Controller
 
         $count_all = LeaveApplication::count();
         
-        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all'));
+        $history = History::orderby('id', 'ASC')->get();
+
+        $current_user = auth()->user()->id;
+
+        $edited_by = User::where('users.id', 'like', '%'.$current_user.'%')
+        ->first();
+        
+        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'history', 'edited_by'));
     }
 
     public function change_status(Request $request)
     {
         $new_status = $request->get('change_status');
+        // dd($new_status);
         $user_id = $request->get('status_user_id');
+        // dd($user_id);
         $app_id = $request->get('status_app_id');
         // dd($app_id);
 
@@ -55,14 +64,26 @@ class ExcelController extends Controller
         ->where('user_id', '=', $user_id)
         ->first();
 
+        $current_user = auth()->user()->id;
+
+        $edited_by = User::where('users.id', 'like', '%'.$current_user.'%')
+        ->select('users.name')
+        ->get();
+
+        // dd($edited_by);
+
+
+
         $update_status->status = $new_status;
         $update_status->save();
+
+        // if ($new_status == "APPROVED")
         
-        // $hist = new History;
-        // $hist->leave_application_id = $leaveApplication->id;
-        // $hist->user_id = $user->id;
-        // $hist->action = "Approved";
-        // $hist->save();
+        $hist = new History;
+        $hist->leave_application_id = $app_id;
+        $hist->user_id = auth()->user()->id;
+        $hist->action = $new_status;
+        $hist->save();
 
         return back();
     }
@@ -75,11 +96,9 @@ class ExcelController extends Controller
         $leave_type = $request->get('leave_type');
         $leave_status = $request->get('leave_status');
 
-        $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')
-        ->count();
+        $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')->count();
 
-        $count_cancel = LeaveApplication::where('leave_applications.status','like','%CANCELLED%')
-        ->count();
+        $count_cancel = LeaveApplication::where('leave_applications.status','like','%CANCELLED%')->count();
 
         $count_pending = LeaveApplication::where('leave_applications.status','like','%PENDING_1%')
         ->orwhere('leave_applications.status','like','%PENDING_2%')
@@ -92,6 +111,8 @@ class ExcelController extends Controller
         ->count();
 
         $count_all = LeaveApplication::count();
+
+        $history = History::orderby('id', 'ASC')->get();
 
         $query = User::sortable()
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
@@ -128,7 +149,8 @@ class ExcelController extends Controller
 
         $users = $query->paginate(15);
 
-        return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all'));
+        return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 
+        'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'history'));
     }
 
     public function import(Request $request)

@@ -5,22 +5,6 @@
     .buttonStat {width: 100px;}
     .card {margin: 0 auto; float: none; margin-bottom: 20px;}
 </style>
-@if ($errors->any())
-<div class="alert alert-danger">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-    <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
-@if($message = Session::get('success'))
-<div class="alert alert-success alert-block">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    <strong>{{ $message }}</strong>
-</div>
-@endif
 <div class="mt-2 col-md-12">
     <div class="card">
         <div class="card-header bg-teal">
@@ -250,14 +234,14 @@
             </button>
         </div>
         <div class="modal-body">
-            <form id="change_status_btn" action="{{ route('change_status') }}" method="get">
-                <label for="status_user_name">Employee Name :</label>
-                <input class="form-control" type="text" id="status_user_name" readonly><br>
-                <label for="status_leave_status">Current Leave Status :</label>
-                <input class="form-control" type="text" id="status_leave_status" readonly><br>
-                <label for="change_status">Change Leave Status To :</label>
+            <form id="change_status_form" action="{{ route('change_status') }}" method="get">
+                <h6>Hi {{ $edited_by->name }}, you are about to edit leave application status for <b id="status_user_name"></b>.</h6>
+                <h6>Current Leave Status : <b id="status_leave_status"></b><br><br>
+                <!-- <label for="status_leave_status">Current Leave Status :</label>
+                <input class="form-control" type="text" id="status_leave_status" readonly><br> -->
+                <!-- <label for="change_status">Change Leave Status To :</label> -->
                 <select class="form-control" name="change_status" id="change_status">
-                    <option value="" disabled selected>Select</option>
+                    <option value="" disabled selected>Change Leave Status To</option>
                     <option value="1">PENDING_1</option>
                     <option value="2">PENDING_2</option>
                     <option value="3">PENDING_3</option>
@@ -273,7 +257,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button form="change_status_btn" type="submit" class="btn btn-primary">Save changes</button>
+            <button form="change_status_form" type="submit" class="btn btn-primary">Save changes</button>
         </div>
         </div>
     </div>
@@ -290,7 +274,26 @@
             </button>
         </div>
         <div class="modal-body">
-            
+            <div>
+            <table class="table table-sm table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Remarks</th>
+                        <th>Date Modified</th>
+                    </tr>
+                    </thead>
+                <tbody>
+                    @foreach($history as $list)
+                    <tr>
+                        <td>{{ $list->action }}</td>
+                        <td>{{ $list->remarks }}</td>
+                        <td>{{\Carbon\Carbon::parse($list->created_at)->isoFormat('Y-MM-DD')}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -308,13 +311,13 @@ $(function () {
 
 $(".use-this").click(function() {
     var $row = $(this).closest("tr");    // Find the row
-    var $text = $row.find(".user_name").html(); // Find the text
+    var $name = $row.find(".user_name").html(); // Find the text
     var $status = $row.find(".user_leave_status").html(); // Find the text
     var $id = $row.find(".user_id").html(); // Find the text
     var $app_id = $row.find(".leave_app_id").html(); // Find the text
     // alert($id);
-    $("#status_user_name").val($text);
-    $("#status_leave_status").val($status);
+    $("#status_user_name").html($name);
+    $("#status_leave_status").html($status);
     $("#status_user_id").val($id);
     $("#status_app_id").val($app_id);
 });
