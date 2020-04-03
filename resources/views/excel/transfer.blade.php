@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .buttonStat {width: 100px;}
     .card {margin: 0 auto; float: none; margin-bottom: 20px;}
@@ -193,12 +194,12 @@
                     <td>{{\Carbon\Carbon::parse($row->created_at)->isoFormat('Y-MM-DD')}}</td>
                     <td align="center">
                         <span data-toggle="modal" data-target="#change_status_modal">
-                            <button type="button" class="btn btn-primary btn-sm use-this" data-toggle="tooltip" data-placement="left" title="Change Status">
+                            <button type="button" class="btn btn-primary btn-sm use-this-status" data-toggle="tooltip" data-placement="left" title="Change Status">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </span>
                         <span data-toggle="modal" data-target="#history_modal">
-                            <button type="button" class="btn btn-primary btn-sm use-this" data-toggle="tooltip" data-placement="left" title="View History">
+                            <button type="button" value="{{$row->leave_app_id}}" onclick="loadHistory(this.value)" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="left" title="View History">
                                 <i class="fas fa-history"></i>
                             </button>
                         </span>
@@ -236,20 +237,12 @@
         <div class="modal-body">
             <form id="change_status_form" action="{{ route('change_status') }}" method="get">
                 <h6>Hi {{ $edited_by->name }}, you are about to edit leave application status for <b id="status_user_name"></b>.</h6>
-                <h6>Current Leave Status : <b id="status_leave_status"></b><br><br>
-                <!-- <label for="status_leave_status">Current Leave Status :</label>
-                <input class="form-control" type="text" id="status_leave_status" readonly><br> -->
-                <!-- <label for="change_status">Change Leave Status To :</label> -->
+                <h6>Current Leave Status : <button id="status_leave_status" type="button" class="btn buttonStat btn-sm" disabled></button><br><br>
                 <select class="form-control" name="change_status" id="change_status">
-                    <option value="" disabled selected>Change Leave Status To</option>
-                    <option value="1">PENDING_1</option>
-                    <option value="2">PENDING_2</option>
-                    <option value="3">PENDING_3</option>
-                    <option value="4">APPROVED</option>
-                    <option value="5">DENIED_1</option>
-                    <option value="6">DENIED_2</option>
-                    <option value="7">DENIED_3</option>
-                    <option value="8">CANCELLED</option>
+                    <option value="" disabled selected>Change Leave Status</option>
+                    <option value="APPROVE">Approve</option>
+                    <option value="REJECT">Reject</option>
+                    <option value="CANCEL">Cancel</option>
                 </select>
                 <input type="hidden" id="status_user_id" name="status_user_id">
                 <input type="hidden" id="status_app_id" name="status_app_id">
@@ -273,6 +266,7 @@
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
+        <form id="change_status_form" method="get">
         <div class="modal-body">
             <div>
             <table class="table table-sm table-bordered table-striped table-hover">
@@ -295,6 +289,7 @@
             </table>
             <div>
         </div>
+        </form>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
@@ -309,18 +304,68 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
-$(".use-this").click(function() {
-    var $row = $(this).closest("tr");    // Find the row
-    var $name = $row.find(".user_name").html(); // Find the text
-    var $status = $row.find(".user_leave_status").html(); // Find the text
-    var $id = $row.find(".user_id").html(); // Find the text
-    var $app_id = $row.find(".leave_app_id").html(); // Find the text
+$(".use-this-status").click(function() {
+    var row = $(this).closest("tr");    // Find the row
+    var name = row.find(".user_name").html(); // Find the text
+    var status = row.find(".user_leave_status").html(); // Find the text
+    var id = row.find(".user_id").html(); // Find the text
+    var app_id = row.find(".leave_app_id").html(); // Find the text
     // alert($id);
-    $("#status_user_name").html($name);
-    $("#status_leave_status").html($status);
-    $("#status_user_id").val($id);
-    $("#status_app_id").val($app_id);
+    if ( status == "PENDING_1" || status == "PENDING_2" || status == "PENDING_3" ) {
+        $("#status_leave_status").html("In Progress").addClass("btn-primary");
+    } else if ( status == "DENIED_1" || status == "DENIED_2" || status == "DENIED_3" ) {
+        $("#status_leave_status").html("Rejected").addClass("btn-danger");
+    } else if ( status == "APPROVED" ) {
+        $("#status_leave_status").html('Approved').addClass("btn-success");
+    } else if ( status == "CANCELLED" ) {
+        $("#status_leave_status").html("Cancelled").addClass("btn-warning");
+    }
+    $("#status_user_name").html(name);
+    $("#status_user_id").val(id);
+    $("#status_app_id").val(app_id);
 });
+
+// $(".use-this-history").click(function() {
+//     var row = $(this).closest("tr");    // Find the row
+//     var app_id = row.find(".leave_app_id").html(); // Find the text
+
+//     $.ajaxSetup({
+//     headers: {
+//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         }
+//     });
+    
+//     $.ajax({
+//         url: "/transfer/load-history",
+//         type: "post",
+//         data: app_id,
+//         dataType: 'json',
+//         success: function (data) {
+//             console.log(data);
+//         }
+//     });
+// });
+
+function loadHistory(val){
+
+    console.log(val);
+    
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+    $.ajax({
+        url: "/transfer/load-history",
+        type: "post",
+        data: val,
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+        }
+    });
+}
 
 function resetForm() {
     document.getElementById("name").value = '';

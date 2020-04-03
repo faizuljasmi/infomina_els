@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Http\Request;
 use Datatables;
 use DB;
+use Input;
 use App\User;
 use App\History;
 use App\LeaveType;
@@ -60,32 +61,42 @@ class ExcelController extends Controller
         $app_id = $request->get('status_app_id');
         // dd($app_id);
 
-        $update_status = LeaveApplication::where('id', '=', $app_id)
-        ->where('user_id', '=', $user_id)
-        ->first();
+        if ( $new_status != "") {
+            $update_status = LeaveApplication::where('id', '=', $app_id)
+            ->where('user_id', '=', $user_id)
+            ->first();
+    
+            if ( $new_status == "APPROVE" ) {
+                $update_status->status = "4";
+            } else if ( $new_status == "REJECT" ) {
+                $update_status->status = "7";
+            } else if ( $new_status == "CANCEL" ) {
+                $update_status->status = "8";
+            }
+    
+            $update_status->save();
+            
+            $hist = new History;
+            $hist->leave_application_id = $app_id;
+            $hist->user_id = auth()->user()->id;
+            
+            if ( $new_status == "APPROVE" ) {
+                $hist->action = "Approved";
+            } else if ( $new_status == "REJECT" ) {
+                $hist->action = "Rejected";
+            } else if ( $new_status == "CANCEL" ) {
+                $hist->action = "Cancelled";
+            }
 
-        $current_user = auth()->user()->id;
-
-        $edited_by = User::where('users.id', 'like', '%'.$current_user.'%')
-        ->select('users.name')
-        ->get();
-
-        // dd($edited_by);
-
-
-
-        $update_status->status = $new_status;
-        $update_status->save();
-
-        // if ($new_status == "APPROVED")
-        
-        $hist = new History;
-        $hist->leave_application_id = $app_id;
-        $hist->user_id = auth()->user()->id;
-        $hist->action = $new_status;
-        $hist->save();
+            $hist->save();
+        }
 
         return back();
+    }
+
+    public function view_history(Application $appid) {
+        $input = $request->all();
+        return response()->json(['success'=>'Got Simple Ajax Request.']);
     }
 
     public function search(Request $request)
@@ -113,6 +124,11 @@ class ExcelController extends Controller
         $count_all = LeaveApplication::count();
 
         $history = History::orderby('id', 'ASC')->get();
+
+        $current_user = auth()->user()->id;
+
+        $edited_by = User::where('users.id', 'like', '%'.$current_user.'%')
+        ->first();
 
         $query = User::sortable()
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
@@ -150,7 +166,7 @@ class ExcelController extends Controller
         $users = $query->paginate(15);
 
         return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 
-        'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'history'));
+        'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'history', 'edited_by'));
     }
 
     public function import(Request $request)
