@@ -42,28 +42,24 @@ class ExcelController extends Controller
 
         $count_all = LeaveApplication::count();
         
-        $history = History::orderby('id', 'ASC')->get();
-
         $current_user = auth()->user()->id;
 
-        $edited_by = User::where('users.id', 'like', '%'.$current_user.'%')
+        $edited_by = User::where('users.id', $current_user)
         ->first();
         
-        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'history', 'edited_by'));
+        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
     }
 
     public function change_status(Request $request)
     {
         $new_status = $request->get('change_status');
         // dd($new_status);
-        $user_id = $request->get('status_user_id');
-        // dd($user_id);
         $app_id = $request->get('status_app_id');
         // dd($app_id);
+        $status_remarks = $request->get('status_remarks');
 
         if ( $new_status != "") {
-            $update_status = LeaveApplication::where('id', '=', $app_id)
-            ->where('user_id', '=', $user_id)
+            $update_status = LeaveApplication::where('id', $app_id)
             ->first();
     
             if ( $new_status == "APPROVE" ) {
@@ -79,6 +75,7 @@ class ExcelController extends Controller
             $hist = new History;
             $hist->leave_application_id = $app_id;
             $hist->user_id = auth()->user()->id;
+            $hist->remarks = $status_remarks;
             
             if ( $new_status == "APPROVE" ) {
                 $hist->action = "Approved";
@@ -94,10 +91,17 @@ class ExcelController extends Controller
         return back();
     }
 
-    public function view_history(Application $appid) {
-        $input = $request->all();
-        return response()->json(['success'=>'Got Simple Ajax Request.']);
+    public function view_history(Request $request) 
+    {
+        $getdata = $request->json()->all();
+        $app_id = $getdata[0];
+
+        $history = History::leftjoin('users', 'users.id', '=', 'histories.user_id')
+        ->where('histories.leave_application_id', $app_id)->get();
+
+        return response()->json(['history' => $history]);
     }
+    
 
     public function search(Request $request)
     {
@@ -122,8 +126,6 @@ class ExcelController extends Controller
         ->count();
 
         $count_all = LeaveApplication::count();
-
-        $history = History::orderby('id', 'ASC')->get();
 
         $current_user = auth()->user()->id;
 
@@ -166,7 +168,7 @@ class ExcelController extends Controller
         $users = $query->paginate(15);
 
         return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 
-        'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'history', 'edited_by'));
+        'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
     }
 
     public function import(Request $request)

@@ -16,7 +16,7 @@
                 <div class="row">
                     <div class="card col-8">
                         <div class="card-body">
-                            <form id="btnSearch" class="input-horizontal" action="{{ route('search') }}" method="get">
+                            <form id="search_form" class="input-horizontal" action="{{ route('search') }}" method="get">
                                 <div class="form-inline form-group">
                                     <!-- Name -->
                                     <div class="input-group col-12">
@@ -78,7 +78,7 @@
                                 <button data-toggle="collapse" data-target="#importCard" class="btn btn-warning mr-1">Import</button>
                                 <button data-toggle="collapse" data-target="#exportCard" class="btn btn-warning mr-1">Export</button>
                                 <button onclick="resetForm()" type="button" class="btn btn-primary mr-1">Reset</button>
-                                <button form="btnSearch" type="submit" class="btn btn-primary">Search</button>
+                                <button form="search_form" type="submit" class="btn btn-primary">Search</button>
                             </div>
                             <form id="btnExportBal" action="{{ route('excel_export_bal') }}" enctype="multipart/form-data"></form>
                             <form id="btnExportAll" action="{{ route('excel_export_all') }}" enctype="multipart/form-data"></form>
@@ -199,19 +199,18 @@
                             </button>
                         </span>
                         <span data-toggle="modal" data-target="#history_modal">
-                            <button type="button" value="{{$row->leave_app_id}}" onclick="loadHistory(this.value)" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="left" title="View History">
+                            <button type="button" class="btn btn-primary btn-sm use-this-history" data-toggle="tooltip" data-placement="left" title="View History">
                                 <i class="fas fa-history"></i>
                             </button>
                         </span>
                     </td>
                     <td class="d-none user_leave_status">{{ $row->status }}</td>
-                    <td class="d-none user_id">{{ $row->user_id }}</td>
                     <td class="d-none leave_app_id">{{ $row->leave_app_id }}</td>
                 </tr>
                 @endforeach
                 @if ($users->count() == 0)
                     <tr align="center">
-                        <td colspan="10"><strong>No records found.</strong></td>
+                        <td colspan="11"><strong>No records found.</strong></td>
                     </tr>
                 @endif
                 </tbody>
@@ -236,15 +235,17 @@
         </div>
         <div class="modal-body">
             <form id="change_status_form" action="{{ route('change_status') }}" method="get">
-                <h6>Hi {{ $edited_by->name }}, you are about to edit leave application status for <b id="status_user_name"></b>.</h6>
-                <h6>Current Leave Status : <button id="status_leave_status" type="button" class="btn buttonStat btn-sm" disabled></button><br><br>
-                <select class="form-control" name="change_status" id="change_status">
+                <div class="mb-3">
+                    <h6>Hi {{ $edited_by->name }}, you are about to edit leave application status for <b id="status_user_name"></b>.</h6>
+                    <h6>Current Leave Status : <button id="status_leave_status" type="button" class="btn buttonStat btn-sm" disabled></button>
+                </div>
+                <select class="form-control mb-3" name="change_status" id="change_status">
                     <option value="" disabled selected>Change Leave Status</option>
                     <option value="APPROVE">Approve</option>
                     <option value="REJECT">Reject</option>
                     <option value="CANCEL">Cancel</option>
                 </select>
-                <input type="hidden" id="status_user_id" name="status_user_id">
+                <textarea class="form-control" name="status_remarks" id="status_remarks" placeholder="Add Remarks"></textarea>
                 <input type="hidden" id="status_app_id" name="status_app_id">
             </form>
         </div>
@@ -266,25 +267,19 @@
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <form id="change_status_form" method="get">
         <div class="modal-body">
             <div>
+            <h6>Leave application's history of <b id=history_name></b>.<h6>
             <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Actions</th>
+                        <th>Edited By</th>
+                        <th>Edited Date</th>
                         <th>Remarks</th>
-                        <th>Date Modified</th>
                     </tr>
                     </thead>
-                <tbody>
-                    @foreach($history as $list)
-                    <tr>
-                        <td>{{ $list->action }}</td>
-                        <td>{{ $list->remarks }}</td>
-                        <td>{{\Carbon\Carbon::parse($list->created_at)->isoFormat('Y-MM-DD')}}</td>
-                    </tr>
-                    @endforeach
+                <tbody id="history_table">
                 </tbody>
             </table>
             <div>
@@ -300,17 +295,19 @@
 <script>
 
 $(function () {
-  $('[data-toggle="popover"]').popover()
-  $('[data-toggle="tooltip"]').tooltip()
+
+    $('[data-toggle="popover"]').popover()
+    $('[data-toggle="tooltip"]').tooltip()
+
 })
 
 $(".use-this-status").click(function() {
+
     var row = $(this).closest("tr");    // Find the row
-    var name = row.find(".user_name").html(); // Find the text
-    var status = row.find(".user_leave_status").html(); // Find the text
-    var id = row.find(".user_id").html(); // Find the text
-    var app_id = row.find(".leave_app_id").html(); // Find the text
-    // alert($id);
+    var name = row.find(".user_name").html();   // Find the data
+    var status = row.find(".user_leave_status").html(); 
+    var app_id = row.find(".leave_app_id").html(); 
+
     if ( status == "PENDING_1" || status == "PENDING_2" || status == "PENDING_3" ) {
         $("#status_leave_status").html("In Progress").addClass("btn-primary");
     } else if ( status == "DENIED_1" || status == "DENIED_2" || status == "DENIED_3" ) {
@@ -320,60 +317,68 @@ $(".use-this-status").click(function() {
     } else if ( status == "CANCELLED" ) {
         $("#status_leave_status").html("Cancelled").addClass("btn-warning");
     }
-    $("#status_user_name").html(name);
-    $("#status_user_id").val(id);
+
+    $("#status_user_name").html(name); // Set back to HTML
     $("#status_app_id").val(app_id);
+
 });
 
-// $(".use-this-history").click(function() {
-//     var row = $(this).closest("tr");    // Find the row
-//     var app_id = row.find(".leave_app_id").html(); // Find the text
+$(".use-this-history").click(function() {
 
-//     $.ajaxSetup({
-//     headers: {
-//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         }
-//     });
-    
-//     $.ajax({
-//         url: "/transfer/load-history",
-//         type: "post",
-//         data: app_id,
-//         dataType: 'json',
-//         success: function (data) {
-//             console.log(data);
-//         }
-//     });
-// });
+    var row = $(this).closest("tr");    // Find the row
+    var name = row.find(".user_name").html();   // Find the data
+    var app_id = row.find(".leave_app_id").html(); 
 
-function loadHistory(val){
+    $("#history_name").html(name);
 
-    console.log(val);
-    
+    $('#history_table tr').remove();
+
     $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-    
+
     $.ajax({
-        url: "/transfer/load-history",
-        type: "post",
-        data: val,
+        method: 'POST',
+        url: '/load-history',
         dataType: 'json',
+        data: app_id,
         success: function (data) {
-            console.log(data);
+            console.log(data, "Masuk AJAX !!!");
+            var applications = "";
+            var html = "";
+            for(var i = 0; i < data.history.length; i++){
+                applications = data.history[i];
+                var action = applications.action;
+                if ( applications.remarks != null ) {
+                    var remarks = applications.remarks;
+                } else {
+                    var remarks = "N/A";
+                }
+                var date = applications.created_at;
+                var carbondate = date.substring(0, 10);
+                var created_at = carbondate;
+                var edited_by = applications.name;
+                html += '<tr><td>'+action+'</td><td>'+edited_by+'</td><td>'+carbondate+'</td><td>'+remarks+'</td></tr>';
+            }
+            if ( data.history.length == 0) {
+                html += '<tr align="center"><td  colspan="4">No history found.</td></tr>';
+            }
+            $('#history_table').append(html);
         }
-    });
-}
+    })
+});
 
 function resetForm() {
+
     document.getElementById("name").value = '';
     document.getElementById("date_from").value = '';
     document.getElementById("date_to").value = '';
     document.getElementById("leave_type").value = '';
     document.getElementById("leave_status").value = '';
     window.location.href = "{{ route('search') }}";
+
 }
 
 </script>
