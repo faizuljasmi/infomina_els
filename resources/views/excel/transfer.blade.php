@@ -153,15 +153,15 @@
                 <thead>
                 <tr>
                     <th>No.</th>
-                    <th>@sortablelink('name', 'Name')</th>
+                    <th>Name @sortablelink('name','',[])</th>
                     <th>Day(s)</th>
                     <th>Type</th>
-                    <th width="10%">@sortablelink('date_from', 'From Date')</th>
-                    <th width="10%">@sortablelink('date_from', 'To Date')</th>
-                    <th width="10%">@sortablelink('date_from', 'Resume Date')</th>
+                    <th width="10%">From Date</th>
+                    <th width="10%">To Date</th>
+                    <th width="10%">Resume Date</th>
                     <th>Reason</th>
                     <th>Status</th>
-                    <th width="10%">@sortablelink('created_at', 'Apply Date')</th>
+                    <th width="10%">Apply Date</th>
                     <th>Action</th>
                 </tr>
                 </thead>
