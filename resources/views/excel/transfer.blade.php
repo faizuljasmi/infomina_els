@@ -9,7 +9,7 @@
 <div class="mt-2 col-md-12">
     <div class="card">
         <div class="card-header bg-teal">
-            Reports
+            <b>Reports</b>
         </div>
         <div class="card-body">
             <div class="panel panel-default">
@@ -268,7 +268,6 @@
             </button>
         </div>
         <div class="modal-body">
-            <div>
             <h6>Leave application's history of <b id=history_name></b>.<h6>
             <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
@@ -282,9 +281,7 @@
                 <tbody id="history_table">
                 </tbody>
             </table>
-            <div>
         </div>
-        </form>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
