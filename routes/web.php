@@ -109,7 +109,6 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::post('/holiday/update/{holiday}','HolidayController@update')->name('holiday_update')->middleware('auth');
     Route::get('/holiday/delete/{holiday}','HolidayController@delete')->name('holiday_delete')->middleware('auth');
 
-<<<<<<< HEAD
     //Admin Control
     Route::post('load-history','AdminController@view_history')->middleware('auth');
     Route::get('reports', 'AdminController@index')->name('excel_transfer')->middleware('auth');
@@ -119,8 +118,6 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::get('reports/export-all', 'AdminController@export_all')->name('excel_export_all')->middleware('auth');
     Route::get('reports/export-search', 'AdminController@export_search')->name('excel_export_search')->middleware('auth');
     Route::get('reports/export-balance', 'AdminController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
-=======
->>>>>>> 734462a9730e59118273ad84f45f9032a8431da8
 });
 
 
