@@ -19,9 +19,6 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-// Route::get('/linkfiledoooh', function () {
-//     Artisan::call('storage:link');
-//     });
 
 Auth::routes();
 
@@ -98,9 +95,14 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::get('/holiday/delete/{holiday}','HolidayController@delete')->name('holiday_delete')->middleware('auth');
 
     //Import Export Excel
+    Route::post('load-history','ExcelController@view_history')->middleware('auth');
     Route::get('transfer', 'ExcelController@index')->name('excel_transfer')->middleware('auth');
+    Route::get('transfer/search', 'ExcelController@search')->name('search')->middleware('auth');
+    Route::get('transfer/change-status', 'ExcelController@change_status')->name('change_status')->middleware('auth');
     Route::post('transfer/import', 'ExcelController@import')->name('excel_import')->middleware('auth');
-    Route::get('transfer/export', 'ExcelController@export')->name('excel_export')->middleware('auth');
+    Route::get('transfer/export-all', 'ExcelController@export_all')->name('excel_export_all')->middleware('auth');
+    Route::get('transfer/export-search', 'ExcelController@export_search')->name('excel_export_search')->middleware('auth');
+    Route::get('transfer/export-balance', 'ExcelController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
 });
 
 

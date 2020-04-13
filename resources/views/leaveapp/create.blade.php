@@ -511,8 +511,15 @@
                 </div>
             </div>
         </div>
-        <div id="loader">
-        </div>
+        <div id="loading">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Submitting your application...</figcaption>
+                </figure>
+            </div>
+</div>
+
     </section>
 
     <script>
@@ -553,7 +560,7 @@ $('#reason').keyup(function() {
   window.addEventListener('load', function() {
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     var forms = document.getElementsByClassName('needs-validation');
-    var spinner = $('#loader');
+    var spinner = $('#loading');
     // Loop over them and prevent submission
     var validation = Array.prototype.filter.call(forms, function(form) {
       form.addEventListener('submit', function(event) {
@@ -676,15 +683,29 @@ $('#reason').keyup(function() {
 
         //ANNUAL POLICY
         if(validation.isAnnualLeave()){
-          let next2 = calendar.getNextWorkingDay(calendar.today());
-          next2 = calendar.getNextWorkingDay(next2);
-          next2 = calendar.getDateDb(next2);
-          if(calendar.isDateSmaller(date_from, calendar.today())){
-            return "Attention: Annual leave cannot be applied on passed dates.";
-          }
-          if(calendar.isDateSmaller(date_from, next2)){
-            return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
-          }
+
+		if(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
+			let next2 = calendar.nextDay(calendar.today());
+          		next2 = calendar.nextDay(next2);
+          		next2 = calendar.getDateDb(next2);
+          		if(calendar.isDateSmaller(date_from, calendar.today())){
+            			return "Attention: Annual leave cannot be applied on passed dates.";
+          		}
+          		if(calendar.isDateSmaller(date_from, next2)){
+            			return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
+          		}
+		}
+		else{
+          		let next2 = calendar.getNextWorkingDay(calendar.today());
+          		next2 = calendar.getNextWorkingDay(next2);
+          		next2 = calendar.getDateDb(next2);
+          		if(calendar.isDateSmaller(date_from, calendar.today())){
+            			return "Attention: Annual leave cannot be applied on passed dates.";
+          		}
+          		if(calendar.isDateSmaller(date_from, next2)){
+            			return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
+          		}
+		}
         }
 
         if(validation.isTrainingLeave()){
@@ -935,20 +956,31 @@ $('#reason').keyup(function() {
   }
 
     </script>
+
 <style type="text/css">
-    #loader {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      background: rgba(0,0,0,0.75) url(../images/loader.gif) no-repeat center center;
-      content: "Hang on tight, we are sending your application...";
-      z-index: 10000;
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+        text-align: center;
+        display: none;
     }
-    </style>
+
+    #loading-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
+</style>
+
 </section>
 
 @endsection

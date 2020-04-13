@@ -527,7 +527,10 @@ $("#leave_type_id").change(function() {
                  "min" : from          // values (or variables) here
             });
         });
+<<<<<<< HEAD
+=======
 
+>>>>>>> de146d7543aa03c3297a795e55f8c408dd897005
 var text_max = 5;
 $('#count_reason').html(text_max + ' remaining');
 

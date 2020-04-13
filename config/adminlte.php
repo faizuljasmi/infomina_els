@@ -257,9 +257,9 @@ return [
                 ],
             ],
         ],[
-            'text' => 'Import Data',
+            'text' => 'Reports',
             'url'  => 'transfer',
-            'icon' => 'fas fa-fw fa-user-plus',
+            'icon' => 'fas fa-fw fa-file-alt',
             'can' => 'edit_settings'
         ],
 

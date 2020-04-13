@@ -30,7 +30,7 @@ class ReplacementLeaveController extends Controller
 
         //Get approval authorities for this user
         //Change id to CYNTHIA'S ID
-        $leaveAuth = User::orderBy('id', 'ASC')->where('id', '!=', '1')->get()->except($user->id);
+        $leaveAuth = User::orderBy('id', 'ASC')->where('id', '!=', '4')->where('user_type', 'Authority')->get()->except($user->id);
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
