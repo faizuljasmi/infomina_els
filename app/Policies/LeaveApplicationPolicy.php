@@ -27,7 +27,7 @@ class LeaveApplicationPolicy
      */
     public function view(User $user, LeaveApplication $leaveApplication)
     {
-        return $user->user_type == 'Admin' || $user->id == $leaveApplication->user_id || $user->user_type == 'Authority';
+        return $user->user_type == 'Admin' || $user->id == $leaveApplication->user_id || $user->user_type == 'Authority' || $user->user_type == 'Management';
     }
 
     public function cancel(User $user, LeaveApplication $leaveApplication){
@@ -36,7 +36,7 @@ class LeaveApplicationPolicy
 
     public function approve(User $user,LeaveApplication $leaveApplication)
     {
-        return $user->user_type == 'Admin' || $user->user_type == 'Authority';
+        return $user->user_type == 'Admin' || $user->user_type == 'Authority' || $user->user_type == 'Management';
     }
 
 }

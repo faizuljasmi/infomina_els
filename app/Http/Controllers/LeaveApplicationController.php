@@ -78,7 +78,7 @@ class LeaveApplicationController extends Controller
                 ->orWhere('emp_group_three_id', $user->emp_group_five_id)->orWhere('emp_group_four_id', $user->emp_group_five_id)->orWhere('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
             $groupMates = $groupMates->merge($groupMates5);
         }
-        $groupMates = $groupMates->unique()->values()->all();        
+        $groupMates = $groupMates->unique()->values()->all();
 	//dd($groupMates->unique()->values()->all());
 
         //Get approval authorities of THIS user
@@ -362,7 +362,7 @@ class LeaveApplicationController extends Controller
                 ->orWhere('emp_group_three_id', $user->emp_group_five_id)->orWhere('emp_group_four_id', $user->emp_group_five_id)->orWhere('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
             $groupMates = $groupMates->merge($groupMates5);
         }
-        $groupMates = $groupMates->unique()->values()->all();        
+        $groupMates = $groupMates->unique()->values()->all();
 
         //Get approval authorities of THIS user
         $leaveAuth = $user->approval_authority;
@@ -590,7 +590,7 @@ class LeaveApplicationController extends Controller
             //else update status to pending 2,
             else {
                 $leaveApplication->status = 'PENDING_2';
-                
+
                 //Notify the second approver
                 $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
             }
@@ -759,7 +759,7 @@ class LeaveApplicationController extends Controller
         $hist->action = "Approved";
         $hist->save();
 
-        
+
 
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));

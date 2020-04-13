@@ -217,7 +217,95 @@
     </div>
 
 
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-teal">
+                <strong>Applications History <i class="fas fa-info-circle" data-toggle="tooltip"
+                        data-placement="top"
+                        title="This table shows you leave applications history"></i></strong>
+                        <div class="float-sm-right"><a href="{{route('apply_for', $user)}}"><button type="button" class="btn btn-primary">Apply On Behalf</button></a></div>
+            </div>
+            <div class="card-body">
+                <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
+                </h6>
+                <table class="table table-bordered">
+                    @if($leaveHist->count() > 0)
+                    <thead>
 
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Leave Type @sortablelink('leaveType.name','',[])</th>
+                            <th scope="col">Duration @sortablelink('total_days','',[])</th>
+                            <th scope="col">From @sortablelink('date_from','',[])</th>
+                            <th scope="col">To @sortablelink('date_to','',[])</th>
+                            <th scope="col">Date Submitted @sortablelink('created_at','',[])</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $count = ($leaveHist->currentPage()-1) * $leaveHist->perPage(); @endphp
+                        @foreach($leaveHist as $la)
+
+                        <tr>
+                            <td>{{++$count}}</td>
+                            <td>{{$la->leaveType->name}}</td>
+                            <td>{{$la->total_days}} day(s)</td>
+                            <td>{{ \Carbon\Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YY')}}</td>
+                            <td>{{ \Carbon\Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YY')}}</td>
+                            <td>{{ \Carbon\Carbon::parse($la->created_at)->diffForHumans()}}</td>
+                            <td>
+                                @if($la->status == 'PENDING_1')
+                                <span class="badge badge-warning" data-toggle="tooltip"
+                                    title="Your application is pending on lvl 1"><i class="far fa-clock"></i>
+                                    Lvl 1</span>
+                                @elseif($la->status == 'PENDING_2')
+                                <span class="badge badge-warning" data-toggle="tooltip"
+                                    title="Your application is pending on lvl 2"><i class="far fa-clock"></i>
+                                    Lvl 2</span>
+                                @elseif($la->status == 'PENDING_3')
+                                <span class="badge badge-warning" data-toggle="tooltip"
+                                    title="Your application is pending on lvl 3"><i class="far fa-clock"></i>
+                                    Lvl 3</span>
+                                @elseif($la->status == 'APPROVED')
+                                <span class="badge badge-success" data-toggle="tooltip"
+                                    title="Your application has been approved"><i
+                                        class="far fa-check-circle"></i></span>
+                                @elseif($la->status == 'DENIED_1')
+                                <span class="badge badge-danger" data-toggle="tooltip"
+                                    title="Your application has been denied by lvl 1"><i class="fas fa-ban"></i>
+                                    Lvl 1</span>
+                                @elseif($la->status == 'DENIED_2')
+                                <span class="badge badge-danger" data-toggle="tooltip"
+                                    title="Your application has been denied by lvl 2"><i class="fas fa-ban"></i>
+                                    Lvl 2</span>
+                                @elseif($la->status == 'DENIED_3')
+                                <span class="badge badge-danger" data-toggle="tooltip"
+                                    title="Your application has been denied by lvl 3"><i class="fas fa-ban"></i>
+                                    Lvl 3</span>
+                                @elseif($la->status == 'CANCELLED')
+                                <span class="badge badge-secondary" data-toggle="tooltip"
+                                    title="This application has been cancelled">Cancelled</span>
+                                @endif
+                            </td>
+                            <td><a href="{{route('view_application', $la->id)}}" class="btn btn-success btn-sm"
+                                    data-toggle="tooltip" title="View leave application"><i
+                                        class="fa fa-eye"></i></a></td>
+                        </tr>
+
+                        @endforeach
+                        {{$leaveHist->links()}}
+                        @else
+                        <th>No Record Found</th>
+                        @endif
+
+                    </tbody>
+                </table>
+                {!! $leaveHist->appends(\Request::except('page'),['history' =>
+                $leaveHist->currentPage()])->render() !!}
+            </div>
+        </div>
+    </div>
 
 
     <!-- Leave Days Form -->
@@ -225,7 +313,6 @@
         <div class="card">
             <div class="card-header bg-teal">
                 <strong>Leave Record</strong>
-		<div class="float-sm-right"><a href="{{route('apply_for', $user)}}"><button type="button" class="btn btn-primary">Add Leave Record</button></a></div>
             </div>
             <div class="card-body">
                 <table class="table table-sm table-bordered">

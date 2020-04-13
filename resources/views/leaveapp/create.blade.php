@@ -349,7 +349,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-lg-6 connectedSortable ui-sortable">
                                 <!-- Leaves Balance -->
                                 <div class="card">

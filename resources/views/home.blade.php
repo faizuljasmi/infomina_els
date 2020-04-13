@@ -524,7 +524,10 @@
 <script>
     $(document).ready(HolidayCreate);
 
+
+
   function HolidayCreate() {
+
 
     var holiday_dates = {!!json_encode($all_dates, JSON_HEX_TAG)!!};
     var applied_dates = {!!json_encode($applied_dates, JSON_HEX_TAG)!!};

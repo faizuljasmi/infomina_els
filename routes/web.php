@@ -16,7 +16,12 @@ Route::get('/login', function () {
 });
 
 Route::get('/', function () {
-    return redirect('/login');
+    if (Auth::user() != null && (Auth::user()->user_type == 'Admin' || Auth::user()->user_type == 'Management')) {
+        return redirect('/admin');
+    }
+    else{
+        return redirect('/login');
+    }
 });
 
 
@@ -39,7 +44,7 @@ Route::post('/change-password', 'ChangePasswordController@store')->name('change.
 
 
 //Create, Edit, Delete User
-Route::middleware('can:edit_users')->group(function(){
+Route::middleware('can:employee-data')->group(function(){
     Route::get('/create', 'RegistrationController@create')->name('user_create')->middleware('auth');
     Route::post('create', 'RegistrationController@store')->name('user_store')->middleware('auth');
     Route::get('/edit/{user}','RegistrationController@edit')->name('user_edit')->middleware('auth');
@@ -50,6 +55,16 @@ Route::middleware('can:edit_users')->group(function(){
     Route::get('/search', 'RegistrationController@search')->name('user_search')->middleware('auth');
     Route::get('/apply/for/{user}','LeaveApplicationController@applyFor')->name('apply_for')->middleware('auth');
     Route::post('apply/for/{user}','LeaveApplicationController@submitApplyFor')->name('submit_apply_for')->middleware('auth');
+
+    //Import Export Excel
+    Route::post('load-history','ExcelController@view_history')->middleware('auth');
+    Route::get('transfer', 'ExcelController@index')->name('excel_transfer')->middleware('auth');
+    Route::get('transfer/search', 'ExcelController@search')->name('search')->middleware('auth');
+    Route::get('transfer/change-status', 'ExcelController@change_status')->name('change_status')->middleware('auth');
+    Route::post('transfer/import', 'ExcelController@import')->name('excel_import')->middleware('auth');
+    Route::get('transfer/export-all', 'ExcelController@export_all')->name('excel_export_all')->middleware('auth');
+    Route::get('transfer/export-search', 'ExcelController@export_search')->name('excel_export_search')->middleware('auth');
+    Route::get('transfer/export-balance', 'ExcelController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
 });
 
 
@@ -94,6 +109,7 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::post('/holiday/update/{holiday}','HolidayController@update')->name('holiday_update')->middleware('auth');
     Route::get('/holiday/delete/{holiday}','HolidayController@delete')->name('holiday_delete')->middleware('auth');
 
+<<<<<<< HEAD
     //Admin Control
     Route::post('load-history','AdminController@view_history')->middleware('auth');
     Route::get('reports', 'AdminController@index')->name('excel_transfer')->middleware('auth');
@@ -103,6 +119,8 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::get('reports/export-all', 'AdminController@export_all')->name('excel_export_all')->middleware('auth');
     Route::get('reports/export-search', 'AdminController@export_search')->name('excel_export_search')->middleware('auth');
     Route::get('reports/export-balance', 'AdminController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
+=======
+>>>>>>> 734462a9730e59118273ad84f45f9032a8431da8
 });
 
 

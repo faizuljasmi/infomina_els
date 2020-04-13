@@ -20,7 +20,7 @@
         "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.11.2",
+        "@fortawesome/fontawesome-free": "^5.12.1",
         "air-datepicker": "^2.2.3",
         "icheck-bootstrap": "^3.0.1",
         "overlayscrollbars": "^1.10.0"
