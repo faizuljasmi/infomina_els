@@ -15,7 +15,7 @@
             </div>
             @endif
 
-                <select class="form-control" name="group_leader_id" required>
+                <select class="form-control" name="group_leader_id">
                     <option selected value="">Choose Group Leader</option>
                     @foreach($allUsers as $au)
                     <option value="{{$au->id}}" {{ (old('group_leader_id') == $au->id ? "selected":"") }}>

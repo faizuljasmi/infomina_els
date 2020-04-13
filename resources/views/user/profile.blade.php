@@ -225,6 +225,7 @@
         <div class="card">
             <div class="card-header bg-teal">
                 <strong>Leave Record</strong>
+            <div class="float-sm-right"><a href="{{route('apply_for', $user)}}"><button type="button" class="btn btn-primary">Add Leave Record</button></a></div>
             </div>
             <div class="card-body">
                 <table class="table table-sm table-bordered">

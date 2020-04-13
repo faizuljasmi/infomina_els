@@ -25,39 +25,8 @@
 </div>
 @endif
 
-<h1 class="m-0 text-dark">Apply Leave</h1>
+<h1 class="m-0 text-dark">Add Leave Record for {{$user->name}}</h1>
 @endsection
-
-@if($user->emergency_contact_name == null || $user->emergency_contact_no == null)
-<script type="text/javascript">
-    $(window).on('load', function() {
-    $('#emergencyReminderCenter').modal('show');
-  });
-</script>
-@endif
-
-<div class="modal fade" id="emergencyReminderCenter" tabindex="-1" role="dialog"
-    aria-labelledby="emergencyReminderCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="emergencyReminderLongTitle">Uh oh! We don't know your emergency contact.
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>
-            <div class="modal-body">
-                <strong>Before you submit your application,</strong> </br>
-                Let's set your emergency contact details! This will make the application process much easier.
-            </div>
-            <div class="modal-footer">
-                <a href="{{route('edit_profile')}}"><button type="button" class="btn btn-primary">Set Emergency
-                        Contact</button><a>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <section id="leaveapp-create">
     <section class="content">
@@ -67,7 +36,7 @@
 
                 <!-- Left Col -->
                 <section class="col-lg-6 connectedSortable ui-sortable">
-                    <form class="needs-validation" novalidate method="POST" action="{{route('leaveapp_store')}}"
+                    <form class="needs-validation" novalidate method="POST" action="{{route('submit_apply_for',$user)}}"
                         enctype="multipart/form-data" id="createApp">
                         @csrf
                         <!-- Application Form -->
@@ -308,12 +277,8 @@
                                 </div>
                                 <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-warning" data-toggle="modal"
-                                        data-target="#viewColleague">Colleague's Applications</button>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#viewHolidays">Holidays</button>
                                     <button type="button" class="btn btn-success" data-toggle="modal"
-                                        data-target="#viewApplication">My Applications</button>
+                                        data-target="#viewApplication">{{$user->name}} Applications</button>
                                 </div>
                             </div>
                         </div>
@@ -349,7 +314,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 connectedSortable ui-sortable">
+                            <div class="col-lg-12 connectedSortable ui-sortable">
                                 <!-- Leaves Balance -->
                                 <div class="card">
                                     <div class="card-header bg-teal">
@@ -375,92 +340,6 @@
             </div>
         </div>
 
-        <!-- VIEW HOLIDAYS Modal -->
-        <div class="modal fade" id="viewHolidays" tabindex="-1" role="dialog" aria-labelledby="viewHolidaysLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-info">
-                        <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @foreach ($holsPaginated as $hp => $hols)
-                        <h5><span class="badge badge-dark">{{$hp}}</span></h5>
-                        <table class="table table-sm table-bordered table-striped">
-                            <tr class="bg-primary">
-                                <th style="width: 60%">Holiday Name</th>
-                                <th>From</th>
-                                <th>To</th>
-                            </tr>
-                            @foreach ($hols as $hol)
-                            <tr>
-                                <td><strong>{{$hol->name}}</strong></td>
-                                <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('ddd, D MMM')}}</td>
-                                <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('ddd, D MMM')}}</td>
-                            </tr>
-                            @endforeach
-                        </table>
-                        @endforeach
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW COLLEAGUES APPLICATION Modal -->
-        <div class="modal fade" id="viewColleague" tabindex="-1" role="dialog" aria-labelledby="viewColleagueLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-info">
-                        <h5 class="modal-title" id="viewColleagueLabel">Your colleague's applications</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @foreach ($groupLeaveApps as $gla => $apps)
-                        <h5><span class="badge badge-dark">{{$gla}}</span></h5>
-                        <table class="table table-sm table-bordered table-striped">
-                            <tr class="bg-primary">
-                                <th style="width: 60%">Colleague Name</th>
-                                <th>From</th>
-                                <th>To</th>
-                                <th style="width: 5%">Status</th>
-                            </tr>
-                            @foreach ($apps as $app)
-                            <tr>
-                                <td><strong>{{$app->user->name}}</strong></td>
-                                <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}</td>
-                                <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}</td>
-                                <td>
-                                    @if($app->status == 'APPROVED')
-                                    <span class="badge badge-success"><i class="far fa-check-circle"></i></span>
-                                    @else
-                                    <span class="badge badge-warning"><i class="far fa-clock"></i></span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </table>
-                        @endforeach
-                        <div class="float-right"><strong>Legends:</strong>
-                            <span class="badge badge-success"><i class="far fa-check-circle"></i>
-                                Approved</span>
-                            <span class="badge badge-warning"><i class="far fa-clock"></i>Pending</span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- VIEW NY APPLICATION Modal -->
         <div class="modal fade" id="viewApplication" tabindex="-1" role="dialog" aria-labelledby="viewApplicationLabel"
@@ -573,18 +452,16 @@ $('#reason').keyup(function() {
 
   function MainLeaveApplicationCreate() {
 
-    var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
     var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
     var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
     var balances= {!! json_encode($leaveBal, JSON_HEX_TAG) !!};
     var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
     var userGroup = {!! json_encode($user->emp_group->name, JSON_HEX_TAG) !!};
-    console.log((userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'));
 
     //console.log("MY APP:",myapplications);
 
     let calendar = new VanillaCalendar({
-        holiday: dates,
+        holiday: [],
         applied: applied,
         approved: approved,
         selector: ".myCalendar",
@@ -670,102 +547,11 @@ $('#reason').keyup(function() {
 
         for (index = 0; index < myapplications.length; index++) {
             if( myapplications[index] == calendar.getDateDb(date_from)){
-                return "You already have a Pending/Approved application during this date.";
+                return "Employee already have a Pending/Approved application during this date.";
             }
         }
 
-        //ANNUAL POLICY
-        if(validation.isAnnualLeave()){
-          let next2 = calendar.getNextWorkingDay(calendar.today());
-          next2 = calendar.getNextWorkingDay(next2);
-          next2 = calendar.getDateDb(next2);
-          if(calendar.isDateSmaller(date_from, calendar.today())){
-            return "Attention: Annual leave cannot be applied on passed dates.";
-          }
-          if(calendar.isDateSmaller(date_from, next2)){
-            return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
-          }
-        }
 
-        if(validation.isTrainingLeave()){
-            let nextMonth = calendar.nextMonth(calendar.today());
-            let prevWeek = calendar.getPrevWeekWorkingDay(calendar.today());
-            prevWeek = calendar.getPrevWeekWorkingDay(prevWeek);
-            if(calendar.isDateSmaller(date_from,prevWeek)){
-                return "Attention: Training Leave must be applied within 7 days after the training day."
-            }
-            if(calendar.isDateBigger(date_from,nextMonth)){
-                return "Attention: Training Leave cannot be applied more than a month in advance."
-            }
-        }
-
-        //SICK, EMERGENCY, PATERNITY, COMPASSIONATE, CALAMITY POLICY
-        if(validation.isSickLeave() || validation.isEmergencyLeave() || validation.isPaternityLeave() || validation.isCompassionateLeave() || validation.isCalamityLeave()){
-          let prev3 = calendar.getPrevWeekWorkingDay(calendar.today());
-          prev3 = calendar.getPrevWeekWorkingDay(prev3);
-          prev3 = calendar.getPrevWeekWorkingDay(prev3);
-          prev3 = calendar.getPrevWeekWorkingDay(prev3);
-	  prev3 = calendar.getPrevWeekWorkingDay(prev3);
-          prev3 = calendar.getDateDb(prev3);
-          if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
-            return "Attention: Leave must be applied within 7 working days after the day of leave.";
-          }
-          if(calendar.isDateBigger(date_from, calendar.today())){
-            return "Attention: Leave cannot be applied in advance.";
-          }
-        }
-
-        // MATERNITY POLICY
-        if(validation.isMaternityLeave()){
-          let monthFwd = calendar.nextMonth(calendar.today());
-          monthFwd = calendar.getDateDb(monthFwd);
-
-
-          if(calendar.isDateSmaller(date_from,monthFwd) || calendar.isDateEqual(date_from,monthFwd)){
-            return "Attention: Maternity leave application shall be made not less than one (1) month prior to the date on which it is desired that maternity leave commences."
-          }
-          if(calendar.isDateSmaller(date_from, calendar.today())){
-            return "Attention: Maternity leave cannot be applied in advance.";
-          }
-        }
-
-        //HOSPITALIZATION POLICY
-        if(validation.isHospitalizationLeave()){
-          let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
-          prev7 = calendar.getPrevWeekWorkingDay(prev7);
-	  prev7 = calendar.getPrevWeekWorkingDay(prev7);
-          prev7 = calendar.getPrevWeekWorkingDay(prev7);
-          prev7 = calendar.getPrevWeekWorkingDay(prev7);
-          prev7 = calendar.getDateDb(prev7);
-
-          if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
-            return "Attention: Hospitalization leave must be applied within 7 days after the day of leave.";
-          }
-          if(calendar.isDateBigger(date_from, calendar.today())){
-            return "Attention: Hospitalization leave cannot be applied in advance.";
-          }
-        }
-
-        //UNPAID POLICY
-        if(validation.isUnpaidLeave()){
-          let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
-          prev3 = calendar.getDateDb(prev3);
-
-          let next2 = calendar.getNextWorkingDay(calendar.today());
-          next2 = calendar.getNextWorkingDay(next2);
-          next2 = calendar.getDateDb(next2);
-
-          if(calendar.isDateSmaller(date_from,calendar.today())){
-          if(calendar.isDateSmaller(date_from, prev3)){
-            return "Attention: Unpaid leave must be applied within 3 days after the day of leave.";
-          }
-        }
-        if(calendar.isDateBigger(date_from,calendar.today())){
-          if(calendar.isDateSmaller(date_from,next2)){
-            return "Attention: Unpaid leave must be applied within 2 days before the day of leave.";
-          }
-        }
-        }
 
         if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
           if(
@@ -843,7 +629,7 @@ $('#reason').keyup(function() {
             var leaveId = _form.get(FC.leave_type_id);
             var i = leaveId - 1;
             if(total > balances[i]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
-                alert('You have insufficient leave balance');
+                alert('Employee have insufficient leave balance');
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
             }
