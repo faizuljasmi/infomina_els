@@ -2,6 +2,7 @@
 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <style>
     .buttonStat {width: 100px;}
     .card {margin: 0 auto; float: none; margin-bottom: 20px;}
@@ -93,35 +94,11 @@
                     </div>
                     <div class="card col-4">
                         <div class="card-body">
-                        <table class="table table-sm table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th colspan="2">Leave Applications</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>Approved</td>
-                                <td>{{ $count_approve }}</td>
-                            </tr>
-                            <tr>
-                                <td>Pending</td>
-                                <td>{{ $count_pending }}</td>
-                            </tr>
-                            <tr>
-                                <td>Rejected</td>
-                                <td>{{ $count_reject }}</td>
-                            </tr>
-                            <tr>
-                                <td>Cancelled</td>
-                                <td>{{ $count_cancel }}</td>
-                            </tr>
-                            <tr>
-                                <td><b>Total</b></td>
-                                <td><b>{{ $count_all }}</b></td>
-                            </tr>
-                            </tbody>
-                            </table>
+                            <input type="hidden" id="approve" value="{{ $count_approve }}">
+                            <input type="hidden" id="reject" value="{{ $count_reject }}">
+                            <input type="hidden" id="pending" value="{{ $count_pending }}">
+                            <input type="hidden" id="cancel" value="{{ $count_cancel }}">
+                            <div id="piechart"></div>
                         </div>
                     </div>
                 </div>
@@ -290,6 +267,42 @@
 </div>
 
 <script>
+
+// Load google charts
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+// Draw the chart and set the chart values
+function drawChart() {
+
+    var approve = $('#approve').val();
+    var approve_no = parseInt(approve);
+    
+    var reject = $('#reject').val();
+    var reject_no = parseInt(reject);
+
+    var pending = $('#pending').val();
+    var pending_no = parseInt(pending);
+
+    var cancel = $('#cancel').val();
+    var cancel_no = parseInt(cancel);
+
+    var data = google.visualization.arrayToDataTable([
+    ['Task', 'Applications'],
+    ['Pending', pending_no],
+    ['Rejected', reject_no],
+    ['Cancelled', cancel_no],
+    ['Approved', approve_no],
+]);
+
+// Optional; add a title and set the width and height of the chart
+var options = {'width':350, 'height':200, 'pieHole':0.1};
+
+// Display the chart inside the <div> element with id="piechart"
+var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
+piechart.draw(data, options);
+}
+
 
 $(function () {
 

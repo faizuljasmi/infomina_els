@@ -16,7 +16,7 @@ use App\History;
 use App\LeaveType;
 use App\LeaveApplication;
 
-class ExcelController extends Controller
+class AdminController extends Controller
 {
     public function index()
     {
@@ -47,7 +47,7 @@ class ExcelController extends Controller
         $edited_by = User::where('users.id', $current_user)
         ->first();
         
-        return view('excel/transfer')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
+        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
     }
 
     public function change_status(Request $request)
@@ -167,8 +167,29 @@ class ExcelController extends Controller
 
         $users = $query->paginate(15);
 
-        return view('excel/transfer')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 
+        return view('admin/report')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 
         'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
+    }
+
+    public function chart()
+    {
+        $count_all = LeaveApplication::count();
+
+        $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')->count();
+
+        $count_cancel = LeaveApplication::where('leave_applications.status','like','%CANCELLED%')->count();
+
+        $count_pending = LeaveApplication::where('leave_applications.status','like','%PENDING_1%')
+        ->orwhere('leave_applications.status','like','%PENDING_2%')
+        ->orwhere('leave_applications.status','like','%PENDING_3%')
+        ->count();
+
+        $count_reject = LeaveApplication::where('leave_applications.status','like','%DENIED_1%')
+        ->orwhere('leave_applications.status','like','%DENIED_2%')
+        ->orwhere('leave_applications.status','like','%DENIED_3%')
+        ->count();
+
+        return view('admin/chart')->with(compact('count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all'));
     }
 
     public function import(Request $request)

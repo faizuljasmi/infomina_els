@@ -258,7 +258,7 @@ return [
             ],
         ],[
             'text' => 'Reports',
-            'url'  => 'transfer',
+            'url'  => 'reports',
             'icon' => 'fas fa-fw fa-file-alt',
             'can' => 'edit_settings'
         ],
