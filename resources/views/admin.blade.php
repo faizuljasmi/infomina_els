@@ -22,6 +22,51 @@
     </div>
     @endif
 </div>
+
+<head>
+    <meta charset='utf-8' />
+    <link href='{{asset('assets/fullcalendar/packages/core/main.css')}}' rel='stylesheet' />
+    <link href='{{asset('assets/fullcalendar/packages/daygrid/main.css')}}' rel='stylesheet' />
+    <script src='{{asset('assets/fullcalendar/packages/core/main.js')}}'></script>
+    <script src='{{asset('assets/fullcalendar/packages/interaction/main.js')}}'></script>
+    <script src='{{asset('assets/fullcalendar/packages/daygrid/main.js')}}'></script>
+    <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var evnts = {!! json_encode($events, JSON_HEX_TAG) !!};
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+
+          defaultView: 'dayGridWeek',
+          plugins: [ 'interaction', 'dayGrid' ],
+          header: {
+            left: 'prevYear,prev,next,nextYear today',
+            center: 'title',
+            right: 'dayGridWeek'
+          },
+          defaultDate: '2020-02-12',
+          height: 700,
+          navLinks: true, // can click day/week names to navigate views
+          editable: true,
+          eventLimit: true, // allow "more" link when too many events
+          events: evnts,
+        });
+
+        calendar.render();
+      });
+
+    </script>
+    <style>
+
+      #calendar {
+        max-width: auto;
+        margin: 0 auto;
+      }
+
+    </style>
+    </head>
+
+
 @stop
 
 @section('content')
@@ -612,7 +657,7 @@
             <!-- MAP & BOX PANE -->
             <div class="card">
                 <div class="card-header bg-teal">
-                    <h3 class="card-title">Leave Applications History</h3>
+                    <h3 class="card-title">Leave Calendar</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -625,6 +670,35 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
+                    <div id='calendar'></div>
+                </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+
+
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <div class="col-md-12">
+            <!-- MAP & BOX PANE -->
+            <div class="card">
+                <div class="card-header bg-teal">
+                    <h3 class="card-title">Leave Application History</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div id='calendar'></div>
                     <div class="d-md-flex">
                         <div class="p-1 flex-fill" style="overflow: hidden">
                             <div class="col-md-3 float-right mb-3">

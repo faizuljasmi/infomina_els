@@ -194,6 +194,7 @@ return [
             'text' => 'Dashboard (Employee)',
             'url'  => '/home',
             'icon' => 'fas fa-fw fa-user-tie',
+            'can' => 'employee-dashboard',
         ],
         [
             'text' => 'Dashboard (Authority)',
@@ -205,18 +206,20 @@ return [
             'text' => 'Apply Leave',
             'url'  => '/leave/apply',
             'icon' => 'fas fa-fw fa-calendar-alt',
+            'can' => 'employee-dashboard',
         ],
         [
             'text' => 'Claim Replacement Leave',
             'url'  => '/leave/replacement/apply',
             'icon' => 'fas fa-fw fa-calendar-plus',
+            'can' => 'employee-dashboard',
         ],
         ['header' => ' System Settings', 'can' => 'edit_settings'],
         [
             'text' => 'User',
             'url'  => '/create',
             'icon' => 'fas fa-fw fa-user-plus',
-            'can' => 'edit_settings'
+            'can' => 'employee-data'
         ],
         [
             'text'    => 'Employee',
@@ -260,7 +263,7 @@ return [
             'text' => 'Reports',
             'url'  => 'transfer',
             'icon' => 'fas fa-fw fa-file-alt',
-            'can' => 'edit_settings'
+            'can' => 'employee-data'
         ],
 
         ['header' => ' My Settings', ],

@@ -211,9 +211,11 @@ class HomeController extends Controller
 
         //Get leave applications of same group
         $groupLeaveApps = collect([]);
-        foreach ($allLeaveApps as $la) {
-            $groupIndex = ["_", "_two_", "_three_", "_four_", "_five_"];
+        $events = array();
 
+        foreach ($allLeaveApps as $la) {
+
+            $groupIndex = ["_", "_two_", "_three_", "_four_", "_five_"];
             $isUserLaGroupSameUserGroup = false;
             foreach ($groupIndex as $gI_1) {
                 foreach ($groupIndex as $gI_2) {
@@ -234,6 +236,17 @@ class HomeController extends Controller
             ) {
                 $groupLeaveApps->add($la);
             }
+            else if($user->user_type == "Management" && ($la->status == 'APPROVED')
+            && ($la->user_id != $user->id)){
+                $eventDetails = array(
+                    'title' => $la->user->name."\n".$la->leaveType->name."\n".Carbon::parse($la->date_from)->isoFormat('D/MM')."-".Carbon::parse($la->date_to)->isoFormat('D/MM'),
+                    'start' => $la->date_from,
+                    'description' => "LOL",
+                    'end' => $la->date_to,
+                    'color' => "mediumseagreen"
+                );
+                array_push($events , $eventDetails);
+            }
         }
 
         //Group user's group applications by months. Starting from the start of the week until end of year.
@@ -241,7 +254,9 @@ class HomeController extends Controller
             return Carbon::parse($val->date_from)->format('F');
         });
 
-        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays'));
+
+
+        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events'));
     }
 
     public function search(Request $request)

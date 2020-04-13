@@ -32,7 +32,7 @@
                                         Cancel
                                     </button>
                                     <a href="{{route('edit_application', $leaveApp->id)}}"
-                                        class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip"
+                                        class="btn btn-primary float-right mr-1" data-toggle="tooltip"
                                         title="Edit Application">Edit</a>
                                     @endcan
                                     @can('approve',$leaveApp)
@@ -313,6 +313,7 @@
                                                 <th>Level</th>
                                                 <th>Name</th>
                                                 <th>Status</th>
+                                                <th>Updated At</th>
                                             </tr>
                                             <tr>
                                                 <td>1</td>
@@ -332,6 +333,17 @@
                                                     @else
                                                     <span class="badge badge-success"><i
                                                             class="far fa-check-circle"></i></span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if(!isset($leaveApp->approver_one))
+                                                    NA
+                                                    @else
+                                                        @foreach($leaveApp->histories as $hist)
+                                                            @if($hist->user_id == $leaveApp->approver_one->id)
+                                                            {{ \Carbon\Carbon::parse($hist->updated_at)->isoFormat('ddd, D MMM YYYY')}}
+                                                            @endif
+                                                        @endforeach
                                                     @endif
                                                 </td>
                                             </tr>
@@ -361,13 +373,24 @@
                                                             class="far fa-check-circle"></i></span>
                                                     @endif
                                                 </td>
+                                                <td>
+                                                    @if(!isset($leaveApp->approver_two))
+                                                    NA
+                                                    @else
+                                                        @foreach($leaveApp->histories as $hist)
+                                                            @if($hist->user_id == $leaveApp->approver_two->id)
+                                                            {{ \Carbon\Carbon::parse($hist->updated_at)->isoFormat('ddd, D MMM YYYY')}}
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>3</td>
                                                 <td>{{isset($leaveApp->approver_three) ? $leaveApp->approver_three->name:'NA'}}
                                                 </td>
                                                 <td>
-                                                    @if(!isset($leaveApp->approver_id_3))
+                                                    @if(!isset($leaveApp->approver_three))
                                                     NA
                                                     @elseif($leaveApp->status == 'PENDING_1')
                                                     <span class="badge badge-warning"><i
@@ -391,6 +414,17 @@
                                                     @else
                                                     <span class="badge badge-success"><i
                                                             class="far fa-check-circle"></i></span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if(!isset($leaveApp->approver_three))
+                                                    NA
+                                                    @else
+                                                        @foreach($leaveApp->histories as $hist)
+                                                            @if($hist->user_id == $leaveApp->approver_three->id)
+                                                            {{ \Carbon\Carbon::parse($hist->updated_at)->isoFormat('ddd, D MMM YYYY')}}
+                                                            @endif
+                                                        @endforeach
                                                     @endif
                                                 </td>
                                             </tr>

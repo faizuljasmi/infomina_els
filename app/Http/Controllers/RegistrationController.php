@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\User;
 use App\EmpType;
 use App\EmpGroup;
+use App\LeaveApplication;
 use App\LeaveType;
 use App\LeaveEntitlement;
 use App\LeaveEarning;
@@ -134,7 +135,23 @@ class RegistrationController extends Controller
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
         //dd($user->name);
-        return view('user.profile')->with(compact('user', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
+        $leaveHist = LeaveApplication::where(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'DENIED_1')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'DENIED_2')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'DENIED_3')
+                ->where('user_id', $user->id);
+        })->sortable(['date_from'])->paginate(5, ['*'], 'history');
+        return view('user.profile')->with(compact('user', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist'));
     }
 
     public function deactivate(User $user)
