@@ -30,6 +30,7 @@
     <script src='{{asset('assets/fullcalendar/packages/core/main.js')}}'></script>
     <script src='{{asset('assets/fullcalendar/packages/interaction/main.js')}}'></script>
     <script src='{{asset('assets/fullcalendar/packages/daygrid/main.js')}}'></script>
+
     <script>
 
       document.addEventListener('DOMContentLoaded', function() {
@@ -44,14 +45,11 @@
             center: 'title',
             right: 'dayGridWeek'
           },
-          defaultDate: '2020-02-12',
           height: 700,
           navLinks: true, // can click day/week names to navigate views
-          editable: true,
           eventLimit: true, // allow "more" link when too many events
           events: evnts,
         });
-
         calendar.render();
       });
 
