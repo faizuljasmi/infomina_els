@@ -98,13 +98,13 @@
                             </form>
                         </div>
                     </div>
-                    <div class="card col-4 zoom">
+                    <div class="card col-4">
                         <div class="card-body">
                             <input type="hidden" id="approve" value="{{ $count_approve }}">
                             <input type="hidden" id="reject" value="{{ $count_reject }}">
                             <input type="hidden" id="pending" value="{{ $count_pending }}">
                             <input type="hidden" id="cancel" value="{{ $count_cancel }}">
-                            <div id="piechart"></div>
+                            <div class="zoom" id="piechart"></div>
                         </div>
                     </div>
                 </div>
