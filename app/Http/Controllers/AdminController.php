@@ -101,6 +101,15 @@ class AdminController extends Controller
 
         return response()->json(['history' => $history]);
     }
+
+    public function autocomplete(Request $request)
+    {
+        $search_name = $request->get('name');
+
+        $result = User::where('users.name','like','%'.$search_name.'%')->get();
+        
+        return response()->json($result);
+    } 
     
 
     public function search(Request $request)

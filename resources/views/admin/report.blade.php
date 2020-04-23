@@ -3,9 +3,15 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
 <style>
     .buttonStat {width: 100px;}
     .card {margin: 0 auto; float: none; margin-bottom: 20px;}
+    .zoom:hover {
+        -ms-transform: scale(1.5); /* IE 9 */
+        -webkit-transform: scale(1.5); /* Safari 3-8 */
+        transform: scale
+    }
 </style>
 <div class="mt-2 col-md-12">
     <div class="card">
@@ -21,7 +27,7 @@
                                 <div class="form-inline form-group">
                                     <!-- Name -->
                                     <div class="input-group col-12">
-                                        <input type="search" name="name" id="name" placeholder="Name" value="{{ isset($search_name)? $search_name: '' }}" class="form-control">
+                                        <input type="search" name="name" id="name" placeholder="Name" value="{{ isset($search_name)? $search_name: '' }}" class="form-control" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-inline form-group">
@@ -92,7 +98,7 @@
                             </form>
                         </div>
                     </div>
-                    <div class="card col-4">
+                    <div class="card col-4 zoom">
                         <div class="card-body">
                             <input type="hidden" id="approve" value="{{ $count_approve }}">
                             <input type="hidden" id="reject" value="{{ $count_reject }}">
@@ -267,6 +273,16 @@
 </div>
 
 <script>
+
+var route = "{{ url('reports/autocomplete') }}";
+$('#name').typeahead({
+    source:  function (name, process) {
+    return $.get(route, { name: name }, function (data) {
+            console.log(data);
+            return process(data);
+        });
+    }
+});
 
 // Load google charts
 google.charts.load('current', {'packages':['corechart']});
