@@ -56,15 +56,16 @@ Route::middleware('can:employee-data')->group(function(){
     Route::get('/apply/for/{user}','LeaveApplicationController@applyFor')->name('apply_for')->middleware('auth');
     Route::post('apply/for/{user}','LeaveApplicationController@submitApplyFor')->name('submit_apply_for')->middleware('auth');
 
-    //Import Export Excel
-    Route::post('load-history','ExcelController@view_history')->middleware('auth');
-    Route::get('transfer', 'ExcelController@index')->name('excel_transfer')->middleware('auth');
-    Route::get('transfer/search', 'ExcelController@search')->name('search')->middleware('auth');
-    Route::get('transfer/change-status', 'ExcelController@change_status')->name('change_status')->middleware('auth');
-    Route::post('transfer/import', 'ExcelController@import')->name('excel_import')->middleware('auth');
-    Route::get('transfer/export-all', 'ExcelController@export_all')->name('excel_export_all')->middleware('auth');
-    Route::get('transfer/export-search', 'ExcelController@export_search')->name('excel_export_search')->middleware('auth');
-    Route::get('transfer/export-balance', 'ExcelController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
+     //Admin Control
+     Route::post('load-history','AdminController@view_history')->middleware('auth');
+     Route::get('reports', 'AdminController@index')->name('excel_transfer')->middleware('auth');
+     Route::get('reports/search', 'AdminController@search')->name('search')->middleware('auth');
+     Route::get('reports/change-status', 'AdminController@change_status')->name('change_status')->middleware('auth');
+     Route::post('reports/import', 'AdminController@import')->name('excel_import')->middleware('auth');
+     Route::get('reports/export-all', 'AdminController@export_all')->name('excel_export_all')->middleware('auth');
+     Route::get('reports/export-search', 'AdminController@export_search')->name('excel_export_search')->middleware('auth');
+     Route::get('reports/export-balance', 'AdminController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
+     Route::get('reports/autocomplete', 'AdminController@autocomplete');
 });
 
 
@@ -108,17 +109,6 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::get('/holiday/edit/{holiday}','HolidayController@edit')->name('holiday_edit')->middleware('auth');
     Route::post('/holiday/update/{holiday}','HolidayController@update')->name('holiday_update')->middleware('auth');
     Route::get('/holiday/delete/{holiday}','HolidayController@delete')->name('holiday_delete')->middleware('auth');
-
-    //Admin Control
-    Route::post('load-history','AdminController@view_history')->middleware('auth');
-    Route::get('reports', 'AdminController@index')->name('excel_transfer')->middleware('auth');
-    Route::get('reports/search', 'AdminController@search')->name('search')->middleware('auth');
-    Route::get('reports/change-status', 'AdminController@change_status')->name('change_status')->middleware('auth');
-    Route::post('reports/import', 'AdminController@import')->name('excel_import')->middleware('auth');
-    Route::get('reports/export-all', 'AdminController@export_all')->name('excel_export_all')->middleware('auth');
-    Route::get('reports/export-search', 'AdminController@export_search')->name('excel_export_search')->middleware('auth');
-    Route::get('reports/export-balance', 'AdminController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
-    Route::get('reports/autocomplete', 'AdminController@autocomplete');
 });
 
 

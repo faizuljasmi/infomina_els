@@ -170,6 +170,27 @@ class HomeController extends Controller
                 ->where('approver_id_3', $user->id);
         })->sortable(['updated_at'])->paginate(5, ['*'], 'history');
 
+        $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_1', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_1', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_2', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_2', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_3', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_3', $user->id);
+        })->get();
+
+
         $holidays = Holiday::all();
         $all_dates = array();
         foreach ($holidays as $hols) {
@@ -186,6 +207,7 @@ class HomeController extends Controller
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
+        $events = array();
         foreach ($leaveApps as $la) {
 
             $startDate = new Carbon($la->date_from);
@@ -208,11 +230,26 @@ class HomeController extends Controller
                 $startDate->addDay();
             }
         }
+        $color = "";
+        foreach($allLeaveHist as $lh){
+            if($lh->status == "APPROVED"){
+                $color = "mediumseagreen";
+            }
+            else{
+                $color = "crimson";
+            }
+            $eventDetails = array(
+                'title' => $lh->user->name."\n".$lh->leaveType->name." (".$lh->apply_for.") "."\n".Carbon::parse($lh->date_from)->isoFormat('D/MM')."-".Carbon::parse($lh->date_to)->isoFormat('D/MM'),
+                'start' => $lh->date_from,
+                'description' => "LOL",
+                'end' => $lh->date_to,
+                'color' => $color
+            );
+            array_push($events , $eventDetails);
+        }
 
         //Get leave applications of same group
         $groupLeaveApps = collect([]);
-        $events = array();
-
         foreach ($allLeaveApps as $la) {
 
             $groupIndex = ["_", "_two_", "_three_", "_four_", "_five_"];
