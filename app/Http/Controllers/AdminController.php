@@ -152,6 +152,7 @@ class AdminController extends Controller
 
         if($request->get('date_from') != '' && $request->get('date_to') != '') {
             $query->wherebetween('leave_applications.date_from', [$date_from, $date_to]);
+            $query->orwherebetween('leave_applications.date_to', [$date_from, $date_to]);
         }
 
         if($request->get('leave_type') != '') {
