@@ -520,17 +520,14 @@ $("#leave_type_id").change(function() {
         $("#ToDate").val("");
     });
 
-    $("#FromDate").change(function() {
-        var from = $("#FromDate").val();
-            $("#ToDate").val("");
-            $("#ToDate").attr({
-                 "min" : from          // values (or variables) here
-            });
+$("#FromDate").change(function() {
+    var from = $("#FromDate").val();
+        $("#ToDate").val("");
+        $("#ToDate").attr({
+              "min" : from          // values (or variables) here
         });
-<<<<<<< HEAD
-=======
+    });
 
->>>>>>> de146d7543aa03c3297a795e55f8c408dd897005
 var text_max = 5;
 $('#count_reason').html(text_max + ' remaining');
 
@@ -825,8 +822,8 @@ const validation = {
         let from = _form.get(FC.date_from);
         let to = _form.get(FC.date_to);
         let total = calendar.getTotalWorkingDay(from, to);
-        if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave()){
-          total = calendar.getTotalDays(from, to);
+        if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){	
+          total = calendar.getTotalDays(from, to);	
         }
         var leaveId = _form.get(FC.leave_type_id);
         var i = leaveId - 1;

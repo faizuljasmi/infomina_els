@@ -27,12 +27,12 @@
                             <div class="card-header bg-teal">
                                 <strong>Application Details
                                     @can('cancel',$leaveApp)
-                                    <button type="button" class="btn btn-secondary  float-right"
+                                    <button type="button" class="btn btn-secondary btn-sm float-right"
                                         data-toggle="modal" data-target="#cancelModal">
                                         Cancel
                                     </button>
                                     <a href="{{route('edit_application', $leaveApp->id)}}"
-                                        class="btn btn-primary float-right mr-1" data-toggle="tooltip"
+                                        class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip"
                                         title="Edit Application">Edit</a>
                                     @endcan
                                     @can('approve',$leaveApp)
@@ -40,11 +40,11 @@
                                     'DENIED_1'||$leaveApp->status == 'DENIED_2'||$leaveApp->status == 'DENIED_3'
                                     ||$leaveApp->status == 'CANCELLED')
                                     @elseif($leaveApp->user_id != auth()->user()->id)
-                                    <a href="{{route('deny_application', $leaveApp->id)}}" id="btn-deny"
-                                        class="btn btn-danger  float-right mr-1" data-toggle="tooltip"
+                                    <a href="{{route('deny_application', $leaveApp->id)}}"
+                                        class="btn btn-danger btn-sm float-right mr-1" data-toggle="tooltip"
                                         title="Deny Application">Deny</a>
-                                    <a href="{{route('approve_application', $leaveApp->id)}}" id="btn-approve"
-                                        class="btn btn-success  float-right mr-1" data-toggle="tooltip"
+                                    <a href="{{route('approve_application', $leaveApp->id)}}"
+                                        class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip"
                                         title="Approve Application">Approve</a>
                                     @endif
                                     @endcan
@@ -313,7 +313,6 @@
                                                 <th>Level</th>
                                                 <th>Name</th>
                                                 <th>Status</th>
-                                                <th>Updated At</th>
                                             </tr>
                                             <tr>
                                                 <td>1</td>
@@ -333,17 +332,6 @@
                                                     @else
                                                     <span class="badge badge-success"><i
                                                             class="far fa-check-circle"></i></span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if(!isset($leaveApp->approver_one))
-                                                    NA
-                                                    @else
-                                                        @foreach($leaveApp->histories as $hist)
-                                                            @if($hist->user_id == $leaveApp->approver_one->id)
-                                                            {{ \Carbon\Carbon::parse($hist->updated_at)->isoFormat('ddd, D MMM YYYY')}}
-                                                            @endif
-                                                        @endforeach
                                                     @endif
                                                 </td>
                                             </tr>
@@ -373,24 +361,13 @@
                                                             class="far fa-check-circle"></i></span>
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    @if(!isset($leaveApp->approver_two))
-                                                    NA
-                                                    @else
-                                                        @foreach($leaveApp->histories as $hist)
-                                                            @if($hist->user_id == $leaveApp->approver_two->id)
-                                                            {{ \Carbon\Carbon::parse($hist->updated_at)->isoFormat('ddd, D MMM YYYY')}}
-                                                            @endif
-                                                        @endforeach
-                                                    @endif
-                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>3</td>
                                                 <td>{{isset($leaveApp->approver_three) ? $leaveApp->approver_three->name:'NA'}}
                                                 </td>
                                                 <td>
-                                                    @if(!isset($leaveApp->approver_three))
+                                                    @if(!isset($leaveApp->approver_id_3))
                                                     NA
                                                     @elseif($leaveApp->status == 'PENDING_1')
                                                     <span class="badge badge-warning"><i
@@ -414,17 +391,6 @@
                                                     @else
                                                     <span class="badge badge-success"><i
                                                             class="far fa-check-circle"></i></span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if(!isset($leaveApp->approver_three))
-                                                    NA
-                                                    @else
-                                                        @foreach($leaveApp->histories as $hist)
-                                                            @if($hist->user_id == $leaveApp->approver_three->id)
-                                                            {{ \Carbon\Carbon::parse($hist->updated_at)->isoFormat('ddd, D MMM YYYY')}}
-                                                            @endif
-                                                        @endforeach
                                                     @endif
                                                 </td>
                                             </tr>
@@ -458,31 +424,16 @@
 
                 </section>
                 @endcan
+
+
+
             </div>
+
         </div>
-        <div id="loading">
-            <div id="loading-image">
-                <figure>
-                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
-                    <figcaption>Submitting your response...</figcaption>
-                </figure>
-            </div>
-</div>
     </section>
 
-<script>
-$(document).ready(MainLeaveApplicationCreate);
-
-$(document).ready(function(){
-    var spinner = $('#loading');
-    $("#btn-approve").click(function(e){
-        spinner.show();
-    });
-    $("#btn-deny").click(function(e){
-        spinner.show();
-    });
-});
-
+    <script>
+        $(document).ready(MainLeaveApplicationCreate);
 
   function MainLeaveApplicationCreate() {
 
@@ -671,32 +622,11 @@ $(document).ready(function(){
 
 
   }
+
     </script>
+
 </section>
 
-<style type="text/css">
-    #loading {
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        position: fixed;
-        opacity: 0.7;
-        background-color: #fff;
-        z-index: 99;
-        text-align: center;
-        display: none;
-    }
-
-    #loading-image {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        /* bring your own prefixes */
-        transform: translate(-50%, -50%);
-        z-index: 100;
-    }
-</style>
 
 @endsection
 @section('css')
