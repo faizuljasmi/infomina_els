@@ -30,13 +30,14 @@ class RegistrationController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
         $activeUsers = User::where('status','Active')->sortable(['staff_id'])->paginate(15,['*'],'active');
         $inactiveUsers = User::where('status','Inactive')->sortable(['staff_id'])->paginate(15,['*'],'inactive');
         //dd($users);
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         //dd($empTypes);
         $empGroups = EmpGroup::orderBy('id', 'ASC')->get();
-        return view('registration.create')->with(compact('activeUsers','inactiveUsers','empTypes', 'empGroups'));
+        return view('registration.create')->with(compact('user','activeUsers','inactiveUsers','empTypes', 'empGroups'));
     }
 
     public function store(Request $request)
@@ -71,6 +72,7 @@ class RegistrationController extends Controller
     public function edit(User $user)
     {
         $user = $user;
+        $user_insesh = auth()->user();
         $users = User::orderBy('id', 'ASC')->get()->except($user->id);
         $authUsers = User::orderBy('name','ASC')->where(function ($query) {
             $query->where('user_type', 'Admin')
@@ -93,7 +95,7 @@ class RegistrationController extends Controller
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        return view('user.edit')->with(compact('user', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
+        return view('user.edit')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
     }
 
     public function update(Request $request, User $user)
@@ -111,6 +113,7 @@ class RegistrationController extends Controller
     public function profile(User $user)
     {
         $user = $user;
+        $user_insesh = auth()->user();
         $users = User::orderBy('id', 'ASC')->get()->except($user->id);
 
         $authUsers = User::orderBy('name','ASC')->where(function ($query) {
@@ -151,7 +154,7 @@ class RegistrationController extends Controller
             $query->where('status', 'DENIED_3')
                 ->where('user_id', $user->id);
         })->sortable(['date_from'])->paginate(5, ['*'], 'history');
-        return view('user.profile')->with(compact('user', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist'));
+        return view('user.profile')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist'));
     }
 
     public function deactivate(User $user)

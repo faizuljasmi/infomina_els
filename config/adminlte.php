@@ -191,16 +191,22 @@ return [
         //     'label_color' => 'success',
         // ],
         [
-            'text' => 'Dashboard (Employee)',
-            'url'  => '/home',
-            'icon' => 'fas fa-fw fa-user-tie',
-            'can' => 'employee-dashboard',
+            'text' => 'Dashboard',
+            'url'  => '/admin',
+            'icon' => 'fas fa-fw fa-user-shield',
+            'can' => 'admin-dashboard'
         ],
         [
             'text' => 'Dashboard (Authority)',
             'url'  => '/admin',
             'icon' => 'fas fa-fw fa-user-shield',
-            'can' => 'admin-dashboard'
+            'can' => 'authority-dashboard'
+        ],
+        [
+            'text' => 'Dashboard (Employee)',
+            'url'  => '/home',
+            'icon' => 'fas fa-fw fa-user-tie',
+            'can' => 'employee-dashboard',
         ],
         [
             'text' => 'Apply Leave',
@@ -214,13 +220,19 @@ return [
             'icon' => 'fas fa-fw fa-calendar-plus',
             'can' => 'employee-dashboard',
         ],
-        ['header' => ' System Settings', 'can' => 'edit_settings'],
         [
-            'text' => 'User',
+            'text' => 'Employee Records',
             'url'  => '/create',
             'icon' => 'fas fa-fw fa-user-plus',
             'can' => 'employee-data'
         ],
+        [
+            'text' => 'Reports',
+            'url'  => 'reports',
+            'icon' => 'fas fa-fw fa-file-alt',
+            'can' => 'employee-data'
+        ],
+        ['header' => ' System Settings', 'can' => 'edit_settings'],
         [
             'text'    => 'Employee',
             'can' => 'edit_settings',
@@ -259,11 +271,6 @@ return [
                     'can' => 'admin-dashboard'
                 ],
             ],
-        ],[
-            'text' => 'Reports',
-            'url'  => 'reports',
-            'icon' => 'fas fa-fw fa-file-alt',
-            'can' => 'employee-data'
         ],
 
         ['header' => ' My Settings', ],

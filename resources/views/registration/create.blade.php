@@ -21,13 +21,14 @@
 @stop
 @section('content')
 <div class="row">
-
+    @if($user->user_type == "Admin")
     <div class="col-md-6">
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
             Create New User
         </button>
     </div>
+    @endif
 
     <!-- ACTIVE USERS LIST -->
     <div class="mt-2 col-md-12">
@@ -84,6 +85,7 @@
                                         <a href="{{route('user_view', $u->id)}}" class="btn btn-success btn-sm"><i
                                                 class="fa fa-eye"></i></a>
                                     </span>
+                                    @if($user->user_type == "Admin")
                                     <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
                                         title="Edit user profile and leave">
                                         <a href="{{route('user_edit', $u->id)}}" class="btn btn-info btn-sm"><i
@@ -100,6 +102,7 @@
                                         <a href="{{route('user_deactivate', $u->id)}}" class="btn btn-warning btn-sm"><i
                                                 class="fas fa-user-slash"></i></a>
                                     </span>
+                                    @endif
                                 </td>
                             </tr>
                             @endif

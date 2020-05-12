@@ -31,7 +31,15 @@ class AuthServiceProvider extends ServiceProvider
 
         //
         Gate::define('admin-dashboard', function($user){
-            return $user->user_type == 'Admin' || $user->user_type == 'Authority' || $user->user_type == 'Management';
+            return $user->user_type == 'Admin' || $user->user_type == 'Management';
+        });
+
+        Gate::define('authority-dashboard', function($user){
+            return  $user->user_type == 'Authority';
+        });
+
+        Gate::define('management-dashboard', function($user){
+            return  $user->user_type == 'Management';
         });
 
         Gate::define('employee-data', function($user){

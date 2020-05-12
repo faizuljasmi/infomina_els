@@ -135,10 +135,13 @@
                         </div>
                     </fieldset>
                 </form>
+                @if($user_insesh->user_type == "Admin" )
                 <div class="float-sm-right"><span class="d-inline-block" tabindex="0" data-toggle="tooltip"
                         title="Edit user profile and leave">
                         <a href="{{route('user_edit', $user->id)}}" class="btn btn-primary">Edit</a>
-                    </span></div>
+                    </span>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -191,8 +194,10 @@
                         <td>{{isset($empAuth->authority_3_id) ? $empAuth->authority_three->name:'NA'}}</td>
                     </tr>
                 </table>
+                @if($user_insesh->user_type == "Admin" )
                 <div class="float-sm-right mt-3"><button type="button" class="btn btn-primary" data-toggle="modal"
                         data-target="#editAuthority">Edit</button></div>
+                        @endif
                 <div class="modal fade" id="editAuthority" tabindex="-1" role="dialog"
                     aria-labelledby="editAuthorityTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -223,7 +228,9 @@
                 <strong>Applications History <i class="fas fa-info-circle" data-toggle="tooltip"
                         data-placement="top"
                         title="This table shows you leave applications history"></i></strong>
+                        @if($user_insesh->user_type == "Admin")
                         <div class="float-sm-right"><a href="{{route('apply_for', $user)}}"><button type="button" class="btn btn-primary">Apply On Behalf</button></a></div>
+                        @endif
             </div>
             <div class="card-body">
                 <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
@@ -335,11 +342,13 @@
                         </tr>
                         <tr>
                             <th>Brought Forward
+                            @if($user_insesh->user_type == "Admin")
                                 @if ($leaveEarn->count() == 0)<small><a href=""
                                         onclick="return alert('Please set this year\'s\ leave earnings before setting carry forward leaves')">Edit</a></small>
                                 @else <small><a href="" data-toggle="modal"
                                         data-target="#setBroughtForward">Edit</a></small>
                                 @endif
+                            @endif
                             </th>
                             @foreach($broughtFwd as $bf)
                             @if($bf->leave_type_id == '1')
@@ -350,7 +359,10 @@
                             @endforeach
                         </tr>
                         <tr>
-                            <th>Earned <small><a href="" data-toggle="modal" data-target="#setEarnings">Edit</a></small>
+                            <th>Earned 
+                            @if($user_insesh->user_type == "Admin")
+                            <small><a href="" data-toggle="modal" data-target="#setEarnings">Edit</a></small>
+                            @endif
                             </th>
                             @foreach($leaveEarn as $le)
                             @foreach($broughtFwd as $bf)
