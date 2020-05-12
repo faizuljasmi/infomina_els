@@ -568,7 +568,12 @@ class LeaveApplicationController extends Controller
          $hist->action = "Edited";
          $hist->save();
 
-        return redirect()->to('/home')->with('message', 'Leave application edited succesfully');
+        if(auth()->user()->user_type == "Admin" || auth()->user()->user_type == "Management"){
+            return redirect()->to('/admin')->with('message', 'Leave application edited succesfully');
+        }
+        else{
+            return redirect()->to('/home')->with('message', 'Leave application edited succesfully');
+        }
     }
 
     public function approve(LeaveApplication $leaveApplication)
@@ -888,7 +893,7 @@ class LeaveApplicationController extends Controller
         $when = now()->addMinutes(5);
         $leaveApplication->user->notify((new CancelApplication($leaveApplication))->delay($when));
 
-        return redirect()->to('/home')->with('message', 'Leave application cancelled succesfully');
+        return redirect()->to('/admin')->with('message', 'Leave application cancelled succesfully');
     }
 
     public function applyFor(User $user){

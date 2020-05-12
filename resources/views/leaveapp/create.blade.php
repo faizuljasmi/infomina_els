@@ -792,9 +792,9 @@ $('#reason').keyup(function() {
             if(	
             (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))	
             ||	
-            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave())	
+            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))
           ){	
-            return `Selected date is a Weekend day. Please select another date.`;	
+            return "Selected date is a Weekend day. Please select another date.";
           }	
         }	
 
@@ -803,7 +803,7 @@ $('#reason').keyup(function() {
         if(
             (name == FC.date_from.name && calendar.isHoliday(date_from) && (!validation.isMaternityLeave()))
           ||
-          (name == FC.date_to.name && calendar.isHoliday(date_to) && (!validation.isMaternityLeave())
+          (name == FC.date_to.name && calendar.isHoliday(date_to) && (!validation.isMaternityLeave()))
         ){
           return `Selected date is an announced Public Holiday. Please select another date.`;
         }

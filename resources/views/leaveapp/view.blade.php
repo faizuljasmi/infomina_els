@@ -40,10 +40,10 @@
                                     'DENIED_1'||$leaveApp->status == 'DENIED_2'||$leaveApp->status == 'DENIED_3'
                                     ||$leaveApp->status == 'CANCELLED')
                                     @elseif($leaveApp->user_id != auth()->user()->id)
-                                    <a href="{{route('deny_application', $leaveApp->id)}}"
+                                    <a href="{{route('deny_application', $leaveApp->id)}}" id="approve"
                                         class="btn btn-danger btn-sm float-right mr-1" data-toggle="tooltip"
                                         title="Deny Application">Deny</a>
-                                    <a href="{{route('approve_application', $leaveApp->id)}}"
+                                    <a href="{{route('approve_application', $leaveApp->id)}}" id="deny"
                                         class="btn btn-success btn-sm float-right mr-1" data-toggle="tooltip"
                                         title="Approve Application">Approve</a>
                                     @endif
@@ -278,8 +278,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Are you sure you want to cancel this application?')">Cancel</button>
+                                    <button id ="submit-cancel" type="submit" class="btn btn-danger"
+                                        >Cancel</button>
                                 </div>
                                 </form>
                             </div>
@@ -424,12 +424,16 @@
 
                 </section>
                 @endcan
-
-
-
             </div>
-
         </div>
+        <div id="loading">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Working on it...</figcaption>
+                </figure>
+            </div>
+</div>
     </section>
 
     <script>
@@ -623,7 +627,49 @@
 
   }
 
+  document.getElementById("approve").addEventListener('click', functSubmit);
+    var spinner = $('#loading');
+    function functSubmit(event) {
+    spinner.show();
+}
+
+document.getElementById("deny").addEventListener('click', functSubmit);
+    var spinner = $('#loading');
+    function functSubmit(event) {
+    spinner.show();
+}
+
+document.getElementById("submit-cancel").addEventListener('click', functSubmit);
+    var spinner = $('#loading');
+    function functSubmit(event) {
+    spinner.show();
+}
+
     </script>
+
+<style type="text/css">
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+        text-align: center;
+        display: none;
+    }
+
+    #loading-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
+</style>
 
 </section>
 

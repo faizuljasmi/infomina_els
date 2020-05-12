@@ -136,17 +136,31 @@ class HomeController extends Controller
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
-        $leaveApps = LeaveApplication::where(function ($query) use ($user) {
-            $query->where('status', 'PENDING_1')
-                ->where('approver_id_1', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'PENDING_2')
-                ->where('approver_id_2', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'PENDING_3')
-                ->where('approver_id_3', $user->id);
-        })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
+
+        if($user->user_type == 'Admin'){
+            //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
+            $leaveApps = LeaveApplication::where(function ($query) use ($user) {
+                $query->where('status', 'PENDING_1');
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_2');
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_3');
+            })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
+        }
+        else{
+            //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
+            $leaveApps = LeaveApplication::where(function ($query) use ($user) {
+                $query->where('status', 'PENDING_1')
+                    ->where('approver_id_1', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_2')
+                    ->where('approver_id_2', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_3')
+                    ->where('approver_id_3', $user->id);
+            })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
+        }
+        
 
         $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
 

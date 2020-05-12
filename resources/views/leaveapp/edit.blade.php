@@ -500,7 +500,14 @@
           </div>
       </div>
       @endif
-
+      <div id="loading">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Updating application...</figcaption>
+                </figure>
+            </div>
+</div>
   </section>
 
   <!-- Empty Col -->
@@ -550,6 +557,7 @@ $('#reason').keyup(function() {
 window.addEventListener('load', function() {
 // Fetch all the forms we want to apply custom Bootstrap validation styles to
 var forms = document.getElementsByClassName('needs-validation');
+var spinner = $('#loading');
 // Loop over them and prevent submission
 var validation = Array.prototype.filter.call(forms, function(form) {
   form.addEventListener('submit', function(event) {
@@ -557,6 +565,9 @@ var validation = Array.prototype.filter.call(forms, function(form) {
       event.preventDefault();
       event.stopPropagation();
     }
+    else{
+            spinner.show();
+        }
     form.classList.add('was-validated');
   }, false);
 });
@@ -662,7 +673,7 @@ const validation = {
 
     for (index = 0; index < myapplications.length; index++) {
         if( myapplications[index] == calendar.getDateDb(date_from)){
-            return "You already have a Pending/Approved application during this date.";
+            return "User already have a Pending/Approved application during this date.";
         }
     }
 
@@ -753,20 +764,21 @@ const validation = {
 
 
     if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
-          if(
-            (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()))
-            ||
-            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()))
-          ){
-            return `Selected date is a Weekend day. Please select another date.`;
-          }
-        }
+            if(	
+            (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))	
+            ||	
+            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))
+          ){	
+            return "Selected date is a Weekend day. Please select another date.";
+          }	
+        }	
+
 
         if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
         if(
-          (name == FC.date_from.name && calendar.isHoliday(date_from))
+            (name == FC.date_from.name && calendar.isHoliday(date_from) && (!validation.isMaternityLeave()))
           ||
-          (name == FC.date_to.name && calendar.isHoliday(date_to))
+          (name == FC.date_to.name && calendar.isHoliday(date_to) && (!validation.isMaternityLeave()))
         ){
           return `Selected date is an announced Public Holiday. Please select another date.`;
         }
@@ -918,10 +930,30 @@ _form.disabled(FC.total_days);
 
 
 }
-
 </script>
+<style type="text/css">
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+        text-align: center;
+        display: none;
+    }
 
-
+    #loading-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
+</style>
 </section>
 
 

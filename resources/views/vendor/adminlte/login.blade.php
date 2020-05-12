@@ -38,7 +38,7 @@
         <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">{{ __('adminlte::adminlte.login_message') }}</p>
-                <form action="{{ $login_url }}" method="post">
+                <form id="login" action="{{ $login_url }}" method="post">
                     {{ csrf_field() }}
                     <div class="input-group mb-3">
                         <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
@@ -88,13 +88,53 @@
             </div>
         </div>
     </div>
+
+    <div id="loading">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Logging you in...if you are not redirected, <a href="https://eleave.infomina.com.my/eleave/public/">click here</a></figcaption>
+                </figure>
+            </div>
+</div>
 <style>
     .login-page {
 background: url("images/bgrd2.gif") no-repeat right bottom;
 background-size: 910.5px 500.3px;
 /* background-color: #ededed; */
 }
+
+#loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+        text-align: center;
+        display: none;
+    }
+
+    #loading-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
 </style>
+
+<script>
+document.getElementById("login").addEventListener('submit', functSubmit);
+var spinner = $('#loading');
+function functSubmit(event) {
+    spinner.show();
+}
+</script>
+
 @stop
 
 @section('adminlte_js')

@@ -36,7 +36,10 @@ class LeaveApplicationPolicy
 
     public function approve(User $user,LeaveApplication $leaveApplication)
     {
-        return $user->user_type == 'Admin' || $user->user_type == 'Authority' || $user->user_type == 'Management';
+        return ($user->user_type == 'Admin' || $user->user_type == 'Authority' || $user->user_type == 'Management') 
+                && (($leaveApplication->status == 'PENDING_1' && $user->id == $leaveApplication->approver_id_1) || 
+                    ($leaveApplication->status == 'PENDING_2' && $user->id == $leaveApplication->approver_id_2) ||
+                    ($leaveApplication->status == 'PENDING_3' && $user->id == $leaveApplication->approver_id_3));
     }
 
 }

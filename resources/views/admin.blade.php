@@ -39,6 +39,7 @@
         var calendar = new FullCalendar.Calendar(calendarEl, {
 
           defaultView: 'dayGridWeek',
+          locale: 'en-GB',
           plugins: [ 'interaction', 'dayGrid' ],
           header: {
             left: 'prevYear,prev,next,nextYear today',
