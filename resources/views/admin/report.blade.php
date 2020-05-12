@@ -12,6 +12,23 @@
         -webkit-transform: scale(1.5); /* Safari 3-8 */
         transform: scale
     }
+    #loading {
+        width: 100%; height: 100%; top: 0; left: 0; position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+    }
+    #loading-modal-status {
+        width: 100%; height: 100%; top: 0; left: 0; position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+    }
+    #loading-modal-history {
+        position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+    }
+    #loading-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
 </style>
 <div class="mt-2 col-md-12">
     <div class="card">
@@ -206,6 +223,15 @@
     </div>
 </div>
 
+<div id="loading">
+    <div id="loading-image">
+        <figure>
+            <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+            <figcaption>Hold on...</figcaption>
+        </figure>
+    </div>
+</div>
+
 <!-- Status Change -->
 <div class="modal fade" id="change_status_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -234,11 +260,20 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button form="change_status_form" type="submit" class="btn btn-primary">Save changes</button>
+            <button form="change_status_form" type="submit" class="btn btn-primary load-button">Save changes</button>
         </div>
+        </div>
+        <div id="loading-modal-status">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Hold on...</figcaption>
+                </figure>
+            </div>
         </div>
     </div>
 </div>
+
 
 <!-- View History -->
 <div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -268,11 +303,28 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
+        <div id="loading-modal-history">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Hold on...</figcaption>
+                </figure>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+
+$('#change_status_form').submit(function() {
+    var spinner = $('#loading-modal-status');
+    spinner.show();
+});
+
+$('#search_form').submit(function() {
+    var spinner = $('#loading');
+    spinner.show();
+});
 
 var route = "{{ url('reports/autocomplete') }}";
 $('#name').typeahead({
@@ -351,6 +403,9 @@ $(".use-this-status").click(function() {
 
 $(".use-this-history").click(function() {
 
+    var spinner = $('#loading-modal-history');
+    spinner.show();
+
     var row = $(this).closest("tr");    // Find the row
     var name = row.find(".user_name").html();   // Find the data
     var app_id = row.find(".leave_app_id").html(); 
@@ -392,6 +447,7 @@ $(".use-this-history").click(function() {
                 html += '<tr align="center"><td  colspan="4">No history found.</td></tr>';
             }
             $('#history_table').append(html);
+            spinner.hide();
         }
     })
 });
