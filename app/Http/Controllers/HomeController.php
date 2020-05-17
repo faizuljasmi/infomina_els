@@ -318,17 +318,29 @@ class HomeController extends Controller
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
-        $leaveApps = LeaveApplication::where(function ($query) use ($user) {
-            $query->where('status', 'PENDING_1')
-                ->where('approver_id_1', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'PENDING_2')
-                ->where('approver_id_2', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'PENDING_3')
-                ->where('approver_id_3', $user->id);
-        })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
+        if($user->user_type == 'Admin'){
+            //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
+            $leaveApps = LeaveApplication::where(function ($query) use ($user) {
+                $query->where('status', 'PENDING_1');
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_2');
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_3');
+            })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
+        }
+        else{
+            //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
+            $leaveApps = LeaveApplication::where(function ($query) use ($user) {
+                $query->where('status', 'PENDING_1')
+                    ->where('approver_id_1', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_2')
+                    ->where('approver_id_2', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'PENDING_3')
+                    ->where('approver_id_3', $user->id);
+            })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
+        }
 
         $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
 
@@ -370,7 +382,25 @@ class HomeController extends Controller
                 ->where('approver_id_3', $user->id);
         })->sortable(['updated_at'])->paginate(5, ['*'], 'history');
 
-
+        $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_1', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_1', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_2', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_2', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'APPROVED')
+                ->where('approver_id_3', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'CANCELLED')
+                ->where('approver_id_3', $user->id);
+        })->get();
 
         $holidays = Holiday::all();
         $all_dates = array();
@@ -388,6 +418,7 @@ class HomeController extends Controller
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
+        $events = array();
         foreach ($leaveApps as $la) {
 
             $startDate = new Carbon($la->date_from);
@@ -410,12 +441,29 @@ class HomeController extends Controller
                 $startDate->addDay();
             }
         }
+        $color = "";
+        foreach($allLeaveHist as $lh){
+            if($lh->status == "APPROVED"){
+                $color = "mediumseagreen";
+            }
+            else{
+                $color = "crimson";
+            }
+            $eventDetails = array(
+                'title' => $lh->user->name."\n".$lh->leaveType->name." (".$lh->apply_for.") "."\n".Carbon::parse($lh->date_from)->isoFormat('D/MM')."-".Carbon::parse($lh->date_to)->isoFormat('D/MM'),
+                'start' => $lh->date_from,
+                'description' => "LOL",
+                'end' => $lh->date_to,
+                'color' => $color
+            );
+            array_push($events , $eventDetails);
+        }
 
         //Get leave applications of same group
         $groupLeaveApps = collect([]);
         foreach ($allLeaveApps as $la) {
-            $groupIndex = ["_", "_two_", "_three_", "_four_", "_five_"];
 
+            $groupIndex = ["_", "_two_", "_three_", "_four_", "_five_"];
             $isUserLaGroupSameUserGroup = false;
             foreach ($groupIndex as $gI_1) {
                 foreach ($groupIndex as $gI_2) {
@@ -436,6 +484,17 @@ class HomeController extends Controller
             ) {
                 $groupLeaveApps->add($la);
             }
+            else if($user->user_type == "Management" && ($la->status == 'APPROVED')
+            && ($la->user_id != $user->id)){
+                $eventDetails = array(
+                    'title' => $la->user->name."\n".$la->leaveType->name."\n".Carbon::parse($la->date_from)->isoFormat('D/MM')."-".Carbon::parse($la->date_to)->isoFormat('D/MM'),
+                    'start' => $la->date_from,
+                    'description' => "LOL",
+                    'end' => $la->date_to,
+                    'color' => "mediumseagreen"
+                );
+                array_push($events , $eventDetails);
+            }
         }
 
         //Group user's group applications by months. Starting from the start of the week until end of year.
@@ -443,6 +502,8 @@ class HomeController extends Controller
             return Carbon::parse($val->date_from)->format('F');
         });
 
-        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays'));
+
+
+        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events'));
     }
 }
