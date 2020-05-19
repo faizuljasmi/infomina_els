@@ -182,7 +182,7 @@
                     </td>
                     <td align="center">
                         @if ($row->status == "APPROVED" )
-                            <button type="button" class="btn buttonStat btn-sm btn-success" disabled>Approved</button>
+                            <button type="button" class="btn buttonStat btn-sm btn-success " disabled>Approved</button>
                         @elseif ($row->status == "CANCELLED")
                             <button type="button" class="btn buttonStat btn-sm btn-warning" disabled>Cancelled</button>
                         @elseif ($row->status == "DENIED_1" || $row->status == "DENIED_2" || $row->status == "DENIED_3")
@@ -203,6 +203,21 @@
                                 <i class="fas fa-history"></i>
                             </button>
                         </span>
+                    </td>
+                    <td class="d-none approver">
+                        @if($row->status == 'PENDING_1')
+                            {{$row->authority_1_id}}
+                        @elseif($row->status == 'PENDING_2')
+                            {{$row->authority_2_id}}
+                        @elseif($row->status == 'PENDING_3')
+                            {{$row->authority_3_id}}
+                        @elseif($row->status == 'DENIED_1')
+                            {{$row->authority_1_id}}
+                        @elseif($row->status == 'DENIED_2')
+                            {{$row->authority_2_id}}
+                        @elseif($row->status == 'DENIED_3')
+                            {{$row->authority_3_id}}
+                        @endif
                     </td>
                     <td class="d-none user_leave_status">{{ $row->status }}</td>
                     <td class="d-none leave_app_id">{{ $row->leave_app_id }}</td>
@@ -247,6 +262,9 @@
                 <div class="mb-3">
                     <h6>Hi {{ $edited_by->name }}, you are about to edit leave application status for <b id="status_user_name"></b>.</h6>
                     <h6>Current Leave Status : <button id="status_leave_status" type="button" class="btn buttonStat btn-sm" disabled></button>
+                </div>
+                <div class="mb-3"> 
+                    <h6><span id="disp_name" class="d-none badge badge-warning"><b id="approver_name"></b>.</span><h6>
                 </div>
                 <select class="form-control mb-3" name="change_status" id="change_status">
                     <option value="" disabled selected>Change Leave Status</option>
@@ -385,6 +403,12 @@ $(".use-this-status").click(function() {
     var name = row.find(".user_name").html();   // Find the data
     var status = row.find(".user_leave_status").html(); 
     var app_id = row.find(".leave_app_id").html(); 
+    var approver_id = row.find(".approver").html();
+
+    $("#status_leave_status").removeClass("btn-primary");
+    $("#status_leave_status").removeClass("btn-danger");
+    $("#status_leave_status").removeClass("btn-success");
+    $("#status_leave_status").removeClass("btn-warning");
 
     if ( status == "PENDING_1" || status == "PENDING_2" || status == "PENDING_3" ) {
         $("#status_leave_status").html("In Progress").addClass("btn-primary");
@@ -398,6 +422,34 @@ $(".use-this-status").click(function() {
 
     $("#status_user_name").html(name); // Set back to HTML
     $("#status_app_id").val(app_id);
+
+    $("#approver_name").empty();
+    $("#disp_name").addClass("d-none");
+
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        method: 'POST',
+        url: '/load-approver',
+        dataType: 'json',
+        data: approver_id,
+        success: function (data) {
+            var content = data.approver_name.name;
+            console.log(content);
+            if ( status == "PENDING_1" || status == "PENDING_2" || status == "PENDING_3" ) {
+                $("#disp_name").removeClass("d-none");
+                $("#approver_name").html("Pending approval from "+content);
+            } else if ( status == "DENIED_1" || status == "DENIED_2" || status == "DENIED_3" ) {
+                $("#disp_name").removeClass("d-none");
+                $("#approver_name").html("Application rejected by "+content);
+            } 
+            // console.log(data.approver_name.name, "Masuk AJAX !!!");
+        }
+    })
 
 });
 

@@ -15,6 +15,10 @@ use App\User;
 use App\History;
 use App\LeaveType;
 use App\LeaveApplication;
+use App\LeaveBalance;
+use App\LeaveEarning;
+use App\TakenLeave;
+use App\ApprovalAuthority;
 
 class AdminController extends Controller
 {
@@ -23,7 +27,8 @@ class AdminController extends Controller
         $users = User::sortable()
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
-        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id')
+        ->join('approval_authorities', 'approval_authorities.user_id', '=', 'users.id')
+        ->select('users.*', 'leave_applications.*', 'approval_authorities.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id')
         ->paginate(15);
 
         $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')->count();
@@ -46,31 +51,109 @@ class AdminController extends Controller
 
         $edited_by = User::where('users.id', $current_user)
         ->first();
+
+        $approver_1 = ApprovalAuthority::join('users', 'users.id', '=', 'approval_authorities.authority_1_id')
+        ->select('users.name')->get();
+
+        // dd($approver_1);
         
-        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
+        
+        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by', 'approver_1'));
     }
 
     public function change_status(Request $request)
     {
         $new_status = $request->get('change_status');
-        // dd($new_status);
         $app_id = $request->get('status_app_id');
-        // dd($app_id);
         $status_remarks = $request->get('status_remarks');
+        
+        $leave_app = LeaveApplication::where('id', $app_id)
+        ->first();
+
+        $leave_bal = LeaveBalance::where('user_id', $leave_app->user_id)
+        ->where('leave_type_id', $leave_app->leave_type_id)
+        ->first();
+
+        $leave_earn = LeaveEarning::where('user_id', $leave_app->user_id)
+        ->where('leave_type_id', '12')
+        ->first();
+
+        $hosp_balance = LeaveBalance::where('user_id', $leave_app->user_id)
+        ->where('leave_type_id', '4')
+        ->first();
+
+        $annual_balance = LeaveBalance::where('user_id', $leave_app->user_id)
+        ->where('leave_type_id', '1') 
+        ->first();
+
+        $taken_leave = TakenLeave::where('user_id', $leave_app->user_id)
+        ->where('leave_type_id', $leave_app->leave_type_id)
+        ->first();
 
         if ( $new_status != "") {
-            $update_status = LeaveApplication::where('id', $app_id)
-            ->first();
-    
             if ( $new_status == "APPROVE" ) {
-                $update_status->status = "4";
+                $leave_app->status = "4"; 
+
+                if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
+                    $leave_bal->no_of_days -= $leave_app->total_days; // Deduct the days in leave balances
+                    $taken_leave->no_of_days += $leave_app->total_days; // Add days in leaves taken
+                } else {
+                    $leave_earn->no_of_days += $leave_app->total_days; // Add days in leave earning
+                    $annual_balance->no_of_days += $leave_app->total_days; // Also add days in annual leave balances
+                }
+
+                if ( $leave_app->leave_type_id == '3') { // If leave type is sick leave
+                    $hosp_balance->no_of_days -= $leave_app->total_days; // Deduct also in hospitalization leaves
+                }
+
+                if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
+                    $annual_balance->no_of_days -= $leave_app->total_days; // Deduct also in annual leaves
+                }
+
             } else if ( $new_status == "REJECT" ) {
-                $update_status->status = "7";
+
+                if ( $leave_app->status == "APPROVED" ) { // If existing status is approved
+                    
+                    if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
+                        $leave_bal->no_of_days += $leave_app->total_days; // Then add back the days to leave balances
+                        $taken_leave->no_of_days -= $leave_app->total_days; // Deduct days in leaves taken
+                    }
+                    
+                    if ( $leave_app->leave_type_id == '3') { // If leave type is sick leave
+                        $hosp_balance->no_of_days += $leave_app->total_days; // Add also in hospitalization leaves
+                    }
+
+                    if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
+                        $annual_balance->no_of_days += $leave_app->total_days; // Deduct also in annual leaves
+                    }
+                } 
+                $leave_app->status = "7";
+
             } else if ( $new_status == "CANCEL" ) {
-                $update_status->status = "8";
+
+                if ( $leave_app->status == "APPROVED" ) { // If existing status is approved
+
+                    if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
+                        $leave_bal->no_of_days += $leave_app->total_days; // Then add back the days to leave balances
+                        $taken_leave->no_of_days -= $leave_app->total_days; // Add days in leaves taken
+                    }
+
+                    if ( $leave_app->leave_type_id == '3') { // If leave type is sick leave
+                        $hosp_balance->no_of_days += $leave_app->total_days; // Add also in hospitalization leaves
+                    }
+
+                    if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
+                        $annual_balance->no_of_days += $leave_app->total_days; // Add also in annual leaves
+                    }
+                } 
+                $leave_app->status = "8";
             }
     
-            $update_status->save();
+            $leave_app->save();
+            $leave_bal->save();
+            $hosp_balance->save();
+            $annual_balance->save();
+            $taken_leave->save();
             
             $hist = new History;
             $hist->leave_application_id = $app_id;
@@ -89,6 +172,16 @@ class AdminController extends Controller
         }
 
         return back();
+    }
+
+    public function view_approver(Request $request) 
+    {
+        $getdata = $request->json()->all();
+        $app_id = $getdata[0];
+
+        $approver_name = User::where('users.id', $app_id)->select('users.name')->first();
+        
+        return response()->json(['approver_name' => $approver_name]);
     }
 
     public function view_history(Request $request) 
@@ -144,7 +237,8 @@ class AdminController extends Controller
         $query = User::sortable()
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
-        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id');
+        ->join('approval_authorities', 'approval_authorities.user_id', '=', 'users.id')
+        ->select('users.*', 'leave_applications.*', 'approval_authorities.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id');
 
         if($request->get('name') != '') {
             $query->where('users.name','like','%'.$search_name.'%');
@@ -156,7 +250,7 @@ class AdminController extends Controller
         }
 
         if($request->get('leave_type') != '') {
-            $query->where('leave_applications.leave_type_id','like','%'.$leave_type.'%');
+            $query->where('leave_applications.leave_type_id', $leave_type);
         }
 
         if($request->get('leave_status') != '') {
