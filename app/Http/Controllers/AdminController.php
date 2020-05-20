@@ -46,7 +46,7 @@ class AdminController extends Controller
         ->count();
 
         $count_all = LeaveApplication::count();
-        
+
         $current_user = auth()->user()->id;
 
         $edited_by = User::where('users.id', $current_user)
@@ -56,9 +56,9 @@ class AdminController extends Controller
         ->select('users.name')->get();
 
         // dd($approver_1);
-        
-        
-        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
+
+
+        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by', 'approver_1'));
     }
 
     public function change_status(Request $request)
@@ -66,7 +66,7 @@ class AdminController extends Controller
         $new_status = $request->get('change_status');
         $app_id = $request->get('status_app_id');
         $status_remarks = $request->get('status_remarks');
-        
+
         $leave_app = LeaveApplication::where('id', $app_id)
         ->first();
 
@@ -83,7 +83,7 @@ class AdminController extends Controller
         ->first();
 
         $annual_balance = LeaveBalance::where('user_id', $leave_app->user_id)
-        ->where('leave_type_id', '1') 
+        ->where('leave_type_id', '1')
         ->first();
 
         $taken_leave = TakenLeave::where('user_id', $leave_app->user_id)
@@ -92,7 +92,7 @@ class AdminController extends Controller
 
         if ( $new_status != "") {
             if ( $new_status == "APPROVE" ) {
-                $leave_app->status = "4"; 
+                $leave_app->status = "4";
 
                 if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
                     $leave_bal->no_of_days -= $leave_app->total_days; // Deduct the days in leave balances
@@ -113,12 +113,12 @@ class AdminController extends Controller
             } else if ( $new_status == "REJECT" ) {
 
                 if ( $leave_app->status == "APPROVED" ) { // If existing status is approved
-                    
+
                     if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
                         $leave_bal->no_of_days += $leave_app->total_days; // Then add back the days to leave balances
                         $taken_leave->no_of_days -= $leave_app->total_days; // Deduct days in leaves taken
                     }
-                    
+
                     if ( $leave_app->leave_type_id == '3') { // If leave type is sick leave
                         $hosp_balance->no_of_days += $leave_app->total_days; // Add also in hospitalization leaves
                     }
@@ -126,7 +126,7 @@ class AdminController extends Controller
                     if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
                         $annual_balance->no_of_days += $leave_app->total_days; // Add also in annual leaves
                     }
-                } 
+                }
                 $leave_app->status = "7";
 
             } else if ( $new_status == "CANCEL" ) {
@@ -145,21 +145,21 @@ class AdminController extends Controller
                     if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
                         $annual_balance->no_of_days += $leave_app->total_days; // Add also in annual leaves
                     }
-                } 
+                }
                 $leave_app->status = "8";
             }
-    
+
             $leave_app->save();
             $leave_bal->save();
             $hosp_balance->save();
             $annual_balance->save();
             $taken_leave->save();
-            
+
             $hist = new History;
             $hist->leave_application_id = $app_id;
             $hist->user_id = auth()->user()->id;
             $hist->remarks = $status_remarks;
-            
+
             if ( $new_status == "APPROVE" ) {
                 $hist->action = "Approved";
             } else if ( $new_status == "REJECT" ) {
@@ -174,17 +174,17 @@ class AdminController extends Controller
         return back();
     }
 
-    public function view_approver(Request $request) 
+    public function view_approver(Request $request)
     {
         $getdata = $request->json()->all();
         $app_id = $getdata[0];
 
         $approver_name = User::where('users.id', $app_id)->select('users.name')->first();
-        
+
         return response()->json(['approver_name' => $approver_name]);
     }
 
-    public function view_history(Request $request) 
+    public function view_history(Request $request)
     {
         $getdata = $request->json()->all();
         $app_id = $getdata[0];
@@ -200,10 +200,10 @@ class AdminController extends Controller
         $search_name = $request->get('name');
 
         $result = User::where('users.name','like','%'.$search_name.'%')->get();
-        
+
         return response()->json($result);
-    } 
-    
+    }
+
 
     public function search(Request $request)
     {
@@ -271,7 +271,7 @@ class AdminController extends Controller
 
         $users = $query->paginate(15);
 
-        return view('admin/report')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status', 
+        return view('admin/report')->with(compact('users', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status',
         'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
     }
 
