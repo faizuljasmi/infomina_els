@@ -56,15 +56,9 @@ class AdminController extends Controller
         ->select('users.name')->get();
 
         // dd($approver_1);
-<<<<<<< HEAD
-        
-        
-        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
-=======
 
 
         return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by', 'approver_1'));
->>>>>>> 7fbcd2991b40279b14f874f6ab08d789ba5e95a6
     }
 
     public function change_status(Request $request)

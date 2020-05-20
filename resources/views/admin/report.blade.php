@@ -468,11 +468,7 @@ $(".use-this-status").click(function() {
                 } else if ( status == "DENIED_3" ) {
                     $("#approver_name").html("Application rejected by "+content+" ( LEVEL 3 )");
                 }
-<<<<<<< HEAD
-            } 
-=======
             }
->>>>>>> 7fbcd2991b40279b14f874f6ab08d789ba5e95a6
             loader.addClass("d-none");
             // console.log(data.approver_name.name, "Masuk AJAX !!!");
         }
