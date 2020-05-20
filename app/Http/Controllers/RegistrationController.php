@@ -157,12 +157,15 @@ class RegistrationController extends Controller
         return view('user.profile')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist'));
     }
 
-    public function deactivate(User $user)
+      public function deactivate(User $user)
     {
         $user->status = 'Inactive';
+        $user_email = $user->email;
+        $user->email = "inactive.".$user_email;
         $user->update();
         return redirect()->route('user_create')->with('message', 'User has been deactivated');
     }
+	
     public function destroy(User $user)
     {
         $user->delete();
@@ -171,6 +174,7 @@ class RegistrationController extends Controller
 
     public function search(Request $request)
     {
+	$user = auth()->user();
         $search = $request->get('search');
         //dd($search);
         $activeUsers = User::where('status','Active')->where('name','like','%'.$search.'%')->paginate(15,['*'],'active');
@@ -183,6 +187,6 @@ class RegistrationController extends Controller
         //dd($empTypes);
         $empGroups = EmpGroup::orderBy('id', 'ASC')->get();
 
-        return view('registration.create', ['users' => $activeUsers])->with(compact('activeUsers','inactiveUsers','empTypes', 'empGroups'));
+        return view('registration.create', ['users' => $activeUsers])->with(compact('user','activeUsers','inactiveUsers','empTypes', 'empGroups'));
     }
 }

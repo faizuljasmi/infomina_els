@@ -58,6 +58,7 @@ Route::middleware('can:employee-data')->group(function(){
 
      //Admin Control
      Route::post('load-history','AdminController@view_history')->middleware('auth');
+     Route::post('load-approver','AdminController@view_approver')->middleware('auth');
      Route::get('reports', 'AdminController@index')->name('excel_transfer')->middleware('auth');
      Route::get('reports/search', 'AdminController@search')->name('search')->middleware('auth');
      Route::get('reports/change-status', 'AdminController@change_status')->name('change_status')->middleware('auth');

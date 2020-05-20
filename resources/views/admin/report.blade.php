@@ -12,6 +12,23 @@
         -webkit-transform: scale(1.5); /* Safari 3-8 */
         transform: scale
     }
+    #loading {
+        width: 100%; height: 100%; top: 0; left: 0; position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+    }
+    #loading-modal-status {
+        width: 100%; height: 100%; top: 0; left: 0; position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+    }
+    #loading-modal-history {
+        position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+    }
+    #loading-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
 </style>
 <div class="mt-2 col-md-12">
     <div class="card">
@@ -131,6 +148,7 @@
                 </div>
                 @if ($users->count() > 0)
                     <h6><strong>Displaying {{$users->count()}} out of {{$users->total()}} leave applications.</strong></h6>
+                    <h6><span class="badge badge-info">{{ isset($leave_type)? $leave_type: '' }}</span></h6>
                 @endif
                 <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
@@ -145,7 +163,7 @@
                     <th>Reason</th>
                     <th>Status</th>
                     <th width="10%">Apply Date</th>
-                    <th>Action</th>
+                    <th width="7%">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -165,7 +183,7 @@
                     </td>
                     <td align="center">
                         @if ($row->status == "APPROVED" )
-                            <button type="button" class="btn buttonStat btn-sm btn-success" disabled>Approved</button>
+                            <button type="button" class="btn buttonStat btn-sm btn-success " disabled>Approved</button>
                         @elseif ($row->status == "CANCELLED")
                             <button type="button" class="btn buttonStat btn-sm btn-warning" disabled>Cancelled</button>
                         @elseif ($row->status == "DENIED_1" || $row->status == "DENIED_2" || $row->status == "DENIED_3")
@@ -187,6 +205,21 @@
                             </button>
                         </span>
                     </td>
+                    <td class="d-none approver">
+                        @if($row->status == 'PENDING_1')
+                            {{$row->authority_1_id}}
+                        @elseif($row->status == 'PENDING_2')
+                            {{$row->authority_2_id}}
+                        @elseif($row->status == 'PENDING_3')
+                            {{$row->authority_3_id}}
+                        @elseif($row->status == 'DENIED_1')
+                            {{$row->authority_1_id}}
+                        @elseif($row->status == 'DENIED_2')
+                            {{$row->authority_2_id}}
+                        @elseif($row->status == 'DENIED_3')
+                            {{$row->authority_3_id}}
+                        @endif
+                    </td>
                     <td class="d-none user_leave_status">{{ $row->status }}</td>
                     <td class="d-none leave_app_id">{{ $row->leave_app_id }}</td>
                 </tr>
@@ -206,6 +239,15 @@
     </div>
 </div>
 
+<div id="loading">
+    <div id="loading-image">
+        <figure>
+            <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+            <figcaption>Hold on...</figcaption>
+        </figure>
+    </div>
+</div>
+
 <!-- Status Change -->
 <div class="modal fade" id="change_status_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -222,6 +264,10 @@
                     <h6>Hi {{ $edited_by->name }}, you are about to edit leave application status for <b id="status_user_name"></b>.</h6>
                     <h6>Current Leave Status : <button id="status_leave_status" type="button" class="btn buttonStat btn-sm" disabled></button>
                 </div>
+                <div class="mb-3">
+                    <h6><span id="load_data" class="d-none badge badge-warning">Fetching information...</b></span><h6>
+                    <h6><span id="disp_name" class="d-none badge badge-warning"><b id="approver_name"></b></span><h6>
+                </div>
                 <select class="form-control mb-3" name="change_status" id="change_status">
                     <option value="" disabled selected>Change Leave Status</option>
                     <option value="APPROVE">Approve</option>
@@ -234,11 +280,20 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button form="change_status_form" type="submit" class="btn btn-primary">Save changes</button>
+            <button form="change_status_form" type="submit" class="btn btn-primary load-button">Save changes</button>
         </div>
+        </div>
+        <div id="loading-modal-status">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Hold on...</figcaption>
+                </figure>
+            </div>
         </div>
     </div>
 </div>
+
 
 <!-- View History -->
 <div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -268,11 +323,28 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
+        <div id="loading-modal-history">
+            <div id="loading-image">
+                <figure>
+                    <img src="{{url('images/loader.gif')}}" alt="Loading..." />
+                    <figcaption>Hold on...</figcaption>
+                </figure>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+
+$('#change_status_form').submit(function() {
+    var spinner = $('#loading-modal-status');
+    spinner.show();
+});
+
+$('#search_form').submit(function() {
+    var spinner = $('#loading');
+    spinner.show();
+});
 
 var route = "{{ url('reports/autocomplete') }}";
 $('#name').typeahead({
@@ -333,6 +405,20 @@ $(".use-this-status").click(function() {
     var name = row.find(".user_name").html();   // Find the data
     var status = row.find(".user_leave_status").html(); 
     var app_id = row.find(".leave_app_id").html(); 
+    var approver_id = row.find(".approver").html();
+
+    var loader = $('#load_data');
+
+    if ( status == "APPROVED" || status == "CANCELLED") {
+        console.log("test");
+    } else {
+        loader.removeClass("d-none");
+    }
+
+    $("#status_leave_status").removeClass("btn-primary");
+    $("#status_leave_status").removeClass("btn-danger");
+    $("#status_leave_status").removeClass("btn-success");
+    $("#status_leave_status").removeClass("btn-warning");
 
     if ( status == "PENDING_1" || status == "PENDING_2" || status == "PENDING_3" ) {
         $("#status_leave_status").html("In Progress").addClass("btn-primary");
@@ -347,9 +433,53 @@ $(".use-this-status").click(function() {
     $("#status_user_name").html(name); // Set back to HTML
     $("#status_app_id").val(app_id);
 
+    $("#approver_name").empty();
+    $("#disp_name").addClass("d-none");
+
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        method: 'POST',
+        url: '/eleave/public/load-approver',
+        dataType: 'json',
+        data: approver_id,
+        success: function (data) {
+            var content = data.approver_name.name;
+            console.log(content);
+            if ( status == "PENDING_1" || status == "PENDING_2" || status == "PENDING_3" ) {
+                $("#disp_name").removeClass("d-none")
+                if ( status == "PENDING_1" ) {
+                    $("#approver_name").html("Pending approval from "+content+" ( LEVEL 1 )");
+                } else if ( status == "PENDING_2" ) {
+                    $("#approver_name").html("Pending approval from "+content+" ( LEVEL 2 )");
+                } else if ( status == "PENDING_3" ) {
+                    $("#approver_name").html("Pending approval from "+content+" ( LEVEL 3 )");
+                }
+            } else if ( status == "DENIED_1" || status == "DENIED_2" || status == "DENIED_3" ) {
+                $("#disp_name").removeClass("d-none");
+                if ( status == "DENIED_1" ) {
+                    $("#approver_name").html("Application rejected by "+content+" ( LEVEL 1 )");
+                } else if ( status == "DENIED_2" ) {
+                    $("#approver_name").html("Application rejected by "+content+" ( LEVEL 2 )");
+                } else if ( status == "DENIED_3" ) {
+                    $("#approver_name").html("Application rejected by "+content+" ( LEVEL 3 )");
+                }
+            } 
+            loader.addClass("d-none");
+            // console.log(data.approver_name.name, "Masuk AJAX !!!");
+        }
+    })
+
 });
 
 $(".use-this-history").click(function() {
+
+    var spinner = $('#loading-modal-history');
+    spinner.show();
 
     var row = $(this).closest("tr");    // Find the row
     var name = row.find(".user_name").html();   // Find the data
@@ -367,7 +497,7 @@ $(".use-this-history").click(function() {
 
     $.ajax({
         method: 'POST',
-        url: '/load-history',
+        url: '/eleave/public/load-history',
         dataType: 'json',
         data: app_id,
         success: function (data) {
@@ -392,6 +522,7 @@ $(".use-this-history").click(function() {
                 html += '<tr align="center"><td  colspan="4">No history found.</td></tr>';
             }
             $('#history_table').append(html);
+            spinner.hide();
         }
     })
 });

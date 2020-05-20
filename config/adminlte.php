@@ -194,7 +194,7 @@ return [
             'text' => 'Dashboard',
             'url'  => '/admin',
             'icon' => 'fas fa-fw fa-user-shield',
-            'can' => 'admin-dashboard'
+            'can' => 'management-dashboard'
         ],
         [
             'text' => 'Dashboard (Authority)',
