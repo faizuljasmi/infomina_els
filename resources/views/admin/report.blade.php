@@ -444,7 +444,7 @@ $(".use-this-status").click(function() {
 
     $.ajax({
         method: 'POST',
-        url: '/eleave/public/load-approver',
+        url: '/load-approver',
         dataType: 'json',
         data: approver_id,
         success: function (data) {
@@ -497,7 +497,7 @@ $(".use-this-history").click(function() {
 
     $.ajax({
         method: 'POST',
-        url: '/eleave/public/load-history',
+        url: '/load-history',
         dataType: 'json',
         data: app_id,
         success: function (data) {
