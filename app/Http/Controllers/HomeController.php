@@ -161,7 +161,7 @@ class HomeController extends Controller
                     ->where('approver_id_3', $user->id);
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
         }
-        
+
 
         $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
 
@@ -300,16 +300,16 @@ class HomeController extends Controller
         // Remarks on calander
         $allremarks = CalanderRemark::orderBy('id', 'ASC')->get();
 
-        // foreach($allremarks as $ar){
-        //     $eventDetails = array(
-        //         'title' => "Remarks by ".$ar->remark_by." :\n".$ar->remark_text, 
-        //         'start' => $ar->remark_date_from,
-        //         'description' => "LOL",
-        //         'end' => $ar->remark_date_to,
-        //         'color' => "lightblue"
-        //     );
-        //     array_push($events , $eventDetails);
-        // }
+        foreach($allremarks as $ar){
+            $eventDetails = array(
+                'title' => "Remarks by ".$ar->remark_by." :\n".$ar->remark_text,
+                'start' => $ar->remark_date_from,
+                'description' => "LOL",
+                'end' => $ar->remark_date_to,
+                'color' => "lightblue"
+            );
+            array_push($events , $eventDetails);
+        }
 
         return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events','allremarks'));
     }
