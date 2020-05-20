@@ -148,6 +148,7 @@
                 </div>
                 @if ($users->count() > 0)
                     <h6><strong>Displaying {{$users->count()}} out of {{$users->total()}} leave applications.</strong></h6>
+                    <h6><span class="badge badge-info">{{ isset($leave_type)? $leave_type: '' }}</span></h6>
                 @endif
                 <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
@@ -162,7 +163,7 @@
                     <th>Reason</th>
                     <th>Status</th>
                     <th width="10%">Apply Date</th>
-                    <th>Action</th>
+                    <th width="7%">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -263,8 +264,9 @@
                     <h6>Hi {{ $edited_by->name }}, you are about to edit leave application status for <b id="status_user_name"></b>.</h6>
                     <h6>Current Leave Status : <button id="status_leave_status" type="button" class="btn buttonStat btn-sm" disabled></button>
                 </div>
-                <div class="mb-3"> 
-                    <h6><span id="disp_name" class="d-none badge badge-warning"><b id="approver_name"></b>.</span><h6>
+                <div class="mb-3">
+                    <h6><span id="load_data" class="d-none badge badge-warning">Fetching information...</b></span><h6>
+                    <h6><span id="disp_name" class="d-none badge badge-warning"><b id="approver_name"></b></span><h6>
                 </div>
                 <select class="form-control mb-3" name="change_status" id="change_status">
                     <option value="" disabled selected>Change Leave Status</option>
@@ -405,6 +407,14 @@ $(".use-this-status").click(function() {
     var app_id = row.find(".leave_app_id").html(); 
     var approver_id = row.find(".approver").html();
 
+    var loader = $('#load_data');
+
+    if ( status == "APPROVED" || status == "CANCELLED") {
+        console.log("test");
+    } else {
+        loader.removeClass("d-none");
+    }
+
     $("#status_leave_status").removeClass("btn-primary");
     $("#status_leave_status").removeClass("btn-danger");
     $("#status_leave_status").removeClass("btn-success");
@@ -441,12 +451,25 @@ $(".use-this-status").click(function() {
             var content = data.approver_name.name;
             console.log(content);
             if ( status == "PENDING_1" || status == "PENDING_2" || status == "PENDING_3" ) {
-                $("#disp_name").removeClass("d-none");
-                $("#approver_name").html("Pending approval from "+content);
+                $("#disp_name").removeClass("d-none")
+                if ( status == "PENDING_1" ) {
+                    $("#approver_name").html("Pending approval from "+content+" ( LEVEL 1 )");
+                } else if ( status == "PENDING_2" ) {
+                    $("#approver_name").html("Pending approval from "+content+" ( LEVEL 2 )");
+                } else if ( status == "PENDING_3" ) {
+                    $("#approver_name").html("Pending approval from "+content+" ( LEVEL 3 )");
+                }
             } else if ( status == "DENIED_1" || status == "DENIED_2" || status == "DENIED_3" ) {
                 $("#disp_name").removeClass("d-none");
-                $("#approver_name").html("Application rejected by "+content);
+                if ( status == "DENIED_1" ) {
+                    $("#approver_name").html("Application rejected by "+content+" ( LEVEL 1 )");
+                } else if ( status == "DENIED_2" ) {
+                    $("#approver_name").html("Application rejected by "+content+" ( LEVEL 2 )");
+                } else if ( status == "DENIED_3" ) {
+                    $("#approver_name").html("Application rejected by "+content+" ( LEVEL 3 )");
+                }
             } 
+            loader.addClass("d-none");
             // console.log(data.approver_name.name, "Masuk AJAX !!!");
         }
     })

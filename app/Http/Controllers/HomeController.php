@@ -22,6 +22,7 @@ use App\BroughtForwardLeave;
 use App\LeaveBalance;
 use App\TakenLeave;
 use App\Holiday;
+use App\CalanderRemark;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -305,9 +306,21 @@ class HomeController extends Controller
             return Carbon::parse($val->date_from)->format('F');
         });
 
+        // Remarks on calander
+        $allremarks = CalanderRemark::orderBy('id', 'ASC')->get();
 
+        // foreach($allremarks as $ar){
+        //     $eventDetails = array(
+        //         'title' => "Remarks by ".$ar->remark_by." :\n".$ar->remark_text, 
+        //         'start' => $ar->remark_date_from,
+        //         'description' => "LOL",
+        //         'end' => $ar->remark_date_to,
+        //         'color' => "lightblue"
+        //     );
+        //     array_push($events , $eventDetails);
+        // }
 
-        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events'));
+        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events','allremarks'));
     }
 
     public function search(Request $request)
@@ -502,8 +515,30 @@ class HomeController extends Controller
             return Carbon::parse($val->date_from)->format('F');
         });
 
-
-
         return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events'));
+    }
+
+    public function remarks(Request $request)
+    {
+        $remark_date_from = $request->get('remark_date_from');
+        $remark_date_to = $request->get('remark_date_to');
+        $remark_text = $request->get('remark_text');
+
+        $remark = new CalanderRemark;
+        $remark->remark_date_from = $remark_date_from;
+        $remark->remark_date_to = $remark_date_to;
+        $remark->remark_text = $remark_text;
+        $remark->remark_by = auth()->user()->name;
+        $remark->save();
+
+        return back();
+    }
+
+    public function delete_remarks(Request $request)
+    {
+        $delete_id = $request->input('id');
+        $remarks_delete = CalanderRemark::whereIn('id', $delete_id)->delete();
+
+        return $delete_id;
     }
 }

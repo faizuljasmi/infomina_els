@@ -58,7 +58,7 @@ class AdminController extends Controller
         // dd($approver_1);
         
         
-        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by', 'approver_1'));
+        return view('admin/report')->with(compact('users', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'count_all', 'edited_by'));
     }
 
     public function change_status(Request $request)
@@ -124,7 +124,7 @@ class AdminController extends Controller
                     }
 
                     if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
-                        $annual_balance->no_of_days += $leave_app->total_days; // Deduct also in annual leaves
+                        $annual_balance->no_of_days += $leave_app->total_days; // Add also in annual leaves
                     }
                 } 
                 $leave_app->status = "7";

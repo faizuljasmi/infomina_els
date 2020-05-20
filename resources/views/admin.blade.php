@@ -3,6 +3,7 @@
 @section('title', 'Infomina/ELS')
 
 @section('content_header')
+
 @if(session()->has('message'))
 <div class="alert alert-success alert-dismissible fade show" role="alert">
     <i class="icon fa fa-check"></i>
@@ -36,6 +37,7 @@
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var evnts = {!! json_encode($events, JSON_HEX_TAG) !!};
+        console.log(evnts);
         var calendar = new FullCalendar.Calendar(calendarEl, {
 
           defaultView: 'dayGridWeek',
@@ -669,6 +671,12 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
+                    <div>
+                        <span>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#remark_modal">Add Remarks</button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#view_modal">View Remarks</button>
+                        </span>
+                    </div>
                     <div id='calendar'></div>
                 </div>
                     <!-- /.card-body -->
@@ -770,12 +778,92 @@
         <!-- /.row -->
     </div>
     <!--/. container-fluid -->
+    
+    
+    <!-- Remark Modal -->
+    <div class="modal fade" id="remark_modal" style="z-index:9999999;"  role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><h5><b>New Remark</b></h5></div>
+                <div class="modal-body">
+                <form id="remark_form" action="{{ route('add_remark') }}" method="get">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar-day"></i>
+                            </span>
+                        </div>
+                        <input placeholder="Select Date From" class="form-control" type="text" onfocus="(this.type='date')" name="remark_date_from" id="remark_date_from">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar-day"></i>
+                            </span>
+                        </div>
+                        <input placeholder="Select Date To" class="form-control" type="text" onfocus="(this.type='date')" name="remark_date_to" id="remark_date_to">
+                    </div>
+                    <div class="d-flex justify-content-end mb-3">
+                        <button id="this_date" type="button" class="btn btn-success">Remark for today</button>
+                    </div>
+                    <div class="input-group mb-3">
+                        <textarea class="form-control" name="remark_text" id="remark_text" placeholder="Add Remarks"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Remark Modal -->
+    <div class="modal fade" id="view_modal" style="z-index:9999999;"  role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5><b>All Remarks</b></h5></div>
+                <div class="modal-body">
+                    <table class="table table-striped table-bordered" id="remark_table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Check</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Date From</th>
+                                <th scope="col">Date To</th>
+                                <th scope="col">Remark</th>
+                                <th scope="col">Remark By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($allremarks as $ar)
+                            <tr>
+                                <th><input type="checkbox" name="remark_checkbox[]" class="remark_checkbox" value="{{$ar->id}}"></th>
+                                <th>{{$ar->id}}</th>
+                                <td>{{$ar->remark_date_from}}</td>
+                                <td>{{$ar->remark_date_to}}</td>
+                                <td>{{$ar->remark_text}}</td>
+                                <td>{{$ar->remark_by}}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        <button type="button" name="bulk_delete" id="bulk_delete">Delete</button>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 <script>
     $(document).ready(HolidayCreate);
 
-  function HolidayCreate() {
+    function HolidayCreate() {
 
     var dates = {!!json_encode($all_dates, JSON_HEX_TAG)!!};
     var applied = {!!json_encode($applied_dates, JSON_HEX_TAG)!!};
@@ -904,5 +992,50 @@
 
 
   }
+
+$("#this_date").click(function() {
+    var today = new Date();
+
+    var day = today.getDate();
+    var month = today.getMonth()+1;
+    var year = today.getFullYear()
+
+    var output = year + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
+
+    $("#remark_date_from").val(output);
+    $("#remark_date_to").val(output);
+
+    console.log(output);
+});
+
+$("#bulk_delete").click(function() {
+    var id = [];
+
+    if(confirm("Are you sure you want to remove this remark(s)?"))
+    {
+        $('.remark_checkbox:checked').each(function(){
+            id.push($(this).val());
+            console.log(id, "<<<");
+        });
+        if(id.length > 0)
+        {
+            $.ajax({
+                url:"/delete-remarks",
+                method:"GET",
+                data:{id:id},
+                success:function(data)
+                {
+                    console.log(data);
+                    location.reload();
+                }
+            });
+        }
+        else
+        {
+            alert("Please select atleast one checkbox");
+        }
+    }
+});
+
 </script>
 @stop
