@@ -189,19 +189,10 @@ class HomeController extends Controller
             $query->where('status', 'APPROVED')
                 ->where('approver_id_1', $user->id);
         })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'CANCELLED')
-                ->where('approver_id_1', $user->id);
-        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('approver_id_2', $user->id);
         })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'CANCELLED')
-                ->where('approver_id_2', $user->id);
-        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
-                ->where('approver_id_3', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'CANCELLED')
                 ->where('approver_id_3', $user->id);
         })->get();
 

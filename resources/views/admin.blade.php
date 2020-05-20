@@ -162,7 +162,7 @@
                                             <th scope="col">To @sortablelink('date_to','',[])</th>
                                             <th scope="col">Duration @sortablelink('total_days','',[])</th>
                                             <th scope="col">Submitted @sortablelink('created_at','',[])</th>
-                                            <th scope="col">Status</th>
+                                            <th scope="col">Status @sortablelink('status','',[])</th>
                                             <th scope="col">Actions</th>
                                         </tr>
                                     </thead>

@@ -178,7 +178,7 @@
                     <td>{{ $row->date_to }}</td>
                     <td>{{ $row->date_resume }}</td>
                     <td align="center">
-                        <button type="button" class="btn btn-sm btn-info" data-toggle="popover" data-trigger="focus" title="Details" 
+                        <button type="button" class="btn btn-sm btn-info" data-toggle="popover" data-trigger="focus" title="Details"
                         data-content="{{ $row->reason }}">View</button>
                     </td>
                     <td align="center">
@@ -365,7 +365,7 @@ function drawChart() {
 
     var approve = $('#approve').val();
     var approve_no = parseInt(approve);
-    
+
     var reject = $('#reject').val();
     var reject_no = parseInt(reject);
 
@@ -403,8 +403,8 @@ $(".use-this-status").click(function() {
 
     var row = $(this).closest("tr");    // Find the row
     var name = row.find(".user_name").html();   // Find the data
-    var status = row.find(".user_leave_status").html(); 
-    var app_id = row.find(".leave_app_id").html(); 
+    var status = row.find(".user_leave_status").html();
+    var app_id = row.find(".leave_app_id").html();
     var approver_id = row.find(".approver").html();
 
     var loader = $('#load_data');
@@ -468,7 +468,11 @@ $(".use-this-status").click(function() {
                 } else if ( status == "DENIED_3" ) {
                     $("#approver_name").html("Application rejected by "+content+" ( LEVEL 3 )");
                 }
+<<<<<<< HEAD
             } 
+=======
+            }
+>>>>>>> 7fbcd2991b40279b14f874f6ab08d789ba5e95a6
             loader.addClass("d-none");
             // console.log(data.approver_name.name, "Masuk AJAX !!!");
         }
@@ -483,7 +487,7 @@ $(".use-this-history").click(function() {
 
     var row = $(this).closest("tr");    // Find the row
     var name = row.find(".user_name").html();   // Find the data
-    var app_id = row.find(".leave_app_id").html(); 
+    var app_id = row.find(".leave_app_id").html();
 
     $("#history_name").html(name);
 

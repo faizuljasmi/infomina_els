@@ -29,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+         //
         Gate::define('admin-dashboard', function($user){
             return $user->user_type == 'Admin' || $user->user_type == 'Management' || $user->user_type == 'Authority';
         });
@@ -39,7 +39,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('management-dashboard', function($user){
-            return  $user->user_type == 'Management';
+            return  $user->user_type == 'Management' || $user->user_type == 'Admin';
         });
 
         Gate::define('employee-data', function($user){
