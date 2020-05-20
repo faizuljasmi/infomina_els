@@ -893,7 +893,13 @@ class LeaveApplicationController extends Controller
         $when = now()->addMinutes(5);
         $leaveApplication->user->notify((new CancelApplication($leaveApplication))->delay($when));
 
-        return redirect()->to('/admin')->with('message', 'Leave application cancelled succesfully');
+        $user = auth()->user();
+        if($user->user_type == "Employee"){
+        return redirect()->to('/home')->with('message', 'Leave application cancelled succesfully');
+        }
+        else{
+         return redirect()->to('/admin')->with('message', 'Leave application cancelled succesfully');
+        }
     }
 
     public function applyFor(User $user){
