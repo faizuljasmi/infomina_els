@@ -34,8 +34,9 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 Route::get('/admin','HomeController@admin')->name('admin')->middleware('can:admin-dashboard');
 Route::get('/admin/search', 'HomeController@search')->name('admin__leave_search')->middleware('auth');
-Route::get('/admin/add-remark', 'HomeController@remarks')->name('add_remark')->middleware('auth'); // Added
+Route::get('/admin/add-remark', 'HomeController@store_remarks')->name('add_remark')->middleware('auth'); // Added
 Route::get('/delete-remarks', 'HomeController@delete_remarks')->middleware('auth'); // Added
+Route::get('/load-remarks', 'HomeController@load_remarks')->middleware('auth'); // Added
 
 Route::get('/myprofile','UserController@index')->name('view_profile')->middleware('auth');
 Route::get('/myprofile/edit','UserController@edit')->name('edit_profile')->middleware('auth');

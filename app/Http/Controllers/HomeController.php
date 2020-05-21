@@ -509,26 +509,73 @@ class HomeController extends Controller
         return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events'));
     }
 
-    public function remarks(Request $request)
+    public function store_remarks(Request $request)
     {
         $remark_date_from = $request->get('remark_date_from');
         $remark_date_to = $request->get('remark_date_to');
         $remark_text = $request->get('remark_text');
 
-        $remark = new CalanderRemark;
-        $remark->remark_date_from = $remark_date_from;
-        $remark->remark_date_to = $remark_date_to;
-        $remark->remark_text = $remark_text;
-        $remark->remark_by = auth()->user()->name;
-        $remark->save();
+        if ( $remark_date_from != null && $remark_date_to != null ){
+            $remark = new CalanderRemark;
+            $remark->remark_date_from = $remark_date_from;
+            $remark->remark_date_to = $remark_date_to;
+            $remark->remark_text = $remark_text;
+            $remark->remark_by = auth()->user()->name;
+            $remark->save();
+        }
 
         return back();
+    }
+
+    function load_remarks(Request $request)
+    {
+        $delete_id = $request->input('id');
+        $remarks_delete = CalanderRemark::where('id', $delete_id)->delete();
+
+        if($request->ajax())
+        {
+            $output = '';
+            $query = $request->get('query');
+            if($query != '') {
+                $data = CalanderRemark::orderBy('id', 'DESC')
+                    ->where('remark_date_from', 'like', '%'.$query.'%')
+                    ->orWhere('remark_date_to', 'like', '%'.$query.'%')
+                    ->orWhere('remark_text', 'like', '%'.$query.'%')
+                    ->orWhere('remark_by', 'like', '%'.$query.'%')
+                    ->get();
+            } else {
+                $data = CalanderRemark::orderBy('id', 'DESC')->get();
+            }
+            $total_row = $data->count();
+            if($total_row > 0) {
+                foreach($data as $row) {
+                    $output .= '
+                    <tr>
+                    <th><input type="checkbox" name="remark_checkbox[]" class="remark_checkbox mx-auto" value="'.$row->id.'"></th>
+                    <td>'.$row->id.'</td>
+                    <td>'.$row->remark_date_from.'</td>
+                    <td>'.$row->remark_date_to.'</td>
+                    <td>'.$row->remark_text.'</td>
+                    <td>'.$row->remark_by.'</td>
+                    </tr>
+                    ';
+                }
+            } else {
+                $output = '
+                <tr>
+                    <td align="center" colspan="6">No Data Found</td>
+                </tr>
+                ';
+            }
+
+        return response()->json(['table_data' => $output]);
+        }
     }
 
     public function delete_remarks(Request $request)
     {
         $delete_id = $request->input('id');
-        $remarks_delete = CalanderRemark::whereIn('id', $delete_id)->delete();
+        $remarks_delete = CalanderRemark::where('id', $delete_id)->delete();
 
         return $delete_id;
     }

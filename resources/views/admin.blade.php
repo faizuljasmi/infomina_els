@@ -825,6 +825,9 @@
             <div class="modal-content">
                 <div class="modal-header"><h5><b>All Remarks</b></h5></div>
                 <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" name="search_remark" id="search_remark" class="form-control" placeholder="Search"/>
+                    </div>
                     <table class="table table-sm table-bordered table-striped table-hover" id="remark_table">
                         <thead>
                             <tr>
@@ -836,22 +839,13 @@
                                 <th scope="col">Remarked By</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach($allremarks as $ar)
-                            <tr>
-                                <th><input type="checkbox" name="remark_checkbox[]" class="remark_checkbox mx-auto" value="{{$ar->id}}"></th>
-                                <th>{{$ar->id}}</th>
-                                <td>{{$ar->remark_date_from}}</td>
-                                <td>{{$ar->remark_date_to}}</td>
-                                <td>{{$ar->remark_text}}</td>
-                                <td>{{$ar->remark_by}}</td>
-                            </tr>
-                            @endforeach
+                        <tbody id="table_remark">
+                            
                         </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="d-none btn btn-danger" name="bulk_delete" id="bulk_delete">Delete</button>
+                    <button type="button" class="btn btn-danger" name="bulk_delete" id="bulk_delete">Delete</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -1008,58 +1002,82 @@ $("#this_date").click(function() {
     console.log(output);
 });
 
-var del = $('#bulk_delete');
 
-// Check all and trigger delete button
-$("#checkAll").change(function () {
-    $('.remark_checkbox').not(this).prop('checked', this.checked);
 
-    if ($('#checkAll').prop('checked') == true) {
-        del.removeClass("d-none");
-    } else{
-        del.addClass("d-none");
+// Load remark data
+$(document).ready(function(){
+
+    fetch_data();
+
+    function fetch_data(query = '') {
+        $.ajax({
+            url:"/load-remarks",
+            method:'GET',
+            data:{query:query},
+            dataType:'json',
+            success:function(data) {
+            // console.log(data.table_data);
+            $('#table_remark').html(data.table_data);
+            }
+        })
     }
-});
 
-// Checkbox triggered to unhide delete button
-$('.remark_checkbox').change(function() {
-    var del = $('#bulk_delete');
+    $(document).on('keyup', '#search_remark', function(){
+        var query = $(this).val();
+        fetch_data(query);
+    });
 
-    if ($('.remark_checkbox').prop('checked') == true) {
-        del.removeClass("d-none");
-    } else{
-        del.addClass("d-none");
-    }
-});
+    // var del = $('#bulk_delete');
 
-// Delete
-$("#bulk_delete").click(function() {
+    // Check all and trigger delete button
+    $("#checkAll").change(function () {
+        $('.remark_checkbox').not(this).prop('checked', this.checked);
+
+    //     if ($('#checkAll').prop('checked') == true) {
+    //         del.removeClass("d-none");
+    //     } else{
+    //         del.addClass("d-none");
+    //     }
+    });
+
+    // Checkbox triggered to unhide delete button
+    // $('.remark_checkbox').change(function() {
+    //     var del = $('#bulk_delete');
+    //     console.log("888");
+
+    //     if ($('.remark_checkbox').prop('checked') == true) {
+    //         del.removeClass("d-none");
+    //     } else{
+    //         del.addClass("d-none");
+    //     }
+    // });
+
+    // Delete
+    $("#bulk_delete").click(function() {
     var id = [];
 
-    if(confirm("Are you sure you want to remove this remark(s)?"))
-    {
+    if(confirm("Are you sure you want to remove this remark(s)?")) {
         $('.remark_checkbox:checked').each(function(){
             id.push($(this).val());
             console.log(id, "<<<");
         });
-        if(id.length > 0)
-        {
+        if(id.length > 0) {
             $.ajax({
                 url:"/delete-remarks",
                 method:"GET",
                 data:{id:id},
                 success:function(data)
                 {
-                    console.log(data);
+                    // console.log(data);
                     location.reload();
                 }
             });
-        }
-        else
-        {
+        } else {
             alert("Please select atleast one checkbox");
         }
     }
+    });
+    
 });
 
 </script>
