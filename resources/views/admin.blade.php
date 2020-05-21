@@ -825,21 +825,21 @@
             <div class="modal-content">
                 <div class="modal-header"><h5><b>All Remarks</b></h5></div>
                 <div class="modal-body">
-                    <table class="table table-striped table-bordered" id="remark_table">
+                    <table class="table table-sm table-bordered table-striped table-hover" id="remark_table">
                         <thead>
                             <tr>
-                                <th scope="col">Check</th>
+                                <th scope="col"><input type="checkbox" id="checkAll"></input></th>
                                 <th scope="col">ID</th>
                                 <th scope="col">Date From</th>
                                 <th scope="col">Date To</th>
                                 <th scope="col">Remark</th>
-                                <th scope="col">Remark By</th>
+                                <th scope="col">Remarked By</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($allremarks as $ar)
                             <tr>
-                                <th><input type="checkbox" name="remark_checkbox[]" class="remark_checkbox" value="{{$ar->id}}"></th>
+                                <th><input type="checkbox" name="remark_checkbox[]" class="remark_checkbox mx-auto" value="{{$ar->id}}"></th>
                                 <th>{{$ar->id}}</th>
                                 <td>{{$ar->remark_date_from}}</td>
                                 <td>{{$ar->remark_date_to}}</td>
@@ -848,10 +848,10 @@
                             </tr>
                             @endforeach
                         </tbody>
-                        <button type="button" name="bulk_delete" id="bulk_delete">Delete</button>
                     </table>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="d-none btn btn-danger" name="bulk_delete" id="bulk_delete">Delete</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -1008,6 +1008,31 @@ $("#this_date").click(function() {
     console.log(output);
 });
 
+var del = $('#bulk_delete');
+
+// Check all and trigger delete button
+$("#checkAll").change(function () {
+    $('.remark_checkbox').not(this).prop('checked', this.checked);
+
+    if ($('#checkAll').prop('checked') == true) {
+        del.removeClass("d-none");
+    } else{
+        del.addClass("d-none");
+    }
+});
+
+// Checkbox triggered to unhide delete button
+$('.remark_checkbox').change(function() {
+    var del = $('#bulk_delete');
+
+    if ($('.remark_checkbox').prop('checked') == true) {
+        del.removeClass("d-none");
+    } else{
+        del.addClass("d-none");
+    }
+});
+
+// Delete
 $("#bulk_delete").click(function() {
     var id = [];
 
