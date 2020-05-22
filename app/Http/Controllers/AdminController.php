@@ -191,7 +191,9 @@ class AdminController extends Controller
         $app_id = $getdata[0];
 
         $history = History::leftjoin('users', 'users.id', '=', 'histories.user_id')
-        ->where('histories.leave_application_id', $app_id)->get();
+        ->where('histories.leave_application_id', $app_id)
+        ->select('histories.*', 'users.*', 'histories.created_at as created')
+        ->get();
 
         return response()->json(['history' => $history]);
     }

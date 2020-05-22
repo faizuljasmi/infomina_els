@@ -512,7 +512,7 @@ $(".use-this-history").click(function() {
                 } else {
                     var remarks = "N/A";
                 }
-                var date = applications.created_at;
+                var date = applications.created;
                 var carbondate = date.substring(0, 10);
                 var created_at = carbondate;
                 var edited_by = applications.name;
