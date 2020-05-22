@@ -166,7 +166,7 @@
                         </button>
                     </div>
                     <div id="collapse-leave" class="collapse show" aria-labelledby="heading-leave">
-                        <div class="card-body">
+                        <div class="card-body" style="overflow-x:auto;">
                             <h6><strong>Displaying {{$pendLeaves->count()}} of {{$pendLeaves->total()}}
                                     records.</strong>
                             </h6>
@@ -275,7 +275,7 @@
                                 data-placement="top"
                                 title="This table shows you leave applications history"></i></strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="overflow-x:auto;">
                         <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
                         </h6>
                         <table class="table table-bordered">
@@ -362,7 +362,7 @@
                     <div class="card-header bg-teal" id="leaveRecord">
                         <strong>Leave Record for 2020</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="overflow-x:auto;">
                         <table class="table table-sm table-bordered">
                             <tbody>
                                 <tr>

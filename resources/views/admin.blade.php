@@ -144,7 +144,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-8" style="overflow-x:auto;">
                                 <p class="text-center">
                                     <strong>Recent Leave Applications</strong>
                                 </p>
@@ -241,12 +241,9 @@
                             <div class="col-lg-4 connectedSortable ui-sortable">
                                 <!-- Calendar -->
                                 <!-- Vanilla Calendar -->
-                                <div class="card">
-                                    <div class="card-header bg-teal">
-                                        <strong>Calendar</strong>
-                                    </div>
-                                    <div class="myCalendar vanilla-calendar" style="margin: 20px auto"></div>
-                                    <div class="btn-group" role="group" aria-label="Basic example">
+
+                                    <div class="myCalendar vanilla-calendar" style="margin: 30px auto"></div>
+                                    <div class="text-center" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-warning" data-toggle="modal"
                                             data-target="#viewColleague">Team Members Applications</button>
                                     </div>
@@ -633,8 +630,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- /.card -->
                             </div>
                             <!-- /.col -->
                         </div>
@@ -778,8 +773,8 @@
         <!-- /.row -->
     </div>
     <!--/. container-fluid -->
-    
-    
+
+
     <!-- Remark Modal -->
     <div class="modal fade" id="remark_modal" style="z-index:9999999;"  role="dialog">
         <div class="modal-dialog modal-dialog-centered">
@@ -840,7 +835,7 @@
                             </tr>
                         </thead>
                         <tbody id="table_remark">
-                            
+
                         </tbody>
                     </table>
                 </div>
@@ -1077,7 +1072,7 @@ $(document).ready(function(){
         }
     }
     });
-    
+
 });
 
 </script>
