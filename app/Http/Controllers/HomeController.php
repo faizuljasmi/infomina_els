@@ -183,7 +183,7 @@ class HomeController extends Controller
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'CANCELLED')
                 ->where('approver_id_3', $user->id);
-        })->sortable(['updated_at'])->paginate(5, ['*'], 'history');
+        })->sortable(['date_from' => 'desc'])->paginate(5, ['*'], 'history');
 
         $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')

@@ -76,7 +76,8 @@ class RegistrationController extends Controller
         $users = User::orderBy('id', 'ASC')->get()->except($user->id);
         $authUsers = User::orderBy('name','ASC')->where(function ($query) {
             $query->where('user_type', 'Admin')
-                ->orWhere('user_type', 'Authority');
+                ->orWhere('user_type', 'Authority')
+                ->orWhere('user_type', 'Management');
         })->get();
         $empType = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
@@ -118,7 +119,8 @@ class RegistrationController extends Controller
 
         $authUsers = User::orderBy('name','ASC')->where(function ($query) {
             $query->where('user_type', 'Admin')
-                ->orWhere('user_type', 'Authority');
+                ->orWhere('user_type', 'Authority')
+                ->orWhere('user_type', 'Management');
         })->get();
         $empType = $user->emp_types;
         $empGroup = $user->emp_group;
@@ -165,7 +167,7 @@ class RegistrationController extends Controller
         $user->update();
         return redirect()->route('user_create')->with('message', 'User has been deactivated');
     }
-	
+
     public function destroy(User $user)
     {
         $user->delete();
