@@ -840,8 +840,8 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" name="bulk_delete" id="bulk_delete">Delete</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" name="bulk_delete" id="bulk_delete">Delete</button>
                 </div>
             </div>
         </div>

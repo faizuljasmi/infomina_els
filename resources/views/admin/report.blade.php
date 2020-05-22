@@ -192,7 +192,7 @@
                             <button type="button" class="btn buttonStat btn-sm btn-primary" disabled>In Progress</button>
                         @endif
                     </td>
-                    <td>{{\Carbon\Carbon::parse($row->created_at)->isoFormat('Y-MM-DD')}}</td>
+                    <td>{{\Carbon\Carbon::parse($row->created)->isoFormat('Y-MM-DD')}}</td>
                     <td align="center">
                         <span data-toggle="modal" data-target="#change_status_modal">
                             <button type="button" class="btn btn-primary btn-sm use-this-status" data-toggle="tooltip" data-placement="left" title="Change Status">

@@ -28,7 +28,8 @@ class AdminController extends Controller
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
         ->join('approval_authorities', 'approval_authorities.user_id', '=', 'users.id')
-        ->select('users.*', 'leave_applications.*', 'approval_authorities.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id')
+        ->select('users.*', 'leave_applications.*', 'approval_authorities.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id', 'leave_applications.created_at as created')
+        ->orderby('leave_applications.created_at', 'DESC')
         ->paginate(15);
 
         $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')->count();
@@ -238,7 +239,8 @@ class AdminController extends Controller
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
         ->join('approval_authorities', 'approval_authorities.user_id', '=', 'users.id')
-        ->select('users.*', 'leave_applications.*', 'approval_authorities.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id');
+        ->select('users.*', 'leave_applications.*', 'approval_authorities.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id', 'leave_applications.created_at as created')
+        ->orderby('leave_applications.created_at', 'DESC');
 
         if($request->get('name') != '') {
             $query->where('users.name','like','%'.$search_name.'%');
@@ -311,7 +313,8 @@ class AdminController extends Controller
     {
         $users = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
-        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name')
+        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.created_at as created')
+        ->orderby('leave_applications.created_at', 'DESC')
         ->get();
 
         $spreadsheet = new Spreadsheet();
@@ -383,7 +386,8 @@ class AdminController extends Controller
 
         $query = User::join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
-        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name');
+        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.created_at as created')
+        ->orderby('leave_applications.created_at', 'DESC');
 
         if($request->get('excel_name') != '') {
             $query->where('users.name','like','%'.$search_name.'%');
