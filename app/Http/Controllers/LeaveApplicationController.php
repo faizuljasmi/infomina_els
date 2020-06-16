@@ -642,6 +642,13 @@ class LeaveApplicationController extends Controller
                 $lb->no_of_days += $leaveApplication->total_days;
                 $lb->save();
 
+                //Record in activity history
+                $hist = new History;
+                $hist->leave_application_id = $leaveApplication->id;
+                $hist->user_id = $user->id;
+                $hist->action = "Approved";
+                $hist->save();
+
                 //Send status update email
                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
                 return redirect()->to('/admin')->with('message', 'Replacement leave application status updated succesfully');
@@ -672,6 +679,13 @@ class LeaveApplicationController extends Controller
                 })->first();
                 $hospBalance->no_of_days -= $leaveApplication->total_days;
                 $hospBalance->save();
+
+                //Record in activity history
+                $hist = new History;
+                $hist->leave_application_id = $leaveApplication->id;
+                $hist->user_id = $user->id;
+                $hist->action = "Approved";
+                $hist->save();
 
                 //Send status update email
                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
@@ -704,6 +718,13 @@ class LeaveApplicationController extends Controller
                 $annBalance->no_of_days -= $leaveApplication->total_days;
                 $annBalance->save();
                 //dd($annBalance->no_of_days);
+
+                //Record in activity history
+                $hist = new History;
+                $hist->leave_application_id = $leaveApplication->id;
+                $hist->user_id = $user->id;
+                $hist->action = "Approved";
+                $hist->save();
 
                 //Send status update email
                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
