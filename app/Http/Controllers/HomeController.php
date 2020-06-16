@@ -298,7 +298,7 @@ class HomeController extends Controller
 
         foreach($allremarks as $ar){
             $eventDetails = array(
-                'title' => "Remarks by ".$ar->remark_by." :\n".$ar->remark_text,
+                'title' => "Remarks by ".$ar->remarker->name." :\n".$ar->remark_text,
                 'start' => $ar->remark_date_from,
                 'description' => "LOL",
                 'end' => $ar->remark_date_to,
