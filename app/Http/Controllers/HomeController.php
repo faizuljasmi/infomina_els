@@ -24,6 +24,7 @@ use App\TakenLeave;
 use App\Holiday;
 use App\CalanderRemark;
 use Carbon\Carbon;
+use DateTime;
 
 class HomeController extends Controller
 {
@@ -185,16 +186,21 @@ class HomeController extends Controller
                 ->where('approver_id_3', $user->id);
         })->sortable(['date_from' => 'desc'])->paginate(5, ['*'], 'history');
 
-        $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
-            $query->where('status', 'APPROVED')
-                ->where('approver_id_1', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'APPROVED')
-                ->where('approver_id_2', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'APPROVED')
-                ->where('approver_id_3', $user->id);
-        })->get();
+        if($user->user_type == "Management" || $user->user_type == "Admin"){
+            $allLeaveHist = LeaveApplication::where('status', 'APPROVED')->get();
+        }
+        if($user->user_type == "Authority" ){
+            $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
+                $query->where('status', 'APPROVED')
+                    ->where('approver_id_1', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'APPROVED')
+                    ->where('approver_id_2', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'APPROVED')
+                    ->where('approver_id_3', $user->id);
+            })->get();
+        }
 
 
         $holidays = Holiday::all();
@@ -244,11 +250,12 @@ class HomeController extends Controller
             else{
                 $color = "crimson";
             }
+            $dateTo = new DateTime($lh->date_to);
+            $dateTo->modify('+1 day');
             $eventDetails = array(
                 'title' => $lh->user->name."\n".$lh->leaveType->name." (".$lh->apply_for.") "."\n".Carbon::parse($lh->date_from)->isoFormat('D/MM')."-".Carbon::parse($lh->date_to)->isoFormat('D/MM'),
                 'start' => $lh->date_from,
-                'description' => "LOL",
-                'end' => $lh->date_to,
+                'end' => $dateTo->format('Y-m-d'),
                 'color' => $color
             );
             array_push($events , $eventDetails);
@@ -278,17 +285,6 @@ class HomeController extends Controller
                 && ($la->user_id != $user->id)
             ) {
                 $groupLeaveApps->add($la);
-            }
-            else if($user->user_type == "Management" && ($la->status == 'APPROVED')
-            && ($la->user_id != $user->id)){
-                $eventDetails = array(
-                    'title' => $la->user->name."\n".$la->leaveType->name."\n".Carbon::parse($la->date_from)->isoFormat('D/MM')."-".Carbon::parse($la->date_to)->isoFormat('D/MM'),
-                    'start' => $la->date_from,
-                    'description' => "LOL",
-                    'end' => $la->date_to,
-                    'color' => "mediumseagreen"
-                );
-                array_push($events , $eventDetails);
             }
         }
 

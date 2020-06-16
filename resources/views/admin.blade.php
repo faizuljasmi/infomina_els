@@ -52,6 +52,7 @@
           navLinks: true, // can click day/week names to navigate views
           eventLimit: true, // allow "more" link when too many events
           events: evnts,
+
         });
         calendar.render();
       });
@@ -683,96 +684,98 @@
             </div>
             <!-- /.col -->
         </div>
-        <div class="col-md-12">
-            <!-- MAP & BOX PANE -->
-            <div class="card">
-                <div class="card-header bg-teal">
-                    <h3 class="card-title">Leave Application History</h3>
 
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div id='calendar'></div>
-                    <div class="d-md-flex">
-                        <div class="p-1 flex-fill" style="overflow: hidden">
-                            <div class="col-md-3 float-right mb-3">
-                                <form action="{{ route('admin__leave_search') }}" method="get">
-                                    <div class="input-group">
-                                        <input type="search" name="search" class="form-control">
-                                        <span class="input-group-prepend">
-                                            <button type="submit" class="btn btn-primary">Search</button>
-                                        </span>
-                                    </div>
-                                </form>
-                            </div>
-                            <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
-                            </h6>
-                            <table class="table table-striped table-bordered">
-                                @if($leaveHist->count() > 0)
-                                <thead>
-                                    <tr>
-                                        <th scope="col">No.</th>
-                                        <th scope="col">Submitted by</th>
-                                        <th scope="col">Leave Type @sortablelink('leaveType.name','',[])</th>
-                                        <th scope="col">Duration @sortablelink('total_days','',[])</th>
-                                        <th scope="col">From @sortablelink('date_from','',[])</th>
-                                        <th scope="col">To @sortablelink('date_to','',[])</th>
-                                        <th scope="col">Status @sortablelink('status','',[])</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php $count = ($leaveHist->currentPage()-1) * $leaveHist->perPage(); @endphp
-                                    @foreach($leaveHist as $lh)
-                                    <tr>
-                                        <th scope="row">{{++$count}}</th>
-                                        <td>{{$lh->user->name}}</td>
-                                        <td>{{$lh->leaveType->name}}</td>
-                                        <td>{{$lh->total_days}} day(s)</td>
-                                        <td>{{ \Carbon\Carbon::parse($lh->date_from)->isoFormat('ddd, D MMM YY')}}</td>
-                                        <td>{{ \Carbon\Carbon::parse($lh->date_to)->isoFormat('ddd, D MMM YY')}}</td>
-                                        <td>
-                                            @if($lh->status == 'APPROVED')
-                                            <span class="badge badge-pill badge-success">Approved</span>
-                                            @elseif($lh->status == 'CANCELLED')
-                                            <span class="badge badge-pill badge-secondary">Cancelled</span>
-                                            @endif
-                                        </td>
-                                        <td><a href="{{route('view_application', $lh->id)}}"
-                                                class="btn btn-success btn-sm" data-toggle="tooltip"
-                                                title="View leave application">View</a></td>
-                                    </tr>
-                                    @endforeach
-                                    @else
-                                    <th>No Record Found</th>
-                                    @endif
-                                </tbody>
-                            </table>
-                            {!! $leaveHist->appends(\Request::except('page'),['history' =>
-                            $leaveHist->currentPage()])->render() !!}
-                        </div>
-
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-
-
-
-            </div>
-            <!-- /.col -->
-        </div>
-        <!-- /.row -->
     </div>
     <!--/. container-fluid -->
+
+        <!-- Main row -->
+        <div class="row">
+            <!-- Left col -->
+            <div class="col-md-12">
+                <!-- MAP & BOX PANE -->
+                <div class="card">
+                    <div class="card-header bg-teal">
+                        <h3 class="card-title">Leave Application History</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body" style="overflow-x:auto;">
+                        <div class="col-md-3 float-right mb-3">
+                            <form action="{{ route('admin__leave_search') }}" method="get">
+                                <div class="input-group">
+                                    <input type="search" name="search" class="form-control">
+                                    <span class="input-group-prepend">
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                        <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
+                        </h6>
+                        <table class="table table-striped table-bordered">
+                            @if($leaveHist->count() > 0)
+                            <thead>
+                                <tr>
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Submitted by</th>
+                                    <th scope="col">Leave Type @sortablelink('leaveType.name','',[])</th>
+                                    <th scope="col">Duration @sortablelink('total_days','',[])</th>
+                                    <th scope="col">From @sortablelink('date_from','',[])</th>
+                                    <th scope="col">To @sortablelink('date_to','',[])</th>
+                                    <th scope="col">Status @sortablelink('status','',[])</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $count = ($leaveHist->currentPage()-1) * $leaveHist->perPage(); @endphp
+                                @foreach($leaveHist as $lh)
+                                <tr>
+                                    <th scope="row">{{++$count}}</th>
+                                    <td>{{$lh->user->name}}</td>
+                                    <td>{{$lh->leaveType->name}}</td>
+                                    <td>{{$lh->total_days}} day(s)</td>
+                                    <td>{{ \Carbon\Carbon::parse($lh->date_from)->isoFormat('ddd, D MMM YY')}}</td>
+                                    <td>{{ \Carbon\Carbon::parse($lh->date_to)->isoFormat('ddd, D MMM YY')}}</td>
+                                    <td>
+                                        @if($lh->status == 'APPROVED')
+                                        <span class="badge badge-pill badge-success">Approved</span>
+                                        @elseif($lh->status == 'CANCELLED')
+                                        <span class="badge badge-pill badge-secondary">Cancelled</span>
+                                        @endif
+                                    </td>
+                                    <td><a href="{{route('view_application', $lh->id)}}"
+                                            class="btn btn-success btn-sm" data-toggle="tooltip"
+                                            title="View leave application">View</a></td>
+                                </tr>
+                                @endforeach
+                                @else
+                                <th>No Record Found</th>
+                                @endif
+                            </tbody>
+                        </table>
+                        {!! $leaveHist->appends(\Request::except('page'),['history' =>
+                        $leaveHist->currentPage()])->render() !!}
+                    </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+
+
+
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+        <!--/. container-fluid -->
 
 
     <!-- Remark Modal -->
@@ -1006,7 +1009,7 @@ $(document).ready(function(){
 
     function fetch_data(query = '') {
         $.ajax({
-            url:"/load-remarks",
+            url:"/eleave/public/load-remarks",
             method:'GET',
             data:{query:query},
             dataType:'json',
@@ -1058,7 +1061,7 @@ $(document).ready(function(){
         });
         if(id.length > 0) {
             $.ajax({
-                url:"/delete-remarks",
+                url:"/eleave/public/delete-remarks",
                 method:"GET",
                 data:{id:id},
                 success:function(data)

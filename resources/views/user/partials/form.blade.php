@@ -11,7 +11,7 @@
         </div>
         <div class="form-group col-md-3">
             <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email " value="{{$user->email}}">
+            <input type="email" class="form-control" id="email" name="email" value="{{$user->email}}">
         </div>
         @if (Gate::forUser(Auth::user())->allows('admin-dashboard'))
         <div class="form-group col-md-3">
