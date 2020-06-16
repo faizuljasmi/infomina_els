@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Events\Dispatcher;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use App\User;
+use Illuminate\Database\Schema\Builder; // Import Builder where defaultStringLength method is defined
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
                 'text' => auth()->user()->name,
                 'icon' => 'fas fa-power-off',
             ]);
-        });   
+        });
+        Builder::defaultStringLength(191); // Update defaultStringLength
     }
 }
