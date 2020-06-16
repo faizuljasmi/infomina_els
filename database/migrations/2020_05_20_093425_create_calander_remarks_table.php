@@ -18,8 +18,10 @@ class CreateCalanderRemarksTable extends Migration
             $table->date('remark_date_from');
             $table->date('remark_date_to');
             $table->longText('remark_text')->nullable();
-            $table->longText('remark_by');
+            $table->unsignedBigInteger('remark_by');
             $table->timestamps();
+
+            $table->foreign('remark_by')->references('id')->on('users');
         });
     }
 

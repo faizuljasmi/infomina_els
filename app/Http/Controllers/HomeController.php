@@ -516,7 +516,7 @@ class HomeController extends Controller
             $remark->remark_date_from = $remark_date_from;
             $remark->remark_date_to = $remark_date_to;
             $remark->remark_text = $remark_text;
-            $remark->remark_by = auth()->user()->name;
+            $remark->remark_by = auth()->user()->id;
             $remark->save();
         }
 
