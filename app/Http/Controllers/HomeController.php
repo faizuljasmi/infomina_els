@@ -571,7 +571,7 @@ class HomeController extends Controller
     public function delete_remarks(Request $request)
     {
         $delete_id = $request->input('id');
-        $remarks_delete = CalanderRemark::where('id', $delete_id)->delete();
+        $remarks_delete = CalanderRemark::wherein('id', $delete_id)->delete();
 
         return $delete_id;
     }
