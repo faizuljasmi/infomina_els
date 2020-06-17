@@ -1009,12 +1009,12 @@ $(document).ready(function(){
 
     function fetch_data(query = '') {
         $.ajax({
-            url:"/eleave/public/load-remarks",
+            url:"/load-remarks",
             method:'GET',
             data:{query:query},
             dataType:'json',
             success:function(data) {
-            // console.log(data.table_data);
+            console.log(data.table_data);
             $('#table_remark').html(data.table_data);
             }
         })
@@ -1061,7 +1061,7 @@ $(document).ready(function(){
         });
         if(id.length > 0) {
             $.ajax({
-                url:"/eleave/public/delete-remarks",
+                url:"/delete-remarks",
                 method:"GET",
                 data:{id:id},
                 success:function(data)
