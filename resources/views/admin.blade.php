@@ -1014,7 +1014,7 @@ $(document).ready(function(){
             data:{query:query},
             dataType:'json',
             success:function(data) {
-            // console.log(data.table_data);
+            console.log(data);
             $('#table_remark').html(data.table_data);
             }
         })
