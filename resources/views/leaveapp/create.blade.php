@@ -789,21 +789,21 @@ $('#reason').keyup(function() {
         }
 
         if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
-            if(	
-            (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))	
-            ||	
-            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))
-          ){	
+            if(
+            (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave() || !validation.isMaternityLeave() || !validation.isHospitalizationLeave()))
+            ||
+            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave() || !validation.isMaternityLeave() || !validation.isHospitalizationLeave()))
+          ){
             return "Selected date is a Weekend day. Please select another date.";
-          }	
-        }	
+          }
+        }
 
 
         if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
         if(
-            (name == FC.date_from.name && calendar.isHoliday(date_from) && (!validation.isMaternityLeave()))
+            (name == FC.date_from.name && calendar.isHoliday(date_from) && (!validation.isMaternityLeave() || !validation.isHospitalizationLeave()))
           ||
-          (name == FC.date_to.name && calendar.isHoliday(date_to) && (!validation.isMaternityLeave()))
+          (name == FC.date_to.name && calendar.isHoliday(date_to) && (!validation.isMaternityLeave()  || !validation.isHospitalizationLeave()))
         ){
           return `Selected date is an announced Public Holiday. Please select another date.`;
         }
@@ -855,12 +855,12 @@ $('#reason').keyup(function() {
           if(name == FC.apply_for.name){
             _form.set(FC.total_days, "");
           }
-          if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){	
-            let from = _form.get(FC.date_from);	
-            let to = _form.get(FC.date_to);	
-            let total = calendar.getTotalWorkingDay(from, to);	
-            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){	
-              total = calendar.getTotalDays(from, to);	
+          if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
+            let from = _form.get(FC.date_from);
+            let to = _form.get(FC.date_to);
+            let total = calendar.getTotalWorkingDay(from, to);
+            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
+              total = calendar.getTotalDays(from, to);
             }
             var leaveId = _form.get(FC.leave_type_id);
             var i = leaveId - 1;
