@@ -997,7 +997,7 @@ $("#this_date").click(function() {
     $("#remark_date_from").val(output);
     $("#remark_date_to").val(output);
 
-    console.log(output);
+    // console.log(output);
 });
 
 
@@ -1009,12 +1009,12 @@ $(document).ready(function(){
 
     function fetch_data(query = '') {
         $.ajax({
-            url:"/eleave/public/load-remarks",
+            url:"/load-remarks",
             method:'GET',
             data:{query:query},
             dataType:'json',
             success:function(data) {
-            // console.log(data.table_data);
+            console.log(data);
             $('#table_remark').html(data.table_data);
             }
         })
@@ -1025,55 +1025,36 @@ $(document).ready(function(){
         fetch_data(query);
     });
 
-    // var del = $('#bulk_delete');
-
     // Check all and trigger delete button
     $("#checkAll").change(function () {
         $('.remark_checkbox').not(this).prop('checked', this.checked);
-
-    //     if ($('#checkAll').prop('checked') == true) {
-    //         del.removeClass("d-none");
-    //     } else{
-    //         del.addClass("d-none");
-    //     }
     });
-
-    // Checkbox triggered to unhide delete button
-    // $('.remark_checkbox').change(function() {
-    //     var del = $('#bulk_delete');
-    //     console.log("888");
-
-    //     if ($('.remark_checkbox').prop('checked') == true) {
-    //         del.removeClass("d-none");
-    //     } else{
-    //         del.addClass("d-none");
-    //     }
-    // });
 
     // Delete
     $("#bulk_delete").click(function() {
-    var id = [];
+        var id = [];
 
-    if(confirm("Are you sure you want to remove this remark(s)?")) {
         $('.remark_checkbox:checked').each(function(){
             id.push($(this).val());
-            console.log(id, "<<<");
         });
-        if(id.length > 0) {
-            $.ajax({
-                url:"/eleave/public/delete-remarks",
-                method:"GET",
-                data:{id:id},
-                success:function(data)
-                {
-                    // console.log(data);
-                    location.reload();
-                }
-            });
-        } else {
-            alert("Please select atleast one checkbox");
+        // console.log(id, "<<<>>>");
+
+        if(confirm("Are you sure you want to remove this remark(s)?")) {
+            if(id.length > 0) {
+                $.ajax({
+                    url:"/delete-remarks",
+                    method:"GET",
+                    data:{id:id},
+                    success:function(data)
+                    {
+                        // console.log(data);
+                        location.reload();
+                    }
+                });
+            } else {
+                alert("Please select atleast one checkbox");
+            }
         }
-    }
     });
 
 });

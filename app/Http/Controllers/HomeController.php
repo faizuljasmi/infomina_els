@@ -534,13 +534,18 @@ class HomeController extends Controller
             $query = $request->get('query');
             if($query != '') {
                 $data = CalanderRemark::orderBy('id', 'DESC')
+                    ->join('users', 'users.id', '=', 'calander_remarks.remark_by')
                     ->where('remark_date_from', 'like', '%'.$query.'%')
                     ->orWhere('remark_date_to', 'like', '%'.$query.'%')
                     ->orWhere('remark_text', 'like', '%'.$query.'%')
                     ->orWhere('remark_by', 'like', '%'.$query.'%')
+                    ->select('users.name as remark_by_name', 'calander_remarks.*')
                     ->get();
             } else {
-                $data = CalanderRemark::orderBy('id', 'DESC')->get();
+                $data = CalanderRemark::orderBy('id', 'DESC')
+                ->join('users', 'users.id', '=', 'calander_remarks.remark_by')
+                ->select('users.name as remark_by_name', 'calander_remarks.*')
+                ->get();
             }
             $total_row = $data->count();
             if($total_row > 0) {
@@ -552,7 +557,7 @@ class HomeController extends Controller
                     <td>'.$row->remark_date_from.'</td>
                     <td>'.$row->remark_date_to.'</td>
                     <td>'.$row->remark_text.'</td>
-                    <td>'.$row->remark_by.'</td>
+                    <td>'.$row->remark_by_name.'</td>
                     </tr>
                     ';
                 }
@@ -571,7 +576,7 @@ class HomeController extends Controller
     public function delete_remarks(Request $request)
     {
         $delete_id = $request->input('id');
-        $remarks_delete = CalanderRemark::where('id', $delete_id)->delete();
+        $remarks_delete = CalanderRemark::wherein('id', $delete_id)->delete();
 
         return $delete_id;
     }
