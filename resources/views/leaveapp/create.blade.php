@@ -869,6 +869,20 @@ $('#reason').keyup(function() {
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
             }
+            if(validation.isEmergencyLeave()){
+                if(total > balances[0]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
+                alert('You have insufficient annual leave balance');
+                _form.set(FC.date_to, "");
+                _form.set(FC.total_days, "");
+                }
+            }
+            if(validation.isSickLeave()){
+                if(total > balances[3]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
+                alert('You have insufficient hospitalization leave balance');
+                _form.set(FC.date_to, "");
+                _form.set(FC.total_days, "");
+                }
+            }
             if(total > 60){
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");

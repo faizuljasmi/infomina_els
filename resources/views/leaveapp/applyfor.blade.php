@@ -623,15 +623,29 @@ $('#reason').keyup(function() {
             let from = _form.get(FC.date_from);
             let to = _form.get(FC.date_to);
             let total = calendar.getTotalWorkingDay(from, to);
-            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave()){
+            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
               total = calendar.getTotalDays(from, to);
             }
             var leaveId = _form.get(FC.leave_type_id);
             var i = leaveId - 1;
             if(total > balances[i]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
-                alert('Employee have insufficient leave balance');
+                alert('Employee has insufficient leave balance');
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
+            }
+            if(validation.isEmergencyLeave()){
+                if(total > balances[0]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
+                alert('Employee has insufficient annual leave balance');
+                _form.set(FC.date_to, "");
+                _form.set(FC.total_days, "");
+                }
+            }
+            if(validation.isSickLeave()){
+                if(total > balances[3]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
+                alert('Employee has insufficient hospitalization leave balance');
+                _form.set(FC.date_to, "");
+                _form.set(FC.total_days, "");
+                }
             }
             if(total > 60){
                 _form.set(FC.date_to, "");
