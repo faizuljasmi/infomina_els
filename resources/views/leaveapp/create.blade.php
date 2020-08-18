@@ -868,6 +868,7 @@ $('#reason').keyup(function() {
             if(total > balances[i]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
+                _form.set(FC.date_resume, "");
                 alert('You have insufficient leave balance');
                 hasError = true;
             }
@@ -876,6 +877,7 @@ $('#reason').keyup(function() {
                 alert('You have insufficient annual leave balance');
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
+                _form.set(FC.date_resume, "");
                 hasError = true;
                 }
             }
@@ -884,12 +886,14 @@ $('#reason').keyup(function() {
                 alert('You have insufficient hospitalization leave balance');
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
+                _form.set(FC.date_resume, "");
                 hasError = true;
                 }
             }
             if(total > 60){
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
+                _form.set(FC.date_resume, "");
                 hasError = true;
             }
             if(hasError == false){
@@ -897,6 +901,7 @@ $('#reason').keyup(function() {
             }
           } else{
             _form.set(FC.total_days, "");
+            _form.set(FC.date_resume, "");
           }
         }
       },
