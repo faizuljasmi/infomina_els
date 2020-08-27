@@ -41,7 +41,7 @@
                 <form id="login" action="{{ $login_url }}" method="post">
                     {{ csrf_field() }}
                     <div class="input-group mb-3">
-                        <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
+                        <input type="email" id="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -100,7 +100,7 @@
 <style>
     .login-page {
 background: url("images/bgrd2.gif") no-repeat right bottom;
-background-size: 910.5px 500.3px;
+background-size: 658px 455px;
 /* background-color: #ededed; */
 }
 
@@ -132,6 +132,15 @@ document.getElementById("login").addEventListener('submit', functSubmit);
 var spinner = $('#loading');
 function functSubmit(event) {
     spinner.show();
+
+    var email = $('#email').val();
+    var name   = email.substring(0, email.lastIndexOf("@"));
+    var domain = email.substring(email.lastIndexOf("@") +1);
+
+    if(domain == "infomina.co"){
+        var email = name.concat("@infomina.com.my");
+        $("#email").val(email);
+    }
 }
 </script>
 

@@ -90,6 +90,7 @@ class LeaveApplicationController extends Controller
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
+
         //Get all leave applications
         $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
 
