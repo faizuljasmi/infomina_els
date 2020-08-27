@@ -19,6 +19,9 @@ use App\LeaveBalance;
 use App\LeaveEarning;
 use App\TakenLeave;
 use App\ApprovalAuthority;
+use Illuminate\Notifications\Notifiable;
+use Notification;
+use App\Notifications\StatusUpdate;
 
 class AdminController extends Controller
 {
@@ -161,8 +164,11 @@ class AdminController extends Controller
             $hist->user_id = auth()->user()->id;
             $hist->remarks = $status_remarks;
 
+            $user = User::where('id', $leave_app->user_id)->get();
+
             if ( $new_status == "APPROVE" ) {
                 $hist->action = "Approved";
+                $leave_app->user->notify(new StatusUpdate($leave_app)); // emails
             } else if ( $new_status == "REJECT" ) {
                 $hist->action = "Rejected";
             } else if ( $new_status == "CANCEL" ) {

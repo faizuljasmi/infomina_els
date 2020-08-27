@@ -64,7 +64,7 @@ Route::middleware('can:employee-data')->group(function(){
      Route::post('load-approver','AdminController@view_approver')->middleware('auth');
      Route::get('reports', 'AdminController@index')->name('excel_transfer')->middleware('auth');
      Route::get('reports/search', 'AdminController@search')->name('search')->middleware('auth');
-     Route::get('reports/change-status', 'AdminController@change_status')->name('change_status')->middleware('auth');
+     Route::get('reports/change-status/', 'AdminController@change_status')->name('change_status')->middleware('auth');
      Route::post('reports/import', 'AdminController@import')->name('excel_import')->middleware('auth');
      Route::get('reports/export-all', 'AdminController@export_all')->name('excel_export_all')->middleware('auth');
      Route::get('reports/export-search', 'AdminController@export_search')->name('excel_export_search')->middleware('auth');
