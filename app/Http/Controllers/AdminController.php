@@ -167,14 +167,14 @@ class AdminController extends Controller
 
             $user = User::where('id', $leave_app->user_id)->get();
 
-            // if ( $new_status == "APPROVE" ) {
-            //     $hist->action = "Approved";
-            //     $leave_app->user->notify(new StatusUpdate($leave_app)); // emails
-            // } else if ( $new_status == "REJECT" ) {
-            //     $hist->action = "Rejected";
-            // } else if ( $new_status == "CANCEL" ) {
-            //     $hist->action = "Cancelled";
-            // }
+            if ( $new_status == "APPROVE" ) {
+                $hist->action = "Approved";
+                // $leave_app->user->notify(new StatusUpdate($leave_app)); // emails
+            } else if ( $new_status == "REJECT" ) {
+                $hist->action = "Rejected";
+            } else if ( $new_status == "CANCEL" ) {
+                $hist->action = "Cancelled";
+            }
 
             $hist->save();
         }
