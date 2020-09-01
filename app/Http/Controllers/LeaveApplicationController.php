@@ -1249,7 +1249,7 @@ class LeaveApplicationController extends Controller
 
          //Record in activity history
          $hist = new History;
-         $hist->leave_application_id = $leaveApplication->id;
+         $hist->leave_application_id = $leaveApp->id;
          $hist->user_id = auth()->user()->id;
          $hist->action = "Applied on Behalf";
          $hist->save();
