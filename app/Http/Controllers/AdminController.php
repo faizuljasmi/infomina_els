@@ -169,7 +169,7 @@ class AdminController extends Controller
 
             if ( $new_status == "APPROVE" ) {
                 $hist->action = "Approved";
-                // $leave_app->user->notify(new StatusUpdate($leave_app)); // emails
+                $leave_app->user->notify(new StatusUpdate($leave_app)); // emails
             } else if ( $new_status == "REJECT" ) {
                 $hist->action = "Rejected";
             } else if ( $new_status == "CANCEL" ) {
