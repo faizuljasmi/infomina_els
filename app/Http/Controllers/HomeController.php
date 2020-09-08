@@ -187,7 +187,16 @@ class HomeController extends Controller
         })->sortable(['date_from' => 'desc'])->paginate(5, ['*'], 'history');
 
         if($user->user_type == "Management" || $user->user_type == "Admin"){
-            $allLeaveHist = LeaveApplication::where('status', 'APPROVED')->get();
+
+            $allLeaveHist = LeaveApplication::where(function ($query){
+                $query->where('status', 'APPROVED');
+            })->orWhere(function ($query) {
+                $query->where('status', 'PENDING_1');
+            })->orWhere(function ($query) {
+                $query->where('status', 'PENDING_2');
+            })->orWhere(function ($query) {
+                $query->where('status', 'PENDING_3');
+            })->get();
         }
         if($user->user_type == "Authority" ){
             $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
@@ -248,7 +257,7 @@ class HomeController extends Controller
                 $color = "mediumseagreen";
             }
             else{
-                $color = "crimson";
+                $color = "gold";
             }
             $dateTo = new DateTime($lh->date_to);
             $dateTo->modify('+1 day');
@@ -382,25 +391,30 @@ class HomeController extends Controller
                 ->where('approver_id_3', $user->id);
         })->sortable(['updated_at'])->paginate(5, ['*'], 'history');
 
-        $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
-            $query->where('status', 'APPROVED')
-                ->where('approver_id_1', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'CANCELLED')
-                ->where('approver_id_1', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'APPROVED')
-                ->where('approver_id_2', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'CANCELLED')
-                ->where('approver_id_2', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'APPROVED')
-                ->where('approver_id_3', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('status', 'CANCELLED')
-                ->where('approver_id_3', $user->id);
-        })->get();
+        if($user->user_type == "Management" || $user->user_type == "Admin"){
+
+            $allLeaveHist = LeaveApplication::where(function ($query){
+                $query->where('status', 'APPROVED');
+            })->orWhere(function ($query) {
+                $query->where('status', 'PENDING_1');
+            })->orWhere(function ($query) {
+                $query->where('status', 'PENDING_2');
+            })->orWhere(function ($query) {
+                $query->where('status', 'PENDING_3');
+            })->get();
+        }
+        if($user->user_type == "Authority" ){
+            $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
+                $query->where('status', 'APPROVED')
+                    ->where('approver_id_1', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'APPROVED')
+                    ->where('approver_id_2', $user->id);
+            })->orWhere(function ($query) use ($user) {
+                $query->where('status', 'APPROVED')
+                    ->where('approver_id_3', $user->id);
+            })->get();
+        }
 
         $holidays = Holiday::all();
         $all_dates = array();
@@ -447,7 +461,7 @@ class HomeController extends Controller
                 $color = "mediumseagreen";
             }
             else{
-                $color = "crimson";
+                $color = "gold";
             }
             $eventDetails = array(
                 'title' => $lh->user->name."\n".$lh->leaveType->name." (".$lh->apply_for.") "."\n".Carbon::parse($lh->date_from)->isoFormat('D/MM')."-".Carbon::parse($lh->date_to)->isoFormat('D/MM'),

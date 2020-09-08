@@ -147,6 +147,15 @@ class RegistrationController extends Controller
             $query->where('status', 'CANCELLED')
                 ->where('user_id', $user->id);
         })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'PENDING_1')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'PENDING_2')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'PENDING_3')
+                ->where('user_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_1')
                 ->where('user_id', $user->id);
         })->orWhere(function ($query) use ($user) {
