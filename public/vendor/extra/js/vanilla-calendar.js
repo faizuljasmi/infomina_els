@@ -551,6 +551,12 @@ let VanillaCalendar = (function() {
                 .toDate();
         };
 
+        this.prevMonth = function(dateDb) {
+            return moment(dateDb, "YYYYMMDD")
+                .subtract(30, "days")
+                .toDate();
+        };
+
         this.prevDay = function(dateDb) {
             return moment(dateDb, "YYYYMMDD")
                 .subtract(1, "days")

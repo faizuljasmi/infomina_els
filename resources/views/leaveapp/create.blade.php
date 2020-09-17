@@ -738,11 +738,13 @@ $('#reason').keyup(function() {
 
         // MATERNITY POLICY
         if(validation.isMaternityLeave()){
-          let monthFwd = calendar.nextMonth(calendar.today());
-          monthFwd = calendar.getDateDb(monthFwd);
+        //   let monthFwd = calendar.nextMonth(calendar.today());
+        //   monthFwd = calendar.getDateDb(monthFwd);
+            let one_month_before = calendar.prevMonth(calendar.today()); // 30 days before
+            one_month_before = calendar.getDateDb(one_month_before);
 
-
-          if(calendar.isDateSmaller(date_from,monthFwd) || calendar.isDateEqual(date_from,monthFwd)){
+        //   if(calendar.isDateSmaller(date_from,monthFwd) || calendar.isDateEqual(date_from,monthFwd)){
+          if(calendar.isDateSmaller(date_from,one_month_before)){ // Not more than 30 days late in applying
             return "Attention: Maternity leave application shall be made not less than one (1) month prior to the date on which it is desired that maternity leave commences."
           }
           if(calendar.isDateSmaller(date_from, calendar.today())){
