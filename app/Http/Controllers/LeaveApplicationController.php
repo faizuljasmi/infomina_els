@@ -53,7 +53,7 @@ class LeaveApplicationController extends Controller
 
         $group2 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_two_id)->first();
         if (isset($group2)) {
-            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_two_id->where('status', 'Active'))->orWhere('emp_group_two_id', $user->emp_group_two_id)
+            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_two_id)->where('status', 'Active')->orWhere('emp_group_two_id', $user->emp_group_two_id)
                 ->orWhere('emp_group_three_id', $user->emp_group_two_id)->orWhere('emp_group_four_id', $user->emp_group_two_id)->orWhere('emp_group_five_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
             $groupMates = $groupMates->merge($groupMates2);
         }
