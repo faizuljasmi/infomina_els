@@ -30,10 +30,11 @@ class AdminController extends Controller
         $users = User::sortable()
         ->join('leave_applications', 'leave_applications.user_id', '=', 'users.id')
         ->join('leave_types', 'leave_types.id', '=', 'leave_applications.leave_type_id')
-        ->join('approval_authorities', 'approval_authorities.user_id', '=', 'users.id')
-        ->select('users.*', 'leave_applications.*', 'approval_authorities.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id', 'leave_applications.created_at as created')
+        ->select('users.*', 'leave_applications.*', 'leave_types.name as leave_type_name', 'leave_applications.id as leave_app_id', 'leave_applications.created_at as created')
         ->orderby('leave_applications.created_at', 'DESC')
         ->paginate(15);
+
+        // dd($users);
 
         $count_approve = LeaveApplication::where('leave_applications.status','like','%APPROVED%')->count();
 
