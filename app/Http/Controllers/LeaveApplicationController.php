@@ -46,35 +46,35 @@ class LeaveApplicationController extends Controller
 
         $group1 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_id)->first();
         if (isset($group1)) {
-            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->orWhere('emp_group_two_id', $user->emp_group_id)
+            $groupMates1 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_id)->where('status', 'Active')->orWhere('emp_group_two_id', $user->emp_group_id)
             ->orWhere('emp_group_three_id', $user->emp_group_id)->orWhere('emp_group_four_id', $user->emp_group_id)->orWhere('emp_group_five_id', $user->emp_group_id)->get()->except($user->id)->except($group1->group_leader_id);
             $groupMates = $groupMates->merge($groupMates1);
         }
 
         $group2 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_two_id)->first();
         if (isset($group2)) {
-            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_two_id)->orWhere('emp_group_two_id', $user->emp_group_two_id)
+            $groupMates2 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_two_id)->where('status', 'Active')->orWhere('emp_group_two_id', $user->emp_group_two_id)
                 ->orWhere('emp_group_three_id', $user->emp_group_two_id)->orWhere('emp_group_four_id', $user->emp_group_two_id)->orWhere('emp_group_five_id', $user->emp_group_two_id)->get()->except($user->id)->except($group2->group_leader_id);
             $groupMates = $groupMates->merge($groupMates2);
         }
 
         $group3 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_three_id)->first();
         if (isset($group3)) {
-            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_three_id)->orWhere('emp_group_two_id', $user->emp_group_three_id)
+            $groupMates3 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_three_id)->where('status', 'Active')->orWhere('emp_group_two_id', $user->emp_group_three_id)
                 ->orWhere('emp_group_three_id', $user->emp_group_three_id)->orWhere('emp_group_four_id', $user->emp_group_three_id)->orWhere('emp_group_five_id', $user->emp_group_three_id)->get()->except($user->id)->except($group3->group_leader_id);
             $groupMates = $groupMates->merge($groupMates3);
         }
 
         $group4 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_four_id)->first();
         if (isset($group4)) {
-            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_four_id)->orWhere('emp_group_two_id', $user->emp_group_four_id)
+            $groupMates4 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_four_id)->where('status', 'Active')->orWhere('emp_group_two_id', $user->emp_group_four_id)
                 ->orWhere('emp_group_three_id', $user->emp_group_four_id)->orWhere('emp_group_four_id', $user->emp_group_four_id)->orWhere('emp_group_five_id', $user->emp_group_four_id)->get()->except($user->id)->except($group4->group_leader_id);
             $groupMates = $groupMates->merge($groupMates4);
         }
 
         $group5 = EmpGroup::orderby('id', 'ASC')->where('id', $user->emp_group_five_id)->first();
         if (isset($group5)) {
-            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_five_id)->orWhere('emp_group_two_id', $user->emp_group_five_id)
+            $groupMates5 = User::orderBy('id', 'ASC')->where('emp_group_id', $user->emp_group_five_id)->where('status', 'Active')->orWhere('emp_group_two_id', $user->emp_group_five_id)
                 ->orWhere('emp_group_three_id', $user->emp_group_five_id)->orWhere('emp_group_four_id', $user->emp_group_five_id)->orWhere('emp_group_five_id', $user->emp_group_five_id)->get()->except($user->id)->except($group5->group_leader_id);
             $groupMates = $groupMates->merge($groupMates5);
         }

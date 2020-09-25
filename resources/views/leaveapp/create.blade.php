@@ -862,7 +862,7 @@ $('#reason').keyup(function() {
             let to = _form.get(FC.date_to);
             let total = calendar.getTotalWorkingDay(from, to);
             let hasError = false;
-            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
+            if( validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
               total = calendar.getTotalDays(from, to);
             }
             var leaveId = _form.get(FC.leave_type_id);
