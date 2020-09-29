@@ -493,6 +493,9 @@ class AdminController extends Controller
         $annual = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
         ->where('leave_balances.leave_type_id', '=', '1' )->get();
 
+        $annual_total = User::leftjoin('leave_entitlements', 'leave_entitlements.emp_type_id', '=', 'users.emp_type_id')
+        ->where('leave_entitlements.leave_type_id', '=', '1' )->get();
+
         $calamity = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
         ->where('leave_balances.leave_type_id', '=', '2' )->get();
 
@@ -558,6 +561,8 @@ class AdminController extends Controller
         $sheet->setCellValue('N1', 'Unpaid');
         $sheet->getStyle('O')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
         $sheet->setCellValue('O1', 'Replacement');
+        $sheet->getStyle('P')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+        $sheet->setCellValue('P1', 'Total Annaul Ent');
         $rows = 2;
 
         $countapp = count($annual);
@@ -617,6 +622,10 @@ class AdminController extends Controller
             if ( $replacement ) {
                 $sheet->getColumnDimension('O')->setAutoSize(true);
                 $sheet->setCellValue('O' . $rows, $replacement[$d]->no_of_days);
+            }
+            if ( $annual_total ) {
+                $sheet->getColumnDimension('P')->setAutoSize(true);
+                $sheet->setCellValue('P' . $rows, $annual_total[$d]->no_of_days);
             }
             $rows++;
         }
