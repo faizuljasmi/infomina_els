@@ -496,7 +496,7 @@ class AdminController extends Controller
         $annual_total = User::leftjoin('leave_entitlements', 'leave_entitlements.emp_type_id', '=', 'users.emp_type_id')
         ->where('leave_entitlements.leave_type_id', '=', '1' )->get();
 
-        $annual_total = User::leftjoin('brought_forward_leaves', 'brought_forward_leaves.user_id', '=', 'users.user_id')->get();
+        $brought_forw = User::leftjoin('brought_forward_leaves', 'brought_forward_leaves.user_id', '=', 'users.user_id')->get();
 
         $calamity = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
         ->where('leave_balances.leave_type_id', '=', '2' )->get();
