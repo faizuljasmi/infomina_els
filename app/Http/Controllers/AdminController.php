@@ -102,6 +102,9 @@ class AdminController extends Controller
                 $leave_app->status = "4";
 
                 if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
+                    if($leave_app->total_days > $leave_bal->no_of_days){
+                        return back()->with('error', 'Employee does not have enough leave balance');
+                    }
                     $leave_bal->no_of_days -= $leave_app->total_days; // Deduct the days in leave balances
                     $taken_leave->no_of_days += $leave_app->total_days; // Add days in leaves taken
                 } else {
@@ -114,6 +117,9 @@ class AdminController extends Controller
                 }
 
                 if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
+                    if($leave_app->total_days >  $annual_balance->no_of_days){
+                        return back()->with('error', 'Employee does not have enough leave balance');
+                    }
                     $annual_balance->no_of_days -= $leave_app->total_days; // Deduct also in annual leaves
                 }
 

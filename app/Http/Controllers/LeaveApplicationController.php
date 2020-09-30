@@ -587,6 +587,8 @@ class LeaveApplicationController extends Controller
         $la_2 = $leaveApplication->approver_id_2;
         $la_3 = $leaveApplication->approver_id_3;
 
+        $old_status = $leaveApplication->status;
+
         //If user id same as approver id 1
         if ($la_1 == $user->id) {
             //if no authority 2, terus change to approved
@@ -716,6 +718,11 @@ class LeaveApplicationController extends Controller
                     $query->where('leave_type_id', '1')
                         ->where('user_id', $leaveApplication->user_id);
                 })->first();
+                if($leaveApplication->total_days >  $annBalance->no_of_days){
+                    $leaveApplication->status = $old_status;
+                    $leaveApplication->update();
+                    return redirect()->to('/admin')->with('error', 'Employee does not have enough leave balance');
+                }
                 $annBalance->no_of_days -= $leaveApplication->total_days;
                 $annBalance->save();
                 //dd($annBalance->no_of_days);
@@ -774,8 +781,13 @@ class LeaveApplicationController extends Controller
             }
             //else update existing
             else {
-                $dupcheck2->no_of_days -= $leaveApplication->total_days;
-                $dupcheck2->save();
+                if($leaveApplication->total_days > $dupcheck2->no_of_days){
+                    return redirect()->to('/admin')->with('error', 'Employee does not have enough leave balance');
+                }
+                else{
+                    $dupcheck2->no_of_days -= $leaveApplication->total_days;
+                    $dupcheck2->save();
+                }
             }
         }
 
