@@ -207,17 +207,17 @@
                     </td>
                     <td class="d-none approver">
                         @if($row->status == 'PENDING_1')
-                            {{$row->authority_1_id}}
+                            {{$row->approver_id_1}}
                         @elseif($row->status == 'PENDING_2')
-                            {{$row->authority_2_id}}
+                            {{$row->approver_id_2}}
                         @elseif($row->status == 'PENDING_3')
-                            {{$row->authority_3_id}}
+                            {{$row->approver_id_3}}
                         @elseif($row->status == 'DENIED_1')
-                            {{$row->authority_1_id}}
+                            {{$row->approver_id_1}}
                         @elseif($row->status == 'DENIED_2')
-                            {{$row->authority_2_id}}
+                            {{$row->approver_id_2}}
                         @elseif($row->status == 'DENIED_3')
-                            {{$row->authority_3_id}}
+                            {{$row->approver_id_3}}
                         @endif
                     </td>
                     <td class="d-none user_leave_status">{{ $row->status }}</td>
