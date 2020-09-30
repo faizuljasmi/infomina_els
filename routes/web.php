@@ -70,8 +70,10 @@ Route::middleware('can:employee-data')->group(function(){
      Route::get('reports/export-search', 'AdminController@export_search')->name('excel_export_search')->middleware('auth');
      Route::get('reports/export-balance', 'AdminController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
      Route::get('reports/autocomplete', 'AdminController@autocomplete');
-});
 
+    // Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
+});
+Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
 
 Route::middleware('can:edit_settings')->group(function() {
 

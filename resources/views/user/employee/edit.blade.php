@@ -22,7 +22,7 @@
                 @include('user.employee.partials.form', ['action' => route('update_profile')])
             </div>
         </div>
-    </div> 
+    </div>
 
     <div class="col-md-4">
         <div class="card">
@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    
+
     <!-- Leave Days Form -->
     <div class="col-md-12">
         <div class="card">
@@ -83,7 +83,7 @@
                     @endforeach
                     </tr>
                     <tr>
-                    <th>Brought Forward 
+                    <th>Brought Forward
                     </th>
                     @foreach($broughtFwd as $bf)
                       @if($bf->leave_type_id == '1')
@@ -130,20 +130,23 @@
                     <td class="table-secondary"></td>
                     </tr>
                     <tr>
-                    <th>Burnt</th>
-                    @foreach($leaveEnt as $le)
-                      @if($le->leave_type_id != '12')
-                        <td class="table-danger">0</td>
-                      @endif
-                    @endforeach
-                    </tr>
-                    <tr>
-                    <th>Balance</th>
-                    @foreach($leaveBal as $lb)
-                      @if($lb->leave_type_id != '12')
-                        <td class="table-primary">{{$lb->no_of_days}}</td>
-                      @endif
-                    @endforeach
+                        <th>Burnt <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top"
+                            title="Unused brought forward leaves will go here on 1 July"></i></th>
+                    @if($burntLeave != null)
+                    <td class="table-danger">{{$burntLeave->no_of_days}}</td>
+                    @else
+                    <td class="table-danger">0</td>
+                    @endif
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
                     </tr>
                  </tbody>
                 </table>
