@@ -23,6 +23,8 @@ use App\LeaveEntitlement;
 use Illuminate\Notifications\Notifiable;
 use Notification;
 use App\Notifications\StatusUpdate;
+use App\BroughtForwardLeave;
+use App\BurntLeave;
 
 class AdminController extends Controller
 {
@@ -101,6 +103,9 @@ class AdminController extends Controller
                 $leave_app->status = "4";
 
                 if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
+                    if($leave_app->total_days > $leave_bal->no_of_days){
+                        return back()->with('error', 'Employee does not have enough leave balance');
+                    }
                     $leave_bal->no_of_days -= $leave_app->total_days; // Deduct the days in leave balances
                     $taken_leave->no_of_days += $leave_app->total_days; // Add days in leaves taken
                 } else {
@@ -113,6 +118,9 @@ class AdminController extends Controller
                 }
 
                 if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
+                    if($leave_app->total_days >  $annual_balance->no_of_days){
+                        return back()->with('error', 'Employee does not have enough leave balance');
+                    }
                     $annual_balance->no_of_days -= $leave_app->total_days; // Deduct also in annual leaves
                 }
 
@@ -650,5 +658,38 @@ class AdminController extends Controller
         header('Content-Disposition: attachment; filename="Leave_Balance.xlsx"');
         $writer->save("php://output");
 
+    }
+
+    public function deduct_burnt(){
+        $users = User::where('status','Active')->get();
+        $bfwd = BroughtForwardLeave::where('leave_type_id',1)->where('no_of_days','>',0)->get();
+
+        foreach($users as $user){
+            foreach($bfwd as $bf){
+                if($user->id == $bf->user_id){
+                    $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->where('created_at' ,'<=', '2020-06-30')->get();
+                    $cur_ann_leave_bal = LeaveBalance::where('user_id',$user->id)->where('leave_type_id',1)->first();
+                    $total_days = 0;
+                    foreach($ann_taken_first_half as $ann){
+                        $total_days += $ann->total_days;
+                    }
+                    $bf_balance = $bf->no_of_days - $total_days;
+                    if($bf_balance < 0){
+                        $bf_balance = 0;
+                    }
+                    $new_ann_balance = $cur_ann_leave_bal->no_of_days - $bf_balance;
+                    $cur_ann_leave_bal->no_of_days = $new_ann_balance;
+                    $cur_ann_leave_bal->save();
+
+                    $burnt = new BurntLeave;
+                    $burnt->leave_type_id = 1;
+                    $burnt->user_id = $user->id;
+                    $burnt->no_of_days = $bf_balance;
+                    $burnt->save();
+                    //dd("Total Annual Taken ".$total_days." Brought Forward ".$bf->no_of_days." Annual Balance ".$user->leave_balances[0]->no_of_days);
+                }
+            }
+        }
+        dd("Done");
     }
 }

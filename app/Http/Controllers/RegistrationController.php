@@ -21,6 +21,7 @@ use App\LeaveEarning;
 use App\LeaveBalance;
 use App\TakenLeave;
 use App\BroughtForwardLeave;
+use App\BurntLeave;
 use Redirect,Response,DB,Config;
 use Datatables;
 
@@ -96,7 +97,8 @@ class RegistrationController extends Controller
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        return view('user.edit')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
+        $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
+        return view('user.edit')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','burntLeave'));
     }
 
     public function update(Request $request, User $user)
@@ -137,6 +139,13 @@ class RegistrationController extends Controller
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
+
+        $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->where('created_at' ,'<=', '2020-06-30')->get();
+        $total_ann_taken_first_half = 0;
+        foreach($ann_taken_first_half as $ann){
+            $total_ann_taken_first_half += $ann->total_days;
+        }
+
         //dd($leaveEnt);
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
         //dd($user->name);
@@ -165,7 +174,8 @@ class RegistrationController extends Controller
             $query->where('status', 'DENIED_3')
                 ->where('user_id', $user->id);
         })->sortable(['date_from'])->paginate(5, ['*'], 'history');
-        return view('user.profile')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist'));
+        $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
+        return view('user.profile')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist','burntLeave','total_ann_taken_first_half'));
     }
 
       public function deactivate(User $user)

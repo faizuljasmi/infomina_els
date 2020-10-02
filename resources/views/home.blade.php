@@ -419,8 +419,8 @@
                                           $bfwd =  $broughtFwd[0]->no_of_days;
                                           $frmBfwd = 0;
                                           $frmAnnual = 0;
-                                        if($taken <= $bfwd){$frmBwd = $taken; $frmAnnual = 0;}
-                                        elseif($taken > $bfwd){ $frmBwd = $bfwd; $frmAnnual = $taken - $bfwd;} ?>
+                                        if($total_ann_taken_first_half <= $bfwd){$frmBwd = $total_ann_taken_first_half; $frmAnnual = $taken - $total_ann_taken_first_half;}
+                                        elseif($total_ann_taken_first_half > $bfwd){ $frmBwd = $bfwd; $frmAnnual = $taken - $bfwd;} ?>
                                     <td class="table-danger" data-toggle="tooltip"
                                         title="{{$frmBwd}} from Brought Forward + {{$frmAnnual}} from Annual Leave"><a
                                             href="#leaveRecord"><u>{{$lt->no_of_days}}</u></a></td>
@@ -454,11 +454,21 @@
                                 <tr>
                                     <th>Burnt <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top"
                                             title="Unused brought forward leaves will go here on 1 July"></i></th>
-                                    @foreach($leaveEnts as $le)
-                                    @if($le->leave_type_id != '12')
+                                    @if($burntLeave != null)
+                                    <td class="table-danger">{{$burntLeave->no_of_days}}</td>
+                                    @else
                                     <td class="table-danger">0</td>
                                     @endif
-                                    @endforeach
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
+                                    <td class="table-secondary"></td>
                                 </tr>
                                 <tr>
                                     <th>Balance</th>

@@ -22,7 +22,7 @@
                 @include('user.partials.form', ['action' => route('user_update', $user), 'user' => $user])
             </div>
         </div>
-    </div> 
+    </div>
 
     <div class="col-md-4">
         <div class="card">
@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    
+
     <!-- Leave Days Form -->
     <div class="col-md-12">
         <div class="card">
@@ -116,7 +116,7 @@
                     @endforeach
                     </tr>
                     <tr>
-                    <th>Brought Forward 
+                    <th>Brought Forward
                     @if ($leaveEarn->count() == 0)<small><a href="" onclick="return alert('Please set this year\'s\ leave earnings before setting carry forward leaves')">Edit</a></small>
                     @else <small><a href="" data-toggle="modal" data-target="#setBroughtForward">Edit</a></small>
                     @endif
@@ -140,12 +140,24 @@
                     @endforeach
                     </tr>
                     <tr>
-                    <th>Taken</th>
-                    @foreach($leaveTak as $lt)
-                      @if($lt->leave_type_id != '12')
+                        <th>Taken</th>
+                        @foreach($leaveTak as $lt)
+                        @if($lt->leave_type_id != '12')
+                        @if($lt->leave_type_id == '1')
+                        <?php $taken = $lt->no_of_days;
+                              $bfwd =  $broughtFwd[0]->no_of_days;
+                              $frmBfwd = 0;
+                              $frmAnnual = 0;
+                            if($taken <= $bfwd){$frmBwd = $taken; $frmAnnual = 0;}
+                            elseif($taken > $bfwd){ $frmBwd = $bfwd; $frmAnnual = $taken - $bfwd;} ?>
+                        <td class="table-danger" data-toggle="tooltip"
+                            title="{{$frmBwd}} from Brought Forward + {{$frmAnnual}} from Annual Leave"><a
+                                href="#leaveRecord"><u>{{$lt->no_of_days}}</u></a></td>
+                        @else
                         <td class="table-danger">{{$lt->no_of_days}}</td>
-                      @endif
-                    @endforeach
+                        @endif
+                        @endif
+                        @endforeach
                     </tr>
                     <tr>
                     <th>Replacement</th>
@@ -166,12 +178,23 @@
                     <td class="table-secondary"></td>
                     </tr>
                     <tr>
-                    <th>Burnt</th>
-                    @foreach($leaveEnt as $le)
-                      @if($le->leave_type_id != '12')
-                        <td class="table-danger">0</td>
-                      @endif
-                    @endforeach
+                        <th>Burnt <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top"
+                            title="Unused brought forward leaves will go here on 1 July"></i></th>
+                    @if($burntLeave != null)
+                    <td class="table-danger">{{$burntLeave->no_of_days}}</td>
+                    @else
+                    <td class="table-danger">0</td>
+                    @endif
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
+                    <td class="table-secondary"></td>
                     </tr>
                     <tr>
                     <th>Balance</th>
@@ -183,7 +206,7 @@
                     </tr>
                  </tbody>
                 </table>
-                
+
                 <!-- MODAL FOR LEAVE EARNINGS SETTINGS -->
                 <div class="modal fade" id="setEarnings" tabindex="-1" role="dialog" aria-labelledby="setEarningsTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">

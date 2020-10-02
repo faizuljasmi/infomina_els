@@ -30,6 +30,15 @@
         z-index: 100;
     }
 </style>
+@if(session()->has('error'))
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="icon fa fa-times"></i>
+    {{ session()->get('error') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
 <div class="mt-2 col-md-12">
     <div class="card">
         <div class="card-header bg-teal">

@@ -22,6 +22,7 @@ use App\LeaveEarning;
 use App\LeaveBalance;
 use App\BroughtForwardLeave;
 use App\TakenLeave;
+use App\BurntLeave;
 
 
 class UserController extends Controller
@@ -48,7 +49,8 @@ class UserController extends Controller
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //Get all leave types, for display
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        return view('user.employee.profile')->with(compact('user', 'empType', 'empGroup', 'empAuth', 'leaveEnt', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
+        $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
+        return view('user.employee.profile')->with(compact('user', 'empType', 'empGroup', 'empAuth', 'leaveEnt', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','burntLeave'));
     }
 
     public function edit()
@@ -65,7 +67,8 @@ class UserController extends Controller
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        return view('user.employee.edit')->with(compact('user', 'empType', 'empGroup', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak'));
+        $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
+        return view('user.employee.edit')->with(compact('user', 'empType', 'empGroup', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','burntLeave'));
     }
 
     public function update(Request $request)

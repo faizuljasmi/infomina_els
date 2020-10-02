@@ -359,7 +359,7 @@
                             @endforeach
                         </tr>
                         <tr>
-                            <th>Earned 
+                            <th>Earned
                             @if($user_insesh->user_type == "Admin")
                             <small><a href="" data-toggle="modal" data-target="#setEarnings">Edit</a></small>
                             @endif
@@ -376,11 +376,23 @@
                         </tr>
                         <tr>
                             <th>Taken</th>
-                            @foreach($leaveTak as $lt)
-                            @if($lt->leave_type_id != '12')
-                            <td class="table-danger">{{$lt->no_of_days}}</td>
-                            @endif
-                            @endforeach
+                                    @foreach($leaveTak as $lt)
+                                    @if($lt->leave_type_id != '12')
+                                    @if($lt->leave_type_id == '1')
+                                    <?php $taken = $lt->no_of_days;
+                                          $bfwd =  $broughtFwd[0]->no_of_days;
+                                          $frmBfwd = 0;
+                                          $frmAnnual = 0;
+                                        if($total_ann_taken_first_half <= $bfwd){$frmBwd = $total_ann_taken_first_half; $frmAnnual = $taken - $total_ann_taken_first_half;}
+                                        elseif($total_ann_taken_first_half > $bfwd){ $frmBwd = $bfwd; $frmAnnual = $taken - $bfwd;} ?>
+                                    <td class="table-danger" data-toggle="tooltip"
+                                        title="{{$frmBwd}} from Brought Forward + {{$frmAnnual}} from Annual Leave"><a
+                                            href="#leaveRecord"><u>{{$lt->no_of_days}}</u></a></td>
+                                    @else
+                                    <td class="table-danger">{{$lt->no_of_days}}</td>
+                                    @endif
+                                    @endif
+                                    @endforeach
                         </tr>
                         <tr>
                             <th>Replacement</th>
@@ -401,12 +413,23 @@
                             <td class="table-secondary"></td>
                         </tr>
                         <tr>
-                            <th>Burnt</th>
-                            @foreach($leaveEnt as $le)
-                            @if($le->leave_type_id != '12')
-                            <td class="table-danger">0</td>
-                            @endif
-                            @endforeach
+                            <th>Burnt <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top"
+                                title="Unused brought forward leaves will go here on 1 July"></i></th>
+                        @if($burntLeave != null)
+                        <td class="table-danger">{{$burntLeave->no_of_days}}</td>
+                        @else
+                        <td class="table-danger">0</td>
+                        @endif
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
+                        <td class="table-secondary"></td>
                         </tr>
                         <tr>
                             <th>Balance</th>

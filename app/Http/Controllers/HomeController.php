@@ -19,6 +19,7 @@ use App\LeaveApplication;
 use App\LeaveEntitlement;
 use App\LeaveEarning;
 use App\BroughtForwardLeave;
+use App\BurntLeave;
 use App\LeaveBalance;
 use App\TakenLeave;
 use App\Holiday;
@@ -53,6 +54,13 @@ class HomeController extends Controller
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
+
+        $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->where('created_at' ,'<=', '2020-06-30')->get();
+        $total_ann_taken_first_half = 0;
+        foreach($ann_taken_first_half as $ann){
+            $total_ann_taken_first_half += $ann->total_days;
+        }
+
         $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where('user_id', '=', $user->id)->paginate(3);
         $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
@@ -122,8 +130,9 @@ class HomeController extends Controller
             }
         }
         //dd($approved_dates);
-
-        return view('home')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'leaveEnts', 'leaveEarns', 'broughtFwd', 'leaveBal', 'leaveTak', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'holsPaginated', 'pendLeaves', 'leaveHist'));
+        $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
+        //dd($burntLeave);
+        return view('home')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'leaveEnts', 'leaveEarns', 'broughtFwd', 'leaveBal', 'leaveTak', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'holsPaginated', 'pendLeaves', 'leaveHist','burntLeave','total_ann_taken_first_half'));
     }
 
     /**

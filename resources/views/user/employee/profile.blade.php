@@ -110,7 +110,7 @@
         <div class="card">
             <div class="card-header bg-teal">
                 <strong>Leave Record</strong>
-		
+
             </div>
             <div class="card-body">
             <table class="table table-sm table-bordered">
@@ -180,11 +180,23 @@
                     </tr>
                     <tr>
                     <th>Burnt</th>
-                    @foreach($leaveEnt as $le)
-                      @if($le->leave_type_id != '12')
-                        <td class="table-danger">0</td>
-                      @endif
-                    @endforeach
+                    <th>Burnt <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top"
+                        title="Unused brought forward leaves will go here on 1 July"></i></th>
+                @if($burntLeave != null)
+                <td class="table-danger">{{$burntLeave->no_of_days}}</td>
+                @else
+                <td class="table-danger">0</td>
+                @endif
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
+                <td class="table-secondary"></td>
                     </tr>
                     <tr>
                     <th>Balance</th>
