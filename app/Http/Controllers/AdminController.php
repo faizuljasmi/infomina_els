@@ -19,6 +19,7 @@ use App\LeaveBalance;
 use App\LeaveEarning;
 use App\TakenLeave;
 use App\ApprovalAuthority;
+use App\LeaveEntitlement;
 use Illuminate\Notifications\Notifiable;
 use Notification;
 use App\Notifications\StatusUpdate;
@@ -493,9 +494,6 @@ class AdminController extends Controller
         $annual = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
         ->where('leave_balances.leave_type_id', '=', '1' )->get();
 
-        $annual_total = User::leftjoin('leave_entitlements', 'leave_entitlements.emp_type_id', '=', 'users.emp_type_id')
-        ->where('leave_entitlements.leave_type_id', '=', '1' )->get();
-
         $brought_forw = User::leftjoin('brought_forward_leaves', 'brought_forward_leaves.user_id', '=', 'users.id')
         ->where('brought_forward_leaves.leave_type_id', '=', '1' )->get();
 
@@ -565,7 +563,7 @@ class AdminController extends Controller
         $sheet->getStyle('O')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
         $sheet->setCellValue('O1', 'Replacement');
         $sheet->getStyle('P')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-        $sheet->setCellValue('P1', 'Total Annaul Ent');
+        $sheet->setCellValue('P1', 'Total Annual Ent');
         $sheet->getStyle('Q')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
         $sheet->setCellValue('Q1', 'Total Brought Forw');
         $rows = 2;
@@ -628,12 +626,19 @@ class AdminController extends Controller
                 $sheet->getColumnDimension('O')->setAutoSize(true);
                 $sheet->setCellValue('O' . $rows, $replacement[$d]->no_of_days);
             }
-            if ( $annual_total ) {
+            if ( $annual ) {
                 $sheet->getColumnDimension('P')->setAutoSize(true);
-                $sheet->setCellValue('P' . $rows, $annual_total[$d]->no_of_days);
+
+                $this_emp_type = $annual[$d]->emp_type_id;
+                $total_ent = LeaveEntitlement::where('emp_type_id', $this_emp_type)
+                            ->where('leave_type_id', '1')->first();
+
+                $sheet->setCellValue('P' . $rows, $total_ent->no_of_days);
             }
             if ( $brought_forw ) {
                 $sheet->getColumnDimension('Q')->setAutoSize(true);
+
+
                 $sheet->setCellValue('Q' . $rows, $brought_forw[$d]->no_of_days);
             }
             $rows++;
