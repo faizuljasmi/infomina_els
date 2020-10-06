@@ -540,6 +540,7 @@ class AdminController extends Controller
     public function export_leave_balance()
     {
         $annual = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
+        ->select('users.id as user_id', 'users.*', 'leave_balances.*')
         ->where('leave_balances.leave_type_id', '=', '1' )->get();
 
         $brought_forw = User::leftjoin('brought_forward_leaves', 'brought_forward_leaves.user_id', '=', 'users.id')
@@ -613,7 +614,11 @@ class AdminController extends Controller
         $sheet->getStyle('P')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
         $sheet->setCellValue('P1', 'Total Annual Ent');
         $sheet->getStyle('Q')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-        $sheet->setCellValue('Q1', 'Total Brought Forw');
+        $sheet->setCellValue('Q1', 'Total Annual Earn');
+        $sheet->getStyle('R')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+        $sheet->setCellValue('R1', 'Join Date');
+        $sheet->getStyle('S')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+        $sheet->setCellValue('S1', 'Total Brought Forw');
         $rows = 2;
 
         $countapp = count($annual);
@@ -676,18 +681,29 @@ class AdminController extends Controller
             }
             if ( $annual ) {
                 $sheet->getColumnDimension('P')->setAutoSize(true);
+                $sheet->getColumnDimension('Q')->setAutoSize(true);
+                $sheet->getColumnDimension('R')->setAutoSize(true);
 
                 $this_emp_type = $annual[$d]->emp_type_id;
+                $this_user_id = $annual[$d]->user_id;
+                
                 $total_ent = LeaveEntitlement::where('emp_type_id', $this_emp_type)
-                            ->where('leave_type_id', '1')->first();
+                ->where('leave_type_id', '1')->first();
+                
+                $total_earn = LeaveEarning::where('user_id', $this_user_id)
+                ->where('leave_type_id', '1')->first();
+                
+                // dd($total_earn);
+
+                $join_date = User::where('id', $this_user_id)->first();
 
                 $sheet->setCellValue('P' . $rows, $total_ent->no_of_days);
+                $sheet->setCellValue('Q' . $rows, $total_earn->no_of_days);
+                $sheet->setCellValue('R' . $rows, $join_date->join_date);
             }
             if ( $brought_forw ) {
-                $sheet->getColumnDimension('Q')->setAutoSize(true);
-
-
-                $sheet->setCellValue('Q' . $rows, $brought_forw[$d]->no_of_days);
+                $sheet->getColumnDimension('S')->setAutoSize(true);
+                $sheet->setCellValue('S' . $rows, $brought_forw[$d]->no_of_days);
             }
             $rows++;
         }
