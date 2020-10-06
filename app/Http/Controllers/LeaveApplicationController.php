@@ -894,20 +894,56 @@ class LeaveApplicationController extends Controller
 
     public function cancel(LeaveApplication $leaveApplication, Request $request)
     {
+        //If leave has been approved
         if($leaveApplication->status == "APPROVED"){
+            //Get total days of leave application
             $days = $leaveApplication->total_days;
+            //Get number of taken leave for the leave type
             $takenLeave = TakenLeave::where('user_id', $leaveApplication->user_id)->where('leave_type_id', $leaveApplication->leave_type_id)->first();
+            //Get number of leave balance for the leave type
             $leaveBalance = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', $leaveApplication->leave_type_id)->first();
 
-            $takenLeave->no_of_days -= $days;
-            $leaveBalance->no_of_days += $days;
+            if($leaveApplication->leave_type_id != "12"){
+                //Subtract total days from taken leave
+                $takenLeave->no_of_days -= $days;
+                //Add total days into leave balance
+                $leaveBalance->no_of_days += $days;
+                $takenLeave->save();
+                $leaveBalance->save();
+            }
+
+            //If leave application is Sick leave
             if($leaveApplication->leave_type_id == "3"){
+                //Get leave balance for hospitalization
                 $leaveBal2 = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', 4)->first();
+                //Add the total days cancelle back to hospitalization balance
                 $leaveBal2->no_of_days += $days;
+                //Save
                 $leaveBal2->save();
             }
-            $takenLeave->save();
-            $leaveBalance->save();
+            //If leave application is replacement leave
+            if($leaveApplication->leave_type_id == "12"){
+                //Get leave earning for replacement leave
+                $leaveEarn = LeaveEarning::where('user_id', $leaveApplication->user_id)->where('leave_type_id', 12)->first();
+                //Get annual leave balance
+                $balanceLeave = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', 1)->first();
+                //Subtract replacement leave earning
+                $leaveEarn->no_of_days -= $days;
+                //Subtract annual leave balance that has been added before
+                $balanceLeave->no_of_days -= $days;
+                //Save
+                $leaveEarn->save();
+                $balanceLeave->save();
+            }
+            //If leave application is emergency
+            if($leaveApplication->leave_type_id == "6"){
+                //Get leave annual leave balance
+                $leaveBal2 = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', 1)->first();
+                //Add the total days back into annual leave balance
+                $leaveBal2->no_of_days += $days;
+                //Save
+                $leaveBal2->save();
+            }
         }
         $leaveApplication->remarks = $request->remarks;
         $leaveApplication->remarker_id = auth()->user()->id;

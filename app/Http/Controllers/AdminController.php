@@ -102,27 +102,57 @@ class AdminController extends Controller
             if ( $new_status == "APPROVE" ) {
                 $leave_app->status = "4";
 
-                if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
-                    if($leave_app->total_days > $leave_bal->no_of_days){
-                        return back()->with('error', 'Employee does not have enough leave balance');
-                    }
-                    $leave_bal->no_of_days -= $leave_app->total_days; // Deduct the days in leave balances
-                    $taken_leave->no_of_days += $leave_app->total_days; // Add days in leaves taken
-                } else {
-                    $leave_earn->no_of_days += $leave_app->total_days; // Add days in leave earning
-                    $annual_balance->no_of_days += $leave_app->total_days; // Also add days in annual leave balances
+                //If leave type is replacement
+                if($leave_app->leave_type_id == '12'){
+                    //Add replacement leave earning
+                    $leave_earn += $leave_app->total_days;
+                    //Add to annual leave balance
+                    $annual_balance += $leave_app->total_days;
                 }
-
-                if ( $leave_app->leave_type_id == '3') { // If leave type is sick leave
-                    $hosp_balance->no_of_days -= $leave_app->total_days; // Deduct also in hospitalization leaves
+                //If leave type is sick leave
+                if($leave_app->leave_type_id == '3'){
+                    //Substract from hospitalization balance as well
+                    $hosp_balance -= $leave_app->total_days;
                 }
-
-                if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
+                //If leave type is emergency leave
+                if($leave_app->leave_type_id == '6'){
+                    //Check annual balance
                     if($leave_app->total_days >  $annual_balance->no_of_days){
                         return back()->with('error', 'Employee does not have enough leave balance');
                     }
-                    $annual_balance->no_of_days -= $leave_app->total_days; // Deduct also in annual leaves
+                    //Subtract from annual leave balance as well
+                    $annual_balance -= $leave_app->total_days;
                 }
+                //For the rest of the leave type other than replacement
+                if($leave_app->leave_type_id != '12'){
+                    //Add taken leave days
+                    $taken_leave += $leave_app->total_days;
+                    //Subtract leave balance
+                    $leave_bal -= $leave_app->total_days;
+                }
+
+
+                // if ( $leave_app->leave_type_id != '12' ) { // If leave type is not replacement leave
+                //     if($leave_app->total_days > $leave_bal->no_of_days){
+                //         return back()->with('error', 'Employee does not have enough leave balance');
+                //     }
+                //     $leave_bal->no_of_days -= $leave_app->total_days; // Deduct the days in leave balances
+                //     $taken_leave->no_of_days += $leave_app->total_days; // Add days in leaves taken
+                // } else {
+                //     $leave_earn->no_of_days += $leave_app->total_days; // Add days in leave earning
+                //     $annual_balance->no_of_days += $leave_app->total_days; // Also add days in annual leave balances
+                // }
+
+                // if ( $leave_app->leave_type_id == '3') { // If leave type is sick leave
+                //     $hosp_balance->no_of_days -= $leave_app->total_days; // Deduct also in hospitalization leaves
+                // }
+
+                // if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
+                //     if($leave_app->total_days >  $annual_balance->no_of_days){
+                //         return back()->with('error', 'Employee does not have enough leave balance');
+                //     }
+                //     $annual_balance->no_of_days -= $leave_app->total_days; // Deduct also in annual leaves
+                // }
 
             } else if ( $new_status == "REJECT" ) {
 
@@ -139,6 +169,11 @@ class AdminController extends Controller
 
                     if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
                         $annual_balance->no_of_days += $leave_app->total_days; // Add also in annual leaves
+                    }
+
+                    if( $leave_app->leave_type_id == '12'){ //If leave type is replacement
+                        $leave_earn -= $leave_app->total_days; //Subtract replacement leave earned
+                        $annual_balance -= $leave_app->total_days; //Subtract annual leave balance
                     }
                 }
                 $leave_app->status = "7";
@@ -158,6 +193,11 @@ class AdminController extends Controller
 
                     if ( $leave_app->leave_type_id == '6') { // If leave type is emergency leave
                         $annual_balance->no_of_days += $leave_app->total_days; // Add also in annual leaves
+                    }
+
+                    if( $leave_app->leave_type_id == '12'){ //If leave type is replacement
+                        $leave_earn -= $leave_app->total_days; //Subtract replacement leave earned
+                        $annual_balance -= $leave_app->total_days; //Subtract annual leave balance
                     }
                 }
                 $leave_app->status = "8";
