@@ -172,8 +172,8 @@ class AdminController extends Controller
                     }
 
                     if( $leave_app->leave_type_id == '12'){ //If leave type is replacement
-                        $leave_earn -= $leave_app->total_days; //Subtract replacement leave earned
-                        $annual_balance -= $leave_app->total_days; //Subtract annual leave balance
+                        $leave_earn->no_of_days -= $leave_app->total_days; //Subtract replacement leave earned
+                        $annual_balance->no_of_days -= $leave_app->total_days; //Subtract annual leave balance
                     }
                 }
                 $leave_app->status = "7";
@@ -196,8 +196,8 @@ class AdminController extends Controller
                     }
 
                     if( $leave_app->leave_type_id == '12'){ //If leave type is replacement
-                        $leave_earn -= $leave_app->total_days; //Subtract replacement leave earned
-                        $annual_balance -= $leave_app->total_days; //Subtract annual leave balance
+                        $leave_earn->no_of_days -= $leave_app->total_days; //Subtract replacement leave earned
+                        $annual_balance->no_of_days -= $leave_app->total_days; //Subtract annual leave balance
                     }
                 }
                 $leave_app->status = "8";
