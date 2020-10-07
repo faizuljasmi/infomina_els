@@ -105,14 +105,14 @@ class AdminController extends Controller
                 //If leave type is replacement
                 if($leave_app->leave_type_id == '12'){
                     //Add replacement leave earning
-                    $leave_earn += $leave_app->total_days;
+                    $leave_earn->no_of_days += $leave_app->total_days;
                     //Add to annual leave balance
-                    $annual_balance += $leave_app->total_days;
+                    $annual_balance->no_of_days += $leave_app->total_days;
                 }
                 //If leave type is sick leave
                 if($leave_app->leave_type_id == '3'){
                     //Substract from hospitalization balance as well
-                    $hosp_balance -= $leave_app->total_days;
+                    $hosp_balance->no_of_days -= $leave_app->total_days;
                 }
                 //If leave type is emergency leave
                 if($leave_app->leave_type_id == '6'){
@@ -121,14 +121,14 @@ class AdminController extends Controller
                         return back()->with('error', 'Employee does not have enough leave balance');
                     }
                     //Subtract from annual leave balance as well
-                    $annual_balance -= $leave_app->total_days;
+                    $annual_balance->no_of_days -= $leave_app->total_days;
                 }
                 //For the rest of the leave type other than replacement
                 if($leave_app->leave_type_id != '12'){
                     //Add taken leave days
-                    $taken_leave += $leave_app->total_days;
+                    $taken_leave->no_of_days += $leave_app->total_days;
                     //Subtract leave balance
-                    $leave_bal -= $leave_app->total_days;
+                    $leave_bal->no_of_days -= $leave_app->total_days;
                 }
 
 
@@ -686,13 +686,13 @@ class AdminController extends Controller
 
                 $this_emp_type = $annual[$d]->emp_type_id;
                 $this_user_id = $annual[$d]->user_id;
-                
+
                 $total_ent = LeaveEntitlement::where('emp_type_id', $this_emp_type)
                 ->where('leave_type_id', '1')->first();
-                
+
                 $total_earn = LeaveEarning::where('user_id', $this_user_id)
                 ->where('leave_type_id', '1')->first();
-                
+
                 // dd($total_earn);
 
                 $join_date = User::where('id', $this_user_id)->first();
