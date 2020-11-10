@@ -12,3 +12,6 @@
 |
 */
 
+Route::post('/leave/list/mobile','LeaveApplicationController@list');
+Route::post('/leave/action/mobile','LeaveApplicationController@mobile_action');
+
