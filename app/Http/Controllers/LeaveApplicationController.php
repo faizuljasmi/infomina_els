@@ -1324,7 +1324,7 @@ class LeaveApplicationController extends Controller
             })->orWhere(function ($query) use ($user_id) {
                 $query->where('status', 'PENDING_3')
                     ->where('approver_id_3', $user_id);
-            })->with('user','relief_personnel')->get();
+            })->with('user','relief_personnel','leaveType')->get();
 
             return response()->json($leaveApps);
         }
