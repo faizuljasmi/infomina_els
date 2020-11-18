@@ -14,4 +14,5 @@
 
 Route::post('/leave/list/mobile','LeaveApplicationController@list');
 Route::post('/leave/action/mobile','LeaveApplicationController@mobile_action');
+Route::post('/leave/total-pending/mobile','LeaveApplicationController@pending_count');
 

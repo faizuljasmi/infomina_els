@@ -1331,6 +1331,27 @@ class LeaveApplicationController extends Controller
         return response()->json("Failed");
     }
 
+    public function pending_count(Request $request){
+
+        $user_id = $request->user_id;
+        $user = User::where('id',$user_id)->first();
+        if($user->name == $request->user_name){
+            $leaveApps = LeaveApplication::where(function ($query) use ($user_id) {
+                $query->where('status', 'PENDING_1')
+                    ->where('approver_id_1', $user_id);
+            })->orWhere(function ($query) use ($user_id) {
+                $query->where('status', 'PENDING_2')
+                    ->where('approver_id_2', $user_id);
+            })->orWhere(function ($query) use ($user_id) {
+                $query->where('status', 'PENDING_3')
+                    ->where('approver_id_3', $user_id);
+            })->get();
+
+            return response()->json('total_pending', count($leaveApps));
+        }
+        return response()->json("Failed");
+    }
+
     public function mobile_action(Request $request){
 
         $user_id = $request->user_id;
