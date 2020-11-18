@@ -1347,7 +1347,9 @@ class LeaveApplicationController extends Controller
                     ->where('approver_id_3', $user_id);
             })->get();
 
-            return response()->json('total_pending', count($leaveApps));
+            $total_pending = count($leaveApps);
+
+            return response()->json(['total_pending' => $total_pending]);
         }
         return response()->json("Failed");
     }
