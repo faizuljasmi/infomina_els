@@ -1326,6 +1326,7 @@ class LeaveApplicationController extends Controller
                     ->where('approver_id_3', $user_id);
             })->with('user','relief_personnel','leaveType')->get();
 
+            $leaveApps->makeVisible('attachment_url')->toArray();
             return response()->json($leaveApps);
         }
         return response()->json("Failed");
