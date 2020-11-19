@@ -1606,6 +1606,8 @@ class LeaveApplicationController extends Controller
                 else {
                     $leaveApplication->status = 'DENIED_3';
                 }
+                $leaveApplication->remarks = $request->remarks;
+                $leaveApplication->remarker_id = $request->user_id;
                 $leaveApplication->update();
 
                 //Record in activity history
