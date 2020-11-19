@@ -1315,7 +1315,7 @@ class LeaveApplicationController extends Controller
         $user_id = $request->user_id;
         $user = User::where('id',$user_id)->first();
         if($user->name == $request->user_name){
-            $leaveApps = LeaveApplication::select('id','user_id','leave_type_id','status','date_from','date_to','apply_for','date_resume','total_days','reason' ,'relief_personnel_id','updated_at')->where(function ($query) use ($user_id) {
+            $leaveApps = LeaveApplication::select('id','user_id','leave_type_id','status','date_from','date_to','apply_for','date_resume','total_days','reason' ,'relief_personnel_id','attachment','updated_at')->where(function ($query) use ($user_id) {
                 $query->where('status', 'PENDING_1')
                     ->where('approver_id_1', $user_id);
             })->orWhere(function ($query) use ($user_id) {
