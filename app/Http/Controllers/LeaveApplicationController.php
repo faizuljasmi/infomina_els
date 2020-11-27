@@ -1332,6 +1332,40 @@ class LeaveApplicationController extends Controller
         return response()->json("Failed");
     }
 
+    public function list_my_pending(Request $request){
+
+        $user_id = $request->user_id;
+        $user = User::where('id',$user_id)->first();
+        $status = $request->status;
+        if($user->name == $request->user_name){
+            if($status == "pending"){
+                $leaves = LeaveApplication::where(function ($query) use ($user) {
+                    $query->where('status', 'PENDING_1')
+                        ->where('user_id', $user->id);
+                })->orWhere(function ($query) use ($user) {
+                    $query->where('status', 'PENDING_2')
+                        ->where('user_id', $user->id);
+                })->orWhere(function ($query) use ($user) {
+                    $query->where('status', 'PENDING_3')
+                        ->where('user_id', $user->id);
+                })->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
+            }
+            else if($status == "approved"){
+                $leaves = LeaveApplication::where('status', 'APPROVED')->where('user_id', $user->id)->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
+            }
+            else if($status == "cancelled"){
+                $leaves = LeaveApplication::where('status', 'CANCELLED')->where('user_id', $user->id)->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
+            }
+            else{
+                return response()->json("Failed: Param status was not sent");
+            }
+            
+            $leaves->makeVisible('attachment_url')->toArray();
+            return response()->json($leaves);
+        }
+        return response()->json("Failed");
+    }
+
     public function pending_count(Request $request){
 
         $user_id = $request->user_id;

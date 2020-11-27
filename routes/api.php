@@ -13,6 +13,7 @@
 */
 
 Route::post('/leave/list/mobile','LeaveApplicationController@list');
+Route::post('/leave/list/my-apl/mobile','LeaveApplicationController@list_my_pending');
 Route::post('/leave/action/mobile','LeaveApplicationController@mobile_action');
 Route::post('/leave/total-pending/mobile','LeaveApplicationController@pending_count');
 
