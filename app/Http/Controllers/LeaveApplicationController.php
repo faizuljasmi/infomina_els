@@ -1338,7 +1338,7 @@ class LeaveApplicationController extends Controller
         $user = User::where('id',$user_id)->first();
         $status = $request->status;
         if($user->name == $request->user_name){
-            if($status == "pending"){
+
                 $leaves = LeaveApplication::where(function ($query) use ($user) {
                     $query->where('status', 'PENDING_1')
                         ->where('user_id', $user->id);
@@ -1348,18 +1348,15 @@ class LeaveApplicationController extends Controller
                 })->orWhere(function ($query) use ($user) {
                     $query->where('status', 'PENDING_3')
                         ->where('user_id', $user->id);
-                })->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
-            }
-            else if($status == "approved"){
-                $leaves = LeaveApplication::where('status', 'APPROVED')->where('user_id', $user->id)->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
-            }
-            else if($status == "cancelled"){
-                $leaves = LeaveApplication::where('status', 'CANCELLED')->where('user_id', $user->id)->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
-            }
-            else{
-                return response()->json("Failed: Param status was not sent");
-            }
-            
+                })->orWhere(function ($query) use ($user) {
+                    $query->where('status', 'APPROVED')
+                        ->where('user_id', $user->id);
+                })->orWhere(function ($query) use ($user) {
+                    $query->where('status', 'CANCELLED')
+                        ->where('user_id', $user->id);
+                })->with('user','relief_personnel','leaveType')->paginate(5)->sortBy('status');
+
+
             $leaves->makeVisible('attachment_url')->toArray();
             return response()->json($leaves);
         }
