@@ -1336,7 +1336,6 @@ class LeaveApplicationController extends Controller
 
         $user_id = $request->user_id;
         $user = User::where('id',$user_id)->first();
-        $status = $request->status;
         if($user->name == $request->user_name){
 
                 $leaves = LeaveApplication::where(function ($query) use ($user) {
