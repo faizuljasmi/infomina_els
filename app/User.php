@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Kyslik\ColumnSortable\Sortable;
 use App\Notifications\PasswordReset;
 
+
 class User extends Authenticatable
 {
     use Notifiable, Sortable;

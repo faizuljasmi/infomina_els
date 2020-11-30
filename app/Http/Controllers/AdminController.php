@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Datatables;
 use DB;
 use Input;
+use Auth;
 use App\User;
 use App\History;
 use App\LeaveType;
@@ -25,6 +26,9 @@ use Notification;
 use App\Notifications\StatusUpdate;
 use App\BroughtForwardLeave;
 use App\BurntLeave;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+
+
 
 class AdminController extends Controller
 {
@@ -747,5 +751,36 @@ class AdminController extends Controller
             }
         }
         dd("Done");
+    }
+
+    public function sso_login(Request $request){
+      
+        // $response = Http::post('https://wspace.io/api/other/validate-token', [
+        //     'token' => $token,
+        // ]);
+            $endpoint = "https://wspace.io/api/other/validate-token";
+            $client = new \GuzzleHttp\Client(['http_errors' => false]);
+            $token = $request->token;
+
+            $response = $client->request('POST', $endpoint, [
+                'form_params' => [
+                    'token' => $token
+                ]
+            ]);
+
+            // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
+
+            $statusCode = $response->getStatusCode();
+            $content = $response->getBody();
+
+            // or when your server returns json
+            $content = json_decode($response->getBody(), true);
+            if(array_key_exists('error', $content)){
+                return redirect('/');
+            }
+            else{
+                Auth::loginUsingId($content['data']['id']);
+                return redirect('home');
+            }
     }
 }

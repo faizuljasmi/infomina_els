@@ -10,10 +10,19 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use App\User;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-Route::get('/login', function () {
-    return view('adminlte::login');
-});
+// Route::get('/login/mobile', function () {
+//     if (Request::get('token')){
+//         //Auth::loginUsingId(99);
+//         $token = Request::get('token');
+//         route('sso_login', $token);
+//     }
+//     else{
+//         return view('adminlte::login');
+//     }
+// });
 
 Route::get('/', function () {
     if (Auth::user() != null && (Auth::user()->user_type == 'Admin' || Auth::user()->user_type == 'Management')) {
@@ -24,6 +33,7 @@ Route::get('/', function () {
     }
 });
 
+Route::get('/sso/{token}', 'AdminController@sso_login');
 
 Auth::routes();
 
