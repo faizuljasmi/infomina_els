@@ -687,12 +687,13 @@ $('#reason').keyup(function() {
 		if(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
 			let next2 = calendar.nextDay(calendar.today());
           		next2 = calendar.nextDay(next2);
+                next2 = calendar.nextDay(next2);
           		next2 = calendar.getDateDb(next2);
           		if(calendar.isDateSmaller(date_from, calendar.today())){
             			return "Attention: Annual leave cannot be applied on passed dates.";
           		}
           		if(calendar.isDateSmaller(date_from, next2)){
-            			return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
+            			return "Attention: Annual leave must be applied at least 3 days prior to the leave date.";
           		}
 		}
 		else{
@@ -710,27 +711,33 @@ $('#reason').keyup(function() {
         }
 
         if(validation.isTrainingLeave()){
-            let nextMonth = calendar.nextMonth(calendar.today());
-            let prevWeek = calendar.getPrevWeekWorkingDay(calendar.today());
-            prevWeek = calendar.getPrevWeekWorkingDay(prevWeek);
-            if(calendar.isDateSmaller(date_from,prevWeek)){
-                return "Attention: Training Leave must be applied within 7 days after the training day."
-            }
-            if(calendar.isDateBigger(date_from,nextMonth)){
-                return "Attention: Training Leave cannot be applied more than a month in advance."
-            }
+            // let nextMonth = calendar.nextMonth(calendar.today());
+            // let prevWeek = calendar.getPrevWeekWorkingDay(calendar.today());
+            // prevWeek = calendar.getPrevWeekWorkingDay(prevWeek);
+            // if(calendar.isDateSmaller(date_from,prevWeek)){
+            //     return "Attention: Training Leave must be applied within 7 days after the training day."
+            // }
+            // if(calendar.isDateBigger(date_from,nextMonth)){
+            //     return "Attention: Training Leave cannot be applied more than a month in advance."
+            // }
+            let next2 = calendar.getNextWorkingDay(calendar.today());
+          		next2 = calendar.getNextWorkingDay(next2);
+          		next2 = calendar.getDateDb(next2);
+          		if(calendar.isDateSmaller(date_from, calendar.today())){
+            			return "Attention: Training leave cannot be applied on passed dates.";
+          		}
+          		if(calendar.isDateSmaller(date_from, next2)){
+            			return "Attention: Training leave must be applied at least 2 days prior to the training day.";
+          		}
         }
 
         //SICK, EMERGENCY, PATERNITY, COMPASSIONATE, CALAMITY POLICY
         if(validation.isSickLeave() || validation.isEmergencyLeave() || validation.isPaternityLeave() || validation.isCompassionateLeave() || validation.isCalamityLeave()){
-          let prev3 = calendar.getPrevWeekWorkingDay(calendar.today());
-          prev3 = calendar.getPrevWeekWorkingDay(prev3);
-          prev3 = calendar.getPrevWeekWorkingDay(prev3);
-          prev3 = calendar.getPrevWeekWorkingDay(prev3);
-	  prev3 = calendar.getPrevWeekWorkingDay(prev3);
+          let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
+          prev3 = calendar.getDateDb(prev3);
           prev3 = calendar.getDateDb(prev3);
           if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
-            return "Attention: Leave must be applied within 7 working days after the day of leave.";
+            return "Attention: Leave must be applied within 3 working days after the day of leave.";
           }
           if(calendar.isDateBigger(date_from, calendar.today())){
             return "Attention: Leave cannot be applied in advance.";
@@ -741,29 +748,27 @@ $('#reason').keyup(function() {
         if(validation.isMaternityLeave()){
         //   let monthFwd = calendar.nextMonth(calendar.today());
         //   monthFwd = calendar.getDateDb(monthFwd);
-            let one_month_before = calendar.prevMonth(calendar.today()); // 30 days before
-            one_month_before = calendar.getDateDb(one_month_before);
+            let one_month_after = calendar.nextMonth(calendar.today()); // 30 days before
+            one_month_after = calendar.getDateDb(one_month_after);
 
         //   if(calendar.isDateSmaller(date_from,monthFwd) || calendar.isDateEqual(date_from,monthFwd)){
-          if(calendar.isDateSmaller(date_from,one_month_before)){ // Not more than 30 days late in applying
+          if(calendar.isDateSmaller(date_from,one_month_after)){ // Not more than 30 days late in applying
+            if(calendar.isDateBigger(date_from, calendar.today())){
             return "Attention: Maternity leave application shall be made not less than one (1) month prior to the date on which it is desired that maternity leave commences."
+            }
           }
           if(calendar.isDateSmaller(date_from, calendar.today())){
-            return "Attention: Maternity leave cannot be applied in advance.";
+            return "Attention: Maternity leave cannot be applied on passed date.";
           }
         }
 
         //HOSPITALIZATION POLICY
         if(validation.isHospitalizationLeave()){
-          let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
-          prev7 = calendar.getPrevWeekWorkingDay(prev7);
-	  prev7 = calendar.getPrevWeekWorkingDay(prev7);
-          prev7 = calendar.getPrevWeekWorkingDay(prev7);
-          prev7 = calendar.getPrevWeekWorkingDay(prev7);
+          let prev7 = calendar.prevMonth(calendar.today());
           prev7 = calendar.getDateDb(prev7);
 
           if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
-            return "Attention: Hospitalization leave must be applied within 7 days after the day of leave.";
+            return "Attention: Hospitalization leave must be applied within 30 days after the day of discharged.";
           }
           if(calendar.isDateBigger(date_from, calendar.today())){
             return "Attention: Hospitalization leave cannot be applied in advance.";

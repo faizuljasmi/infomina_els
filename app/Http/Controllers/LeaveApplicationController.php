@@ -1315,7 +1315,7 @@ class LeaveApplicationController extends Controller
         $user_id = $request->user_id;
         $user = User::where('id',$user_id)->first();
         if($user->name == $request->user_name){
-            $leaveApps = LeaveApplication::select('id','user_id','leave_type_id','status','date_from','date_to','apply_for','date_resume','total_days','reason' ,'relief_personnel_id','updated_at')->where(function ($query) use ($user_id) {
+            $leaveApps = LeaveApplication::select('id','user_id','leave_type_id','status','date_from','date_to','apply_for','date_resume','total_days','reason' ,'relief_personnel_id','attachment','updated_at')->where(function ($query) use ($user_id) {
                 $query->where('status', 'PENDING_1')
                     ->where('approver_id_1', $user_id);
             })->orWhere(function ($query) use ($user_id) {
@@ -1326,7 +1326,65 @@ class LeaveApplicationController extends Controller
                     ->where('approver_id_3', $user_id);
             })->with('user','relief_personnel','leaveType')->get();
 
+            $leaveApps->makeVisible('attachment_url')->toArray();
             return response()->json($leaveApps);
+        }
+        return response()->json("Failed");
+    }
+
+    public function list_my_pending(Request $request){
+
+        $user_id = $request->user_id;
+        $user = User::where('id',$user_id)->first();
+        $status = $request->status;
+        if($user->name == $request->user_name){
+            if($status == "pending"){
+                $leaves = LeaveApplication::where(function ($query) use ($user) {
+                    $query->where('status', 'PENDING_1')
+                        ->where('user_id', $user->id);
+                })->orWhere(function ($query) use ($user) {
+                    $query->where('status', 'PENDING_2')
+                        ->where('user_id', $user->id);
+                })->orWhere(function ($query) use ($user) {
+                    $query->where('status', 'PENDING_3')
+                        ->where('user_id', $user->id);
+                })->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
+            }
+            else if($status == "approved"){
+                $leaves = LeaveApplication::where('status', 'APPROVED')->where('user_id', $user->id)->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
+            }
+            else if($status == "cancelled"){
+                $leaves = LeaveApplication::where('status', 'CANCELLED')->where('user_id', $user->id)->sortable(['created_at'])->with('user','relief_personnel','leaveType')->paginate(5);
+            }
+            else{
+                return response()->json("Failed: Param status was not sent");
+            }
+            
+            $leaves->makeVisible('attachment_url')->toArray();
+            return response()->json($leaves);
+        }
+        return response()->json("Failed");
+    }
+
+    public function pending_count(Request $request){
+
+        $user_id = $request->user_id;
+        $user = User::where('id',$user_id)->first();
+        if($user->name == $request->user_name){
+            $leaveApps = LeaveApplication::where(function ($query) use ($user_id) {
+                $query->where('status', 'PENDING_1')
+                    ->where('approver_id_1', $user_id);
+            })->orWhere(function ($query) use ($user_id) {
+                $query->where('status', 'PENDING_2')
+                    ->where('approver_id_2', $user_id);
+            })->orWhere(function ($query) use ($user_id) {
+                $query->where('status', 'PENDING_3')
+                    ->where('approver_id_3', $user_id);
+            })->get();
+
+            $total_pending = count($leaveApps);
+
+            return response()->json(['total_pending' => $total_pending]);
         }
         return response()->json("Failed");
     }
@@ -1583,6 +1641,8 @@ class LeaveApplicationController extends Controller
                 else {
                     $leaveApplication->status = 'DENIED_3';
                 }
+                $leaveApplication->remarks = $request->remarks;
+                $leaveApplication->remarker_id = $request->user_id;
                 $leaveApplication->update();
 
                 //Record in activity history

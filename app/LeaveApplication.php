@@ -28,6 +28,8 @@ class LeaveApplication extends Model
         'status'
     ];
 
+    protected $appends = array('attachment_url');
+
     //One leave app has belongs to one user
     public function user(){
         return $this->belongsTo(User::class,'user_id');
