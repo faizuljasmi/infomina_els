@@ -698,12 +698,13 @@ $('#reason').keyup(function() {
 		else{
           		let next2 = calendar.getNextWorkingDay(calendar.today());
           		next2 = calendar.getNextWorkingDay(next2);
+                next2 = calendar.getNextWorkingDay(next2);
           		next2 = calendar.getDateDb(next2);
           		if(calendar.isDateSmaller(date_from, calendar.today())){
             			return "Attention: Annual leave cannot be applied on passed dates.";
           		}
           		if(calendar.isDateSmaller(date_from, next2)){
-            			return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
+            			return "Attention: Annual leave must be applied at least 3 days prior to the leave date.";
           		}
 		}
         }
