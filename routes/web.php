@@ -25,6 +25,7 @@ Route::get('/', function () {
 });
 
 Route::get('/sso/{token}', 'AdminController@sso_login');
+//Route::get('/mobile/notification', 'LeaveApplicationController@mobile_notification');
 
 Auth::routes();
 
