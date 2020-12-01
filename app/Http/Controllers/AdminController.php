@@ -776,7 +776,6 @@ class AdminController extends Controller
             // or when your server returns json
             $content = json_decode($response->getBody(), true);
             if(array_key_exists('error', $content)){
-                dd($content);
                 return redirect('/');
             }
             else{
