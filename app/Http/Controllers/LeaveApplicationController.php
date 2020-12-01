@@ -314,7 +314,7 @@ class LeaveApplicationController extends Controller
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
         $leaveApp->approver_one->notify(new NewApplication($leaveApp));
-        $this->mobile_notificiation($leaveApp,"authority");
+        $this->mobile_notification($leaveApp,"authority");
 
         //STORE
         return redirect()->to('/home')->with('message', 'Leave application submitted succesfully');
@@ -1414,7 +1414,7 @@ class LeaveApplicationController extends Controller
 
                         //Notify the second approver
                         $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
-                        $this->mobile_notificiation($leaveApplication, "authority");
+                        $this->mobile_notification($leaveApplication, "authority");
                     }
                 }
                 //if user id same as approved id 2
@@ -1428,7 +1428,7 @@ class LeaveApplicationController extends Controller
                         $leaveApplication->status = 'PENDING_3';
                         //Notify the third approver
                         $leaveApplication->approver_three->notify(new NewApplication($leaveApplication));
-                        $this->mobile_notificiation($leaveApplication, "authority");
+                        $this->mobile_notification($leaveApplication, "authority");
                     }
                 }
                 //If user id same as approved id 3, update status to approved
@@ -1469,7 +1469,7 @@ class LeaveApplicationController extends Controller
 
                         //Send status update email
                         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                        $this->mobile_notificiation($leaveApplication, "employee");
+                        $this->mobile_notification($leaveApplication, "employee");
                         return response()->json("Success");
                         // return redirect()->to('/admin')->with('message', 'Replacement leave application status updated succesfully');
                     }
@@ -1509,7 +1509,7 @@ class LeaveApplicationController extends Controller
 
                         //Send status update email
                         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                        $this->mobile_notificiation($leaveApplication, "employee");
+                        $this->mobile_notification($leaveApplication, "employee");
                         return response()->json("Success");
                         // return redirect()->to('/admin')->with('message', 'Sick leave application status updated succesfully');
                     }
@@ -1556,7 +1556,7 @@ class LeaveApplicationController extends Controller
 
                         //Send status update email
                         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                        $this->mobile_notificiation($leaveApplication,"employee");
+                        $this->mobile_notification($leaveApplication,"employee");
                         return response()->json("Success");
                         // return redirect()->to('/admin')->with('message', 'Emergency leave application status updated succesfully');
                     }
@@ -1625,7 +1625,7 @@ class LeaveApplicationController extends Controller
 
                 //Send status update email
                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                $this->mobile_notificiation($leaveApplication,"employee");
+                $this->mobile_notification($leaveApplication,"employee");
                 return response()->json("Success");
             }
             else{
@@ -1667,7 +1667,7 @@ class LeaveApplicationController extends Controller
     }
 
 
-    public function mobile_notificiation(LeaveApplication $leaveApplication, $personnel){
+    public function mobile_notification(){
         $endpoint = "https://wspace.io/api/push-notification/android";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $leave_type = $leaveApplication->leaveType->name;
