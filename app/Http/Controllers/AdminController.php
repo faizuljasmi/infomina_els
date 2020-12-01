@@ -28,8 +28,6 @@ use App\BroughtForwardLeave;
 use App\BurntLeave;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-
-
 class AdminController extends Controller
 {
     public function index()

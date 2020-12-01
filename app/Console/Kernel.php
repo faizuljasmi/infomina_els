@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\CalculateProrate',
     ];
 
     /**
@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('calculate:prorate')
+                 ->monthlyOn(1, '08:00'); // 1st of every month, 8.00am
     }
 
     /**
