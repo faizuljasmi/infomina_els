@@ -1672,6 +1672,8 @@ class LeaveApplicationController extends Controller
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $leave_type = $leaveApplication->leaveType->name;
         $user_id = $leaveApplication->user_id;
+        $title = "";
+        $body = "";
         if($personnel == "employee"){
             $user_id = $leaveApplication->user_id;
             if($leaveApplication->status == "APPROVED"){
