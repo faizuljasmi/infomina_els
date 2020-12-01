@@ -314,6 +314,7 @@ class LeaveApplicationController extends Controller
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
         $leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        $this->mobile_notificiation($leaveApp,"authority");
 
         //STORE
         return redirect()->to('/home')->with('message', 'Leave application submitted succesfully');
@@ -1413,6 +1414,7 @@ class LeaveApplicationController extends Controller
 
                         //Notify the second approver
                         $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
+                        $this->mobile_notificiation($leaveApplication, "authority");
                     }
                 }
                 //if user id same as approved id 2
@@ -1426,6 +1428,7 @@ class LeaveApplicationController extends Controller
                         $leaveApplication->status = 'PENDING_3';
                         //Notify the third approver
                         $leaveApplication->approver_three->notify(new NewApplication($leaveApplication));
+                        $this->mobile_notificiation($leaveApplication, "authority");
                     }
                 }
                 //If user id same as approved id 3, update status to approved
@@ -1466,6 +1469,8 @@ class LeaveApplicationController extends Controller
 
                         //Send status update email
                         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                        $this->mobile_notificiation($leaveApplication, "employee");
+                        return response()->json("Success");
                         // return redirect()->to('/admin')->with('message', 'Replacement leave application status updated succesfully');
                     }
 
@@ -1504,6 +1509,8 @@ class LeaveApplicationController extends Controller
 
                         //Send status update email
                         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                        $this->mobile_notificiation($leaveApplication, "employee");
+                        return response()->json("Success");
                         // return redirect()->to('/admin')->with('message', 'Sick leave application status updated succesfully');
                     }
 
@@ -1549,6 +1556,8 @@ class LeaveApplicationController extends Controller
 
                         //Send status update email
                         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                        $this->mobile_notificiation($leaveApplication,"employee");
+                        return response()->json("Success");
                         // return redirect()->to('/admin')->with('message', 'Emergency leave application status updated succesfully');
                     }
 
@@ -1616,6 +1625,7 @@ class LeaveApplicationController extends Controller
 
                 //Send status update email
                 $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                $this->mobile_notificiation($leaveApplication,"employee");
                 return response()->json("Success");
             }
             else{
@@ -1654,6 +1664,97 @@ class LeaveApplicationController extends Controller
                 }
             }
         return response()->json("Failed");
+    }
+
+
+    public function mobile_notificiation(LeaveApplication $leaveApplication, $personnel){
+        $endpoint = "https://wspace.io/api/push-notification/android";
+        $client = new \GuzzleHttp\Client(['http_errors' => false]);
+        $leave_type = $leaveApplication->leaveType->name;
+
+        if($personnel == "employee"){
+            $user_id = $leaveApplication->user_id;
+            if($leaveApplication->status == "APPROVED"){
+                $title = "Leave Application Approved";
+                $body = "Your ".$leave_type." leave application has been approved.";
+                if($leaveApplication->leave_type_id == "12"){
+                    $title = 'Leave Claim Application Approved';
+                    $body = 'Your replacement leave claim application has been approved';
+                }
+            }
+            else if($leaveApplication->status == "PENDING_1" || $leaveApplication->status == "PENDING_2" || $leaveApplication->status == "PENDING_3"){
+                $title = $leave_type." Leave Application Status Updated";
+
+                if($leaveApplication->leave_type_id == "12"){
+                    $title = 'Leave Claim Application Status Update';
+                }
+                if($leaveApplication->status == 'PENDING_1'){
+                    $currAuth = $leaveApplication->approver_one->name;
+                }
+                else if($leaveApplication->status == 'PENDING_2'){
+                    $currAuth = $leaveApplication->approver_two->name;
+                }
+                else if($leaveApplication->status == 'PENDING_3'){
+                    $currAuth = $leaveApplication->approver_three->name;
+                }
+                $body = 'Waiting approval by '.$currAuth;
+            }
+            else if($leaveApplication->status == 'DENIED_1'|| $leaveApplication->status == 'DENIED_2'|| $leaveApplication->status == 'DENIED_3' ){
+
+                $title = 'Leave Application Denied';
+
+                if($leaveApplication->leave_type_id == "12"){
+                    $title = 'Leave Claim Application Denied';
+                }
+                if($leaveApplication->status == 'DENIED_1'){
+                    $currAuth = $leaveApplication->approver_one->name;
+                }
+                else if($leaveApplication->status == 'DENIED_2'){
+                    $currAuth = $leaveApplication->approver_two->name;
+                }
+                else if($la->status == 'DENIED_3'){
+                    $currAuth = $leaveApplication->approver_three->name;
+                }
+                $body = 'Denied by '.$currAuth;
+            }
+        }
+        else if($personnel == "authority"){
+            if($leaveApplication->status == "PENDING_1"){
+                $user_id = $leaveApplication->approver_id_1;
+                $title = "Leave Application Waiting Approval";
+                $body = $leave_type." Leave Application by ".$leaveApplication->user->name." waiting for your approval.";
+
+            }
+            else if($leaveApplication->status == "PENDING_2"){
+                $user_id = $leaveApplication->approver_id_2;
+                $title = "Leave Application Waiting Approval";
+                $body = $leave_type." Leave Application by ".$leaveApplication->user->name." waiting for your approval.";
+
+            }
+            else if($leaveApplication->status == "PENDING_3"){
+                $user_id = $leaveApplication->approver_id_3;
+                $title = "Leave Application Waiting Approval";
+                $body = $leave_type." Leave Application by ".$leaveApplication->user->name." waiting for your approval.";
+            }
+        }
+
+
+        $response = $client->request('POST', $endpoint, [
+            'form_params' => [
+                'user' => [$user_id],
+                'title' => $title,
+                'body' => $body
+            ]
+        ]);
+
+        // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getBody();
+
+        // or when your server returns json
+        $content = json_decode($response->getBody(), true);
+        return $statusCode;
     }
 
 }
