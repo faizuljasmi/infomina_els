@@ -1667,7 +1667,7 @@ class LeaveApplicationController extends Controller
     }
 
 
-    public function mobile_notification(){
+    public function mobile_notification(LeaveApplication $leaveApplication,$personnel){
         $endpoint = "https://wspace.io/api/push-notification/android";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $leave_type = $leaveApplication->leaveType->name;
