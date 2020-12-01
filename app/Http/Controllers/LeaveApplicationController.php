@@ -1671,7 +1671,7 @@ class LeaveApplicationController extends Controller
         $endpoint = "https://wspace.io/api/push-notification/android";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $leave_type = $leaveApplication->leaveType->name;
-
+        $user_id = $leaveApplication->user_id;
         if($personnel == "employee"){
             $user_id = $leaveApplication->user_id;
             if($leaveApplication->status == "APPROVED"){
@@ -1741,7 +1741,7 @@ class LeaveApplicationController extends Controller
 
         $response = $client->request('POST', $endpoint, [
             'form_params' => [
-                'user' => [$user_id],
+                'users' => [$user_id],
                 'title' => $title,
                 'body' => $body
             ]
