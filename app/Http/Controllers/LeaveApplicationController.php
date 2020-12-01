@@ -271,7 +271,6 @@ class LeaveApplicationController extends Controller
         $leaveApp->date_from = $request->date_from;
         //get date to
         $leaveApp->date_to = $request->date_to;
-        $leaveApp->status = "PENDING_1";
         //get date resume
         $leaveApp->date_resume = $request->date_resume;
         //get total days
@@ -315,7 +314,7 @@ class LeaveApplicationController extends Controller
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
         $leaveApp->approver_one->notify(new NewApplication($leaveApp));
-        $this->mobile_notification($leaveApp,"authority");
+        $this->mobile_notification($leaveApp,"authority_1");
 
         //STORE
         return redirect()->to('/home')->with('message', 'Leave application submitted succesfully');
@@ -1415,7 +1414,7 @@ class LeaveApplicationController extends Controller
 
                         //Notify the second approver
                         $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
-                        $this->mobile_notification($leaveApplication, "authority");
+                        $this->mobile_notification($leaveApplication, "authority_2");
                     }
                 }
                 //if user id same as approved id 2
@@ -1429,7 +1428,7 @@ class LeaveApplicationController extends Controller
                         $leaveApplication->status = 'PENDING_3';
                         //Notify the third approver
                         $leaveApplication->approver_three->notify(new NewApplication($leaveApplication));
-                        $this->mobile_notification($leaveApplication, "authority");
+                        $this->mobile_notification($leaveApplication, "authority_3");
                     }
                 }
                 //If user id same as approved id 3, update status to approved
@@ -1722,21 +1721,21 @@ class LeaveApplicationController extends Controller
                 $body = 'Denied by '.$currAuth;
             }
         }
-        else if($personnel == "authority"){
+        else{
             //dd($leaveApplication);
-            if($leaveApplication->status == "PENDING_1"){
-                $user_id = $leaveApplication->approver_id_1;
-                $title = "Leave Application Waiting Approval";
-                $body = $leave_type." Leave Application by ".$leaveApplication->user->name." waiting for your approval.";
+            if($personnel == "authority_1"){
+                    $user_id = $leaveApplication->approver_id_1;
+                    $title = "Leave Application Waiting Approval";
+                    $body = $leave_type." Leave Application by ".$leaveApplication->user->name." waiting for your approval.";
 
             }
-            else if($leaveApplication->status == "PENDING_2"){
+            else if($personnel == "authority_2"){
                 $user_id = $leaveApplication->approver_id_2;
                 $title = "Leave Application Waiting Approval";
                 $body = $leave_type." Leave Application by ".$leaveApplication->user->name." waiting for your approval.";
 
             }
-            else if($leaveApplication->status == "PENDING_3"){
+            else if($personnel == "authority_3"){
                 $user_id = $leaveApplication->approver_id_3;
                 $title = "Leave Application Waiting Approval";
                 $body = $leave_type." Leave Application by ".$leaveApplication->user->name." waiting for your approval.";
