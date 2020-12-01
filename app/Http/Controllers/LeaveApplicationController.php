@@ -1722,7 +1722,7 @@ class LeaveApplicationController extends Controller
             }
         }
         else{
-            //dd($leaveApplication);
+
             if($personnel == "authority_1"){
                     $user_id = $leaveApplication->approver_id_1;
                     $title = "Leave Application Waiting Approval";
