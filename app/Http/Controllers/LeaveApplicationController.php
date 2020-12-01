@@ -271,6 +271,7 @@ class LeaveApplicationController extends Controller
         $leaveApp->date_from = $request->date_from;
         //get date to
         $leaveApp->date_to = $request->date_to;
+        $leaveApp->status = "PENDING_1";
         //get date resume
         $leaveApp->date_resume = $request->date_resume;
         //get total days
@@ -1667,13 +1668,14 @@ class LeaveApplicationController extends Controller
     }
 
 
-    public function mobile_notification(LeaveApplication $leaveApplication,$personnel){
+    public function mobile_notification(LeaveApplication $leaveApplication, $personnel){
         $endpoint = "https://wspace.io/api/push-notification/android";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $leave_type = $leaveApplication->leaveType->name;
         $user_id = $leaveApplication->user_id;
         $title = "";
         $body = "";
+        //dd($personnel);
         if($personnel == "employee"){
             $user_id = $leaveApplication->user_id;
             if($leaveApplication->status == "APPROVED"){
@@ -1721,6 +1723,7 @@ class LeaveApplicationController extends Controller
             }
         }
         else if($personnel == "authority"){
+            //dd($leaveApplication);
             if($leaveApplication->status == "PENDING_1"){
                 $user_id = $leaveApplication->approver_id_1;
                 $title = "Leave Application Waiting Approval";
