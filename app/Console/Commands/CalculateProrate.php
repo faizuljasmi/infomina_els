@@ -50,6 +50,7 @@ class CalculateProrate extends Command
 
         foreach($monthEmp as $emp)
         {
+            // // Testing
             // $fromYear = 2017;
             // $fromMonth = 11;
             // $toYear = 2020;
@@ -60,14 +61,14 @@ class CalculateProrate extends Command
             $from = Carbon::parse($emp->join_date);
             $to = Carbon::parse($currentYear.'-'.$currentMonth);
             $diff = $from->diffInMonths($to);
-            echo $diff;
+            // echo $diff;
 
             $annualEnt = 0;
             $newEnt = 0;
             
-            if (($diff + 1) == 36) {
+            if (($diff + 1) == 36) { // If 3 Years
                 $annualEnt = 16;
-            } else if (($diff + 1) == 60) {
+            } else if (($diff + 1) == 60) { // If 5 Years
                 $annualEnt = 18;
             } 
             
