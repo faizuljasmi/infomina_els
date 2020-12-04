@@ -155,8 +155,8 @@
                     </div>
                 </div>
                 </div>
-                <button class="btn btn-success" id="carry_forward" disabled>Calculate Carry Forward</button>  
-                <button class="btn btn-success" id="prorate_2020">Calculate 2020 Prorate</button>
+                <!-- <button class="btn btn-success" id="carry_forward" disabled>Calculate Carry Forward</button>  
+                <button class="btn btn-success" id="prorate_2020" disabled>Calculate 2020 Prorate</button> -->
                 @if ($users->count() > 0)
                     <h6><strong>Displaying {{$users->count()}} out of {{$users->total()}} leave applications.</strong></h6>
                     <h6><span class="badge badge-info">{{ isset($leave_type)? $leave_type: '' }}</span></h6>
