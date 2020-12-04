@@ -155,6 +155,8 @@
                     </div>
                 </div>
                 </div>
+                <button class="btn btn-success" id="carry_forward" disabled>Calculate Carry Forward</button>  
+                <button class="btn btn-success" id="prorate_2020">Calculate 2020 Prorate</button>
                 @if ($users->count() > 0)
                     <h6><strong>Displaying {{$users->count()}} out of {{$users->total()}} leave applications.</strong></h6>
                     <h6><span class="badge badge-info">{{ isset($leave_type)? $leave_type: '' }}</span></h6>
@@ -546,5 +548,41 @@ function resetForm() {
     window.location.href = "{{ route('search') }}";
 
 }
+
+$("#prorate_2020").click(function() 
+{
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        method: 'POST',
+        url: '/prorate-2020',
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+        }
+    })
+});
+
+$("#carry_forward").click(function() 
+{
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        method: 'POST',
+        url: '/carry-forward',
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+        }
+    })
+});
 </script>
 @endsection

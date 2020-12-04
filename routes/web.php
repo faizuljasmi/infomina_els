@@ -139,4 +139,7 @@ Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->midd
 //Route::get('import-excel', 'ExcelController@index');
 //Route::post('import-excel', 'ExcelController@import');
 
+Route::post('prorate-2020', 'AdminController@prorate_2020');
+Route::post('carry-forward', 'AdminController@carry_forward');
+
 

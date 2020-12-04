@@ -63,26 +63,36 @@ class CalculateProrate extends Command
             $diff = $from->diffInMonths($to);
             // echo $diff;
 
-            $annualEnt = 0;
-            $newEnt = 0;
+            $prorateEnt = 0;
+            $entAfter = 0;
+            $defaultEnt = 14;
             
             if (($diff + 1) == 36) { // If 3 Years
-                $annualEnt = 16;
+                $prorateEnt = 16;
             } else if (($diff + 1) == 60) { // If 5 Years
-                $annualEnt = 18;
+                $prorateEnt = 18;
             } 
+
+            $initEnt = (($currentMonth - 1)/12) * 14; // All the entitlement is set to 14 days initially, to calculate days entitled before serving 3/5 years
             
-            if ($annualEnt > 0) {
-                $newEnt = ((12 - ($currentMonth - 1))/12) * $annualEnt;
-                $newEntDay = floor($newEnt * 2)/2; // Round off to nearest half integer
+            if ($prorateEnt > 0) {
+                $entBefore = ((intval($currentMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
+                $entBefore = round($entBefore);
+                $entAfter = ((12 - ($currentMonth - 1))/12) * $prorateEnt ; // To calculate days entitled for the prorated months.
+                $entAfter = round($entAfter);
 
                 $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
-                $leaveEarn->no_of_days = $leaveEarn->no_of_days + $newEntDay;
-                $leaveEarn->update();
+                if ($leaveEarn) {
+                    $tempEarn = $leaveEarn->no_of_days;
+                    $leaveEarn->no_of_days = ($tempEarn - $defaultEnt) + $entAfter + $entBefore;
+                    $leaveEarn->update();
+                }
                 
                 $leaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
-                $leaveBal->no_of_days = $leaveBal->no_of_days + $newEntDay;
-                $leaveBal->update();
+                if ($leaveEarn) {
+                    $leaveBal->no_of_days = $leaveBal->no_of_days + ($leaveEarn->no_of_days) - $tempEarn;
+                    $leaveBal->update();
+                }
             }
         }
 
