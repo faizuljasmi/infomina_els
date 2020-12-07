@@ -1354,7 +1354,7 @@ class LeaveApplicationController extends Controller
                 })->orWhere(function ($query) use ($user) {
                     $query->where('status', 'CANCELLED')
                         ->where('user_id', $user->id);
-                })->with('user','relief_personnel','leaveType')->paginate(5)->sortBy('status');
+                })->with('user','relief_personnel','leaveType')->get();
 
 
             $leaves->makeVisible('attachment_url')->toArray();
@@ -1618,7 +1618,7 @@ class LeaveApplicationController extends Controller
                 $hist = new History;
                 $hist->leave_application_id = $leaveApplication->id;
                 $hist->user_id = $user->id;
-                $hist->action = "Approved";
+                $hist->action = $leaveApplication->status;
                 $hist->save();
 
 

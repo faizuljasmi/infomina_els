@@ -721,13 +721,18 @@ $('#reason').keyup(function() {
             //     return "Attention: Training Leave cannot be applied more than a month in advance."
             // }
             let next2 = calendar.getNextWorkingDay(calendar.today());
-          		next2 = calendar.getNextWorkingDay(next2);
+                  next2 = calendar.getNextWorkingDay(next2);
+                  next2 = calendar.getNextWorkingDay(next2);
+                  next2 = calendar.getNextWorkingDay(next2);
+                  next2 = calendar.getNextWorkingDay(next2);
+                  next2 = calendar.getNextWorkingDay(next2);
+                  next2 = calendar.getNextWorkingDay(next2);
           		next2 = calendar.getDateDb(next2);
           		if(calendar.isDateSmaller(date_from, calendar.today())){
             			return "Attention: Training leave cannot be applied on passed dates.";
           		}
           		if(calendar.isDateSmaller(date_from, next2)){
-            			return "Attention: Training leave must be applied at least 2 days prior to the training day.";
+            			return "Attention: Training leave must be applied at least 7 days prior to the training day.";
           		}
         }
 
@@ -764,11 +769,11 @@ $('#reason').keyup(function() {
 
         //HOSPITALIZATION POLICY
         if(validation.isHospitalizationLeave()){
-          let prev7 = calendar.prevMonth(calendar.today());
+          let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
           prev7 = calendar.getDateDb(prev7);
 
           if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
-            return "Attention: Hospitalization leave must be applied within 30 days after the day of discharged.";
+            return "Attention: Hospitalization leave must be applied within 7 days after the day of discharged.";
           }
           if(calendar.isDateBigger(date_from, calendar.today())){
             return "Attention: Hospitalization leave cannot be applied in advance.";

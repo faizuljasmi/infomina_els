@@ -138,4 +138,16 @@ class User extends Authenticatable
     {
         return $this->hasOne(ApprovalAuthority::class);
     }
+
+    public function branch(){
+        return $this->belongsTo(Branch::class,'branch_id');
+    }
+
+    public function state_holidays(){
+        return $this->branch->state->state_only_holidays();
+    }
+
+    public function national_holidays(){
+        return $this->branch->country->country_wide_holidays();
+    }
 }

@@ -4,12 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Holiday extends Model
+class Branch extends Model
 {
-    protected $fillable = [
-        'name','date_from','date_to','total_days',
-    ];
-
     public function state(){
         return $this->belongsTo(State::class,'state_id');
     }
@@ -18,4 +14,7 @@ class Holiday extends Model
         return $this->belongsTo(Country::class,'country_id');
     }
 
+    public function employees(){
+        return $this->hasMany(User::class);
+    }
 }
