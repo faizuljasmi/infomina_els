@@ -1354,7 +1354,7 @@ class LeaveApplicationController extends Controller
                 })->orWhere(function ($query) use ($user) {
                     $query->where('status', 'CANCELLED')
                         ->where('user_id', $user->id);
-                })->with('user','relief_personnel','leaveType')->paginate(5)->sortBy('status')->get();
+                })->with('user','relief_personnel','leaveType')->get()->sortBy('status');
 
 
             $leaves->makeVisible('attachment_url')->toArray();
