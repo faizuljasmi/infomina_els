@@ -137,13 +137,14 @@ class AdminController extends Controller
                     $entBefore = ((intval($annMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
                     $entBefore = round($entBefore);
                     $entAfter = ((12 - (intval($annMonth) - 1)) / 12) * $prorateEnt; // To calculate days entitled for the prorated months.
-                    $entAfter = round($entAfter);
+                    $entAfter = ceil($entAfter);
+                    $totalEnt = $entBefore + $entAfter;
                     // dd($annMonth, $entBefore, $entAfter);
                     
                     $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
                     if ($leaveEarn) {
                         $tempEarn = $leaveEarn->no_of_days;
-                        $leaveEarn->no_of_days = ($tempEarn - $defaultEnt) + $entBefore + $entAfter; 
+                        $leaveEarn->no_of_days = ($tempEarn - $defaultEnt) + $totalEnt; 
                         $leaveEarn->update();
                     }
                     

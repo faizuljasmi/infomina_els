@@ -45,10 +45,10 @@ class Calculate2020Leave extends Command
 
         foreach($employees as $emp)
         {
-            // if ($emp->id == '32') { // Faizal
+            // if ($emp->id == '13') { // Faizal
                 $currentYear = '2020';
     
-                $after36months = Carbon::parse('2017-01-01')->addMonths(36)->isoFormat('Y-MM-DD'); // Return String
+                $after36months = Carbon::parse($emp->join_date)->addMonths(36)->isoFormat('Y-MM-DD'); // Return String
                 $after60months = Carbon::parse($emp->join_date)->addMonths(60)->isoFormat('Y-MM-DD'); // Return String
     
                 $is3rdYear = substr($after36months, 0, 4); // Year
@@ -72,7 +72,8 @@ class Calculate2020Leave extends Command
                     $entBefore = ((intval($annMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
                     $entBefore = round($entBefore);
                     $entAfter = ((12 - (intval($annMonth) - 1)) / 12) * $prorateEnt; // To calculate days entitled for the prorated months.
-                    $entAfter = round($entAfter);
+                    $entAfter = ceil($entAfter);
+                    
                     // dd($annMonth, $entBefore, $entAfter);
                     
                     $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
