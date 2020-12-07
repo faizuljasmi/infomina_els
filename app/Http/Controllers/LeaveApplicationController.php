@@ -1618,7 +1618,7 @@ class LeaveApplicationController extends Controller
                 $hist = new History;
                 $hist->leave_application_id = $leaveApplication->id;
                 $hist->user_id = $user->id;
-                $hist->action = "Approved";
+                $hist->action = $leaveApplication->status;
                 $hist->save();
 
 
