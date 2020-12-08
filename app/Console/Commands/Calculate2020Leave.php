@@ -70,7 +70,7 @@ class Calculate2020Leave extends Command
 
             $defaultEnt = 14; // Default entitlement for all staff is 14 days.
 
-            if ($prorateEnt > 0 && $emp->id != 3) {
+            if ($prorateEnt > 0 && $emp->id != 3 && $emp->id != 8 && $emp->id != 25 && $emp->id != 26) {
                 $annMonth = substr($month, 5, 2); // Month
                 $entBefore = ((intval($annMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
                 $entBefore = round($entBefore);
@@ -80,7 +80,6 @@ class Calculate2020Leave extends Command
                 // dd($annMonth, $entBefore, $entAfter);
                 $tempEarn = 0;
                 $tempBal = 0;
-                $x = 0;
                 
                 $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
                 if ($leaveEarn) {
@@ -97,7 +96,7 @@ class Calculate2020Leave extends Command
                 }
 
                 $staff = (object) ['Name' => $emp->name, 'Before' => $tempEarn, 'After' => $leaveEarn->no_of_days];
-                array_push($emps, $staff);
+                array_push($emps, $emp->id);
             }
         }
 

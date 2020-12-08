@@ -44,10 +44,11 @@ class ProrateUpdate extends Notification
         $employee = $this->employee;
 
         return (new MailMessage)
-        ->subject('[INFOMINA ELS]',)
-        ->greeting('Hi')
-        ->line('Have a nice day!', $employee);
-
+        ->subject('[INFOMINA ELS] - Prorated Annual Leave')
+        ->greeting('Hi '.$employee['name'].',')
+        ->line('Your annual leave have been adjusted/prorated according to the years of completed service with the company.')
+        ->line('Thus, you have earned an additional '.$employee['gain'].' day(s), and your new balance for annual leave would be '.$employee['balance'].' day(s).')
+        ->line('Please contact HR if you need any clarification.');
     }
 
     /**
