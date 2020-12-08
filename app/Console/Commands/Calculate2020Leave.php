@@ -96,11 +96,11 @@ class Calculate2020Leave extends Command
                 }
 
                 $staff = (object) ['Name' => $emp->name, 'Before' => $tempEarn, 'After' => $leaveEarn->no_of_days];
-                array_push($emps, $emp->id);
+                array_push($emps, $staff);
             }
         }
 
-        print_r($emps);
+        print_r($staff);
     }
 }
 
