@@ -70,6 +70,14 @@ class LeaveApplication extends Model
         return $this->hasOne(User::class,'id','remarker_id');
     }
 
+    public function replacement_applications(){
+        return $this->hasMany(ReplacementRelation::class,'claim_id');
+    }
+
+    public function replacement_claim(){
+        return $this->hasOne(ReplacementRelation::class,'leave_id');
+    }
+
     public function getAttachmentUrlAttribute(){
         return $this->attributes['attachment'] ? url('/storage/'.$this->attributes['attachment']) : 'https://placehold.it/900x300';
       }
