@@ -22,7 +22,6 @@ class ReplacementLeaveController extends Controller
 {
     public function create()
     {
-
         //Get THIS user id
         $user = auth()->user();
         //Get employees who are in the same group (for relieve personnel).
@@ -48,10 +47,10 @@ class ReplacementLeaveController extends Controller
             }
         }
 
-        //Get all leave applications
-        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->where('leave_type_id', 12)->get();
+        //Get all claim applications
+        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->where('leave_type_id', 12)->where('remarks','Claim')->get();
 
-        //Get all leave applications date
+    //Get all leave applications date
       $applied_dates = array();
       $approved_dates = array();
       $myApplication = array();
@@ -86,6 +85,7 @@ class ReplacementLeaveController extends Controller
 
     public function store()
     {
+
     }
 
     public function edit()

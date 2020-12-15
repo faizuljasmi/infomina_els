@@ -28,6 +28,7 @@ use App\TakenLeave;
 use App\Holiday;
 use App\EmpGroup;
 use App\History;
+use App\ReplacementRelation;
 use Carbon\Carbon;
 
 class LeaveApplicationController extends Controller
@@ -191,7 +192,9 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'myApplication', 'holidays', 'groupLeaveApps', 'holsPaginated', 'myApps'));
+        $all_rep_claims = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->where('leave_type_id', 12)->where('remarks','Claim')->get();
+
+        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'myApplication', 'holidays', 'groupLeaveApps', 'holsPaginated', 'myApps', 'all_rep_claims'));
     }
 
 
@@ -247,7 +250,7 @@ class LeaveApplicationController extends Controller
         //get all authorities id
 
         //If it is replacement leave claim
-        if ($request->leave_type_id == '12') {
+        if ($request->leave_type_id == '12' && $request->replacement_action == "Claim") {
 
             //If there is no second approver, move the last approver to the 2nd one
             if ($request->approver_id_2 == null) {
@@ -259,10 +262,14 @@ class LeaveApplicationController extends Controller
                 $leaveApp->approver_id_2 = $request->approver_id_2;
                 $leaveApp->approver_id_3 = $request->approver_id_3;
             }
+                $leaveApp->remarks = "Claim";
         } else {
             $leaveApp->approver_id_1 = $request->approver_id_1;
             $leaveApp->approver_id_2 = $request->approver_id_2;
             $leaveApp->approver_id_3 = $request->approver_id_3;
+            if($request->leave_type_id == "12"){
+                $leaveApp->remarks = "Apply";
+            }
         }
 
 
@@ -310,6 +317,34 @@ class LeaveApplicationController extends Controller
 
 
         $leaveApp->save();
+        if($leaveApp->leave_type_id == "12" &&  $leaveApp->remarks == "Apply"){
+
+            $claim_apply = ReplacementRelation::where('claim_id',$request->claim_id)->get();
+            if(!$claim_apply->isEmpty()){
+                $total_days = 0;
+                foreach($claim_apply as $ca){
+                    $leaveApp = LeaveApplication::where('id',$ca->leave_id)->first();
+                    if($leaveApp->status != 'CANCELLED'){
+                        $total_days += $leaveApp->total_days;
+                    }
+                    if($ca->claim_total_days == $total_days){
+                        return redirect()->to('/leave/apply')->with('error', 'You have fully used the chosen replacement claim. Choose another claim.');
+                    }
+                }
+
+            }
+                $claim_apply = new ReplacementRelation;
+                //Set Claim ID
+                $claim_apply->claim_id = $request->claim_id;
+                //Get Claim application total days and set
+                $claimApp = LeaveApplication::where('id',$request->claim_id)->first();
+                $claim_apply->claim_total_days =  $claimApp->total_days;
+                //Set Leave ID
+                $claim_apply->leave_id = $leaveApp->id;
+                //Set Leave Total days
+                $claim_apply->leave_total_days =  $leaveApp->total_days;
+                $claim_apply->save();
+        }
         //Send email notification
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
@@ -460,7 +495,8 @@ class LeaveApplicationController extends Controller
         //status set pending 1
         //get all authorities id
         //If it is replacement leave claim
-        if ($request->leave_type_id == '12') {
+           //If it is replacement leave claim
+           if ($request->leave_type_id == '12' && $request->replacement_action == "Claim") {
 
             //If there is no second approver, move the last approver to the 2nd one
             if ($request->approver_id_2 == null) {
@@ -472,10 +508,14 @@ class LeaveApplicationController extends Controller
                 $leaveApp->approver_id_2 = $request->approver_id_2;
                 $leaveApp->approver_id_3 = $request->approver_id_3;
             }
+                $leaveApp->remarks = "Claim";
         } else {
             $leaveApp->approver_id_1 = $request->approver_id_1;
             $leaveApp->approver_id_2 = $request->approver_id_2;
             $leaveApp->approver_id_3 = $request->approver_id_3;
+            if($request->leave_type_id == "12"){
+                $leaveApp->remarks = "Apply";
+            }
         }
 
 
@@ -628,34 +668,71 @@ class LeaveApplicationController extends Controller
 
             //If the approved leave is a Replacement leave, assign earned to Replacement, and add day balance to Annual
             if ($leaveApplication->leaveType->name == 'Replacement') {
-                $lt = LeaveEarning::where(function ($query) use ($leaveApplication) {
-                    $query->where('leave_type_id', $leaveApplication->leave_type_id)
-                        ->where('user_id', $leaveApplication->user_id);
-                })->first();
+                if($leaveApplication->remarks == "Claim"){
+                    $lt = LeaveEarning::where(function ($query) use ($leaveApplication) {
+                        $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                            ->where('user_id', $leaveApplication->user_id);
+                    })->first();
 
-                $lt->no_of_days += $leaveApplication->total_days;
+                    $lt->no_of_days += $leaveApplication->total_days;
 
-                $lt->save();
+                    $lt->save();
 
-                //Add balance to annual;
-                $lb = LeaveBalance::where(function ($query) use ($leaveApplication) {
-                    $query->where('leave_type_id', '1')
-                        ->where('user_id', $leaveApplication->user_id);
-                })->first();
+                    //Add balance to replacement leave balance;
+                    $lb = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                        $query->where('leave_type_id', $leaveApplication->leave_type_id)
+                            ->where('user_id', $leaveApplication->user_id);
+                    })->first();
 
-                $lb->no_of_days += $leaveApplication->total_days;
-                $lb->save();
+                    $lb->no_of_days += $leaveApplication->total_days;
+                    $lb->save();
 
-                //Record in activity history
-                $hist = new History;
-                $hist->leave_application_id = $leaveApplication->id;
-                $hist->user_id = $user->id;
-                $hist->action = "Approved";
-                $hist->save();
+                    //Record in activity history
+                    $hist = new History;
+                    $hist->leave_application_id = $leaveApplication->id;
+                    $hist->user_id = $user->id;
+                    $hist->action = " Claim Approved";
+                    $hist->save();
 
-                //Send status update email
-                $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-                return redirect()->to('/admin')->with('message', 'Replacement leave application status updated succesfully');
+                    // $leaveApplication->remarks = "Claim";
+                    // $leaveApplication->save();
+
+                    //Send status update email
+                    $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                    return redirect()->to('/admin')->with('message', 'Replacement leave claim application status updated succesfully');
+                }
+                else if($leaveApplication->remarks == "Apply"){
+                    //Get the claim application related to this use replacement application
+                    $this_claim_apply = ReplacementRelation::where('leave_id',$leaveApplication->id)->first();
+                    $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
+                    //Get related claim records
+                    $all_claim_apply = ReplacementRelation::where('claim_id',$this_claim_apply->claim_id)->get();
+                    $total_days = 0;
+                    foreach($all_claim_apply as $aca){
+                        $leaveApp = LeaveApplication::where('id',$aca->leave_id)->first();
+                        if($leaveApp->status != 'CANCELLED'){
+                            $total_days += $leaveApp->total_days;
+                        }
+                    }
+                    //If the total days is fully used including this application, set the claim application status to TAKEN,
+                    if($total_days == $claimApp->total_days){
+                        $claimApp->status = "TAKEN";
+                        $claimApp->save();
+                    }
+                    elseif($total_days > $claimApp->total_days){
+                        return redirect()->to('/admin')->with('error', 'Employee does not have enough replacement leave balance');
+                    }
+                    //If not just leave the status as it is
+
+                    //Minus the user replacement leave balance based on the total days for this application
+                    $ReplacementBal = LeaveBalance::where('leave_type_id','12')->where('user_id',$leaveApplication->user_id)->first();
+                    $ReplacementBal -= $leaveApplication->total_days;
+                    $ReplacementBal->save();
+
+                    $ReplacementTaken = TakenLeave::where('leave_type_id','12')->where('user_id',$leaveApplication->user_id)->first();
+                    $ReplacementTaken += $leaveApplication->total_days;
+                    $ReplacementTaken->save();
+                }
             }
 
             //If the approved leave is a Sick leave, deduct the amount taken in both sick leave and hospitalization balance
