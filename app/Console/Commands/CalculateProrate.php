@@ -6,6 +6,9 @@ use Illuminate\Console\Command;
 use App\User;
 use App\LeaveEarning;
 use App\LeaveBalance;
+use Illuminate\Notifications\Notifiable;
+use Notification;
+use App\Notifications\ProrateUpdate;
 use Carbon\Carbon;
 
 class CalculateProrate extends Command
@@ -73,13 +76,11 @@ class CalculateProrate extends Command
                 $prorateEnt = 18;
             } 
 
-            $initEnt = (($currentMonth - 1)/12) * 14; // All the entitlement is set to 14 days initially, to calculate days entitled before serving 3/5 years
-            
-            if ($prorateEnt > 0) {
+            if ($prorateEnt > 0 ) {
                 $entBefore = ((intval($currentMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
                 $entBefore = round($entBefore);
-                $entAfter = ((12 - ($currentMonth - 1))/12) * $prorateEnt ; // To calculate days entitled for the prorated months.
-                $entAfter = round($entAfter);
+                $entAfter = ((12 - ($currentMonth - 1)) / 12) * $prorateEnt ; // To calculate days entitled for the prorated months.
+                $entAfter = ceil($entAfter);
 
                 $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
                 if ($leaveEarn) {
@@ -87,12 +88,18 @@ class CalculateProrate extends Command
                     $leaveEarn->no_of_days = ($tempEarn - $defaultEnt) + $entAfter + $entBefore;
                     $leaveEarn->update();
                 }
+
+                $gain = ($entBefore + $entAfter) - $defaultEnt;
                 
                 $leaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
                 if ($leaveEarn) {
-                    $leaveBal->no_of_days = $leaveBal->no_of_days + ($leaveEarn->no_of_days) - $tempEarn;
+                    $tempBal = $leaveBal->no_of_days;
+                    $leaveBal->no_of_days = $tempBal + $gain;
                     $leaveBal->update();
-                }
+                }   
+
+                $staff = ['name' => $emp->name, 'gain' => $gain, 'balance' => $leaveBal->no_of_days];
+                $emp->notify(new ProrateUpdate($staff));
             }
         }
 
