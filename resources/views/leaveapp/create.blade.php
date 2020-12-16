@@ -126,7 +126,14 @@
                                             <option value="">Choose Leave</option>
                                             @foreach($all_rep_claims as $all_rep_claim)
                                             <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}">
-                                                {{$all_rep_claim->id}} , {{$all_rep_claim->reason}} , {{$all_rep_claim->total_days}}
+                                                <?php 
+                                                    $total_used = 0;
+                                                    $apps = $all_rep_claim->replacement_applications;
+                                                    foreach($apps as $app){
+                                                        $total_used += $app->leave_total_days;
+                                                    }
+                                                ?>
+                                                {{$all_rep_claim->id}} , {{$all_rep_claim->reason}} , {{$all_rep_claim->total_days - $total_used}}
                                             </option>
                                             @endforeach
                                         </select>
@@ -591,7 +598,7 @@
 
             var count_pending = 0; // To count all pending leave applications on this claim.
             var total_leave_apply = 0;
-            var bal = 0;
+            var bal_days = 0;
 
             var claim_id = this.value;
             var claimed_days = $(this).find(':selected').data('total-days'); // To get total submitted days of claim.
@@ -608,16 +615,17 @@
                 // If there are leave applications with the same claim selected.
                 if (prev_apply == claim_id) {
                     // Calculate total days taken.
-                    total_leave_apply = total_leave_apply + prev_apply_days;
+                    total_leave_apply += prev_apply_days;
                     // If that leave application is still on pending.
                     if (prev_apply_status == "PENDING_1" || prev_apply_status == "PENDING_2" || prev_apply_status == "PENDING_3") {
                         count_pending++;
                     }
                 }
-                bal = claimed_days - total_leave_apply;
             });
 
-            alert("You have submitted "+count_pending+" leave application(s) on this claim. You still have "+bal+" more day(s) left for this claim.")
+            bal_days = claimed_days - total_leave_apply;
+
+            alert("You have submitted "+count_pending+" leave application(s) on this claim. You still have "+bal_days+" more day(s) left for this claim.")
 
             $("#FromDate").attr("disabled", false);
             $("#ToDate").attr("disabled", false);
