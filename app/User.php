@@ -144,7 +144,7 @@ class User extends Authenticatable
     }
 
     public function state_holidays(){
-        return $this->branch->state->state_only_holidays();
+        return $this->branch->state->state_wide_holidays();
     }
 
     public function national_holidays(){
