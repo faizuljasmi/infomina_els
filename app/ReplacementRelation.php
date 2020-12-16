@@ -13,6 +13,6 @@ class ReplacementRelation extends Model
     }
 
     public function application(){
-        return $this->belongsTo(LeaveApplication::class,'leave_id')
+        return $this->belongsTo(LeaveApplication::class,'leave_id');
     }
 }

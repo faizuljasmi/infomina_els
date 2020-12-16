@@ -328,7 +328,7 @@ class LeaveApplicationController extends Controller
                         $total_days += $rep_apply->total_days;
                     }
                     $td = $total_days + $leaveApp->total_days;
-                    if($ca->claim_total_days >= $td){
+                    if($td >= $ca->claim_total_days){
                         $leaveApp->delete();
                         return redirect()->to('/leave/apply')->with('error', 'You have fully used the chosen replacement claim. Choose another claim.');
                     }
@@ -721,7 +721,9 @@ class LeaveApplicationController extends Controller
                         $claimApp->save();
                     }
                     elseif($total_days > $claimApp->total_days){
-                        return redirect()->to('/admin')->with('error', 'Employee does not have enough replacement leave balance');
+                        $leaveApplication->status = "CANCELLED";
+                        $leaveApplication->save();
+                        return redirect()->to('/admin')->with('error', 'Employee does not have enough replacement leave balance. The leave has been cancelled.');
                     }
                     //If not just leave the status as it is
 
