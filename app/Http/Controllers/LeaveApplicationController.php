@@ -192,7 +192,7 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        $all_rep_claims = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->where('leave_type_id', 12)->where('remarks','Claim')->get();
+        $all_rep_claims = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->where('leave_type_id', 12)->where('remarks','Claim')->where('status','APPROVED')->get();
 
         return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'myApplication', 'holidays', 'groupLeaveApps', 'holsPaginated', 'myApps', 'all_rep_claims'));
     }
