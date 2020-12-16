@@ -328,7 +328,7 @@ class LeaveApplicationController extends Controller
                         $total_days += $rep_apply->total_days;
                     }
                     $td = $total_days + $leaveApp->total_days;
-                    if($td >= $ca->claim_total_days){
+                    if($td > $ca->claim_total_days){
                         $leaveApp->delete();
                         return redirect()->to('/leave/apply')->with('error', 'You have fully used the chosen replacement claim. Choose another claim.');
                     }
