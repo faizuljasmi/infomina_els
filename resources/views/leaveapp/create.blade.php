@@ -89,16 +89,40 @@
                                         <select class="form-control" name="leave_type_id" id="leave_type_id" required>
                                             <option value="">Choose Leave</option>
                                             @foreach($leaveType as $lt)
-                                            @if($lt->name == 'Replacement')
-                                            @else
                                             <option value="{{$lt->id}}"
                                                 {{ (old('leave_type_id') == $lt->id ? "selected":"") }}>{{$lt->name}}
                                             </option>
-                                            @endif
                                             @endforeach
                                         </select>
                                         <div class="invalid-feedback">
                                             Please choose a leave type
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <?php echo $all_rep_claims ?>
+                                <!-- Available Replacement Leave -->
+                                <div id="rep_leave_div" class="form-group d-none">
+                                    <label>Select Available Leaves <font color="red">*</font></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="far fa-star"></i>
+                                            </span>
+                                        </div>
+                                        <select class="form-control" name="available_leave" id="available_leave" required>
+                                            <option value="">Choose Leave</option>
+                                            @foreach($all_rep_claims as $all_rep_claim)
+                                            <option value="{{$all_rep_claim->id}}">
+                                                {{$all_rep_claim->reason}} , {{$all_rep_claim->total_days}}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please choose available leave
                                         </div>
                                         <div class="valid-feedback">
                                             Looks good!
@@ -525,9 +549,28 @@
     <script>
         $(document).ready(MainLeaveApplicationCreate);
 
-$("#leave_type_id").change(function() {
+        $("#leave_type_id").change(function() {
             $("#FromDate").val("");
             $("#ToDate").val("");
+
+            var leave_type = $("#leave_type_id").val();
+
+            if (leave_type == 12) {
+                $("#rep_leave_div").removeClass("d-none");
+
+                $("#FromDate").attr("disabled", true);
+                $("#ToDate").attr("disabled", true);
+            } else {
+                $("#rep_leave_div").addClass("d-none");
+
+                $("#FromDate").attr("disabled", false);
+                $("#ToDate").attr("disabled", false);
+            }
+        });
+
+        $("#available_leave").change(function() {
+            $("#FromDate").attr("disabled", false);
+            $("#ToDate").attr("disabled", false);
         });
 
 $("#FromDate").change(function() {
