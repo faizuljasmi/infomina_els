@@ -105,7 +105,7 @@
 
 
                                 <!-- Available Replacement Leave -->
-
+                                <!-- todo -->
                                 @if($all_rep_claims)
                                     @foreach($all_rep_claims as $all_rep_claim)
                                         @foreach($all_rep_claim->replacement_applications as $ra)
@@ -125,7 +125,7 @@
                                         <select class="form-control" name="available_leave" id="available_leave" required>
                                             <option value="">Choose Leave</option>
                                             @foreach($all_rep_claims as $all_rep_claim)
-                                            <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}">
+                                            <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}" data-event-date="{{$all_rep_claim->date_from}}">
                                                 <?php 
                                                     $total_used = 0;
                                                     $apps = $all_rep_claim->replacement_applications;
@@ -571,11 +571,14 @@
     <script>
         $(document).ready(MainLeaveApplicationCreate);
 
+        var leave_type = "";
+        var event_date = "";
+
         $("#leave_type_id").change(function() {
             $("#FromDate").val("");
             $("#ToDate").val("");
 
-            var leave_type = $("#leave_type_id").val();
+            leave_type = $("#leave_type_id").val();
 
             if (leave_type == 12) {
                 $("#rep_leave_div").removeClass("d-none");
@@ -593,15 +596,15 @@
                 $("#replacement_action").val('');
             }
         });
-
+        // todo
         $("#available_leave").change(function() {
-
             var count_pending = 0; // To count all pending leave applications on this claim.
             var total_leave_apply = 0;
             var bal_days = 0;
-
+            
             var claim_id = this.value;
             var claimed_days = $(this).find(':selected').data('total-days'); // To get total submitted days of claim.
+            event_date = $(this).find(':selected').data('event-date');
 
             $("input[name='replacement_applications']").each(function () {
                 // To get all previous leave application data using claimed replacement leave.
@@ -633,8 +636,8 @@
             $("#claim_id").val(claim_id);
         });
 
-$("#FromDate").change(function() {
-        var from = $("#FromDate").val();
+        $("#FromDate").change(function() {
+            var from = $("#FromDate").val();
             $("#ToDate").val("");
             $("#ToDate").attr({
                  "min" : from          // values (or variables) here
@@ -711,7 +714,7 @@ $('#reason').keyup(function() {
       isCalamityLeave : function(){
         return _form.get(FC.leave_type_id) == "2";
       },
-       isSickLeave : function(){
+        isSickLeave : function(){
         return _form.get(FC.leave_type_id) == "3";
       },
       isHospitalizationLeave : function(){
@@ -837,6 +840,19 @@ $('#reason').keyup(function() {
           		if(calendar.isDateSmaller(date_from, next2)){
             			return "Attention: Training leave must be applied at least 7 days prior to the training day.";
           		}
+        }
+
+        // todo
+        // REPLACEMENT POLICY
+        if (validation.isReplacementLeave()) {
+            var date = new Date(event_date);
+            var newdate = new Date(date);
+
+            newdate.setDate(newdate.getDate() + 30);
+            
+            if(calendar.isDateBigger(date_from, newdate)){
+                return "Attention: This replacement claim should be utilized within 30 days from the event date.";
+            }
         }
 
         //SICK, EMERGENCY, PATERNITY, COMPASSIONATE, CALAMITY POLICY
