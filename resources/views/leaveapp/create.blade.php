@@ -103,8 +103,17 @@
                                     </div>
                                 </div>
 
-                                <?php echo $all_rep_claims ?>
+
                                 <!-- Available Replacement Leave -->
+
+                                @if($all_rep_claims)
+                                    @foreach($all_rep_claims as $all_rep_claim)
+                                        @foreach($all_rep_claim->replacement_applications as $ra)
+                                            <input type="hidden" name="replacement_applications" data-id="{{$ra->claim_id}}" data-days="{{$ra->application->total_days}}" data-status="{{$ra->application->status}}">
+                                        @endforeach
+                                    @endforeach
+                                @endif
+
                                 <div id="rep_leave_div" class="form-group d-none">
                                     <label>Select Available Leaves <font color="red">*</font></label>
                                     <div class="input-group">
@@ -116,8 +125,8 @@
                                         <select class="form-control" name="available_leave" id="available_leave" required>
                                             <option value="">Choose Leave</option>
                                             @foreach($all_rep_claims as $all_rep_claim)
-                                            <option value="{{$all_rep_claim->id}}">
-                                                {{$all_rep_claim->reason}} , {{$all_rep_claim->total_days}}
+                                            <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}">
+                                                {{$all_rep_claim->id}} , {{$all_rep_claim->reason}} , {{$all_rep_claim->total_days}}
                                             </option>
                                             @endforeach
                                         </select>
@@ -311,6 +320,12 @@
                                     value="{{isset($leaveAuth->authority_2_id) ? $leaveAuth->authority_2_id:'' }}" />
                                 <input style="display:none;" type="text" name="approver_id_3"
                                     value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
+
+                                <!-- Replacement Action -->
+                                <input  type="text" name="replacement_action" id="replacement_action" value="" />
+                                
+                                <!-- Replacement Action -->
+                                <input  type="text" name="claim_id" id="claim_id" value="" />
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="btn btn-success float-right">Submit</button>
@@ -560,17 +575,54 @@
 
                 $("#FromDate").attr("disabled", true);
                 $("#ToDate").attr("disabled", true);
+
+                $("#replacement_action").val('Apply');
             } else {
                 $("#rep_leave_div").addClass("d-none");
 
                 $("#FromDate").attr("disabled", false);
                 $("#ToDate").attr("disabled", false);
+
+                $("#replacement_action").val('');
             }
         });
 
         $("#available_leave").change(function() {
+
+            var count_pending = 0; // To count all pending leave applications on this claim.
+            var total_leave_apply = 0;
+            var bal = 0;
+
+            var claim_id = this.value;
+            var claimed_days = $(this).find(':selected').data('total-days'); // To get total submitted days of claim.
+
+            $("input[name='replacement_applications']").each(function () {
+                // To get all previous leave application data using claimed replacement leave.
+                let data = $(this).data();
+                var prev_apply = data.id;
+                var prev_apply_status = data.status;
+                var prev_apply_days = data.days;
+
+                console.log(prev_apply, prev_apply_status, prev_apply_days);
+
+                // If there are leave applications with the same claim selected.
+                if (prev_apply == claim_id) {
+                    // Calculate total days taken.
+                    total_leave_apply = total_leave_apply + prev_apply_days;
+                    // If that leave application is still on pending.
+                    if (prev_apply_status == "PENDING_1" || prev_apply_status == "PENDING_2" || prev_apply_status == "PENDING_3") {
+                        count_pending++;
+                    }
+                }
+                bal = claimed_days - total_leave_apply;
+            });
+
+            alert("You have submitted "+count_pending+" leave application(s) on this claim. You still have "+bal+" more day(s) left for this claim.")
+
             $("#FromDate").attr("disabled", false);
             $("#ToDate").attr("disabled", false);
+
+            $("#claim_id").val(claim_id);
         });
 
 $("#FromDate").change(function() {
