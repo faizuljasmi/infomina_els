@@ -103,19 +103,17 @@
                                     </div>
                                 </div>
 
-
                                 <!-- Available Replacement Leave -->
-                                <!-- todo -->
                                 @if($all_rep_claims)
                                     @foreach($all_rep_claims as $all_rep_claim)
                                         @foreach($all_rep_claim->replacement_applications as $ra)
-                                            <input type="hidden" name="replacement_applications" data-id="{{$ra->claim_id}}" data-days="{{$ra->application->total_days}}" data-status="{{$ra->application->status}}">
+                                            <input type="hidden" name="replacement_applications" value="{{$ra->claim_id}}" data-days="{{$ra->application->total_days}}" data-status="{{$ra->application->status}}">
                                         @endforeach
                                     @endforeach
                                 @endif
 
                                 <div id="rep_leave_div" class="form-group d-none">
-                                    <label>Select Available Leaves <font color="red">*</font></label>
+                                    <label>Available Claim(s) <font color="red">*</font></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
@@ -123,22 +121,27 @@
                                             </span>
                                         </div>
                                         <select class="form-control" name="available_leave" id="available_leave" required>
-                                            <option value="">Choose Leave</option>
+                                            <option value="">Select Replacement Claim</option>
                                             @foreach($all_rep_claims as $all_rep_claim)
-                                            <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}" data-event-date="{{$all_rep_claim->date_from}}">
-                                                <?php 
-                                                    $total_used = 0;
-                                                    $apps = $all_rep_claim->replacement_applications;
-                                                    foreach($apps as $app){
+                                            <?php 
+                                                $total_used = 0;
+                                                $apps = $all_rep_claim->replacement_applications;
+                                                foreach($apps as $app){
+                                                    $status = $app->application->status;
+                                                    if ($status == "APPROVED" || $status == "PENDING_1" || $status == "PENDING_2" || $status == "PENDING_3") {
                                                         $total_used += $app->leave_total_days;
                                                     }
-                                                ?>
-                                                {{$all_rep_claim->id}} , {{$all_rep_claim->reason}} , {{$all_rep_claim->total_days - $total_used}}
-                                            </option>
+                                                }
+                                            ?>
+                                            @if (($all_rep_claim->total_days - $total_used) > 0)
+                                                <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}" data-event-date="{{$all_rep_claim->date_from}}">
+                                                        {{$all_rep_claim->date_from}} - {{$all_rep_claim->date_to}} | {{$all_rep_claim->reason}} | Day(s) : {{$all_rep_claim->total_days - $total_used}}
+                                                </option>
+                                            @endif
                                             @endforeach
                                         </select>
                                         <div class="invalid-feedback">
-                                            Please choose available leave
+                                            Please choose available replacement claim.
                                         </div>
                                         <div class="valid-feedback">
                                             Looks good!
@@ -329,10 +332,10 @@
                                     value="{{isset($leaveAuth->authority_3_id) ? $leaveAuth->authority_3_id: ''}}" />
 
                                 <!-- Replacement Action -->
-                                <input  type="text" name="replacement_action" id="replacement_action" value="" />
+                                <input style="display:none;" type="text" name="replacement_action" id="replacement_action" value="" />
                                 
-                                <!-- Replacement Action -->
-                                <input  type="text" name="claim_id" id="claim_id" value="" />
+                                <!-- Claim ID -->
+                                <input style="display:none;" type="text" name="claim_id" id="claim_id" value="" />
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="btn btn-success float-right">Submit</button>
@@ -571,8 +574,10 @@
     <script>
         $(document).ready(MainLeaveApplicationCreate);
 
+        // Global variables for replacement leaves.
         var leave_type = "";
         var event_date = "";
+        var count_balance = 0;
 
         $("#leave_type_id").change(function() {
             $("#FromDate").val("");
@@ -586,54 +591,57 @@
                 $("#FromDate").attr("disabled", true);
                 $("#ToDate").attr("disabled", true);
 
-                $("#replacement_action").val('Apply');
+                $("#replacement_action").val("Apply");
             } else {
                 $("#rep_leave_div").addClass("d-none");
 
                 $("#FromDate").attr("disabled", false);
                 $("#ToDate").attr("disabled", false);
 
-                $("#replacement_action").val('');
+                $("#replacement_action").val("");
             }
         });
-        // todo
+
         $("#available_leave").change(function() {
-            var count_pending = 0; // To count all pending leave applications on this claim.
-            var total_leave_apply = 0;
-            var bal_days = 0;
+            var count_pending = 0;
+            var count_approved = 0;
+            var taken_replacement = 0;
+            count_balance = 0;
+            event_date = "";
+            claim_id = "";
             
             var claim_id = this.value;
+            $("#claim_id").val(claim_id);
+
             var claimed_days = $(this).find(':selected').data('total-days'); // To get total submitted days of claim.
-            event_date = $(this).find(':selected').data('event-date');
+            event_date = $(this).find(':selected').data('event-date'); // To get event date of claim.
 
-            $("input[name='replacement_applications']").each(function () {
-                // To get all previous leave application data using claimed replacement leave.
-                let data = $(this).data();
-                var prev_apply = data.id;
-                var prev_apply_status = data.status;
-                var prev_apply_days = data.days;
+            // If claimed more than one day.
+            if (claimed_days > 1) {
+                $("input[name='replacement_applications']").each(function () {
+                    var prev_apply = this.value;
+                    // If there are leave applications submitted with the same claim selected.
+                    if (prev_apply == claim_id) {
+                        // To get all previous leave application data using this claimed replacement leave.
+                        let data = $(this).data();
+                        var prev_apply_status = data.status;
+                        var prev_apply_days = data.days;
 
-                console.log(prev_apply, prev_apply_status, prev_apply_days);
-
-                // If there are leave applications with the same claim selected.
-                if (prev_apply == claim_id) {
-                    // Calculate total days taken.
-                    total_leave_apply += prev_apply_days;
-                    // If that leave application is still on pending.
-                    if (prev_apply_status == "PENDING_1" || prev_apply_status == "PENDING_2" || prev_apply_status == "PENDING_3") {
-                        count_pending++;
+                        if (prev_apply_status == "APPROVED" || prev_apply_status == "PENDING_1" || prev_apply_status == "PENDING_2" || prev_apply_status == "PENDING_3") {
+                            // Calculate total days taken previously.
+                            taken_replacement += prev_apply_days;
+                        }
                     }
+                });
+                // Calculate current balance.
+                count_balance = claimed_days - taken_replacement;
+                if (taken_replacement > 0) {
+                    alert("You have used "+taken_replacement+"/"+claimed_days+" day(s) of replacement leave from this claim. Thus, your balance leave for this claim will be "+count_balance+" day(s).");
                 }
-            });
-
-            bal_days = claimed_days - total_leave_apply;
-
-            alert("You have submitted "+count_pending+" leave application(s) on this claim. You still have "+bal_days+" more day(s) left for this claim.")
+            }
 
             $("#FromDate").attr("disabled", false);
             $("#ToDate").attr("disabled", false);
-
-            $("#claim_id").val(claim_id);
         });
 
         $("#FromDate").change(function() {
@@ -842,16 +850,19 @@ $('#reason').keyup(function() {
           		}
         }
 
-        // todo
         // REPLACEMENT POLICY
         if (validation.isReplacementLeave()) {
-            var date = new Date(event_date);
-            var newdate = new Date(date);
+            var date_event = new Date(event_date);
+            var date_allow = new Date(date_from);
 
-            newdate.setDate(newdate.getDate() + 30);
-            
-            if(calendar.isDateBigger(date_from, newdate)){
-                return "Attention: This replacement claim should be utilized within 30 days from the event date.";
+            date_event.setDate(date_event.getDate() + 30); // Add 30 days.
+            date_allow.setDate(date_allow.getDate() + count_balance); // Add the balance days of the claim.
+
+            if(calendar.isDateBigger(date_from, date_event)){
+                return "Attention: This replacement claim should be utilized within 30 days from the claimed event date.";
+            }
+            if(calendar.isDateBigger(date_to, date_allow) || calendar.isDateEqual(date_to, date_allow)){
+                return "Attention: You have insufficient leave balance from this claim to apply until this date.";
             }
         }
 

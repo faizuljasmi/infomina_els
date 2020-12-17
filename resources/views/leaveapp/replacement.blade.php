@@ -347,12 +347,18 @@ $('#reason').keyup(function() {
         let date_from = _form.get(FC.date_from);
         let date_to = _form.get(FC.date_to);
 
+        // REPLACEMENT POLICY
+        let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
+        prev3 = calendar.getDateDb(prev3);
+        if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+          return "Attention: Claim must be submitted within 3 working days after the day of event.";
+        }
+
         for (index = 0; index < myapplications.length; index++) {
             if( myapplications[index] == calendar.getDateDb(date_from) || myapplications[index] == calendar.getDateDb(date_to)){
                 return "You already have a Pending/Approved application during this date.";
             }
         }
-
 
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
           if(calendar.isDateSmaller(date_to, date_from)){
