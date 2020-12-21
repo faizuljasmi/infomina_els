@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\CalculateProrate',
-        'App\Console\Commands\CalculateEntitlement',
+        'App\Console\Commands\CalculateEarning',
     ];
 
     /**
@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('calculate:prorate')
                  ->monthlyOn(1, '08:00'); // 1st of every month, 8.00am
 
-        $schedule->command('calculate:entitlement')
+        $schedule->command('calculate:earning')
                  ->yearlyOn(31, 12, '17:30'); // 31st December, 5.00pm
     }
 

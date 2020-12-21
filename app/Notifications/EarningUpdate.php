@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ProrateUpdate extends Notification
+class EarningUpdate extends Notification
 {
     use Queueable;
 
@@ -43,11 +43,13 @@ class ProrateUpdate extends Notification
     {
         $employee = $this->employee;
 
+        $today = Carbon::now();
+        $currentYear = $today->year;
+
         return (new MailMessage)
-        ->subject('[INFOMINA ELS] - Prorated '.$employee['leave'].' Leave')
-        ->greeting('Hi '.$employee['name'].',')
-        ->line('Your '.$employee['leave'].' leave have been adjusted/prorated according to the years of completed service with the company.')
-        ->line('Thus, you have earned an additional '.$employee['gain'].' day(s), and your new balance for '.$employee['leave'].' leave would be '.$employee['balance'].' day(s).')
+        ->subject('[INFOMINA ELS] - '.$currentYear.' Leave Earnings')
+        ->greeting('Happy New Year '.$employee->name.',')
+        ->line('Your leave earning has been successfully recalculated for the year '.$currentYear.'.')
         ->line('Please contact the HR if you need any further clarification.');
     }
 

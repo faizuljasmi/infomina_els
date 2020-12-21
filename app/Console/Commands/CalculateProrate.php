@@ -53,53 +53,114 @@ class CalculateProrate extends Command
 
         foreach($monthEmp as $emp)
         {
-            // // Testing
-            // $fromYear = 2017;
-            // $fromMonth = 11;
-            // $toYear = 2020;
-            // $toMonth = 11;
-            // $from = Carbon::parse($fromYear.'-'.$fromMonth);
-            // $to = Carbon::parse($toYear.'-'.$toMonth);
-
             $from = Carbon::parse($emp->join_date);
             $to = Carbon::parse($currentYear.'-'.$currentMonth);
             $diff = $from->diffInMonths($to);
-            // echo $diff;
 
-            $prorateEnt = 0;
-            $entAfter = 0;
-            $defaultEnt = 14;
+            if ($emp->emp_type_id != 3 || $emp->emp_type_id != 4 || $emp->emp_type_id != 5) // Executive and Non-Executive Staff Only.
+            {
+                // Calculate AL Prorate
+                $prorateAL = 0;
+                $annualAfter = 0;
+                
+                if ($emp->emp_type_id == 1 || $emp->emp_type_id == 6 || $emp->emp_type_id == 7 || $emp->emp_type_id == 8) { // Executive
+                    $defaultAL = 14;
+                } else if ($emp->emp_type_id == 2) { // Non Executive
+                    $defaultAL = 12;
+                }
             
-            if (($diff + 1) == 36) { // If 3 Years
-                $prorateEnt = 16;
-            } else if (($diff + 1) == 60) { // If 5 Years
-                $prorateEnt = 18;
-            } 
+                if (($diff + 1) == 36) { // If 3 Years
+                    if ($emp->emp_type_id == 1 || $emp->emp_type_id == 6 || $emp->emp_type_id == 7 || $emp->emp_type_id == 8) { // Executive
+                        $prorateAL = 16;
+                    } else if ($emp->emp_type_id == 2) { // Non Executive
+                        $prorateAL = 14;
+                    }
+                } else if (($diff + 1) == 60) { // If 5 Years
+                    if ($emp->emp_type_id == 1 || $emp->emp_type_id == 6 || $emp->emp_type_id == 7 || $emp->emp_type_id == 8) { // Executive
+                        $prorateAL = 18;
+                    } else if ($emp->emp_type_id == 2) { // Non Executive
+                        $prorateAL = 16;
+                    }
+                } 
 
-            if ($prorateEnt > 0 ) {
-                $entBefore = ((intval($currentMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
-                $entBefore = round($entBefore);
-                $entAfter = ((12 - ($currentMonth - 1)) / 12) * $prorateEnt ; // To calculate days entitled for the prorated months.
-                $entAfter = ceil($entAfter);
+                if ($prorateAL > 0 ) {
+                    $annualBefore = ((intval($currentMonth) - 1) / 12) * $defaultAL; // To calculate days entitled before prorated months.
+                    $annualBefore = round($annualBefore);
+                    $annualAfter = ((12 - ($currentMonth - 1)) / 12) * $prorateAL ; // To calculate days entitled for the prorated months.
+                    $annualAfter = ceil($annualAfter);
 
-                $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
-                if ($leaveEarn) {
-                    $tempEarn = $leaveEarn->no_of_days;
-                    $leaveEarn->no_of_days = ($tempEarn - $defaultEnt) + $entAfter + $entBefore;
-                    $leaveEarn->update();
+                    $leaveEarnAL = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
+                    if ($leaveEarnAL) {
+                        $tempEarnAL = $leaveEarnAL->no_of_days;
+                        $leaveEarnAL->no_of_days = ($tempEarnAL - $defaultAL) + $annualAfter + $annualBefore;
+                        $leaveEarnAL->update();
+                    }
+
+                    $gainAL = ($annualBefore + $annualAfter) - $defaultAL;
+                    
+                    $leaveBalAL = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
+                    if ($leaveBalAL && $leaveEarnAL) {
+                        $tempBalAL = $leaveBalAL->no_of_days;
+                        $leaveBalAL->no_of_days = $tempBalAL + $gainAL;
+                        $leaveBalAL->update();
+                    }   
+
+                    if ($gainAL > 0) {
+                        $staff = ['leave' => 'Annual', 'name' => $emp->name, 'gain' => $gainAL, 'balance' => $leaveBalAL->no_of_days];
+                        $emp->notify(new ProrateUpdate($staff));
+                    }
                 }
 
-                $gain = ($entBefore + $entAfter) - $defaultEnt;
-                
-                $leaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
-                if ($leaveEarn) {
-                    $tempBal = $leaveBal->no_of_days;
-                    $leaveBal->no_of_days = $tempBal + $gain;
-                    $leaveBal->update();
-                }   
+                // Calculate MC Prorate
+                $prorateMC = 0;
+                $mcAfter = 0;
+                $defaultMC = 14;
 
-                $staff = ['name' => $emp->name, 'gain' => $gain, 'balance' => $leaveBal->no_of_days];
-                $emp->notify(new ProrateUpdate($staff));
+                if (($diff + 1) == 24) { // If 2 Years
+                    $prorateMC = 18;
+                } else if (($diff + 1) == 60) { // If 5 Years
+                    $prorateMC = 22;
+                } 
+
+                if ($prorateMC > 0 ) {
+                    $mcBefore = ((intval($currentMonth) - 1) / 12) * $defaultMC; // To calculate days entitled before prorated months.
+                    $mcBefore = round($mcBefore);
+                    $mcAfter = ((12 - ($currentMonth - 1)) / 12) * $prorateMC ; // To calculate days entitled for the prorated months.
+                    $mcAfter = ceil($mcAfter);
+
+                    $leaveEarnMC = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
+                    if ($leaveEarnMC) {
+                        $tempEarnMC = $leaveEarnMC->no_of_days;
+                        $leaveEarnMC->no_of_days = ($tempEarnMC - $defaultMC) + $mcAfter + $mcBefore;
+                        $leaveEarnMC->update();
+                    }
+
+                    $gainMC = ($mcBefore + $mcAfter) - $defaultMC;
+                    
+                    $leaveBalMC = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
+                    if ($leaveBalMC && $leaveEarnMC) {
+                        $tempBalMC = $leaveBalMC->no_of_days;
+                        $leaveBalMC->no_of_days = $tempBalMC + $gainMC;
+                        $leaveBalMC->update();
+                    }   
+
+                    $leaveBalHosp = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 4)->first();
+                    if ($leaveBalHosp && $leaveBalMC && $leaveEarnMC) {
+                        $tempBalHosp = $leaveBalHosp->no_of_days;
+                        $hospBalance = $tempBalHosp + $gainMC;
+                        if ($hospBalance >= 60) {
+                            $leaveBalHosp->no_of_days = 60;
+                        } else {
+                            $leaveBalHosp->no_of_days = $hospBalance;
+                        }
+                        $leaveBalHosp->update();
+                    }   
+
+                    if ($gainMC > 0) {
+                        $staff = ['leave' => 'Medical', 'name' => $emp->name, 'gain' => $gainMC, 'balance' => $leaveBalMC->no_of_days];
+                        $emp->notify(new ProrateUpdate($staff));
+                    }
+                }
             }
         }
 

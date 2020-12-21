@@ -32,143 +32,143 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    public function carry_forward() {
+    // public function carry_forward() {
 
-        $employees = User::get();
+    //     $employees = User::get();
 
-        $today = Carbon::now();
-        $currentMonth = $today->month;
-        $currentYear = $today->year;
+    //     $today = Carbon::now();
+    //     $currentMonth = $today->month;
+    //     $currentYear = $today->year;
 
-        foreach($employees as $emp) {
-            $carryForw = 0;
-            $annualEnt = 0;
-            $annualBal = 0;
+    //     foreach($employees as $emp) {
+    //         $carryForw = 0;
+    //         $annualEnt = 0;
+    //         $annualBal = 0;
 
-            $annualLeave = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
+    //         $annualLeave = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
 
-            if ($annualLeave != null) {
-                $annualBal = $annualLeave->no_of_days;
-                if ($annualBal > 0 && $annualBal <= 5) {
-                    $carryForw = $annualBal;
-                } else if ($annualBal > 5) {
-                    $carryForw = 5;
-                }
+    //         if ($annualLeave != null) {
+    //             $annualBal = $annualLeave->no_of_days;
+    //             if ($annualBal > 0 && $annualBal <= 5) {
+    //                 $carryForw = $annualBal;
+    //             } else if ($annualBal > 5) {
+    //                 $carryForw = 5;
+    //             }
             
-                $joinDate = Carbon::parse($emp->join_date);
-                $to = Carbon::parse($currentYear.'-'.$currentMonth);
-                $diff = $joinDate->diffInMonths($to);
+    //             $joinDate = Carbon::parse($emp->join_date);
+    //             $to = Carbon::parse($currentYear.'-'.$currentMonth);
+    //             $diff = $joinDate->diffInMonths($to);
                 
-                if (($diff + 1) < 36) {
-                    $annualEnt = 14;
-                } else if (($diff + 1) >= 36 && ($diff + 1) < 60) {
-                    $annualEnt = 16;
-                } else if (($diff + 1) >= 60) {
-                    $annualEnt = 18;
-                }
+    //             if (($diff + 1) < 36) {
+    //                 $annualEnt = 14;
+    //             } else if (($diff + 1) >= 36 && ($diff + 1) < 60) {
+    //                 $annualEnt = 16;
+    //             } else if (($diff + 1) >= 60) {
+    //                 $annualEnt = 18;
+    //             }
                 
-                for($leaveType = 1; $leaveType <= 13; $leaveType++) // Total 13 leave types
-                { 
-                    $empEarning = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', $leaveType)->first();
-                    if ($empEarning != null) {
-                        if ($leaveType == 1) {
-                            $empEarning->no_of_days = $carryForw + $annualEnt; // Annual
-                        } else if ($leaveType == 2) {
-                            $empEarning->no_of_days = 0; // Calamity
-                        } else if ($leaveType == 3) { 
-                            $empEarning->no_of_days = 0; // Sick
-                        } else if ($leaveType == 4) {
-                            $empEarning->no_of_days = 60; // Hospitalization
-                        } else if ($leaveType == 5) {
-                            $empEarning->no_of_days = 0; // Compassionate
-                        } else if ($leaveType == 6) {
-                            $empEarning->no_of_days = 0; // Emergency
-                        } else if ($leaveType == 7) {
-                            $empEarning->no_of_days = 0; // Marriage
-                        } else if ($leaveType == 8) {
-                            $empEarning->no_of_days = 0; // Maternity
-                        } else if ($leaveType == 9) {
-                            $empEarning->no_of_days = 0; // Paternity
-                        } else if ($leaveType == 10) {
-                            $empEarning->no_of_days = 0; // Training
-                        } else if ($leaveType == 11) {
-                            $empEarning->no_of_days = 0; // Unpaid
-                        } else if ($leaveType == 12) {
-                            $empEarning->no_of_days = 0; // Replacement
-                        } else if ($leaveType == 13){
-                            $empEarning->no_of_days = 0; // Wedding
-                        }
-                        $empEarning->update();
-                    }
-                }
-            }
-        }
-    }
+    //             for($leaveType = 1; $leaveType <= 13; $leaveType++) // Total 13 leave types
+    //             { 
+    //                 $empEarning = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', $leaveType)->first();
+    //                 if ($empEarning != null) {
+    //                     if ($leaveType == 1) {
+    //                         $empEarning->no_of_days = $carryForw + $annualEnt; // Annual
+    //                     } else if ($leaveType == 2) {
+    //                         $empEarning->no_of_days = 0; // Calamity
+    //                     } else if ($leaveType == 3) { 
+    //                         $empEarning->no_of_days = 0; // Sick
+    //                     } else if ($leaveType == 4) {
+    //                         $empEarning->no_of_days = 60; // Hospitalization
+    //                     } else if ($leaveType == 5) {
+    //                         $empEarning->no_of_days = 0; // Compassionate
+    //                     } else if ($leaveType == 6) {
+    //                         $empEarning->no_of_days = 0; // Emergency
+    //                     } else if ($leaveType == 7) {
+    //                         $empEarning->no_of_days = 0; // Marriage
+    //                     } else if ($leaveType == 8) {
+    //                         $empEarning->no_of_days = 0; // Maternity
+    //                     } else if ($leaveType == 9) {
+    //                         $empEarning->no_of_days = 0; // Paternity
+    //                     } else if ($leaveType == 10) {
+    //                         $empEarning->no_of_days = 0; // Training
+    //                     } else if ($leaveType == 11) {
+    //                         $empEarning->no_of_days = 0; // Unpaid
+    //                     } else if ($leaveType == 12) {
+    //                         $empEarning->no_of_days = 0; // Replacement
+    //                     } else if ($leaveType == 13){
+    //                         $empEarning->no_of_days = 0; // Wedding
+    //                     }
+    //                     $empEarning->update();
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-    public function prorate_2020()
-    {
-        $employees = User::get();
+    // public function prorate_2020()
+    // {
+    //     $employees = User::get();
 
-        $emps = [];
+    //     $emps = [];
         
-        foreach($employees as $emp)
-        {
-            $currentYear = '2020';
+    //     foreach($employees as $emp)
+    //     {
+    //         $currentYear = '2020';
 
-            $after36months = Carbon::parse($emp->join_date)->addMonths(36)->isoFormat('Y-MM-DD'); // Return String
-            $after60months = Carbon::parse($emp->join_date)->addMonths(60)->isoFormat('Y-MM-DD'); // Return String
+    //         $after36months = Carbon::parse($emp->join_date)->addMonths(36)->isoFormat('Y-MM-DD'); // Return String
+    //         $after60months = Carbon::parse($emp->join_date)->addMonths(60)->isoFormat('Y-MM-DD'); // Return String
 
-            $is3rdYear = substr($after36months, 0, 4); // Year
-            $is5thYear = substr($after60months, 0, 4); // Year
+    //         $is3rdYear = substr($after36months, 0, 4); // Year
+    //         $is5thYear = substr($after60months, 0, 4); // Year
 
-            $prorateEnt = 0;
-            $entAfter = 0;
+    //         $prorateEnt = 0;
+    //         $entAfter = 0;
 
-            if ($is3rdYear == $currentYear) {
-                $prorateEnt = 16;       
-                $month = $after36months;
-            } else if ($is5thYear == $currentYear) {
-                $prorateEnt = 18;
-                $month = $after60months;
-            }
+    //         if ($is3rdYear == $currentYear) {
+    //             $prorateEnt = 16;       
+    //             $month = $after36months;
+    //         } else if ($is5thYear == $currentYear) {
+    //             $prorateEnt = 18;
+    //             $month = $after60months;
+    //         }
 
-            $defaultEnt = 14; // Default entitlement for all staff is 14 days.
+    //         $defaultEnt = 14; // Default entitlement for all staff is 14 days.
 
-            if ($prorateEnt > 0 && $emp->id != 3 && $emp->id != 8 && $emp->id != 25 && $emp->id != 26) {
-                $annMonth = substr($month, 5, 2); // Month
-                $entBefore = ((intval($annMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
-                $entBefore = round($entBefore);
-                $entAfter = ((12 - (intval($annMonth) - 1)) / 12) * $prorateEnt; // To calculate days entitled for the prorated months.
-                $entAfter = ceil($entAfter);
+    //         if ($prorateEnt > 0 && $emp->id != 3 && $emp->id != 8 && $emp->id != 25 && $emp->id != 26) {
+    //             $annMonth = substr($month, 5, 2); // Month
+    //             $entBefore = ((intval($annMonth) - 1) / 12) * $defaultEnt; // To calculate days entitled before prorated months.
+    //             $entBefore = round($entBefore);
+    //             $entAfter = ((12 - (intval($annMonth) - 1)) / 12) * $prorateEnt; // To calculate days entitled for the prorated months.
+    //             $entAfter = ceil($entAfter);
                 
-                // dd($annMonth, $entBefore, $entAfter);
-                $tempEarn = 0;
-                $tempBal = 0;
-                $gain = 0;
+    //             // dd($annMonth, $entBefore, $entAfter);
+    //             $tempEarn = 0;
+    //             $tempBal = 0;
+    //             $gain = 0;
                 
-                $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
-                if ($leaveEarn) {
-                    $tempEarn = $leaveEarn->no_of_days;
-                    $leaveEarn->no_of_days = ($tempEarn - $defaultEnt) + $entBefore + $entAfter; 
-                    $leaveEarn->update();
-                }
+    //             $leaveEarn = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
+    //             if ($leaveEarn) {
+    //                 $tempEarn = $leaveEarn->no_of_days;
+    //                 $leaveEarn->no_of_days = ($tempEarn - $defaultEnt) + $entBefore + $entAfter; 
+    //                 $leaveEarn->update();
+    //             }
                 
-                $gain = ($entBefore + $entAfter) - $defaultEnt;
+    //             $gain = ($entBefore + $entAfter) - $defaultEnt;
 
-                $leaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
-                if ($leaveBal && $leaveEarn) {
-                    $tempBal = $leaveBal->no_of_days;
-                    $leaveBal->no_of_days = $tempBal + $gain;
-                    $leaveBal->update();
-                }
+    //             $leaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 1)->first();
+    //             if ($leaveBal && $leaveEarn) {
+    //                 $tempBal = $leaveBal->no_of_days;
+    //                 $leaveBal->no_of_days = $tempBal + $gain;
+    //                 $leaveBal->update();
+    //             }
 
-                // if ($emp->id == '32') {
-                    $staff = ['name' => $emp->name, 'gain' => $gain, 'balance' => $leaveBal->no_of_days];
-                    $emp->notify(new ProrateUpdate($staff));
-                // }
-            }
-        }
-    }
+    //             // if ($emp->id == '32') {
+    //                 $staff = ['name' => $emp->name, 'gain' => $gain, 'balance' => $leaveBal->no_of_days];
+    //                 $emp->notify(new ProrateUpdate($staff));
+    //             // }
+    //         }
+    //     }
+    // }
 
     public function index()
     {
