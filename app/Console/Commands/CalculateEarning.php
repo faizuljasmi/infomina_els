@@ -112,42 +112,50 @@ class CalculateEarning extends Command
                     for($leaveType = 1; $leaveType <= 13; $leaveType++) // Total 13 leave types
                     { 
                         $empEarning = LeaveEarning::where('user_id', $emp->id)->where('leave_type_id', $leaveType)->first();
-                        
+                        $empBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', $leaveType)->first();
+
                         if ($empEarning != null) {
                             if ($leaveType == 1) {
                                 $empEarning->no_of_days = $carryForw + $annualEnt; // Annual
+                                $empBal->no_of_days = $carryForw + $annualEnt;
                             } else if ($leaveType == 2) {
-                                $empEarning->no_of_days = 0; // Calamity
+                                $empEarning->no_of_days = 1; // Calamity
+                                $empBal->no_of_days = 1;
                             } else if ($leaveType == 3) { 
                                 $empEarning->no_of_days = $mcEnt; // Sick
+                                $empBal->no_of_days = $mcEnt;
                             } else if ($leaveType == 4) {
                                 $empEarning->no_of_days = 60; // Hospitalization
+                                $empBal->no_of_days = 60;
                             } else if ($leaveType == 5) {
-                                $empEarning->no_of_days = 0; // Compassionate
+                                $empEarning->no_of_days = 2; // Compassionate
+                                $empBal->no_of_days = 2;
                             } else if ($leaveType == 6) {
                                 $empEarning->no_of_days = 5; // Emergency
+                                $empBal->no_of_days = 5;
                             } else if ($leaveType == 7) {
-                                $empEarning->no_of_days = 0; // Marriage
+                                $empEarning->no_of_days = 2; // Marriage
+                                $empBal->no_of_days = 2;
                             } else if ($leaveType == 8) {
                                 $empEarning->no_of_days = 0; // Maternity
+                                $empBal->no_of_days = 0;
                             } else if ($leaveType == 9) {
                                 $empEarning->no_of_days = 0; // Paternity
+                                $empBal->no_of_days = 0;
                             } else if ($leaveType == 10) {
                                 $empEarning->no_of_days = 0; // Training
+                                $empBal->no_of_days = 0;
                             } else if ($leaveType == 11) {
                                 $empEarning->no_of_days = 0; // Unpaid
+                                $empBal->no_of_days = 0;
                             } else if ($leaveType == 12) {
                                 $empEarning->no_of_days = 0; // Replacement
+                                $empBal->no_of_days = 0;
                             } else if ($leaveType == 13){
                                 $empEarning->no_of_days = 0; // Wedding
+                                $empBal->no_of_days = 0;
                             }
                             $empEarning->update();
-                        }
-
-                        $empBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', $leaveType)->first();
-
-                        if ($empBal != null) {
-                            $empBal->no_of_days = 0;
                             $empBal->update();
                         }
 
