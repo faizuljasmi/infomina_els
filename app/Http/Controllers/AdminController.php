@@ -918,7 +918,7 @@ class AdminController extends Controller
         foreach($users as $user){
             foreach($bfwd as $bf){
                 if($user->id == $bf->user_id){
-                    $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->where('created_at' ,'<=', '2021-06-30')->get();
+                    $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->whereBetween('created_at' ,'2021-01-01', '2021-06-30')->get();
                     $cur_ann_leave_bal = LeaveBalance::where('user_id',$user->id)->where('leave_type_id',1)->first();
                     $total_days = 0;
                     foreach($ann_taken_first_half as $ann){

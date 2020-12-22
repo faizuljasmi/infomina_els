@@ -415,8 +415,7 @@
                                           $frmBfwd = 0;
                                           $frmAnnual = 0;
                                         if($total_ann_taken_first_half <= $bfwd){$frmBwd = $total_ann_taken_first_half; $frmAnnual = $taken - $total_ann_taken_first_half;}
-                                        if($total_ann_taken_first_half > $bfwd){ $frmBwd = $bfwd; $frmAnnual = $taken - $bfwd;}
-                                        if($total_ann_taken_first_half == 0){$frmBwd = 0; $frmAnnual = 0;}?>
+                                        elseif($total_ann_taken_first_half > $bfwd){ $frmBwd = $bfwd; $frmAnnual = $taken - $bfwd;} ?>
                                     <td class="table-danger" data-toggle="tooltip"
                                         title="{{$frmBwd}} from Brought Forward + {{$frmAnnual}} from Annual Leave"><a
                                             href="#leaveRecord"><u>{{$lt->no_of_days}}</u></a></td>
