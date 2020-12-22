@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Country extends Model
 {
     public function states(){
-        return $this->hasMany(State::class,'state_id');
+        return $this->hasMany(State::class);
+    }
+
+    public function branches(){
+        return $this->hasMany(Branch::class);
     }
 
     public function holidays(){

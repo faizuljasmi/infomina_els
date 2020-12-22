@@ -90,9 +90,12 @@ class HomeController extends Controller
                 ->where('user_id', $user->id);
         })->sortable(['date_from'])->paginate(5, ['*'], 'history');
 
-        //Get all holidays dates
-        $holidays = Holiday::all();
-        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get()->groupBy(function ($val) {
+        //Get all holidays dates\
+        $state_hols = $user->state_holidays;
+        $natioanl_hols = $user->national_holidays;
+
+        $holidays = $state_hols->merge($natioanl_hols)->sortBy('date_from');
+        $holsPaginated = $holidays->groupBy(function ($val) {
             return Carbon::parse($val->date_from)->format('F');
         });
 
@@ -131,8 +134,9 @@ class HomeController extends Controller
         }
         //dd($approved_dates);
         $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
+        $burntReplacement = BurntLeave::where('user_id',$user->id)->where('leave_type_id',12)->first();
         //dd($burntLeave);
-        return view('home')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'leaveEnts', 'leaveEarns', 'broughtFwd', 'leaveBal', 'leaveTak', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'holsPaginated', 'pendLeaves', 'leaveHist','burntLeave','total_ann_taken_first_half'));
+        return view('home')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'leaveEnts', 'leaveEarns', 'broughtFwd', 'leaveBal', 'leaveTak', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'holsPaginated', 'pendLeaves', 'leaveHist','burntLeave','total_ann_taken_first_half','burntReplacement'));
     }
 
     /**
@@ -604,5 +608,5 @@ class HomeController extends Controller
         return $delete_id;
     }
 
-   
+
 }

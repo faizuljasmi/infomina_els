@@ -17,4 +17,8 @@ class Branch extends Model
     public function employees(){
         return $this->hasMany(User::class);
     }
+
+    public function active_employees(){
+        return $this->employees()->where('status','Active');
+    }
 }

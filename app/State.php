@@ -14,6 +14,10 @@ class State extends Model
         return $this->hasMany(Holiday::class);
     }
 
+    public function branches(){
+        return $this->hasMany(Branch::class);
+    }
+
     public function state_wide_holidays(){
         return $this->holidays()->where('state_id',$this->id);
     }

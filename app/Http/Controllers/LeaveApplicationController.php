@@ -139,9 +139,12 @@ class LeaveApplicationController extends Controller
       });
 
 
-        $holidays = Holiday::all();
-        $holsPaginated = Holiday::orderBy('date_from', 'ASC')->get()->groupBy(function($val) {
-            return Carbon::parse($val->date_from)->format('F');
+      $state_hols = $user->state_holidays;
+      $natioanl_hols = $user->national_holidays;
+
+      $holidays = $state_hols->merge($natioanl_hols)->sortBy('date_from');
+      $holsPaginated = $holidays->groupBy(function ($val) {
+          return Carbon::parse($val->date_from)->format('F');
       });
 
       //dd($holsPaginated);
@@ -350,7 +353,7 @@ class LeaveApplicationController extends Controller
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
         $leaveApp->approver_one->notify(new NewApplication($leaveApp));
-        $this->mobile_notification($leaveApp,"authority_1");
+        //$this->mobile_notification($leaveApp,"authority_1");
 
         //STORE
         return redirect()->to('/home')->with('message', 'Leave application submitted succesfully');
@@ -729,13 +732,15 @@ class LeaveApplicationController extends Controller
 
                     //Minus the user replacement leave balance based on the total days for this application
                     $ReplacementBal = LeaveBalance::where('leave_type_id','12')->where('user_id',$leaveApplication->user_id)->first();
-                    $ReplacementBal -= $leaveApplication->total_days;
+                    $ReplacementBal->no_of_days -= $leaveApplication->total_days;
                     $ReplacementBal->save();
 
                     $ReplacementTaken = TakenLeave::where('leave_type_id','12')->where('user_id',$leaveApplication->user_id)->first();
-                    $ReplacementTaken += $leaveApplication->total_days;
+                    $ReplacementTaken->no_of_days += $leaveApplication->total_days;
                     $ReplacementTaken->save();
                 }
+                $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
+                return redirect()->to('/admin')->with('message', 'Replacement leave application status updated succesfully');
             }
 
             //If the approved leave is a Sick leave, deduct the amount taken in both sick leave and hospitalization balance

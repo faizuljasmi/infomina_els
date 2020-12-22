@@ -273,6 +273,32 @@ return [
             ],
         ],
 
+        [
+            'text'    => 'Location',
+            'can' => 'edit_settings',
+            'icon'    => 'fas fa-fw fa-globe',
+            'submenu' => [
+                [
+                    'text' => 'Country',
+                    'url'  => '/countries/index',
+                    'icon' => 'fas fa-fw fa-flag',
+                    'can' => 'admin-dashboard'
+                ],
+                [
+                    'text' => 'State',
+                    'url'  => '/states/index',
+                    'icon' => 'fas fa-fw fa-map-marker',
+                    'can' => 'admin-dashboard'
+                ],
+                [
+                    'text' => 'Branch',
+                    'url'  => '/branches/index',
+                    'icon' => 'fas fa-fw fa-building',
+                    'can' => 'admin-dashboard'
+                ],
+            ],
+        ],
+
         ['header' => ' My Settings', ],
         [
             'text' => 'Edit My Profile',
