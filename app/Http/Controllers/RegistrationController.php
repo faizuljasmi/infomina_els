@@ -144,7 +144,7 @@ class RegistrationController extends Controller
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
-        $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->whereBetween('created_at' ,'2021-01-01', '2021-06-30')->get();
+        $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->whereBetween('created_at' ,['2021-01-01', '2021-06-30'])->get();
         $total_ann_taken_first_half = 0;
         foreach($ann_taken_first_half as $ann){
             $total_ann_taken_first_half += $ann->total_days;
