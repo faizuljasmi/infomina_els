@@ -327,7 +327,7 @@ class LeaveApplicationController extends Controller
                 $total_days = 0;
                 foreach($claim_apply as $ca){
                     $rep_apply = LeaveApplication::where('id',$ca->leave_id)->first();
-                    if($rep_apply->status != 'CANCELLED'){
+                    if($rep_apply->status == 'PENDING_1' || $rep_apply->status == 'PENDING_2' || $rep_apply->status == 'PENDING_3'||$rep_apply->status == 'APPROVED'){
                         $total_days += $rep_apply->total_days;
                     }
                     $td = $total_days + $leaveApp->total_days;
@@ -714,7 +714,7 @@ class LeaveApplicationController extends Controller
                     $total_days = 0;
                     foreach($all_claim_apply as $aca){
                         $leaveApp = LeaveApplication::where('id',$aca->leave_id)->first();
-                        if($leaveApp->status != 'CANCELLED'){
+                        if($leaveApp->status == 'PENDING_1'|| $leaveApp->status == 'PENDING_2'||$leaveApp->status == 'PENDING_3'||$leaveApp->status == 'APPROVED'){
                             $total_days += $leaveApp->total_days;
                         }
                     }
@@ -724,7 +724,7 @@ class LeaveApplicationController extends Controller
                         $claimApp->save();
                     }
                     elseif($total_days > $claimApp->total_days){
-                        $leaveApplication->status = "CANCELLED";
+                        $leaveApplication->status = $old_status;
                         $leaveApplication->save();
                         return redirect()->to('/admin')->with('error', 'Employee does not have enough replacement leave balance. The leave has been cancelled.');
                     }
