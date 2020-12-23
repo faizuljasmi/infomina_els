@@ -9,6 +9,7 @@ use App\LeaveBalance;
 use Illuminate\Notifications\Notifiable;
 use Notification;
 use App\Notifications\ProrateUpdate;
+use App\Notifications\HRUpdate;
 use Carbon\Carbon;
 
 class CalculateProrate extends Command
@@ -47,6 +48,9 @@ class CalculateProrate extends Command
         $today = Carbon::now();
         $currentMonth = $today->month;
         $currentYear = $today->year;
+
+        $al_prorated_names = [];
+        $mc_prorated_names = [];
 
         // No need to calculate prorate on first month of the year, as already calculate leave earning on the same month.
         if ($currentMonth != 1) {
@@ -111,20 +115,22 @@ class CalculateProrate extends Command
                         
                             $staff = ['leave' => 'Annual', 'name' => $emp->name, 'gain' => $gainAL, 'balance' => $leaveBalAL->no_of_days];
                             $emp->notify(new ProrateUpdate($staff));
+
+                            array_push($al_prorated_names, $emp->name);
                         }
                     }
-
+                    
                     // Calculate MC Prorate
                     $prorateMC = 0;
                     $mcAfter = 0;
                     $defaultMC = 14;
-
+                    
                     if (($diff + 1) == 24) { // If 2 Years
                         $prorateMC = 18;
                     } else if (($diff + 1) == 60) { // If 5 Years
                         $prorateMC = 22;
                     } 
-
+                    
                     if ($prorateMC > 0 ) {
                         $mcBefore = ((intval($currentMonth) - 1) / 12) * $defaultMC; // To calculate days entitled before prorated months.
                         $mcBefore = round($mcBefore);
@@ -141,7 +147,7 @@ class CalculateProrate extends Command
                                 $leaveEarnMC->no_of_days = ($tempEarnMC - $defaultMC) + $mcAfter + $mcBefore;
                                 $leaveEarnMC->update();
                             }
-
+                            
                             
                             $leaveBalMC = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
                             if ($leaveBalMC && $leaveEarnMC) {
@@ -149,7 +155,7 @@ class CalculateProrate extends Command
                                 $leaveBalMC->no_of_days = $tempBalMC + $gainMC;
                                 $leaveBalMC->update();
                             }   
-
+                            
                             // Add up in Hospitalization leave balance.
                             $leaveBalHosp = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 4)->first();
                             if ($leaveBalHosp && $leaveBalMC && $leaveEarnMC) {
@@ -162,16 +168,30 @@ class CalculateProrate extends Command
                                 }
                                 $leaveBalHosp->update();
                             }   
-
+                            
                             $staff = ['leave' => 'Medical', 'name' => $emp->name, 'gain' => $gainMC, 'balance' => $leaveBalMC->no_of_days];
                             $emp->notify(new ProrateUpdate($staff));
+                            
+                            array_push($mc_prorated_names, $emp->name);
                         }
                     }
                 }
             }
         }
-        
 
+        $management = User::where('user_type', 'Management')->get();
+        
+        foreach($management as $hr) {
+            if (sizeof($al_prorated_names) > 0) {
+                $list = ['leave' => 'Annual', 'name_list' => $al_prorated_names];
+                $hr->notify(new HRUpdate($list));
+            }
+            if (sizeof($mc_prorated_names) > 0) {
+                $list = ['leave' => 'Medical', 'name_list' => $al_prorated_names];
+                $hr->notify(new HRUpdate($list));
+            }
+        }
+        
         return;
     }
 }
