@@ -154,10 +154,11 @@ class CalculateProrate extends Command
                             $leaveBalHosp = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 4)->first();
                             if ($leaveBalHosp && $leaveBalMC && $leaveEarnMC) {
                                 $tempBalHosp = $leaveBalHosp->no_of_days;
+                                $hospBalance = $tempBalHosp + $gainMC;
                                 if ($hospBalance >= 60) {
                                     $leaveBalHosp->no_of_days = 60;
                                 } else {
-                                    $leaveBalHosp->no_of_days = $tempBalHosp + $gainMC;
+                                    $leaveBalHosp->no_of_days = $hospBalance;
                                 }
                                 $leaveBalHosp->update();
                             }   
@@ -169,6 +170,7 @@ class CalculateProrate extends Command
                 }
             }
         }
+        
 
         return;
     }
