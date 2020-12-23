@@ -47,7 +47,7 @@ class HRUpdate extends Notification
         $nameList = $employee['name_list'];
 
         $message = new MailMessage;
-        $message->subject("[INFOMINA ELS] - Employees's Prorated ".$employee['leave']." Leave Update");
+        $message->subject("[INFOMINA ELS] - Employee's Prorated ".$employee['leave']." Leave Update");
         $message->greeting('Hi '.$employee['admin'].',');
         $message->line('Below would be the list of employee(s) that have been affected by '.$employee['leave'].' leave prorate calculation for this month.');
         foreach($nameList as $name) {
