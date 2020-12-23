@@ -98,6 +98,10 @@ class AdminController extends Controller
         ->where('leave_type_id', '1')
         ->first();
 
+        $replacement_balance = LeaveBalance::where('user_id', $leave_app->user_id)
+        ->where('leave_type_id', '12')
+        ->first();
+
         $taken_leave = TakenLeave::where('user_id', $leave_app->user_id)
         ->where('leave_type_id', $leave_app->leave_type_id)
         ->first();
@@ -108,10 +112,41 @@ class AdminController extends Controller
 
                 //If leave type is replacement
                 if($leave_app->leave_type_id == '12'){
-                    //Add replacement leave earning
-                    $leave_earn->no_of_days += $leave_app->total_days;
-                    //Add to annual leave balance
-                    $annual_balance->no_of_days += $leave_app->total_days;
+                    if($leave_app->remarks == "Claim"){
+                        //Add replacement leave earning
+                        $leave_earn->no_of_days += $leave_app->total_days;
+                        //Add to annual leave balance
+                        $replacement_balance->no_of_days += $leave_app->total_days;
+                    }
+                    elseif($leave_app->remarks == "Apply"){
+
+                        //Get the claim application related to this use replacement application
+                        $this_claim_apply = ReplacementRelation::where('leave_id',$leave_app->id)->first();
+                        $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
+                        //Get related claim records
+                        $all_claim_apply = ReplacementRelation::where('claim_id',$this_claim_apply->claim_id)->get();
+                        $total_days = 0;
+                        foreach($all_claim_apply as $aca){
+                            $leaveApp = LeaveApplication::where('id',$aca->leave_id)->first();
+                            if($leaveApp->status != 'CANCELLED'){
+                                $total_days += $leaveApp->total_days;
+                            }
+                        }
+                        //If the total days is fully used including this application, set the claim application status to TAKEN,
+                        if($total_days == $claimApp->total_days){
+                            $claimApp->status = "TAKEN";
+                            $claimApp->save();
+                        }
+                        elseif($total_days > $claimApp->total_days){
+                            $leave_app->status = "CANCELLED";
+                            $leave_app->save();
+                            return redirect()->to('/admin')->with('error', 'Employee does not have enough replacement leave balance. The leave has been cancelled.');
+                        }
+                        //Add replacement taken leave
+                        $taken_leave->no_of_days += $leave_app->total_days;
+                        //Minum from replacement balance
+                        $replacement_balance->no_of_days -= $leave_app->total_days;
+                    }
                 }
                 //If leave type is sick leave
                 if($leave_app->leave_type_id == '3'){
@@ -177,7 +212,16 @@ class AdminController extends Controller
 
                     if( $leave_app->leave_type_id == '12'){ //If leave type is replacement
                         $leave_earn->no_of_days -= $leave_app->total_days; //Subtract replacement leave earned
-                        $annual_balance->no_of_days -= $leave_app->total_days; //Subtract annual leave balance
+                        $replacement_balance->no_of_days -= $leave_app->total_days; //Subtract annual leave balance
+
+                        //Get the claim application related to this use replacement application
+                        $this_claim_apply = ReplacementRelation::where('leave_id',$leave_app->id)->first();
+                        $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
+                        if($claimApp->status == "TAKEN"){
+                            $claimApp->status = 'APPROVED';
+                            $claimApp->save();
+                        }
+                        $this_claim_apply->delete();
                     }
                 }
                 $leave_app->status = "7";
@@ -201,7 +245,16 @@ class AdminController extends Controller
 
                     if( $leave_app->leave_type_id == '12'){ //If leave type is replacement
                         $leave_earn->no_of_days -= $leave_app->total_days; //Subtract replacement leave earned
-                        $annual_balance->no_of_days -= $leave_app->total_days; //Subtract annual leave balance
+                        $replacement_balance->no_of_days -= $leave_app->total_days; //Subtract annual leave balance
+
+                        //Get the claim application related to this use replacement application
+                        $this_claim_apply = ReplacementRelation::where('leave_id',$leave_app->id)->first();
+                        $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
+                        if($claimApp->status == "TAKEN"){
+                            $claimApp->status = 'APPROVED';
+                            $claimApp->save();
+                        }
+                        $this_claim_apply->delete();
                     }
                 }
                 $leave_app->status = "8";
@@ -727,7 +780,7 @@ class AdminController extends Controller
         foreach($users as $user){
             foreach($bfwd as $bf){
                 if($user->id == $bf->user_id){
-                    $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->where('created_at' ,'<=', '2020-06-30')->get();
+                    $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->whereBetween('created_at' ,['2021-01-01', '2021-06-30'])->get();
                     $cur_ann_leave_bal = LeaveBalance::where('user_id',$user->id)->where('leave_type_id',1)->first();
                     $total_days = 0;
                     foreach($ann_taken_first_half as $ann){
