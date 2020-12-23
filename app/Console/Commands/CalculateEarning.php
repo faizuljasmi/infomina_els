@@ -27,7 +27,7 @@ class CalculateEarning extends Command
      *
      * @var string
      */
-    protected $description = 'To calculate annual leave entitlement.';
+    protected $description = 'To calculate annual leave earning.';
 
     /**
      * Create a new command instance.
@@ -64,7 +64,7 @@ class CalculateEarning extends Command
 
                 if ($annualLeave != null) {
                     $annualBal = $annualLeave->no_of_days;
-                    if ($annualBal > 0 && $annualBal <= 5) {
+                    if ($annualBal >= 0 && $annualBal <= 5) {
                         $carryForw = $annualBal;
                     } else if ($annualBal > 5) {
                         $carryForw = 5; // Max carry forward is only 5.
@@ -167,9 +167,9 @@ class CalculateEarning extends Command
                         }
                     }
                     
-                    if ($emp->id == 102) {
+                    // if ($emp->id == 102) {
                         $emp->notify(new EarningUpdate($emp));
-                    }
+                    // }
                 }
             }
         }

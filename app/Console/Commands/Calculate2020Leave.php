@@ -43,6 +43,7 @@ class Calculate2020Leave extends Command
      */
     public function handle()
     {
+        // Not in use anymore !
         $employees = User::get();
 
         $emps = [];

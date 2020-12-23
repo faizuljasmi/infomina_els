@@ -48,7 +48,7 @@ class EarningUpdate extends Notification
 
         return (new MailMessage)
         ->subject('[INFOMINA ELS] - '.$currentYear.' Leave Earnings')
-        ->greeting('Happy New Year '.$employee->name.',')
+        ->greeting('Happy New Year '.$employee->name.' !')
         ->line('Your leave earning has been successfully recalculated for the year '.$currentYear.'.')
         ->line('Please contact the HR if you need any further clarification.');
     }
