@@ -179,16 +179,17 @@ class CalculateProrate extends Command
             }
         }
 
-        $management = User::where('user_type', 'Management')->get();
+        // Get admin users to notify the affected employees.
+        $admins = User::where('user_type', 'Admin')->get();
         
-        foreach($management as $hr) {
+        foreach($admins as $admin) {
             if (sizeof($al_prorated_names) > 0) {
-                $list = ['leave' => 'Annual', 'name_list' => $al_prorated_names];
-                $hr->notify(new HRUpdate($list));
+                $list = ['leave' => 'Annual', 'name_list' => $al_prorated_names, 'admin' => $admin->name];
+                $admin->notify(new HRUpdate($list));
             }
             if (sizeof($mc_prorated_names) > 0) {
-                $list = ['leave' => 'Medical', 'name_list' => $al_prorated_names];
-                $hr->notify(new HRUpdate($list));
+                $list = ['leave' => 'Medical', 'name_list' => $mc_prorated_names, 'admin' => $admin->name];
+                $admin->notify(new HRUpdate($list));
             }
         }
         

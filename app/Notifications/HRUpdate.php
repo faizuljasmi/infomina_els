@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class EarningUpdate extends Notification
+class HRUpdate extends Notification
 {
     use Queueable;
 
@@ -43,10 +43,21 @@ class EarningUpdate extends Notification
     {
         $employee = $this->employee;
 
-        return (new MailMessage)
-        ->subject('[INFOMINA ELS] - Test List')
-        ->greeting('Hello!')
-        ->line($employee['name_list']);
+        $count = 1;
+        $nameList = $employee['name_list'];
+
+        $message = new MailMessage;
+        $message->subject("[INFOMINA ELS] - Employees's Prorated ".$employee['leave']." Leave Update");
+        $message->greeting('Hi '.$employee['admin'].',');
+        $message->line('Below would be the list of employee(s) that have been affected by '.$employee['leave'].' leave prorate calculation for this month.');
+        foreach($nameList as $name) {
+            $message->line(nl2br($count.'. '.$name));
+            $count++;
+        }
+        $message->line('');
+        $message->line('Thank you.');
+
+        return $message;
     }
 
     /**
