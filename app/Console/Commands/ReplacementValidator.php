@@ -4,7 +4,12 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use DateTime;
+use App\BurntLeave;
 use App\LeaveApplication;
+use App\LeaveBalance;
+use Illuminate\Notifications\Notifiable;
+use Notification;
+use App\Notifications\ExpiredLeave;
 use Carbon\Carbon;
 
 class ReplacementValidator extends Command
@@ -48,27 +53,55 @@ class ReplacementValidator extends Command
             $start = new DateTime($claim->date_from);
             $diff = $start->diff($today)->format('%a');
 
-            if ($diff >= 30) {
-                // $claim->status = 'EXPIRED';
+            // If claim passed more than 30 days and not utilized fully.
+            if ($diff >= 30 && $claim->status != 'TAKEN' && $claim->status != 'EXPIRED') {
+                // Change claim status to Expired.
+                $claim->status = 'EXPIRED';
+                // Calculate taken days.
                 $totalTaken = 0;
-    
-                foreach($claim->replacement_applications as $app) {
-                    if ($app->status == 'APROVED') {
-                        $totalTaken += $app->no_of_days;
+                
+                foreach($claim->replacement_applications as $leaveApp) {
+                    $leaveStatus = $leaveApp->application->status;
+                    if ($leaveStatus == 'APPROVED' || $leaveStatus == 'PENDING_1' || $leaveStatus == 'PENDING_2' || $leaveStatus == 'PENDING_3') {
+                        $totalTaken += $leaveApp->application->total_days;
                     }
                 }
-    
-                $balanceForThisClaim = $claim->no_of_days - $totalTaken;
-    
-                if ($balanceForThisClaim > 0 && $balanceForThisClaim < $claim->no_of_days) {
-                    // This claim has been utilized a part but not fully.
-                } else if ($balanceForThisClaim == $claim->no_of_days) {
-                    // This claim has never been utilized.
-                } else if ($balanceForThisClaim == 0) {
-                    // This claim has been utilized fully.
-                }
-            }
+                
+                $claimedDays = $claim->total_days;
+                $balanceForThisClaim = $claimedDays - $totalTaken;
+                echo $balanceForThisClaim;
 
+                $burntLeave = BurntLeave::where('user_id', $claim->user_id)->where('leave_type_id', 12)->first();
+                if ($burntLeave) {
+                    $tempBurn = $burntLeave->no_of_days;
+                    $burntLeave->no_of_days = $tempBurn + $balanceForThisClaim;
+                    $burntLeave->update();
+                } else {
+                    $burnt = new BurntLeave;
+                    $burnt->leave_type_id = 12;
+                    $burnt->user_id = $claim->user_id;
+                    $burnt->no_of_days = $balanceForThisClaim;
+                    $burnt->save();
+                }
+
+                $leaveBalance = LeaveBalance::where('user_id', $claim->user_id)->where('leave_type_id', 12)->first();
+                $tempBal= $leaveBalance->no_of_days;
+                if ($tempBal > 0) {
+                    $leaveBalance->no_of_days = $tempBal - $balanceForThisClaim;
+                    $leaveBalance->update();
+                }
+
+                $leave = [
+                    'name' => $claim->user->name,
+                    'claim' => $claim->reason, 
+                    'claim_from' => $claim->date_from, 
+                    'claim_to' => $claim->date_to, 
+                    'burnt' => $balanceForThisClaim,
+                    'balance' => $leaveBalance->no_of_days
+                ];
+                
+                // $claim->user->notify(new ExpiredLeave($leave));
+            }
         }
     }
 }
