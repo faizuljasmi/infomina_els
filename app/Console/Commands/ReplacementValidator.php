@@ -57,6 +57,7 @@ class ReplacementValidator extends Command
             if ($diff >= 30 && $claim->status != 'TAKEN' && $claim->status != 'EXPIRED') {
                 // Change claim status to Expired.
                 $claim->status = 'EXPIRED';
+                $claim->update();
                 // Calculate taken days.
                 $totalTaken = 0;
                 
@@ -69,8 +70,8 @@ class ReplacementValidator extends Command
                 
                 $claimedDays = $claim->total_days;
                 $balanceForThisClaim = $claimedDays - $totalTaken;
-                echo $balanceForThisClaim;
-
+                // echo $balanceForThisClaim;
+                
                 $burntLeave = BurntLeave::where('user_id', $claim->user_id)->where('leave_type_id', 12)->first();
                 if ($burntLeave) {
                     $tempBurn = $burntLeave->no_of_days;
@@ -100,7 +101,10 @@ class ReplacementValidator extends Command
                     'balance' => $leaveBalance->no_of_days
                 ];
                 
-                $claim->user->notify(new ExpiredLeave($leave));
+                if ($balanceForThisClaim > 0) {
+                    $claim->user->notify(new ExpiredLeave($leave));
+                }
+
             }
         }
     }
