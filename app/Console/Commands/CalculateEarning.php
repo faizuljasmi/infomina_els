@@ -143,8 +143,8 @@ class CalculateEarning extends Command
                                 $empEarning->no_of_days = 0; // Paternity
                                 $empBal->no_of_days = 0;
                             } else if ($leaveType == 10) {
-                                $empEarning->no_of_days = 0; // Training
-                                $empBal->no_of_days = 0;
+                                $empEarning->no_of_days = 10; // Training
+                                $empBal->no_of_days = 10;
                             } else if ($leaveType == 11) {
                                 $empEarning->no_of_days = 0; // Unpaid
                                 $empBal->no_of_days = 0;

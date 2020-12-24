@@ -24,7 +24,7 @@ class Calculate2020Leave extends Command
      *
      * @var string
      */
-    protected $description = 'To calculate 2020 prorated leave entitlements only.';
+    protected $description = '(NOT IN USE) To calculate 2020 prorated leave entitlements only.';
 
     /**
      * Create a new command instance.
