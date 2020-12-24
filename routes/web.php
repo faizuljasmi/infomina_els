@@ -146,9 +146,6 @@ Route::middleware('can:edit_settings')->group(function() {
     Route::get('/branches/delete/{branch}','BranchController@delete')->name('branch_delete')->middleware('auth');
 });
 
-
-
-
 //Leave Application
 Route::get('/leave/apply','LeaveApplicationController@create')->middleware('auth');
 Route::post('leave/apply','LeaveApplicationController@store')->name('leaveapp_store')->middleware('auth');
@@ -165,8 +162,5 @@ Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->midd
 //Excel Import & Export
 //Route::get('import-excel', 'ExcelController@index');
 //Route::post('import-excel', 'ExcelController@import');
-
-Route::post('prorate-2020', 'AdminController@prorate_2020');
-Route::post('carry-forward', 'AdminController@carry_forward');
 
 
