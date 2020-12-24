@@ -100,7 +100,7 @@ class ReplacementValidator extends Command
                     'balance' => $leaveBalance->no_of_days
                 ];
                 
-                // $claim->user->notify(new ExpiredLeave($leave));
+                $claim->user->notify(new ExpiredLeave($leave));
             }
         }
     }

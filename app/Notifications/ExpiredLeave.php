@@ -46,7 +46,7 @@ class ExpiredLeave extends Notification
         $message = new MailMessage;
         $message->subject('[INFOMINA ELS] - Expired Replacement Leave');
         $message->greeting('Hi '.$leave['name'].',');
-        $message->line('Your claimed replacement leave from '.$leave['claim_from'].' to '.$leave['claim_to'].' ('.$leave['claim_from'].') has been expired.');
+        $message->line('Your replacement leave claim dated from '.$leave['claim_from'].' to '.$leave['claim_to'].' ('.$leave['claim'].') has been expired.');
         $message->line('The unused '.$leave['burnt'].' day(s) from this claim has been burned.');
         $message->line('Your new balance for replacement leave would be '.$leave['balance'].' day(s).');
         $message->line('Please contact the HR if you need any further clarification.');
