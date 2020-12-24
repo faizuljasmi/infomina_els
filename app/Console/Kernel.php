@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         'App\Console\Commands\CalculateProrate',
         'App\Console\Commands\CalculateEarning',
+        'App\Console\Commands\ReplacementValidator',
     ];
 
     /**
@@ -26,10 +27,13 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('calculate:prorate')
-                 ->monthlyOn(1, '08:00'); // 1st of every month, 8.00am
+                 ->monthlyOn(1, '08:00');
 
         $schedule->command('calculate:earning')
-                 ->yearlyOn(1, 1, '03:00'); // 31st December, 5.00pm
+                 ->yearlyOn(1, 1, '03:00');
+
+        $schedule->command('validate:replacement')
+                 ->dailyAt('06:00');
     }
 
     /**
