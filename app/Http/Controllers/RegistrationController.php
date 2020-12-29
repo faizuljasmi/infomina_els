@@ -187,7 +187,9 @@ class RegistrationController extends Controller
     {
         $user->status = 'Inactive';
         $user_email = $user->email;
+        $user_staff_id = $user->staff_id;
         $user->email = "inactive.".$user_email;
+        $user->staff_id = "inactive.".$user_staff_id;
         $user->update();
         return redirect()->route('user_create')->with('message', 'User has been deactivated');
     }
