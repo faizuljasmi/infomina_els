@@ -61,33 +61,41 @@ class HomeController extends Controller
             $total_ann_taken_first_half += $ann->total_days;
         }
 
-        $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where('user_id', '=', $user->id)->paginate(3);
+        $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where('user_id', '=', $user->id)->whereDate('created_at','>','2020-12-30')->paginate(3);
         $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_2')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
         $leaveHist = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'CANCELLED')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_1')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_2')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_3')
-                ->where('user_id', $user->id);
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->sortable(['date_from'])->paginate(5, ['*'], 'history');
 
         //Get all holidays dates\
@@ -155,24 +163,30 @@ class HomeController extends Controller
         if($user->user_type == 'Admin'){
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
-                $query->where('status', 'PENDING_1');
+                $query->where('status', 'PENDING_1')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
-                $query->where('status', 'PENDING_2');
+                $query->where('status', 'PENDING_2')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
-                $query->where('status', 'PENDING_3');
+                $query->where('status', 'PENDING_3')
+                ->whereDate('created_at','>','2020-12-30');
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
         }
         else{
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
                 $query->where('status', 'PENDING_1')
-                    ->where('approver_id_1', $user->id);
+                    ->where('approver_id_1', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'PENDING_2')
-                    ->where('approver_id_2', $user->id);
+                    ->where('approver_id_2', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'PENDING_3')
-                    ->where('approver_id_3', $user->id);
+                    ->where('approver_id_3', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
         }
 
@@ -181,46 +195,59 @@ class HomeController extends Controller
 
         $leaveHist = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
-                ->where('approver_id_1', $user->id);
+                ->where('approver_id_1', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'CANCELLED')
-                ->where('approver_id_1', $user->id);
+                ->where('approver_id_1', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
-                ->where('approver_id_2', $user->id);
+                ->where('approver_id_2', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'CANCELLED')
-                ->where('approver_id_2', $user->id);
+                ->where('approver_id_2', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
-                ->where('approver_id_3', $user->id);
+                ->where('approver_id_3', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'CANCELLED')
-                ->where('approver_id_3', $user->id);
+                ->where('approver_id_3', $user->id)
+                ->whereDate('created_at','>','2020-12-30');
         })->sortable(['date_from' => 'desc'])->paginate(5, ['*'], 'history');
 
         if($user->user_type == "Management" || $user->user_type == "Admin"){
 
             $allLeaveHist = LeaveApplication::where(function ($query){
-                $query->where('status', 'APPROVED');
+                $query->where('status', 'APPROVED')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) {
-                $query->where('status', 'PENDING_1');
+                $query->where('status', 'PENDING_1')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) {
-                $query->where('status', 'PENDING_2');
+                $query->where('status', 'PENDING_2')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) {
-                $query->where('status', 'PENDING_3');
+                $query->where('status', 'PENDING_3')
+                ->whereDate('created_at','>','2020-12-30');
             })->get();
         }
         if($user->user_type == "Authority" ){
             $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
                 $query->where('status', 'APPROVED')
-                    ->where('approver_id_1', $user->id);
+                    ->where('approver_id_1', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'APPROVED')
-                    ->where('approver_id_2', $user->id);
+                    ->where('approver_id_2', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'APPROVED')
-                    ->where('approver_id_3', $user->id);
+                    ->where('approver_id_3', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->get();
         }
 
@@ -343,63 +370,75 @@ class HomeController extends Controller
         if($user->user_type == 'Admin'){
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
-                $query->where('status', 'PENDING_1');
+                $query->where('status', 'PENDING_1')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
-                $query->where('status', 'PENDING_2');
+                $query->where('status', 'PENDING_2')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
-                $query->where('status', 'PENDING_3');
+                $query->where('status', 'PENDING_3')
+                ->whereDate('created_at','>','2020-12-30');
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
         }
         else{
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
                 $query->where('status', 'PENDING_1')
-                    ->where('approver_id_1', $user->id);
+                    ->where('approver_id_1', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'PENDING_2')
-                    ->where('approver_id_2', $user->id);
+                    ->where('approver_id_2', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'PENDING_3')
-                    ->where('approver_id_3', $user->id);
+                    ->where('approver_id_3', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
         }
 
-        $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
+        $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->whereDate('created_at','>','2020-12-30')->get();
 
         $leaveHist = LeaveApplication::where(function ($query) use ($user, $search) {
             $query->where('status', 'APPROVED')
                 ->whereHas('user', function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->where('name', 'like', '%' . $search . '%')
+                    ->whereDate('created_at','>','2020-12-30');
                 })
                 ->where('approver_id_1', $user->id);
         })->orWhere(function ($query) use ($user, $search) {
             $query->where('status', 'CANCELLED')
                 ->whereHas('user', function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->where('name', 'like', '%' . $search . '%')
+                    ->whereDate('created_at','>','2020-12-30');
                 })
                 ->where('approver_id_1', $user->id);
         })->orWhere(function ($query) use ($user, $search) {
             $query->where('status', 'APPROVED')
                 ->whereHas('user', function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->where('name', 'like', '%' . $search . '%')
+                    ->whereDate('created_at','>','2020-12-30');
                 })
                 ->where('approver_id_2', $user->id);
         })->orWhere(function ($query) use ($user, $search) {
             $query->where('status', 'CANCELLED')
                 ->whereHas('user', function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->where('name', 'like', '%' . $search . '%')
+                    ->whereDate('created_at','>','2020-12-30');
                 })
                 ->where('approver_id_2', $user->id);
         })->orWhere(function ($query) use ($user, $search) {
             $query->where('status', 'APPROVED')
                 ->whereHas('user', function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->where('name', 'like', '%' . $search . '%')
+                    ->whereDate('created_at','>','2020-12-30');
                 })
                 ->where('approver_id_3', $user->id);
         })->orWhere(function ($query) use ($user, $search) {
             $query->where('status', 'CANCELLED')
                 ->whereHas('user', function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->where('name', 'like', '%' . $search . '%')
+                    ->whereDate('created_at','>','2020-12-30');
                 })
                 ->where('approver_id_3', $user->id);
         })->sortable(['updated_at'])->paginate(5, ['*'], 'history');
@@ -407,25 +446,32 @@ class HomeController extends Controller
         if($user->user_type == "Management" || $user->user_type == "Admin"){
 
             $allLeaveHist = LeaveApplication::where(function ($query){
-                $query->where('status', 'APPROVED');
+                $query->where('status', 'APPROVED')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) {
-                $query->where('status', 'PENDING_1');
+                $query->where('status', 'PENDING_1')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) {
-                $query->where('status', 'PENDING_2');
+                $query->where('status', 'PENDING_2')
+                ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) {
-                $query->where('status', 'PENDING_3');
+                $query->where('status', 'PENDING_3')
+                ->whereDate('created_at','>','2020-12-30');
             })->get();
         }
         if($user->user_type == "Authority" ){
             $allLeaveHist = LeaveApplication::where(function ($query) use ($user) {
                 $query->where('status', 'APPROVED')
-                    ->where('approver_id_1', $user->id);
+                    ->where('approver_id_1', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'APPROVED')
-                    ->where('approver_id_2', $user->id);
+                    ->where('approver_id_2', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->orWhere(function ($query) use ($user) {
                 $query->where('status', 'APPROVED')
-                    ->where('approver_id_3', $user->id);
+                    ->where('approver_id_3', $user->id)
+                    ->whereDate('created_at','>','2020-12-30');
             })->get();
         }
 
