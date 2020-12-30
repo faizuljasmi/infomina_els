@@ -584,20 +584,20 @@
             $("#ToDate").val("");
 
             leave_type = $("#leave_type_id").val();
-
+            //$("#createApp").validate()
             if (leave_type == 12) {
                 $("#rep_leave_div").removeClass("d-none");
 
                 $("#FromDate").attr("disabled", true);
                 $("#ToDate").attr("disabled", true);
-                $("#available_leave").rules('add', {required: true});
+                $('#available_leave').prop('required',true);
                 $("#replacement_action").val("Apply");
             } else {
                 $("#rep_leave_div").addClass("d-none");
 
                 $("#FromDate").attr("disabled", false);
                 $("#ToDate").attr("disabled", false);
-                $("#available_leave").rules('add', {required: false});
+                $('#available_leave').prop('required',false);
                 $("#replacement_action").val("");
             }
         });
