@@ -120,10 +120,10 @@
                                                 <i class="far fa-star"></i>
                                             </span>
                                         </div>
-                                        <select class="form-control" name="available_leave" id="available_leave" required>
+                                        <select class="form-control" name="available_leave" id="available_leave">
                                             <option value="">Select Replacement Claim</option>
                                             @foreach($all_rep_claims as $all_rep_claim)
-                                            <?php 
+                                            <?php
                                                 $total_used = 0;
                                                 $apps = $all_rep_claim->replacement_applications;
                                                 foreach($apps as $app){
@@ -333,7 +333,7 @@
 
                                 <!-- Replacement Action -->
                                 <input style="display:none;" type="text" name="replacement_action" id="replacement_action" value="" />
-                                
+
                                 <!-- Claim ID -->
                                 <input style="display:none;" type="text" name="claim_id" id="claim_id" value="" />
 
@@ -590,14 +590,14 @@
 
                 $("#FromDate").attr("disabled", true);
                 $("#ToDate").attr("disabled", true);
-
+                $("#available_leave").rules('add', {required: true});
                 $("#replacement_action").val("Apply");
             } else {
                 $("#rep_leave_div").addClass("d-none");
 
                 $("#FromDate").attr("disabled", false);
                 $("#ToDate").attr("disabled", false);
-
+                $("#available_leave").rules('add', {required: false});
                 $("#replacement_action").val("");
             }
         });
@@ -609,7 +609,7 @@
             count_balance = 0;
             event_date = "";
             claim_id = "";
-            
+
             var claim_id = this.value;
             $("#claim_id").val(claim_id);
 

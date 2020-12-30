@@ -93,7 +93,7 @@ class LeaveApplicationController extends Controller
 
 
         //Get all leave applications
-        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->whereDate('created_at','>','2020-12-30')->get();
+        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get();
 
 
         //Get leave applications of same group
