@@ -153,7 +153,7 @@ class LeaveController extends Controller
             })->first();
             //Check leave balance of similar leave type
             $lbCheck = LeaveBalance::orderBy('leave_type_id', 'ASC')->where(function ($query) use ($user, $key) {
-                $query->where('leave_type_id', (int) $key)
+                $query->where('leave_type_id', 1)
                     ->where('user_id', $user->id);
             })->first();
 
@@ -211,11 +211,11 @@ class LeaveController extends Controller
                         //Minus the diff from the earning
                         $diff = $dupcheck->no_of_days - (float) $val;
                         $leCheck->no_of_days -= $diff;
-                        $lbCheck->no_of_days = $leCheck->no_of_days;
+                        $lbCheck->no_of_days -= $diff;
                     } else {
                         $diff = (float) $val - $dupcheck->no_of_days;
                         $leCheck->no_of_days += $diff;
-                        $lbCheck->no_of_days = $leCheck->no_of_days;
+                        $lbCheck->no_of_days += $diff;
                     }
                     $leCheck->save();
                     $lbCheck->save();
