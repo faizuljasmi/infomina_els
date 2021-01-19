@@ -408,9 +408,25 @@
                                         <div class="card-body">
                                             <table class="table table-bordered">
                                                 @foreach($leaveBal as $lb)
+                                                <?php
+                                                $count = 0;
+                                                $hasPending = false;
+                                                ?>
+                                                @foreach($myApps as $ma)
+                                                    @if($ma->leaveType->name == $lb->leave_type->name && $ma->status != "APPROVED")
+                                                        <?php
+                                                        $count += $ma->total_days;
+                                                        $hasPending = true;
+                                                        ?>
+                                                    @endif
+                                                @endforeach
                                                 <tr>
                                                     <th>{{$lb->leave_type->name}}</th>
+                                                    @if($hasPending == false)
                                                     <td>{{$lb->no_of_days}}</td>
+                                                    @else
+                                                    <td>{{$lb->no_of_days + $count}} - {{$count}}(Pending)</td>
+                                                    @endif
                                                 </tr>
                                                 @endforeach
                                             </table>
@@ -523,7 +539,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        @foreach ($myApps as $ma => $apps)
+                        @foreach ($myAppSorted as $ma => $apps)
                         <h5><span class="badge badge-dark">{{$ma}}</span></h5>
                         <table class="table table-sm table-bordered table-striped">
                             <tr class="bg-primary">

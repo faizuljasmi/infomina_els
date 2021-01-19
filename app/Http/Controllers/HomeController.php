@@ -76,6 +76,16 @@ class HomeController extends Controller
                 ->whereDate('created_at','>','2020-12-01');
         })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
+        foreach($leaveBal as $lb){
+            foreach($pendLeaves as $ma){
+                if($lb->leave_type->name == $ma->leaveType->name && $ma->status != "APPROVED"){
+                    $lb->no_of_days -= $ma->total_days;
+                }
+            }
+        }
+
+        //dd($leaveBal);
+
         $leaveHist = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('user_id', $user->id)

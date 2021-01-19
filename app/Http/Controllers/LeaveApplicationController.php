@@ -120,6 +120,7 @@ class LeaveApplicationController extends Controller
                 $groupLeaveApps->add($la);
             }
         }
+        
         //Get my applications
         $myApps = collect([]);
         foreach ($leaveApps as $la) {
@@ -127,9 +128,18 @@ class LeaveApplicationController extends Controller
                 $myApps->add($la);
             }
         }
+        foreach($leaveBal as $lb){
+            foreach($myApps as $ma){
+                if($lb->leave_type->name == $ma->leaveType->name && $ma->status != "APPROVED"){
+                    $lb->no_of_days -= $ma->total_days;
+                }
+            }
+        }
+        
+       
 
         //Group user's applications by months. Starting from the start of current month until end of year
-        $myApps = $myApps->whereBetween('date_from',array(now()->startOfMonth()->format('Y-m-d'),now()->endOfYear()->format('Y-m-d')))->groupBy(function($val) {
+        $myAppSorted = $myApps->whereBetween('date_from',array(now()->startOfMonth()->format('Y-m-d'),now()->endOfYear()->format('Y-m-d')))->groupBy(function($val) {
             return Carbon::parse($val->date_from)->format('F');
       });
 
@@ -197,7 +207,7 @@ class LeaveApplicationController extends Controller
 
         $all_rep_claims = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->where('leave_type_id', 12)->where('remarks','Claim')->where('status','APPROVED')->get();
 
-        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'myApplication', 'holidays', 'groupLeaveApps', 'holsPaginated', 'myApps', 'all_rep_claims'));
+        return view('leaveapp.create')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'all_dates', 'applied_dates', 'approved_dates', 'myApplication', 'holidays', 'groupLeaveApps', 'holsPaginated', 'myAppSorted','myApps', 'all_rep_claims'));
     }
 
 

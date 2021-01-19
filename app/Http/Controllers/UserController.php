@@ -23,6 +23,7 @@ use App\LeaveBalance;
 use App\BroughtForwardLeave;
 use App\TakenLeave;
 use App\BurntLeave;
+use App\LeaveApplication;
 
 
 class UserController extends Controller
@@ -46,12 +47,33 @@ class UserController extends Controller
         $leaveEarn = LeaveEarning::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
+        $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
+            $query->where('status', 'PENDING_1')
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-01');
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'PENDING_2')
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-01');
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'PENDING_3')
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-01');
+        })->get();
+
+        foreach($leaveBal as $lb){
+            foreach($pendLeaves as $ma){
+                if($lb->leave_type->name == $ma->leaveType->name && $ma->status != "APPROVED"){
+                    $lb->no_of_days -= $ma->total_days;
+                }
+            }
+        }
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         //Get all leave types, for display
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
         $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
         $burntReplacement = BurntLeave::where('user_id',$user->id)->where('leave_type_id',12)->first();
-        return view('user.employee.profile')->with(compact('user', 'empType', 'empGroup', 'empAuth', 'leaveEnt', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','burntLeave','burntReplacement'));
+        return view('user.employee.profile')->with(compact('user','pendLeaves', 'empType', 'empGroup', 'empAuth', 'leaveEnt', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','burntLeave','burntReplacement'));
     }
 
     public function edit()
