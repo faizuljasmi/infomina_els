@@ -232,6 +232,12 @@ return [
             'icon' => 'fas fa-fw fa-file-alt',
             'can' => 'employee-data'
         ],
+        [
+            'text' => 'Health Metrics',
+            'url'  => 'healthmetrics',
+            'icon' => 'fas fa-fw fa-heartbeat',
+            'can' => 'employee-data'
+        ],
         ['header' => ' System Settings', 'can' => 'edit_settings'],
         [
             'text'    => 'Employee',

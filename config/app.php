@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Webklex\IMAP\Providers\LaravelServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -227,6 +228,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        'Client' => Webklex\IMAP\Facades\Client::class,
     ],
 
 ];

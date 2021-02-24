@@ -163,4 +163,8 @@ Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->midd
 //Route::get('import-excel', 'ExcelController@index');
 //Route::post('import-excel', 'ExcelController@import');
 
+//HM
+Route::get('/healthmetrics','HealthMetricsController@index')->middleware('auth');
+Route::post('/fetch-healthmetrics','HealthMetricsController@fetch')->middleware('auth');
+
 
