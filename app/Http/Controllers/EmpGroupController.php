@@ -101,7 +101,7 @@ class EmpGroupController extends Controller
      */
     public function destroy(EmpGroup $empGroup)
     {
-        //
+        //TODO DELETE RECORD
         $empGroup->delete();
         return back();
     }
