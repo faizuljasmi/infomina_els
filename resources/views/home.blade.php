@@ -472,7 +472,25 @@
                                 <tr>
                                     <th>Balance</th>
                                     @foreach($leaveBal as $lb)
+                                    <?php
+                                        $count = 0;
+                                        $hasPending = false;
+                                        ?>
+                                        @foreach($pendLeaves as $ma)
+                                            @if($ma->leaveType->name == $lb->leave_type->name)
+                                                <?php
+                                                $count += $ma->total_days;
+                                                $hasPending = true;
+                                                ?>
+                                            @endif
+                                        @endforeach
+                                    @if($hasPending == false)
                                     <td class="table-primary">{{$lb->no_of_days}}</td>
+                                    @else
+                                    <td class="table-danger" data-toggle="tooltip"
+                                        title="{{$lb->no_of_days + $count}} - {{$count}}(Pending)"><a
+                                            href="#leaveRecord"><u>{{$lb->no_of_days}}</u></a></td>
+                                    @endif
                                     @endforeach
                                 </tr>
                             </tbody>

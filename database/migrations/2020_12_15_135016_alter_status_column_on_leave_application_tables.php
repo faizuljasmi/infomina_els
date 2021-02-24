@@ -13,7 +13,7 @@ class AlterStatusColumnOnLeaveApplicationTables extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE leave_applications MODIFY status ENUM('PENDING_1', 'PENDING_2','PENDING_3','APPROVED', 'DENIED_1','DENIED_2','DENIED_3','CANCELLED','TAKEN')");
+        DB::statement("ALTER TABLE leave_applications MODIFY status ENUM('PENDING_1', 'PENDING_2','PENDING_3','APPROVED', 'DENIED_1','DENIED_2','DENIED_3','CANCELLED','TAKEN','EXPIRED')");
     }
 
     public function down()

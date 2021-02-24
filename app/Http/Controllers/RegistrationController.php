@@ -142,6 +142,27 @@ class RegistrationController extends Controller
         //dd($leaveEarn);
         $broughtFwd = BroughtForwardLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
+        $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
+            $query->where('status', 'PENDING_1')
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-01');
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'PENDING_2')
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-01');
+        })->orWhere(function ($query) use ($user) {
+            $query->where('status', 'PENDING_3')
+                ->where('user_id', $user->id)
+                ->whereDate('created_at','>','2020-12-01');
+        })->get();
+
+        foreach($leaveBal as $lb){
+            foreach($pendLeaves as $ma){
+                if($lb->leave_type->name == $ma->leaveType->name && $ma->status != "APPROVED"){
+                    $lb->no_of_days -= $ma->total_days;
+                }
+            }
+        }
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
         $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->whereBetween('created_at' ,['2021-01-01', '2021-06-30'])->get();
@@ -180,14 +201,16 @@ class RegistrationController extends Controller
         })->sortable(['date_from'])->paginate(5, ['*'], 'history');
         $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
         $burntReplacement = BurntLeave::where('user_id',$user->id)->where('leave_type_id',12)->first();
-        return view('user.profile')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist','burntLeave','total_ann_taken_first_half','burntReplacement'));
+        return view('user.profile')->with(compact('user','user_insesh','pendLeaves', 'users', 'authUsers', 'empType', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','leaveHist','burntLeave','total_ann_taken_first_half','burntReplacement'));
     }
 
       public function deactivate(User $user)
     {
         $user->status = 'Inactive';
         $user_email = $user->email;
+        $user_staff_id = $user->staff_id;
         $user->email = "inactive.".$user_email;
+        $user->staff_id = "inactive.".$user_staff_id;
         $user->update();
         return redirect()->route('user_create')->with('message', 'User has been deactivated');
     }

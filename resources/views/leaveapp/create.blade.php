@@ -120,10 +120,10 @@
                                                 <i class="far fa-star"></i>
                                             </span>
                                         </div>
-                                        <select class="form-control" name="available_leave" id="available_leave" required>
+                                        <select class="form-control" name="available_leave" id="available_leave">
                                             <option value="">Select Replacement Claim</option>
                                             @foreach($all_rep_claims as $all_rep_claim)
-                                            <?php 
+                                            <?php
                                                 $total_used = 0;
                                                 $apps = $all_rep_claim->replacement_applications;
                                                 foreach($apps as $app){
@@ -333,7 +333,7 @@
 
                                 <!-- Replacement Action -->
                                 <input style="display:none;" type="text" name="replacement_action" id="replacement_action" value="" />
-                                
+
                                 <!-- Claim ID -->
                                 <input style="display:none;" type="text" name="claim_id" id="claim_id" value="" />
 
@@ -408,9 +408,25 @@
                                         <div class="card-body">
                                             <table class="table table-bordered">
                                                 @foreach($leaveBal as $lb)
+                                                <?php
+                                                $count = 0;
+                                                $hasPending = false;
+                                                ?>
+                                                @foreach($myApps as $ma)
+                                                    @if($ma->leaveType->name == $lb->leave_type->name && $ma->status != "APPROVED")
+                                                        <?php
+                                                        $count += $ma->total_days;
+                                                        $hasPending = true;
+                                                        ?>
+                                                    @endif
+                                                @endforeach
                                                 <tr>
                                                     <th>{{$lb->leave_type->name}}</th>
+                                                    @if($hasPending == false)
                                                     <td>{{$lb->no_of_days}}</td>
+                                                    @else
+                                                    <td>{{$lb->no_of_days + $count}} - {{$count}}(Pending)</td>
+                                                    @endif
                                                 </tr>
                                                 @endforeach
                                             </table>
@@ -523,7 +539,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        @foreach ($myApps as $ma => $apps)
+                        @foreach ($myAppSorted as $ma => $apps)
                         <h5><span class="badge badge-dark">{{$ma}}</span></h5>
                         <table class="table table-sm table-bordered table-striped">
                             <tr class="bg-primary">
@@ -584,20 +600,20 @@
             $("#ToDate").val("");
 
             leave_type = $("#leave_type_id").val();
-
+            //$("#createApp").validate()
             if (leave_type == 12) {
                 $("#rep_leave_div").removeClass("d-none");
 
                 $("#FromDate").attr("disabled", true);
                 $("#ToDate").attr("disabled", true);
-
+                $('#available_leave').prop('required',true);
                 $("#replacement_action").val("Apply");
             } else {
                 $("#rep_leave_div").addClass("d-none");
 
                 $("#FromDate").attr("disabled", false);
                 $("#ToDate").attr("disabled", false);
-
+                $('#available_leave').prop('required',false);
                 $("#replacement_action").val("");
             }
         });
@@ -609,7 +625,7 @@
             count_balance = 0;
             event_date = "";
             claim_id = "";
-            
+
             var claim_id = this.value;
             $("#claim_id").val(claim_id);
 

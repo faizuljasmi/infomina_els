@@ -34,7 +34,7 @@ class EmpGroupController extends Controller
     public function create()
     {
         $allGroups = $this->getAllEmpGroups();
-        $allUsers = User::all();
+        $allUsers = User::orderBy('name', 'ASC')->where('status','Active')->get();
         return view('empgroup.create')->with(compact('allGroups','allUsers'));
     }
 
@@ -75,7 +75,7 @@ class EmpGroupController extends Controller
      */
     public function edit(EmpGroup $empGroup)
     {
-        $allUsers = User::all();
+        $allUsers = User::orderBy('name', 'ASC')->where('status','Active')->get();
         return view('empgroup.edit')->with(compact('empGroup','allUsers'));
     }
 
