@@ -35,6 +35,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new CalculateEarning)->yearlyOn(1, 1, '03:00');
 
         $schedule->job(new CalculateProrate)->monthlyOn(1, '08:00');
+
     }
 
     /**

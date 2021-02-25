@@ -37,9 +37,8 @@ class CalculateProrate implements ShouldQueue
      */
     public function handle()
     {
-        $today = Carbon::now();
-        $currentMonth = $today->month;
-        $currentYear = $today->year;
+        $currentMonth = date('m');
+        $currentYear = date('Y');
 
         $al_prorated_names = [];
         $mc_prorated_names = [];
