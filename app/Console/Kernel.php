@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\TestCron;
 
 class Kernel extends ConsoleKernel
 {
@@ -36,8 +37,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('validate:replacement')
         //          ->dailyAt('06:00');
 
-        $schedule->command('test:cron')
-                 ->everyTwoMinutes();
+        // $schedule->command('test:cron')
+        //          ->everyTwoMinutes();
+
+        $schedule->job(new TestCron)->everyMinute();
     }
 
     /**
