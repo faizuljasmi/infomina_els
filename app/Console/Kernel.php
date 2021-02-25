@@ -5,6 +5,9 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\TestCron;
+use App\Jobs\ReplacementValidator;
+use App\Jobs\CalculateEarning;
+use App\Jobs\CalculateProrate;
 
 class Kernel extends ConsoleKernel
 {
@@ -14,10 +17,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        'App\Console\Commands\CalculateProrate',
-        'App\Console\Commands\CalculateEarning',
-        'App\Console\Commands\ReplacementValidator',
-        'App\Console\Commands\TestCron',
+        // 
     ];
 
     /**
@@ -28,19 +28,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('calculate:prorate')
-        //          ->monthlyOn(1, '08:00');
+        // $schedule->job(new TestCron)->everyMinute();
 
-        // $schedule->command('calculate:earning')
-        //          ->yearlyOn(1, 1, '03:00');
+        $schedule->job(new ReplacementValidator)->dailyAt('06:00');
 
-        // $schedule->command('validate:replacement')
-        //          ->dailyAt('06:00');
+        $schedule->job(new CalculateEarning)->yearlyOn(1, 1, '03:00');
 
-        // $schedule->command('test:cron')
-        //          ->everyTwoMinutes();
-
-        $schedule->job(new TestCron)->everyMinute();
+        $schedule->job(new CalculateProrate)->monthlyOn(1, '08:00');
     }
 
     /**
