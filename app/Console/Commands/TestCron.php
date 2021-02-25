@@ -3,7 +3,10 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Notifications\EarningUpdate;
+use App\User;
 use App\HealthMetric;
+use Notification;
 
 class TestCron extends Command
 {
@@ -38,12 +41,15 @@ class TestCron extends Command
      */
     public function handle()
     {
-        $hm = HealthMetric::get();
+        // $hm = HealthMetric::get();
 
-        foreach($hm as $x) {
-            $temp = $x->total_days;
-            $x->total_days = $temp + 1;
-            $x->save();
-        }
+        // foreach($hm as $x) {
+        //     $temp = $x->total_days;
+        //     $x->total_days = $temp + 1;
+        //     $x->save();
+        // }
+
+        $u = User::where('id', 102)->first();
+        $u->notify(new EarningUpdate($u));
     }
 }

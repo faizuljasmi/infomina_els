@@ -68,8 +68,8 @@ return [
             'port' => 993,
             'encryption' => 'ssl',
             'validate_cert' => false,
-            'username' => 'leave.infomina@gmail.com',
-            'password' => 'infomina@123',
+            'username' => 'eleave.infomina@gmail.com',
+            'password' => 'Infomina@123',
             'authentication' => 'oauth2', // use v2.0
         ],
 

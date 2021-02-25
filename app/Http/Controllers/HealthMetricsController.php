@@ -16,12 +16,12 @@ class HealthMetricsController extends Controller
     }
 
     function fetch() {
-        $client = Client::account('infomina'); // Setup imap.php
+        $client = Client::account('gmail'); // Setup imap.php
         $client->connect();
 
-        // dd($client->checkConnection());
         
         $inbox = $client->getFolder('INBOX');
+        // dd($client->getFolders());
     
         // $dateToday = '24.02.2021';
         $dateToday = date('d.m.Y');
