@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\CalculateProrate',
         'App\Console\Commands\CalculateEarning',
         'App\Console\Commands\ReplacementValidator',
+        'App\Console\Commands\TestCron',
     ];
 
     /**
@@ -26,14 +27,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('calculate:prorate')
-                 ->monthlyOn(1, '08:00');
+        // $schedule->command('calculate:prorate')
+        //          ->monthlyOn(1, '08:00');
 
-        $schedule->command('calculate:earning')
-                 ->yearlyOn(1, 1, '03:00');
+        // $schedule->command('calculate:earning')
+        //          ->yearlyOn(1, 1, '03:00');
 
-        $schedule->command('validate:replacement')
-                 ->dailyAt('06:00');
+        // $schedule->command('validate:replacement')
+        //          ->dailyAt('06:00');
+
+        $schedule->command('test:cron')
+                 ->everyTwoMinutes();
     }
 
     /**

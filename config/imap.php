@@ -73,6 +73,16 @@ return [
             'authentication' => 'oauth2', // use v2.0
         ],
 
+        'infomina' => [ // account identifier
+            'host' => 'mail.infomina.com.my',
+            'port' => 993,
+            'encryption' => 'ssl',
+            'validate_cert' => false,
+            'username' => 'eleave.medical@infomina.com.my',
+            'password' => 'Infomina@123',
+            'authentication' => null,
+        ],
+
         /*
         'yahoo' => [ // account identifier
             'host' => 'imap.mail.yahoo.com',
