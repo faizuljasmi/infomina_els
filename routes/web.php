@@ -73,6 +73,10 @@ Route::middleware('can:employee-data')->group(function(){
      Route::get('reports/export-balance', 'AdminController@export_leave_balance')->name('excel_export_bal')->middleware('auth');
      Route::get('reports/autocomplete', 'AdminController@autocomplete');
 
+    //HM
+    Route::get('/healthmetrics','HealthMetricsController@index')->middleware('auth');
+    Route::post('/fetch-healthmetrics','HealthMetricsController@fetch')->middleware('auth');
+
     // Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
 });
 //Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
@@ -163,8 +167,6 @@ Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->midd
 //Route::get('import-excel', 'ExcelController@index');
 //Route::post('import-excel', 'ExcelController@import');
 
-//HM
-Route::get('/healthmetrics','HealthMetricsController@index')->middleware('auth');
-Route::post('/fetch-healthmetrics','HealthMetricsController@fetch')->middleware('auth');
+
 
 
