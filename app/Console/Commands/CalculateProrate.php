@@ -192,7 +192,5 @@ class CalculateProrate extends Command
                 $admin->notify(new HRUpdate($list));
             }
         }
-        
-        return;
     }
 }
