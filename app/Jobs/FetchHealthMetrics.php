@@ -34,7 +34,6 @@ class FetchHealthMetrics implements ShouldQueue
     {
         $client = Client::account('gmail'); // Setup imap.php
         $client->connect();
-
         
         $inbox = $client->getFolder('INBOX');
         // dd($client->getFolders());
@@ -93,6 +92,6 @@ class FetchHealthMetrics implements ShouldQueue
             $mail->setFlag('answered');
         }
 
-        return response()->json(['success' => 'Mail fetched!']);
+        // return response()->json(['success' => 'Mail fetched!']);
     }
 }
