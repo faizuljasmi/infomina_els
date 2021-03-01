@@ -484,7 +484,7 @@
                                                 ?>
                                             @endif
                                         @endforeach
-                                    @if($hasPending == false)
+                                    @if($hasPending == false || $lb->leave_type->name == "Replacement")
                                     <td class="table-primary">{{$lb->no_of_days}}</td>
                                     @else
                                     <td class="table-danger" data-toggle="tooltip"
