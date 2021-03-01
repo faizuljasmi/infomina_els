@@ -444,6 +444,9 @@
                                         ?>
                                         @foreach($pendLeaves as $ma)
                                             @if($ma->leaveType->name == $lb->leave_type->name)
+                                            @if ($ma->leaveType->name == "Replacement" && $ma->remarks == "Claim")
+                                                <?php continue; ?>
+                                            @endif
                                                 <?php
                                                 $count += $ma->total_days;
                                                 $hasPending = true;
