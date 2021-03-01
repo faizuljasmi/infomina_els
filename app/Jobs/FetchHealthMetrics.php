@@ -61,13 +61,13 @@ class FetchHealthMetrics implements ShouldQueue
             
             // Find leave date from.
             $leaveFromPos = strpos($body, '(MC) from');
-            $leaveFromStr = substr($body, $leaveFromPos + 10, $countDate + $countMonth + 6);
+            $leaveFromStr = substr($body, $leaveFromPos + 10, $countDate + $countMonth + 7);
             $dFrom = explode('/',$leaveFromStr);
             $leaveFrom = date('Y-m-d', strtotime($dFrom[1].'/'.$dFrom[0].'/'.$dFrom[2]));
             
             // Find leave date to.
             $leaveToPos = strpos($body, '/'.date('Y').' to');
-            $leaveToStr = substr($body, $leaveToPos + 9 , $countDate + $countMonth + 6);
+            $leaveToStr = substr($body, $leaveToPos + 9 , $countDate + $countMonth + 7);
             $dTo = explode('/',$leaveToStr);
             $leaveTo = date('Y-m-d', strtotime($dTo[1].'/'.$dTo[0].'/'.$dTo[2]));
             
