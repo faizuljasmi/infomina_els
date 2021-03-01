@@ -3,18 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notifiable;
 use Webklex\IMAP\Facades\Client;
+use App\Notifications\HealthMetricsUpdate;
+use App\Notifications\HealthMetricsHRUpdate;
 use App\User;
 use App\HealthMetric;
 use App\Holiday;
 use App\LeaveApplication;
 use App\LeaveBalance;
-
-use DateTime;
-use Illuminate\Notifications\Notifiable;
-use App\Notifications\HealthMetricsUpdate;
-use App\Notifications\HealthMetricsHRUpdate;
+use App\TakenLeave;
 use Notification;
+use DateTime;
 
 class HealthMetricsController extends Controller
 {
@@ -32,8 +32,8 @@ class HealthMetricsController extends Controller
     
         $dateToday = date('d.m.Y');
         
-        // $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
-        $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
         
         foreach($mails as $mail){
             // dd($mails);
@@ -117,6 +117,10 @@ class HealthMetricsController extends Controller
                     $leaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
                     $leaveBal->no_of_days = $leaveBal->no_of_days - intval($totalDays);
                     $leaveBal->update();
+
+                    $takenLeave = TakenLeave::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
+                    $takenLeave->no_of_days = $takenLeave->no_of_days + intval($totalDays);
+                    $takenLeave->update();
     
                     $hm = new HealthMetric;
                     $hm->user_id = $emp->id;
@@ -169,6 +173,9 @@ class HealthMetricsController extends Controller
             }
             
             $mail->setFlag('answered');
+
         }
+        
+        return response()->json(['success'=>'Mail fetched successfully!']);
     }
 }
