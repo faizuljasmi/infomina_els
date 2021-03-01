@@ -112,7 +112,7 @@ class StatusUpdate extends Notification
             ->line('Total day(s): '.$la->total_days)
             ->line('Reason: '.$la->reason)
             // ->action('View application', $url)
-            ->line('Note: Once approved, your claimed replacement leave will be added to your total balance of Annual Leave')
+            ->line('Note: Once approved, you can apply for replacement leave.')
             ->line('Have a nice day!');
         }
 

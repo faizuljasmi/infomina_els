@@ -16,13 +16,15 @@ class CreateHealthMetricsTable extends Migration
         Schema::create('health_metrics', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('application_id');
             $table->date('leave_from');
             $table->date('leave_to');
             $table->float('total_days', 8,1);
-            $table->string('link');
+            $table->longText('link');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('application_id')->references('id')->on('leave_applications');
         });
     }
 
