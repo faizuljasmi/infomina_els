@@ -478,13 +478,16 @@
                                         ?>
                                         @foreach($pendLeaves as $ma)
                                             @if($ma->leaveType->name == $lb->leave_type->name)
+                                            @if ($ma->leaveType->name == "Replacement" && $ma->remarks == "Claim")
+                                                <?php continue; ?>
+                                            @endif
                                                 <?php
                                                 $count += $ma->total_days;
                                                 $hasPending = true;
                                                 ?>
                                             @endif
                                         @endforeach
-                                    @if($hasPending == false || $lb->leave_type->name == "Replacement")
+                                    @if($hasPending == false)
                                     <td class="table-primary">{{$lb->no_of_days}}</td>
                                     @else
                                     <td class="table-danger" data-toggle="tooltip"
