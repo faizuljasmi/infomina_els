@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new TestCron)->everyMinute()->withoutOverlapping();
+        // $schedule->job(new TestCron)->everyMinute()->withoutOverlapping();
 
         $schedule->job(new ReplacementValidator)->dailyAt('06:00')->withoutOverlapping();
 

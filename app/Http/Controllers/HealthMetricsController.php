@@ -18,7 +18,6 @@ class HealthMetricsController extends Controller
     function fetch() {
         $client = Client::account('gmail'); // Setup imap.php
         $client->connect();
-
         
         $inbox = $client->getFolder('INBOX');
         // dd($client->getFolders());
