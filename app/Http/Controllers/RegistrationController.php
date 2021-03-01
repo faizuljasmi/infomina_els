@@ -159,6 +159,9 @@ class RegistrationController extends Controller
         foreach($leaveBal as $lb){
             foreach($pendLeaves as $ma){
                 if($lb->leave_type->name == $ma->leaveType->name && $ma->status != "APPROVED"){
+                    if($ma->leaveType->name == "Replacement" && $ma->remarks == "Claim"){
+                        continue;
+                    }
                     $lb->no_of_days -= $ma->total_days;
                 }
             }
