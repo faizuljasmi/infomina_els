@@ -25,8 +25,8 @@ class HealthMetricsController extends Controller
         // $dateToday = '24.02.2021';
         $dateToday = date('d.m.Y');
         
-        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
-        // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
         
         foreach($mails as $mail){
             // dd($mails);
@@ -45,14 +45,15 @@ class HealthMetricsController extends Controller
             
             // Find leave date from.
             $leaveFromPos = strpos($body, '(MC) from');
-            $leaveFromStr = substr($body, $leaveFromPos + 10, $countDate + $countMonth + 6);
+            $leaveFromStr = substr($body, $leaveFromPos + 10, $countDate + $countMonth + 7);
             $dFrom = explode('/',$leaveFromStr);
             $leaveFrom = date('Y-m-d', strtotime($dFrom[1].'/'.$dFrom[0].'/'.$dFrom[2]));
             
             // Find leave date to.
             $leaveToPos = strpos($body, '/'.date('Y').' to');
-            $leaveToStr = substr($body, $leaveToPos + 9 , $countDate + $countMonth + 6);
+            $leaveToStr = substr($body, $leaveToPos + 9 , $countDate + $countMonth + 7);
             $dTo = explode('/',$leaveToStr);
+            // dd($leaveToStr);
             $leaveTo = date('Y-m-d', strtotime($dTo[1].'/'.$dTo[0].'/'.$dTo[2]));
             
             // Find MC link.
