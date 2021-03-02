@@ -18,13 +18,13 @@ use DateTime;
 
 class HealthMetricsController extends Controller
 {
-    function index() {
-        $medical_certs = HealthMetric::orderBy('id', 'DESC')->paginate(5);
+    public function index() {
+        $medical_certs = HealthMetric::orderBy('id', 'DESC')->paginate(15);
 
         return view('admin.healthmetrics')->with(compact('medical_certs'));
     }
 
-    function fetch() {
+    public function fetch() {
         $client = Client::account('gmail'); // Setup imap.php
         $client->connect();
         
@@ -32,8 +32,8 @@ class HealthMetricsController extends Controller
     
         $dateToday = date('d.m.Y');
         
-        $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
-        // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
         
         foreach($mails as $mail){
             $body = $mail->getHTMLBody();
@@ -130,6 +130,7 @@ class HealthMetricsController extends Controller
                     $hm->leave_from = $leaveFrom;
                     $hm->leave_to = $leaveTo;
                     $hm->total_days = $totalDays;
+                    $hm->status = 'Auto Applied';
                     $hm->link = $link;
                     $hm->save();
                 } else {
@@ -150,7 +151,7 @@ class HealthMetricsController extends Controller
                     'total_days' => $totalDays, 
                 ];
                 
-                $emp->notify(new HealthMetricsUpdate($healthUpdate));
+                // $emp->notify(new HealthMetricsUpdate($healthUpdate));
 
                 foreach($admins as $admin) {
                     $healthUpdateHR = [
@@ -162,7 +163,7 @@ class HealthMetricsController extends Controller
                         'status' => 'success',
                     ];
                     
-                    $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
+                    // $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
                 }
             } else {
                 foreach($admins as $admin) {
@@ -172,7 +173,7 @@ class HealthMetricsController extends Controller
                         'status' => 'fail',
                     ];
 
-                    $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
+                    // $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
                 }
             }
             
@@ -181,5 +182,31 @@ class HealthMetricsController extends Controller
         }
         
         return response()->json(['success'=>'Mail fetched successfully!']);
+    }
+
+    public function revert(Request $request){
+        $application_id = $request->get('application_id');
+        $total_days = $request->get('total_days');
+
+        $la = LeaveApplication::where('id', $application_id)->first();
+        $la->status = 'CANCELLED';
+
+        $hm = HealthMetric::where('application_id', $application_id)->first();
+        $hm->status = 'Reverted';
+        
+        $leaveBal = LeaveBalance::where('user_id', $la->user_id)->where('leave_type_id', 3)->first();
+        $leaveBal->no_of_days = $leaveBal->no_of_days + intval($total_days);
+        
+        $takenLeave = TakenLeave::where('user_id', $la->user_id)->where('leave_type_id', 3)->first();
+        $takenLeave->no_of_days = $takenLeave->no_of_days - intval($total_days);
+
+        $la->update();
+        $hm->update();
+        $leaveBal->update();
+        $takenLeave->update();
+
+        // Kena update history also, then only can see who have cancelled this application.
+
+        return response()->json(['application_id' => $application_id]);
     }
 }

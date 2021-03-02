@@ -49,39 +49,49 @@
                         <th>Day(s)</th>
                         <th>From Date</th>
                         <th>To Date</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="healthmetrics_table">
-                <?php $count = 0;?>
+                @php $count = ($medical_certs->currentPage()-1) * $medical_certs->perPage(); @endphp
                 @foreach($medical_certs as $mc)
                     <tr>
+                        <td class="d-none">{{ $mc->application_id }}</td>
                         <td>{{ ++$count }}</td>
                         <td>{{ $mc->user->name }}</td>
                         <td>{{ $mc->total_days }}</td>
                         <td>{{ $mc->leave_from }}</td>
                         <td>{{ $mc->leave_to }}</td>
                         <td>
+                            @if ( $mc->status == 'Auto Applied' )
+                                <span class="badge badge-pill badge-success">{{ $mc->status }}</span>
+                            @else
+                                <span class="badge badge-pill badge-warning">{{ $mc->status }}</span>
+                            @endif
+                        </td>
+                        <td>
                             <a href="{{ route('view_application', $mc->application_id) }}">
-                                <span><button type="button" class="btn btn-info btn-sm" title="View Application">
+                                <button type="button" class="btn btn-info btn-sm" title="View Application">
                                     <i class="fas fa-eye"></i>
-                                </button></span>
+                                </button>
                             </a>
                             <a href="{{ $mc->link }}" target="_blank">
                                 <button type="button" class="btn btn-sm btn-danger" title="View MC">
                                     <i class="fas fa-file-medical-alt"></i>
                                 </button>
                             </a>
-                            <a href="{{ route('view_application', $mc->application_id) }}">
-                                <button type="button" class="btn btn-sm  btn-warning" title="Revert Changes">
-                                    <i class="fas fa-undo-alt"></i>
-                                </button>
-                            </a>
+                            @if ( $mc->status == 'Reverted' )
+                                <button type="button" class="btn btn-sm btn-warning action-revert" title="Revert Changes" disabled><i class="fas fa-undo-alt"></i></button>
+                            @else
+                                <button type="button" class="btn btn-sm btn-warning action-revert" title="Revert Changes"><i class="fas fa-undo-alt"></i></button>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
+            <br>
             {!! $medical_certs->appends(\Request::except('page'))->render() !!}
         </div>
     </div>
@@ -96,9 +106,34 @@
     </div>
 </div>
 
+<!-- Confirm Revert -->
+<div class="modal fade" id="revert_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Confirmation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to revert the changes made? 
+            <a data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Note : This leave application will be cancelled and the employee may need to submit a new application manually. Changes can't be undone."><i class="fa fa-info-circle"></i></a> 
+            <input type="hidden" id="application_id" value=""/>
+            <input type="hidden" id="total_days" value=""/>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" id="confirm_revert">Yes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        </div>
+    </div>
+</div>
+
 <script>
 $( document ).ready(function() 
 {
+
+    $('[data-toggle="popover"]').popover();
 
     $('#btn_fetch').click(function() 
     {
@@ -122,6 +157,48 @@ $( document ).ready(function()
             }
         })
     });
+
+    $('.action-revert').click(function() 
+    {
+        let row = $(this).closest('tr');
+        var application_id = $(row).find('td:eq(0)').text();
+        var total_days = $(row).find('td:eq(3)').text();
+
+        $('#application_id').val(application_id);
+        $('#total_days').val(total_days);
+
+        $('#revert_modal').modal('show');
+    });
+
+    $('#confirm_revert').click(function() 
+    {
+        let application_id = $('#application_id').val();
+        let total_days = $('#total_days').val();
+
+        revert_changes(application_id, total_days);
+    });
+
+    function revert_changes(application_id, total_days) 
+    {
+        $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            method: 'POST',
+            url: '/revert-healthmetrics',
+            dataType: 'json',
+            data: {application_id:application_id, total_days:total_days},
+            success: function (data) {
+                console.log(data);
+                $('#application_id').val('');
+                $('#total_days').val('');
+                location.reload();
+            }
+        })
+    }
 
 });
 </script>

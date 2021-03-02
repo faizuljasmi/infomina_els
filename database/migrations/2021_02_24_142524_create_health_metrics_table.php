@@ -20,6 +20,7 @@ class CreateHealthMetricsTable extends Migration
             $table->date('leave_from');
             $table->date('leave_to');
             $table->float('total_days', 8,1);
+            $table->enum('status', ['Auto Applied','Reverted']);
             $table->longText('link');
             $table->timestamps();
 
