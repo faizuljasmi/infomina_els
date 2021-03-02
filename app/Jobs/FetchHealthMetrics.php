@@ -48,39 +48,41 @@ class FetchHealthMetrics implements ShouldQueue
     
         $dateToday = date('d.m.Y');
         
-        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
         // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
         
         foreach($mails as $mail){
-            // dd($mails);
-            $body = $mail->getTextBody();
+            $body = $mail->getHTMLBody();
             
             (date('j') < 10) ? $countDate = 1 : $countDate = 2; 
             (date('n') < 10) ? $countMonth = 1 : $countMonth = 2;
             
             // Find employee ID.
-            $empIDPos = strpos($body, ': IF');
-            $empID = substr($body, $empIDPos +2, 6);
+            $staffIDPos = strpos($body, ': IF');
+            $staffID = substr($body, $staffIDPos +2, 6);
+            // dd($staffID);
             
             // Find total days.
             $totalDaysPos = strpos($body, '-day');
-            $totalDays = substr($body, $totalDaysPos -2, 2);
+            $totalDaysStr = substr($body, $totalDaysPos -2, 2);
+            $totalDays = trim(preg_replace('/\D/', '', $totalDaysStr));
             
             // Find leave date from.
             $leaveFromPos = strpos($body, '(MC) from');
-            $leaveFromStr = substr($body, $leaveFromPos + 10, $countDate + $countMonth + 7); // Receiving format Y/d/m.
+            $leaveFromStr = substr($body, $leaveFromPos + 10, $countDate + $countMonth + 6); // Receiving format Y/d/m.
             $dFrom = explode('/',$leaveFromStr);
             $leaveFrom = date('Y-m-d', strtotime($dFrom[1].'/'.$dFrom[0].'/'.$dFrom[2])); // Convert to Y-m-d.
             $validLF = DateTime::createFromFormat('Y-m-d', $leaveFrom);
             $isLFValid = ($validLF && $validLF->format('Y-m-d') === $leaveFrom); // Check is a date.
             
             // Find leave date to.
-            $leaveToPos = strpos($body, '/'.date('Y').' to');
-            $leaveToStr = substr($body, $leaveToPos + 9 , $countDate + $countMonth + 7); // Receiving format Y/d/m.
+            $leaveToPos = strpos($body, '/'.date('Y').' to <strong>');
+            $leaveToStr = substr($body, $leaveToPos + 17 , $countDate + $countMonth + 6); // Receiving format Y/d/m.
             $dTo = explode('/',$leaveToStr);
             $leaveTo = date('Y-m-d', strtotime($dTo[1].'/'.$dTo[0].'/'.$dTo[2])); // // Convert to Y-m-d.
             $validLT = DateTime::createFromFormat('Y-m-d', $leaveTo);
             $isLTValid = ($validLT && $validLT->format('Y-m-d') === $leaveTo); // Check is a date.
+
             
             // Find MC link.
             $htmlLink = $mail->getHTMLBody();
@@ -90,13 +92,13 @@ class FetchHealthMetrics implements ShouldQueue
             }
 
             // Get user using employee ID from mail.
-            $emp = User::where('staff_id', trim(preg_replace('/[\(\)]/', '', $empID)))->first();
+            $emp = User::where('staff_id', trim(preg_replace('/[\(\)]/', '', $staffID)))->first();
 
             $plusDay = 0;
             $error = 0;
             $leaveBal = ($emp != null) ? $emp->leave_balances[2]->no_of_days : 0; // Sick Leave balance.
 
-            if (($emp != null) && ($isLFValid == true) && ($isLTValid == true)) {
+            if (($emp != null) && ($isLFValid == true) && ($isLTValid == true) && (is_numeric($totalDays) == true)) {
                 if ($leaveBal >= $totalDays) {
 
                     // To get resume date.
@@ -143,9 +145,11 @@ class FetchHealthMetrics implements ShouldQueue
                     $hm->application_id = $leaveApp->id;
                     $hm->leave_from = $leaveFrom;
                     $hm->leave_to = $leaveTo;
-                    $hm->total_days = trim(preg_replace('/\s+/', '', $totalDays));
+                    $hm->total_days = $totalDays;
                     $hm->link = $link;
                     $hm->save();
+                } else {
+                    $error += 1;
                 }
             } else {
                 $error += 1;
@@ -188,7 +192,8 @@ class FetchHealthMetrics implements ShouldQueue
                 }
             }
             
-            $mail->setFlag('answered');
+            // $mail->setFlag('answered');
+
         }
     }
 }

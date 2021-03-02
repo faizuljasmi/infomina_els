@@ -5,6 +5,9 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
 <style>
+    i.fa {
+        display: inline-block;
+    }
     #loading {
         width: 100%; height: 100%; top: 0; left: 0; position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
     }
@@ -41,12 +44,12 @@
             <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Day(s)</th>
-                        <th scope="col">From Date</th>
-                        <th scope="col">To Date</th>
-                        <th scope="col">MC</th>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Day(s)</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="healthmetrics_table">
@@ -58,7 +61,23 @@
                         <td>{{ $mc->total_days }}</td>
                         <td>{{ $mc->leave_from }}</td>
                         <td>{{ $mc->leave_to }}</td>
-                        <td><a href="{{ $mc->link }}" target="_blank"><button type="button" class="btn btn-sm btn-info">View</button></a></td>
+                        <td>
+                            <a href="{{ route('view_application', $mc->application_id) }}">
+                                <span><button type="button" class="btn btn-info btn-sm" title="View Application">
+                                    <i class="fas fa-eye"></i>
+                                </button></span>
+                            </a>
+                            <a href="{{ $mc->link }}" target="_blank">
+                                <button type="button" class="btn btn-sm btn-danger" title="View MC">
+                                    <i class="fas fa-file-medical-alt"></i>
+                                </button>
+                            </a>
+                            <a href="{{ route('view_application', $mc->application_id) }}">
+                                <button type="button" class="btn btn-sm  btn-warning" title="Revert Changes">
+                                    <i class="fas fa-undo-alt"></i>
+                                </button>
+                            </a>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -72,7 +91,7 @@
     <div id="loading-image">
         <figure>
             <img src="{{url('images/loader.gif')}}" alt="Loading..." />
-            <figcaption>Retrieving data from HealthMetrics...</figcaption>
+            <figcaption>Retrieving data from HealthMetrics</figcaption>
         </figure>
     </div>
 </div>
@@ -80,6 +99,7 @@
 <script>
 $( document ).ready(function() 
 {
+
     $('#btn_fetch').click(function() 
     {
         var spinner = $('#loading');
@@ -96,7 +116,8 @@ $( document ).ready(function()
             url: '/fetch-healthmetrics',
             dataType: 'json',
             success: function (data) {
-                console.log(data, "MC");
+                // console.log(data, "MC");
+                spinner.hide();
                 location.reload();
             }
         })
