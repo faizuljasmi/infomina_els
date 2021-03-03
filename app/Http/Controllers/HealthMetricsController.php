@@ -13,6 +13,7 @@ use App\Holiday;
 use App\LeaveApplication;
 use App\LeaveBalance;
 use App\TakenLeave;
+use App\History;
 use Notification;
 use DateTime;
 
@@ -20,6 +21,22 @@ class HealthMetricsController extends Controller
 {
     public function index() {
         $medical_certs = HealthMetric::orderBy('id', 'DESC')->paginate(15);
+
+        return view('admin.healthmetrics')->with(compact('medical_certs'));
+    }
+
+    public function search(Request $request) {
+        $date_from = $request->get('date_from');
+        $date_to = $request->get('date_to');
+
+        $query = HealthMetric::query();
+        
+        if ($date_from != null && $date_to != null) {
+            $query->whereBetween('leave_from', [$date_from, $date_to])
+                  ->orWhereBetween('leave_to', [$date_from, $date_to]);
+        }
+         
+        $medical_certs = $query->paginate(15);
 
         return view('admin.healthmetrics')->with(compact('medical_certs'));
     }
@@ -33,7 +50,8 @@ class HealthMetricsController extends Controller
         $dateToday = date('d.m.Y');
         
         // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
-        $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->since('02.03.2021')->subject('HMS medical certificate issued')->get();
         
         foreach($mails as $mail){
             $body = $mail->getHTMLBody();
@@ -186,26 +204,31 @@ class HealthMetricsController extends Controller
 
     public function revert(Request $request){
         $application_id = $request->get('application_id');
-        $total_days = $request->get('total_days');
 
         $la = LeaveApplication::where('id', $application_id)->first();
         $la->status = 'CANCELLED';
+        $la->remarker_id = auth()->user()->id;
 
         $hm = HealthMetric::where('application_id', $application_id)->first();
         $hm->status = 'Reverted';
         
         $leaveBal = LeaveBalance::where('user_id', $la->user_id)->where('leave_type_id', 3)->first();
-        $leaveBal->no_of_days = $leaveBal->no_of_days + intval($total_days);
+        $leaveBal->no_of_days = $leaveBal->no_of_days + $la->total_days;
         
         $takenLeave = TakenLeave::where('user_id', $la->user_id)->where('leave_type_id', 3)->first();
-        $takenLeave->no_of_days = $takenLeave->no_of_days - intval($total_days);
+        $takenLeave->no_of_days = $takenLeave->no_of_days - $la->total_days;
 
         $la->update();
         $hm->update();
         $leaveBal->update();
         $takenLeave->update();
 
-        // Kena update history also, then only can see who have cancelled this application.
+        $hist = new History;
+        $hist->leave_application_id = $application_id;
+        $hist->user_id = auth()->user()->id;
+        $hist->action = 'Cancelled';
+        $hist->remarks = 'Health Metrics Auto Apply';
+        $hist->save();
 
         return response()->json(['application_id' => $application_id]);
     }

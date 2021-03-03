@@ -238,6 +238,12 @@ return [
             'icon' => 'fas fa-fw fa-heartbeat',
             'can' => 'employee-data'
         ],
+        [
+            'text' => 'Attendance',
+            'url'  => 'attendance',
+            'icon' => 'fas fa-fw fa-hourglass',
+            'can' => 'employee-data'
+        ],
         ['header' => ' System Settings', 'can' => 'edit_settings'],
         [
             'text'    => 'Employee',

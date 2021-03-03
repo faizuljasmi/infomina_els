@@ -35,8 +35,32 @@
             <b>Health Metrics Records</b>
         </div>
         <div class="card-body">
+            <form id="search_form" class="input-horizontal" action="{{ route('healthmetric_search') }}" method="get">
+                <div class="form-inline form-group">
+                    <!-- Date From -->
+                    <div class="input-group col-4">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar-day"></i>
+                            </span>
+                        </div>
+                        <input placeholder="Date From" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_from)? $date_from: '' }}" name="date_from" id="date_from">
+                    </div>
+                    <!-- Date To -->
+                    <div class="input-group col-4">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar-day"></i>
+                            </span>
+                        </div>
+                        <input placeholder="Date To" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_to)? $date_to: '' }}" name="date_to" id="date_to">
+                    </div>
+                    <button form="search_form" type="submit" class="btn btn-primary mr-1">Search</button>
+                    <a href="{{ route('healthmetric_index') }}"><button type="button" class="btn btn-secondary mr-1">Reset</button></a>
+                    <button type="button" class="btn  btn-success" id="btn_fetch">Fetch</button>
+                </div>
+            </form>
             <div>
-                <button type="button" class="btn btn-sm btn-success mb-2" id="btn_fetch">Fetch <span class="far fa-envelope"></span></button>
             </div>
             @if ($medical_certs->count() > 0)
                 <h6><strong>Displaying {{$medical_certs->count()}} out of {{$medical_certs->total()}} entries.</strong></h6>
@@ -89,6 +113,11 @@
                         </td>
                     </tr>
                 @endforeach
+                @if ($medical_certs->count() == 0)
+                    <tr align="center">
+                        <td colspan="7"><strong>No records found.</strong></td>
+                    </tr>
+                @endif
                 </tbody>
             </table>
             <br>
@@ -120,7 +149,6 @@
             Are you sure you want to revert the changes made? 
             <a data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Note : This leave application will be cancelled and the employee may need to submit a new application manually. Changes can't be undone."><i class="fa fa-info-circle"></i></a> 
             <input type="hidden" id="application_id" value=""/>
-            <input type="hidden" id="total_days" value=""/>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" id="confirm_revert">Yes</button>
@@ -162,10 +190,8 @@ $( document ).ready(function()
     {
         let row = $(this).closest('tr');
         var application_id = $(row).find('td:eq(0)').text();
-        var total_days = $(row).find('td:eq(3)').text();
 
         $('#application_id').val(application_id);
-        $('#total_days').val(total_days);
 
         $('#revert_modal').modal('show');
     });
@@ -173,12 +199,11 @@ $( document ).ready(function()
     $('#confirm_revert').click(function() 
     {
         let application_id = $('#application_id').val();
-        let total_days = $('#total_days').val();
 
-        revert_changes(application_id, total_days);
+        revert_changes(application_id);
     });
 
-    function revert_changes(application_id, total_days) 
+    function revert_changes(application_id) 
     {
         $.ajaxSetup({
         headers: {
@@ -190,11 +215,10 @@ $( document ).ready(function()
             method: 'POST',
             url: '/revert-healthmetrics',
             dataType: 'json',
-            data: {application_id:application_id, total_days:total_days},
+            data: {application_id:application_id},
             success: function (data) {
                 console.log(data);
                 $('#application_id').val('');
-                $('#total_days').val('');
                 location.reload();
             }
         })

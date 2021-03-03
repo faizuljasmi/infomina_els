@@ -10,4 +10,8 @@ class History extends Model
     public function application(){
         return $this->belongsTo(LeaveApplication::class);
     }
+
+    public function editor(){
+        return $this->belongsTo(User::class,'user_id');
+    }
 }
