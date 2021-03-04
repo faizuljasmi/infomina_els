@@ -54,6 +54,8 @@ class HealthMetricsController extends Controller
         $mails = $inbox->messages()->since('02.03.2021')->subject('HMS medical certificate issued')->get();
         
         foreach($mails as $mail){
+            $mail->removeFlag('answered');
+            return;
             $body = $mail->getHTMLBody();
             
             (date('j') < 10) ? $countDate = 1 : $countDate = 2; 

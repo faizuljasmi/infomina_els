@@ -348,9 +348,9 @@ $('#reason').keyup(function() {
         let date_to = _form.get(FC.date_to);
 
         // REPLACEMENT POLICY
-        let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
-        prev3 = calendar.getDateDb(prev3);
-        if(calendar.isDateSmaller(date_from, prev3) || calendar.isDateEqual(date_from, prev3)){
+        let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
+        prev7 = calendar.getDateDb(prev7);
+        if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
           return "Attention: Claim must be submitted within 3 working days after the day of event.";
         }
 
