@@ -62,7 +62,6 @@ class HealthMetricsController extends Controller
             // Find employee ID.
             $staffIDPos = strpos($body, ': IF');
             $staffID = substr($body, $staffIDPos +2, 6);
-            // dd($staffID);
             
             // Find total days.
             $totalDaysPos = strpos($body, '-day');
@@ -101,8 +100,8 @@ class HealthMetricsController extends Controller
             $leaveBal = ($emp != null) ? $emp->leave_balances[2]->no_of_days : 0; // Sick Leave balance.
 
             if (($emp != null) && ($isLFValid == true) && ($isLTValid == true) && (is_numeric($totalDays) == true)) {
+                echo $emp->name , $emp->leave_balances[2]->no_of_days;
                 if ($leaveBal >= $totalDays) {
-
                     // To get resume date.
                     do {
                         $plusDay += 1;
