@@ -351,7 +351,7 @@ $('#reason').keyup(function() {
         let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
         prev7 = calendar.getDateDb(prev7);
         if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
-          return "Attention: Claim must be submitted within 3 working days after the day of event.";
+          return "Attention: Claim must be submitted within 7 working days from the day of event.";
         }
 
         for (index = 0; index < myapplications.length; index++) {
