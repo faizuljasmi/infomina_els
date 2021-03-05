@@ -342,7 +342,7 @@ $("#la_table").on('click', '#change_status_btn', function()
         dataType: 'json',
         data: {mode:mode, leave_id:leave_id},
         success: function (data) {
-            // console.log(data, 'data');
+            console.log(data, 'data');
 
             var la_user = data.leave_app.user.name;
             var leave_status = data.leave_app.status;
@@ -359,15 +359,19 @@ $("#la_table").on('click', '#change_status_btn', function()
             $('#la_status').html('').removeClass('btn-success');
             $('#la_status').html('').removeClass('btn-warning');
 
+            if (data.leave_app.approver_one) { var approver_one = data.leave_app.approver_one.name } else { var approver_one = ''}
+            if (data.leave_app.approver_two) { var approver_two = data.leave_app.approver_two.name } else { var approver_two = ''}
+            if (data.leave_app.approver_three) { var approver_three = data.leave_app.approver_three.name } else { var approver_three = ''}
+
             if (leave_status == 'PENDING_1' || leave_status == 'PENDING_2' || leave_status == 'PENDING_3') {
                 $('#la_status').html('In Progress').addClass('btn-primary');
 
                 if (leave_status == 'PENDING_1') {
-                    $('#approver_name').html('Pending at '+data.leave_app.approver_one.name+'. (Level 1)');
+                    $('#approver_name').html('Pending at '+approver_one+'. (Level 1)');
                 } else if (leave_status == 'PENDING_2') {
-                    $('#approver_name').html('Pending at '+data.leave_app.approver_two.name+'. (Level 2)');
+                    $('#approver_name').html('Pending at '+approver_two+'. (Level 2)');
                 } else if (leave_status == 'PENDING_3') {
-                    $('#approver_name').html('Pending at '+data.leave_app.approver_three.name+'. (Level 3)');
+                    $('#approver_name').html('Pending at '+approver_three+'. (Level 3)');
                 } 
 
                 $('#show_status').removeClass('d-none');
@@ -375,11 +379,11 @@ $("#la_table").on('click', '#change_status_btn', function()
                 $('#la_status').html('Rejected').addClass('btn-danger');
 
                 if (leave_status == 'DENIED_1') {
-                    $('#approver_name').html('Rejected by '+data.leave_app.approver_one.name+'. (Level 1)');
+                    $('#approver_name').html('Rejected by '+approver_one+'. (Level 1)');
                 } else if (leave_status == 'DENIED_2') {
-                    $('#approver_name').html('Rejected by '+data.leave_app.approver_two.name+'. (Level 2)');
+                    $('#approver_name').html('Rejected by '+approver_two+'. (Level 2)');
                 } else if (leave_status == 'DENIED_3') {
-                    $('#approver_name').html('Rejected by '+data.leave_app.approver_three.name+'. (Level 3)');
+                    $('#approver_name').html('Rejected by '+approver_three+'. (Level 3)');
                 } 
 
                 $('#show_status').removeClass('d-none');
