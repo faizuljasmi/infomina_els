@@ -329,6 +329,7 @@ $("#la_table").on('click', '#change_status_btn', function()
     }
 
     $('#save_new_status').attr('disabled', true);
+    $('#new_status').val('');
 
     $.ajaxSetup({
         headers: {
