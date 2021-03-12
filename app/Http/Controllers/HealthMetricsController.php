@@ -46,17 +46,21 @@ class HealthMetricsController extends Controller
         $client->connect();
         
         $inbox = $client->getFolder('INBOX');
+        // dd($client);
     
         $dateToday = date('d.m.Y');
+
+        // Get admin users to notify the affected employees.
+        $admins = User::where('user_type', 'Admin')->get();
         
         // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
         // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
-        $mails = $inbox->messages()->since('02.03.2021')->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->since('08.03.2021')->subject('HMS medical certificate issued')->get();
+        // dd(count($mails));
         
         foreach($mails as $mail){
-            $mail->removeFlag('answered');
-            return;
             $body = $mail->getHTMLBody();
+            // dd($body);
             
             (date('j') < 10) ? $countDate = 1 : $countDate = 2; 
             (date('n') < 10) ? $countMonth = 1 : $countMonth = 2;
@@ -85,7 +89,6 @@ class HealthMetricsController extends Controller
             $leaveTo = date('Y-m-d', strtotime($dTo[1].'/'.$dTo[0].'/'.$dTo[2])); // // Convert to Y-m-d.
             $validLT = DateTime::createFromFormat('Y-m-d', $leaveTo);
             $isLTValid = ($validLT && $validLT->format('Y-m-d') === $leaveTo); // Check is a date.
-
             
             // Find MC link.
             $htmlLink = $mail->getHTMLBody();
@@ -102,7 +105,7 @@ class HealthMetricsController extends Controller
             $leaveBal = ($emp != null) ? $emp->leave_balances[2]->no_of_days : 0; // Sick Leave balance.
 
             if (($emp != null) && ($isLFValid == true) && ($isLTValid == true) && (is_numeric($totalDays) == true)) {
-                echo $emp->name , $emp->leave_balances[2]->no_of_days;
+                // echo $emp->name , $emp->leave_balances[2]->no_of_days;
                 if ($leaveBal >= $totalDays) {
                     // To get resume date.
                     do {
@@ -159,42 +162,39 @@ class HealthMetricsController extends Controller
                 $error += 1;
             }
 
-            // Get admin users to notify the affected employees.
-            $admins = User::where('user_type', 'Admin')->get();
-
-            if ($error == 0) {
-                $healthUpdate = [
-                    'name' => $emp->name,
-                    'date_from' => $leaveFrom, 
-                    'date_to' => $leaveTo, 
-                    'total_days' => $totalDays, 
-                ];
+            // if ($error == 0) {
+            //     $healthUpdate = [
+            //         'name' => $emp->name,
+            //         'date_from' => $leaveFrom, 
+            //         'date_to' => $leaveTo, 
+            //         'total_days' => $totalDays, 
+            //     ];
                 
                 // $emp->notify(new HealthMetricsUpdate($healthUpdate));
 
-                foreach($admins as $admin) {
-                    $healthUpdateHR = [
-                        'hr_name' => $admin->name,
-                        'name' => $emp->name,
-                        'date_from' => $leaveFrom, 
-                        'date_to' => $leaveTo, 
-                        'total_days' => $totalDays, 
-                        'status' => 'success',
-                    ];
+            //     foreach($admins as $admin) {
+            //         $healthUpdateHR = [
+            //             'hr_name' => $admin->name,
+            //             'name' => $emp->name,
+            //             'date_from' => $leaveFrom, 
+            //             'date_to' => $leaveTo, 
+            //             'total_days' => $totalDays, 
+            //             'status' => 'success',
+            //         ];
                     
                     // $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
-                }
-            } else {
-                foreach($admins as $admin) {
-                    $healthUpdateHR = [
-                        'hr_name' => $admin->name,
-                        'mail' => $body,
-                        'status' => 'fail',
-                    ];
+            //     }
+            // } else {
+            //     foreach($admins as $admin) {
+            //         $healthUpdateHR = [
+            //             'hr_name' => $admin->name,
+            //             'mail' => $body,
+            //             'status' => 'fail',
+            //         ];
 
                     // $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
-                }
-            }
+            //     }
+            // }
             
             // $mail->setFlag('answered');
 

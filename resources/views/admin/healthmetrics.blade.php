@@ -57,7 +57,7 @@
                     </div>
                     <button form="search_form" type="submit" class="btn btn-primary mr-1">Search</button>
                     <a href="{{ route('healthmetric_index') }}"><button type="button" class="btn btn-secondary mr-1">Reset</button></a>
-                    <button type="button" class="btn  btn-success" id="btn_fetch" disabled>Fetch</button>
+                    <button type="button" class="btn  btn-success" id="btn_fetch">Fetch</button>
                 </div>
             </form>
             <div>
@@ -179,9 +179,9 @@ $( document ).ready(function()
             url: '/fetch-healthmetrics',
             dataType: 'json',
             success: function (data) {
-                // console.log(data, "MC");
-                spinner.hide();
+                console.log(data, "MC");
                 location.reload();
+                // spinner.hide();
             }
         })
     });
