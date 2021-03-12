@@ -15,7 +15,7 @@ class LeaveType extends Model
         return $this->hasMany(LeaveEntitlement::class);
     }
 
-    //One leave type has many leave earnings 
+    //One leave type has many leave earnings
     public function earnings(){
        return $this->hasMany(LeaveEarning::class);
     }

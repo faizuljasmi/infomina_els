@@ -120,7 +120,7 @@ class LeaveApplicationController extends Controller
                 $groupLeaveApps->add($la);
             }
         }
-        
+
         //Get my applications
         $myApps = collect([]);
         foreach ($leaveApps as $la) {
@@ -135,8 +135,8 @@ class LeaveApplicationController extends Controller
                 }
             }
         }
-        
-       
+
+
 
         //Group user's applications by months. Starting from the start of current month until end of year
         $myAppSorted = $myApps->whereBetween('date_from',array(now()->startOfMonth()->format('Y-m-d'),now()->endOfYear()->format('Y-m-d')))->groupBy(function($val) {
@@ -1810,7 +1810,7 @@ class LeaveApplicationController extends Controller
                 else if($leaveApplication->status == 'DENIED_2'){
                     $currAuth = $leaveApplication->approver_two->name;
                 }
-                else if($la->status == 'DENIED_3'){
+                else if($leaveApplication->status == 'DENIED_3'){
                     $currAuth = $leaveApplication->approver_three->name;
                 }
                 $body = 'Denied by '.$currAuth;
