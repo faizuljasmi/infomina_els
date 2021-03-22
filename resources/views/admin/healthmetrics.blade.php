@@ -57,7 +57,7 @@
                     </div>
                     <button form="search_form" type="submit" class="btn btn-primary mr-1">Search</button>
                     <a href="{{ route('healthmetric_index') }}"><button type="button" class="btn btn-secondary mr-1">Reset</button></a>
-                    <button type="button" class="btn  btn-success" id="btn_fetch">Fetch</button>
+                    <button type="button" class="btn btn-success" id="btn_fetch" disabled>Fetch</button>
                 </div>
             </form>
             <div>
