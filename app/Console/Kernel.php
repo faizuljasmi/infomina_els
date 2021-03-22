@@ -31,13 +31,13 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->job(new TestCron)->everyMinute()->withoutOverlapping();
 
-        $schedule->job(new ReplacementValidator)->dailyAt('06:00')->withoutOverlapping();
+        $schedule->job(new ReplacementValidator)->dailyAt('06:30')->withoutOverlapping();
 
         // $schedule->job(new CalculateEarning)->yearlyOn(1, 1, '03:00')->withoutOverlapping(); // ade problem
 
-        $schedule->job(new CalculateProrate)->monthlyOn(1, '08:00')->withoutOverlapping();
+        $schedule->job(new CalculateProrate)->monthlyOn(1, '08:30')->withoutOverlapping();
 
-        // $schedule->job(new FetchHealthMetrics)->everyTenMinutes()->withoutOverlapping();
+        $schedule->job(new FetchHealthMetrics)->hourly()->withoutOverlapping();
 
 
     }

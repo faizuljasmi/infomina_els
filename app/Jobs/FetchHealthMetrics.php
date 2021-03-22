@@ -48,8 +48,8 @@ class FetchHealthMetrics implements ShouldQueue
     
         $dateToday = date('d.m.Y');
         
-        $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
-        // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
         
         foreach($mails as $mail){
             $body = $mail->getHTMLBody();
@@ -192,7 +192,7 @@ class FetchHealthMetrics implements ShouldQueue
                 }
             }
             
-            // $mail->setFlag('answered');
+            $mail->setFlag('answered');
 
         }
     }
