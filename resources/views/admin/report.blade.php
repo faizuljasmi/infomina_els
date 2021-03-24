@@ -394,6 +394,8 @@ $("#la_table").on('click', '#change_status_btn', function()
                 $('#la_status').html('Cancelled').addClass('btn-warning');
             }
 
+            // Todo 
+
             $('#change_status_modal').modal('show');
             spinner.hide();
         }

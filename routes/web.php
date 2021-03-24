@@ -75,6 +75,7 @@ Route::middleware('can:employee-data')->group(function(){
     Route::get('/healthmetrics/search','HealthMetricsController@search')->name('healthmetric_search')->middleware('auth');
     Route::post('/fetch-healthmetrics','HealthMetricsController@fetch')->middleware('auth');
     Route::post('/revert-healthmetrics','HealthMetricsController@revert')->middleware('auth');
+    Route::post('/fetch-checkins','HealthMetricsController@fetch_checkins')->middleware('auth');
 
     // Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
 });

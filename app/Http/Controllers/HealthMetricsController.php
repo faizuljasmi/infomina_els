@@ -54,15 +54,15 @@ class HealthMetricsController extends Controller
         $admins = User::where('user_type', 'Admin')->get();
         
         // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
-        // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
-        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->since('23.03.2020')->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
         // dd(count($mails));
         
         foreach($mails as $mail){
             // $mail->setFlag('answered');
             $body = $mail->getHTMLBody();
             // dd($mail);
-            // dd($body);
+            dd($body);
             
             (date('j') < 10) ? $countDate = 1 : $countDate = 2; 
             (date('n') < 10) ? $countMonth = 1 : $countMonth = 2;
@@ -234,5 +234,51 @@ class HealthMetricsController extends Controller
         $hist->save();
 
         return response()->json(['application_id' => $application_id]);
+    }
+
+    public function fetch_checkins() {
+        $client = Client::account('gmail'); // Setup imap.php
+        $client->connect();
+        
+        $inbox = $client->getFolder('INBOX');
+    
+        $dateToday = date('d.m.Y');
+
+        // Get admin users to notify the affected employees.
+        $admins = User::where('user_type', 'Admin')->get();
+        
+        // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('Employee check-in with HMS')->get();
+
+        foreach($mails as $mail){
+            $body = $mail->getHTMLBody();
+            dd($body);
+
+            (date('j') < 10) ? $countDate = 1 : $countDate = 2; 
+            (date('n') < 10) ? $countMonth = 1 : $countMonth = 2;
+
+            // Find employee ID.
+            $staffIDPos = strpos($body, ': IF');
+            $staffID = substr($body, $staffIDPos +2, 6);
+            //  dd($staffID);
+
+            /* todo
+            get staff id, klinik name, checkin date
+            get check in details first and then start on getting mcs
+            add klinik name and check in date at mc table
+            after saving new mc, check wether 
+            */
+
+            // Find check in time.
+            $checkInPos = strpos($body, 'CHECK-IN TIME</span></span><br><span style="font-size:18px">');
+            dd($checkInPos);
+            $checkInStr = substr($body, $checkInPos + 10, $countDate + $countMonth + 6); // Receiving format Y/d/m.
+            $dCheckIn = explode('/',$checkInStr);
+            $checkInDate = date('Y-m-d', strtotime($dCheckIn[1].'/'.$dCheckIn[0].'/'.$dCheckIn[2])); // Convert to Y-m-d.
+            $validCT = DateTime::createFromFormat('Y-m-d', $checkInDate);
+            $isCTValid = ($validCT && $validCT->format('Y-m-d') === $checkInTime); // Check is a date.
+        };
+
     }
 }

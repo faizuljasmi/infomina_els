@@ -57,7 +57,8 @@
                     </div>
                     <button form="search_form" type="submit" class="btn btn-primary mr-1">Search</button>
                     <a href="{{ route('healthmetric_index') }}"><button type="button" class="btn btn-secondary mr-1">Reset</button></a>
-                    <button type="button" class="btn btn-success" id="btn_fetch" disabled>Fetch</button>
+                    <button type="button" class="btn btn-success" id="btn_fetch">Fetch</button>
+                    <button type="button" class="btn btn-success" id="btn_checkin">Checkin</button>
                 </div>
             </form>
             <div>
@@ -180,6 +181,29 @@ $( document ).ready(function()
             dataType: 'json',
             success: function (data) {
                 console.log(data, "MC");
+                location.reload();
+                // spinner.hide();
+            }
+        })
+    });
+
+    $('#btn_checkin').click(function() 
+    {
+        var spinner = $('#loading');
+        spinner.show();
+
+        $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            method: 'POST',
+            url: '/fetch-checkins',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data, "check in");
                 location.reload();
                 // spinner.hide();
             }
