@@ -181,7 +181,13 @@
                     <td>{{ ++$count }}</td>
                     <td>{{ $la->user->name }}</td>
                     <td>{{ $la->total_days }}</td>
+                    @if($la->leaveType->name == "Replacement" && $la->remarks == "Claim")
+                    <td>Replacement (Claim)</td>
+                    @elseif($la->leaveType->name == "Replacement" && $la->remarks == "Apply")
+                    <td>Replacement (Apply)</td>
+                    @else
                     <td>{{ $la->leaveType->name }}</td>
+                    @endif
                     <td>{{ $la->date_from }}</td>
                     <td>{{ $la->date_to }}</td>
                     <td>{{ $la->date_resume }}</td>
@@ -336,7 +342,7 @@ $("#la_table").on('click', '#change_status_btn', function()
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-        
+
     $.ajax({
         method: 'POST',
         url: '/change-leave-status',
@@ -373,7 +379,7 @@ $("#la_table").on('click', '#change_status_btn', function()
                     $('#approver_name').html('Pending at '+approver_two+'. (Level 2)');
                 } else if (leave_status == 'PENDING_3') {
                     $('#approver_name').html('Pending at '+approver_three+'. (Level 3)');
-                } 
+                }
 
                 $('#show_status').removeClass('d-none');
             } else if (leave_status == 'DENIED_1' || leave_status == 'DENIED_2' || leave_status == 'DENIED_3') {
@@ -385,7 +391,7 @@ $("#la_table").on('click', '#change_status_btn', function()
                     $('#approver_name').html('Rejected by '+approver_two+'. (Level 2)');
                 } else if (leave_status == 'DENIED_3') {
                     $('#approver_name').html('Rejected by '+approver_three+'. (Level 3)');
-                } 
+                }
 
                 $('#show_status').removeClass('d-none');
             } else if (leave_status == 'APPROVED') {
@@ -420,7 +426,7 @@ $("#change_status_modal").on('click', '#save_new_status', function()
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-        
+
     $.ajax({
         method: 'POST',
         url: '/change-leave-status',
@@ -543,7 +549,7 @@ $(function () {
 
 })
 
-$('#search_form').submit(function() 
+$('#search_form').submit(function()
 {
     var spinner = $('#loading');
     spinner.show();

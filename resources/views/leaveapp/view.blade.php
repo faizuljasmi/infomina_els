@@ -6,7 +6,7 @@
 
 
 <section id="leaveapp-create">
-    <h4>View Leave Application</h4>
+    <h4>View Leave Applicationss</h4>
     @cannot('view', $leaveApp)
     <div class="alert alert-danger" role="alert">
         You don't have permission to view this application
@@ -76,7 +76,8 @@
                                                     {{$leaveApp->approver_three->name}}</span></h5>
                                             @elseif($leaveApp->status == 'APPROVED')
                                             <h5><span class="badge badge-success">This application has been approved on
-                                                {{ \Carbon\Carbon::parse($leaveApp->updated_at)->isoFormat('ddd, D MMM YYYY')}}</span></h5>
+                                                    {{ \Carbon\Carbon::parse($leaveApp->updated_at)->isoFormat('ddd, D MMM YYYY')}}</span>
+                                            </h5>
                                             @elseif($leaveApp->status == 'CANCELLED')
                                             <h5><span class="badge badge-secondary">This application is cancelled by
                                                     {{$leaveApp->remarker->name}}</span></h5>
@@ -105,8 +106,18 @@
                                                     <i class="far fa-star"></i>
                                                 </span>
                                             </div>
+                                            @if($leaveApp->remarks == "Claim" && $leaveApp->leaveType->name ==
+                                            "Replacement")
+                                            <input type="text" class="form-control" id="type"
+                                                placeholder="Replacement (Claim)">
+                                            @elseif($leaveApp->remarks == "Apply" && $leaveApp->leaveType->name ==
+                                            "Replacement")
+                                            <input type="text" class="form-control" id="type"
+                                                placeholder="Replacement (Apply)">
+                                            @else
                                             <input type="text" class="form-control" id="type"
                                                 placeholder="{{$leaveApp->leaveType->name}}">
+                                            @endif
                                         </div>
                                     </div>
 
@@ -278,8 +289,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button id ="submit-cancel" type="submit" class="btn btn-danger"
-                                        >Cancel</button>
+                                    <button id="submit-cancel" type="submit" class="btn btn-danger">Cancel</button>
                                 </div>
                                 </form>
                             </div>
@@ -433,7 +443,7 @@
                     <figcaption>Working on it...</figcaption>
                 </figure>
             </div>
-</div>
+        </div>
     </section>
 
     <script>
@@ -647,29 +657,29 @@ document.getElementById("submit-cancel").addEventListener('click', functSubmit);
 
     </script>
 
-<style type="text/css">
-    #loading {
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        position: fixed;
-        opacity: 0.7;
-        background-color: #fff;
-        z-index: 99;
-        text-align: center;
-        display: none;
-    }
+    <style type="text/css">
+        #loading {
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            position: fixed;
+            opacity: 0.7;
+            background-color: #fff;
+            z-index: 99;
+            text-align: center;
+            display: none;
+        }
 
-    #loading-image {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        /* bring your own prefixes */
-        transform: translate(-50%, -50%);
-        z-index: 100;
-    }
-</style>
+        #loading-image {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            /* bring your own prefixes */
+            transform: translate(-50%, -50%);
+            z-index: 100;
+        }
+    </style>
 
 </section>
 
