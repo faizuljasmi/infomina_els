@@ -125,7 +125,6 @@ class AdminController extends Controller
     
                             // Get the claim application related to this use replacement application.
                             $this_claim_apply = ReplacementRelation::where('leave_id', $leave_app->id)->first();
-                            dd($this_claim_apply);
                             $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
                             if($claimApp->status == "TAKEN"){
                                 $claimApp->status = 'APPROVED';
@@ -166,7 +165,6 @@ class AdminController extends Controller
                         }
                         else if ($leave_app->remarks == "Apply") {
                             $this_claim_apply = ReplacementRelation::where('leave_id', $leave_app->id)->first(); // Get the claim application related to this use replacement application.
-                            dd($leave_app->id, $this_claim_apply);
                             $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
                             $all_claim_apply = ReplacementRelation::where('claim_id', $this_claim_apply->claim_id)->get(); // Get related claim records.
                             $total_days = 0;
