@@ -5,19 +5,50 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
 <style>
-    .buttonStat {width: 100px;}
-    .card {margin: 0 auto; float: none; margin-bottom: 20px;}
+    .buttonStat {
+        width: 100px;
+    }
+
+    .card {
+        margin: 0 auto;
+        float: none;
+        margin-bottom: 20px;
+    }
+
     .zoom:hover {
-        -ms-transform: scale(1.5); /* IE 9 */
-        -webkit-transform: scale(1.5); /* Safari 3-8 */
+        -ms-transform: scale(1.5);
+        /* IE 9 */
+        -webkit-transform: scale(1.5);
+        /* Safari 3-8 */
         transform: scale
     }
+
     #loading {
-        width: 100%; height: 100%; top: 0; left: 0; position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+        text-align: center;
+        display: none;
     }
+
     #loading-modal {
-        width: 100%; height: 100%; top: 0; left: 0; position: fixed; opacity: 0.7; background-color: #fff; z-index: 99; text-align: center; display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 99;
+        text-align: center;
+        display: none;
     }
+
     #loading-image {
         position: fixed;
         top: 50%;
@@ -52,7 +83,9 @@
                                 <div class="form-inline form-group">
                                     <!-- Name -->
                                     <div class="input-group col-12">
-                                        <input type="search" name="name" id="name" placeholder="Name" value="{{ isset($search_name)? $search_name: '' }}" class="form-control" autocomplete="off">
+                                        <input type="search" name="name" id="name" placeholder="Name"
+                                            value="{{ isset($search_name)? $search_name: '' }}" class="form-control"
+                                            autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-inline form-group">
@@ -63,7 +96,9 @@
                                                 <i class="fa fa-calendar-day"></i>
                                             </span>
                                         </div>
-                                        <input placeholder="Leave From" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_from)? $date_from: '' }}" name="date_from" id="date_from">
+                                        <input placeholder="Leave From" class="form-control" type="text"
+                                            onfocus="(this.type='date')" value="{{ isset($date_from)? $date_from: '' }}"
+                                            name="date_from" id="date_from">
                                     </div>
                                     <!-- Leave Type -->
                                     <div class="input-group col-6">
@@ -92,7 +127,9 @@
                                                 <i class="fa fa-calendar-day"></i>
                                             </span>
                                         </div>
-                                        <input placeholder="Leave To" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_to)? $date_to: '' }}" name="date_to" id="date_to">
+                                        <input placeholder="Leave To" class="form-control" type="text"
+                                            onfocus="(this.type='date')" value="{{ isset($date_to)? $date_to: '' }}"
+                                            name="date_to" id="date_to">
                                     </div>
                                     <!-- Status -->
                                     <div class="input-group col-6">
@@ -107,19 +144,28 @@
                                 </div>
                             </form>
                             <div class="d-flex justify-content-end col-12">
-                                <button data-toggle="collapse" data-target="#importCard" class="btn btn-warning mr-1">Import</button>
-                                <button data-toggle="collapse" data-target="#exportCard" class="btn btn-warning mr-1">Export</button>
+                                <button data-toggle="collapse" data-target="#importCard"
+                                    class="btn btn-warning mr-1">Import</button>
+                                <button data-toggle="collapse" data-target="#exportCard"
+                                    class="btn btn-warning mr-1">Export</button>
                                 <button form="search_form" type="submit" class="btn btn-primary mr-1">Search</button>
                                 <button id="reset_btn" type="button" class="btn btn-secondary">Reset</button>
                             </div>
-                            <form id="btnExportBal" action="{{ route('excel_export_bal') }}" enctype="multipart/form-data"></form>
-                            <form id="btnExportAll" action="{{ route('excel_export') }}" enctype="multipart/form-data"></form>
-                            <form id="btnExportCurrent" action="{{ route('excel_export') }}" enctype="multipart/form-data">
-                                <input type="hidden" name="excel_name" value="{{isset($search_name)? $search_name: ''}}">
-                                <input type="hidden" name="excel_date_from" value="{{isset($date_from)? $date_from: ''}}">
+                            <form id="btnExportBal" action="{{ route('excel_export_bal') }}"
+                                enctype="multipart/form-data"></form>
+                            <form id="btnExportAll" action="{{ route('excel_export') }}" enctype="multipart/form-data">
+                            </form>
+                            <form id="btnExportCurrent" action="{{ route('excel_export') }}"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="excel_name"
+                                    value="{{isset($search_name)? $search_name: ''}}">
+                                <input type="hidden" name="excel_date_from"
+                                    value="{{isset($date_from)? $date_from: ''}}">
                                 <input type="hidden" name="excel_date_to" value="{{isset($date_to)? $date_to: ''}}">
-                                <input type="hidden" name="excel_leave_type" value="{{isset($leave_type)? $leave_type: ''}}">
-                                <input type="hidden" name="excel_leave_status" value="{{isset($leave_status)? $leave_status: ''}}">
+                                <input type="hidden" name="excel_leave_type"
+                                    value="{{isset($leave_type)? $leave_type: ''}}">
+                                <input type="hidden" name="excel_leave_status"
+                                    value="{{isset($leave_status)? $leave_status: ''}}">
                             </form>
                         </div>
                     </div>
@@ -134,102 +180,122 @@
                     </div>
                 </div>
                 <div id="importCard" class="collapse">
-                <div class="card col-12">
-                    <div class="card-body d-flex justify-content-center">
-                        <form class="form-inline" action="{{ route('excel_import') }}" method="post">
-                            <div class="form-group">
-                                <input type="file" class="form-control" name="import_file" />
-                            </div>
-                            <button style="margin-left: 10px;" class="btn btn-success mr-2" type="submit">Upload</button>
-                        </form>
+                    <div class="card col-12">
+                        <div class="card-body d-flex justify-content-center">
+                            <form class="form-inline" action="{{ route('excel_import') }}" method="post">
+                                <div class="form-group">
+                                    <input type="file" class="form-control" name="import_file" />
+                                </div>
+                                <button style="margin-left: 10px;" class="btn btn-success mr-2"
+                                    type="submit">Upload</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
                 </div>
                 <div id="exportCard" class="collapse">
-                <div class="card col-12">
-                    <div class="card-body d-flex justify-content-center">
-                        <button form="btnExportCurrent" type="submit" class="btn btn-success mr-1">Export Current</button>
-                        <button form="btnExportAll" type="submit" class="btn btn-success mr-1">Export All Applications</button>
-                        <button form="btnExportBal" type="submit" class="btn btn-success mr-1">Export Leave Balance</button>
+                    <div class="card col-12">
+                        <div class="card-body d-flex justify-content-center">
+                            <button form="btnExportCurrent" type="submit" class="btn btn-success mr-1">Export
+                                Current</button>
+                            <button form="btnExportAll" type="submit" class="btn btn-success mr-1">Export All
+                                Applications</button>
+                            <button form="btnExportBal" type="submit" class="btn btn-success mr-1">Export Leave
+                                Balance</button>
+                        </div>
                     </div>
                 </div>
-                </div>
                 @if ($leave_app->count() > 0)
-                    <h6><strong>Displaying {{$leave_app->count()}} out of {{$leave_app->total()}} leave applications.</strong></h6>
-                    <h6><span class="badge badge-info">{{ isset($leave_type)? $leave_type: '' }}</span></h6>
+                <h6><strong>Displaying {{$leave_app->count()}} out of {{$leave_app->total()}} leave
+                        applications.</strong></h6>
+                <h6><span class="badge badge-info">{{ isset($leave_type)? $leave_type: '' }}</span></h6>
                 @endif
                 <table class="table table-sm table-bordered table-striped table-hover" id="la_table">
-                <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Name</th>
-                    <th>Day(s)</th>
-                    <th>Type</th>
-                    <th width="10%">From Date</th>
-                    <th width="10%">To Date</th>
-                    <th width="10%">Resume Date</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th width="10%">Apply Date</th>
-                    <th width="7%">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php $count = 0;?>
-                @foreach($leave_app as $la)
-                <tr>
-                    <td>{{ ++$count }}</td>
-                    <td>{{ $la->user->name }}</td>
-                    <td>{{ $la->total_days }}</td>
-                    @if($la->leaveType->name == "Replacement" && $la->remarks == "Claim")
-                    <td>Replacement (Claim)</td>
-                    @elseif($la->leaveType->name == "Replacement" && $la->remarks == "Apply")
-                    <td>Replacement (Apply)</td>
-                    @else
-                    <td>{{ $la->leaveType->name }}</td>
-                    @endif
-                    <td>{{ $la->date_from }}</td>
-                    <td>{{ $la->date_to }}</td>
-                    <td>{{ $la->date_resume }}</td>
-                    <td align="center">
-                        <button type="button" class="btn btn-sm btn-info" data-toggle="popover" data-trigger="focus" title="Details"
-                        data-content="{{ $la->reason }}">View</button>
-                    </td>
-                    <td align="center">
-                        @if ($la->status == "APPROVED" )
-                            <button type="button" class="btn buttonStat btn-sm btn-success " disabled>Approved</button>
-                        @elseif ($la->status == "CANCELLED")
-                            <button type="button" class="btn buttonStat btn-sm btn-warning" disabled>Cancelled</button>
-                        @elseif ($la->status == "DENIED_1" || $la->status == "DENIED_2" || $la->status == "DENIED_3")
-                            <button type="button" class="btn buttonStat btn-sm btn-danger" disabled>Rejected</button>
-                        @else
-                            <button type="button" class="btn buttonStat btn-sm btn-primary" disabled>In Progress</button>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Name</th>
+                            <th>Day(s)</th>
+                            <th>Type</th>
+                            <th width="10%">From Date</th>
+                            <th width="10%">To Date</th>
+                            <th width="10%">Resume Date</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th width="10%">Apply Date</th>
+                            <th width="7%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $count = 0;?>
+                        @foreach($leave_app as $la)
+                        <tr>
+                            <td>{{ ++$count }}</td>
+                            <td>{{ $la->user->name }}</td>
+                            <td>{{ $la->total_days }}</td>
+                            @if($la->leaveType->name == "Replacement" && $la->remarks == "Claim")
+                            <td>Replacement (Claim)</td>
+                            @elseif($la->leaveType->name == "Replacement" && $la->remarks == "Apply")
+                            <td>Replacement (Apply)</td>
+                            @else
+                            <td>{{ $la->leaveType->name }}</td>
+                            @endif
+                            <td>{{ $la->date_from }}</td>
+                            <td>{{ $la->date_to }}</td>
+                            <td>{{ $la->date_resume }}</td>
+                            <td align="center">
+                                <button type="button" class="btn btn-sm btn-info" data-toggle="popover"
+                                    data-trigger="focus" title="Details" data-content="{{ $la->reason }}">View</button>
+                            </td>
+                            <td align="center">
+                                @if ($la->status == "APPROVED" )
+                                <button type="button" class="btn buttonStat btn-sm btn-success "
+                                    disabled>Approved</button>
+                                @elseif ($la->status == "CANCELLED")
+                                <button type="button" class="btn buttonStat btn-sm btn-warning"
+                                    disabled>Cancelled</button>
+                                @elseif ($la->status == "DENIED_1" || $la->status == "DENIED_2" || $la->status ==
+                                "DENIED_3")
+                                <button type="button" class="btn buttonStat btn-sm btn-danger"
+                                    disabled>Rejected</button>
+                                @elseif($la->status == "TAKEN")
+                                <button type="button" class="btn buttonStat btn-sm btn-danger"
+                                    disabled>Taken</button>
+                                @elseif($la->status == "EXPIRED")
+                                <button type="button" class="btn buttonStat btn-sm btn-danger"
+                                    disabled>Expired</button>
+                                @else
+                                <button type="button" class="btn buttonStat btn-sm btn-primary" disabled>In
+                                    Progress</button>
+                                @endif
+                            </td>
+                            <td>{{\Carbon\Carbon::parse($la->created_at)->isoFormat('Y-MM-DD')}}</td>
+                            <td align="center">
+                                <button type="button" id="change_status_btn" class="btn btn-warning btn-sm"
+                                    data-toggle="tooltip" data-placement="left" title="Change Status"
+                                    value="{{ $la->id }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" id="view_history_btn" class="btn btn-primary btn-sm"
+                                    data-toggle="tooltip" data-placement="left" title="View History"
+                                    value="{{ $la->id }}" data-user="{{ $la->user->name }}">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @if ($leave_app->count() == 0)
+                        <tr align="center">
+                            <td colspan="11"><strong>No records found.</strong></td>
+                        </tr>
                         @endif
-                    </td>
-                    <td>{{\Carbon\Carbon::parse($la->created_at)->isoFormat('Y-MM-DD')}}</td>
-                    <td align="center">
-                        <button type="button" id="change_status_btn" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="left" title="Change Status" value="{{ $la->id }}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button type="button" id="view_history_btn" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="left" title="View History" value="{{ $la->id }}" data-user="{{ $la->user->name }}">
-                            <i class="fas fa-history"></i>
-                        </button>
-                    </td>
-                </tr>
-                @endforeach
-                @if ($leave_app->count() == 0)
-                    <tr align="center">
-                        <td colspan="11"><strong>No records found.</strong></td>
-                    </tr>
-                @endif
-                </tbody>
+                    </tbody>
                 </table>
                 {!! $leave_app->appends(\Request::except('page'))->render() !!}
-                </div>
-            </div>
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 
 <div id="loading">
@@ -254,11 +320,14 @@
             <div class="modal-body">
                 <input type="hidden" id="leave_id">
                 <div class="mb-3">
-                    <h6>Hi {{ Auth::user()->name }}, you're about to edit the leave application of <b id="la_user"></b>.</h6>
-                    <h6>Current Leave Status : <button id="la_status" type="button" class="btn buttonStat btn-sm" disabled></button>
+                    <h6>Hi {{ Auth::user()->name }}, you're about to edit the leave application of <b id="la_user"></b>.
+                    </h6>
+                    <h6>Current Leave Status : <button id="la_status" type="button" class="btn buttonStat btn-sm"
+                            disabled></button>
                 </div>
                 <div class="mb-3">
-                    <h6><span id="show_status" class="d-none badge badge-warning"><b id="approver_name"></b></span><h6>
+                    <h6><span id="show_status" class="d-none badge badge-warning"><b id="approver_name"></b></span>
+                        <h6>
                 </div>
                 <select class="form-control mb-3" id="new_status">
                     <option value="" disabled selected>Select Leave Status</option>
@@ -266,7 +335,8 @@
                     <option value="REJECT">Reject</option>
                     <option value="CANCEL">Cancel</option>
                 </select>
-                <textarea class="form-control" name="status_remarks" id="status_remarks" placeholder="Add Remarks"></textarea>
+                <textarea class="form-control" name="status_remarks" id="status_remarks"
+                    placeholder="Add Remarks"></textarea>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -289,37 +359,36 @@
 <div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">History</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="leave_id_history">
-            <h6>Leave application's history for <b id="history_user"></b>.<h6>
-            <table class="table table-sm table-bordered table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Edited By</th>
-                        <th>Edited Date</th>
-                        <th>Remarks</th>
-                    </tr>
-                    </thead>
-                <tbody id="history_table">
-                </tbody>
-            </table>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <div class="modal-header">
+                <h5 class="modal-title">History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="leave_id_history">
+                <h6>Leave application's history for <b id="history_user"></b>.<h6>
+                        <table class="table table-sm table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Edited By</th>
+                                    <th>Edited Date</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history_table">
+                            </tbody>
+                        </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-
-$("#la_table").on('click', '#change_status_btn', function()
+    <script>
+        $("#la_table").on('click', '#change_status_btn', function()
 {
     var spinner = $('#loading');
     spinner.show();
@@ -398,6 +467,10 @@ $("#la_table").on('click', '#change_status_btn', function()
                 $('#la_status').html('Approved').addClass('btn-success');
             } else if (leave_status == 'CANCELLED') {
                 $('#la_status').html('Cancelled').addClass('btn-warning');
+            } else if (leave_status == 'TAKEN') {
+                $('#la_status').html('Taken').addClass('btn-danger');
+            }  else if (leave_status == 'EXPIRED') {
+                $('#la_status').html('Expired').addClass('btn-danger');
             }
 
             $('#change_status_modal').modal('show');
@@ -568,5 +641,5 @@ $('#reset_btn').click(function()
     window.location.href = "{{ route('index') }}";
 });
 
-</script>
-@endsection
+    </script>
+    @endsection

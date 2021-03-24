@@ -720,7 +720,7 @@ class LeaveApplicationController extends Controller
                     $this_claim_apply = ReplacementRelation::where('leave_id',$leaveApplication->id)->first();
                     $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
                     //Get related claim records
-                    $all_claim_apply = ReplacementRelation::where('claim_id',$this_claim_apply->claim_id)->get();
+                    $all_claim_apply = ReplacementRelation::where('claim_id', $claimApp->id)->get();
                     $total_days = 0;
                     foreach($all_claim_apply as $aca){
                         $leaveApp = LeaveApplication::where('id',$aca->leave_id)->first();
