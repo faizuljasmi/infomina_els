@@ -146,6 +146,7 @@ class FetchHealthMetrics implements ShouldQueue
                     $hm->leave_from = $leaveFrom;
                     $hm->leave_to = $leaveTo;
                     $hm->total_days = $totalDays;
+                    $hm->status = 'Auto Applied';
                     $hm->link = $link;
                     $hm->save();
                 } else {

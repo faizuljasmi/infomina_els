@@ -55,12 +55,14 @@ class HealthMetricsController extends Controller
         
         // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
         // $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
-        $mails = $inbox->messages()->since('08.03.2021')->subject('HMS medical certificate issued')->get();
-        // dd(count($mails));
+        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        dd(count($mails));
         
         foreach($mails as $mail){
+            // $mail->setFlag('answered');
             $body = $mail->getHTMLBody();
-            // dd($body);
+            // dd($mail);
+            dd($body);
             
             (date('j') < 10) ? $countDate = 1 : $countDate = 2; 
             (date('n') < 10) ? $countMonth = 1 : $countMonth = 2;
