@@ -222,7 +222,7 @@
                             <th>Reason</th>
                             <th>Status</th>
                             <th width="10%">Apply Date</th>
-                            <th width="7%">Action</th>
+                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -280,6 +280,11 @@
                                     value="{{ $la->id }}" data-user="{{ $la->user->name }}">
                                     <i class="fas fa-history"></i>
                                 </button>
+                                <a href="{{ route('view_application', $la->id) }}">
+                                    <button type="button" class="btn btn-info btn-sm" title="View Application">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </a>
                             </td>
                         </tr>
                         @endforeach
@@ -331,7 +336,7 @@
                 </div>
                 <select class="form-control mb-3" id="new_status">
                     <option value="" disabled selected>Select Leave Status</option>
-                    <option value="APPROVE">Approve</option>
+                    <option value="APPROVE" disabled>Approve</option>
                     <option value="REJECT">Reject</option>
                     <option value="CANCEL">Cancel</option>
                 </select>
@@ -474,6 +479,7 @@
             }
 
             // Todo 
+            
 
             $('#change_status_modal').modal('show');
             spinner.hide();
