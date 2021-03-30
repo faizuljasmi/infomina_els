@@ -26,12 +26,11 @@ class WorkspaceController extends Controller
      */
     public function getMyPendingLeave(Request $request)
     {
-
-        $user_id = $request->user_id;
-        $rewind = $request->rewind;
-
         try {
+            $user_email = $request->user_email;
             $date = Carbon::now()->subDays(14);
+            $user = User::where('email', $user_email)->firstOrFail();
+            $user_id = $user->id;
             $pending_leaves = LeaveApplication::where('created_at', '>=', $date)->where(function ($query) use ($user_id) {
                 $query->where('status', 'PENDING_1')
                     ->where('user_id', $user_id);
@@ -65,7 +64,7 @@ class WorkspaceController extends Controller
                 ];
             });
         } catch (ModelNotFoundException $exception) {
-            return back()->withError($exception->getMessage())->withInput();
+            return response()->json($exception->getMessage());
         }
         return response()->json($trimmed);
     }
@@ -76,9 +75,9 @@ class WorkspaceController extends Controller
      */
     public function getToApproveLeaves(Request $request)
     {
-
         try {
-            $user = User::where('id', $request->user_id)->first();
+            $user_email = $request->user_email;
+            $user = User::where('email', $user_email)->firstOrFail();
             $trimmed = [];
             if ($user->user_type == "Authority" || $user->user_type == "Management" || $user->user_type == "Admin") {
 
@@ -116,7 +115,7 @@ class WorkspaceController extends Controller
                 });
             }
         } catch (ModelNotFoundException $exception) {
-            return back()->withError($exception->getMessage())->withInput();
+            return response()->json($exception->getMessage());
         }
         return response()->json($trimmed);
     }
@@ -127,9 +126,8 @@ class WorkspaceController extends Controller
         //Get user id
         //Get leave app details
         //Generate link to view, but according to role (Emp/Authority)
-
-        $leave_app_id = $request->leave_app_id;
         try {
+            $leave_app_id = $request->leave_app_id;
             $leave_app = LeaveApplication::findOrFail($leave_app_id);
             $status = "";
             if ($leave_app->status == "PENDING_1") {
@@ -158,7 +156,7 @@ class WorkspaceController extends Controller
                 'status' => $status
             ];
         } catch (ModelNotFoundException $exception) {
-            return back()->withError($exception->getMessage())->withInput();
+            return response()->json($exception->getMessage());
         }
 
         return response()->json($trimmed);
@@ -168,11 +166,12 @@ class WorkspaceController extends Controller
     {
         //ni yg maleh ni
         //tgk leave type apa
-        $leave_app_id = $request->leave_app_id;
-        $approver_id = $request->els_id;
-        try {
 
+        try {
+            $leave_app_id = $request->leave_app_id;
+            $approver_email = $request->approver_email;
             $leave_app = LeaveApplication::findOrFail($leave_app_id);
+            $approver = User::where('email', $approver_email)->firstOrFail();
             $prev_status = $leave_app->status;
             //Check balance
             if ($this->leaveService->isBalanceEnough($leave_app->user->id, $leave_app->leaveType->id, $leave_app->total_days) == false) {
@@ -180,7 +179,7 @@ class WorkspaceController extends Controller
             }
 
             //Approve or Deny
-            $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver_id, "APPROVE");
+            $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE");
 
             if ($leave_app->status == "APPROVED") {
 
@@ -203,7 +202,7 @@ class WorkspaceController extends Controller
             //$data = $this->leaveService->setLeaveTaken(5,1,2,"Add");
             return response()->json($data);
         } catch (ModelNotFoundException $exception) {
-            return back()->withError($exception->getMessage())->withInput();
+            return response()->json($exception->getMessage());
         }
 
         //do operation tolak tambah
@@ -213,10 +212,11 @@ class WorkspaceController extends Controller
 
     public function approveReplacementLeave(Request $request)
     {
-        $leave_app_id = $request->leave_app_id;
-        $approver_id = $request->els_id;
         try {
+            $leave_app_id = $request->leave_app_id;
+            $approver_email = $request->approver_email;
             $leave_app = LeaveApplication::findOrFail($leave_app_id);
+            $approver = User::where('email', $approver_email)->firstOrFail();
             $prev_status = $leave_app->status;
 
             if ($this->leaveService->isApply($leave_app)) {
@@ -253,24 +253,24 @@ class WorkspaceController extends Controller
             }
 
             //Approve or Deny
-            $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver_id, "APPROVE");
+            $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE");
             return response()->json($leave_app);
         } catch (ModelNotFoundException $exception) {
-            return back()->withError($exception->getMessage())->withInput();
+            return response()->json($exception->getMessage());
         }
     }
 
     public function denyLeave(Request $request)
     {
-
-        $leave_app_id = $request->leave_app_id;
-        $approver_id = $request->els_id;
         try {
+            $leave_app_id = $request->leave_app_id;
+            $approver_email = $request->approver_email;
+            $approver = User::where('email', $approver_email)->firstOrFail();
             $leave_app = LeaveApplication::findOrFail($leave_app_id);
-            $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver_id, "DENY");
-            return $leave_app;
+            $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver->id, "DENY");
+            return  response()->json($leave_app);
         } catch (ModelNotFoundException $exception) {
-            return back()->withError($exception->getMessage())->withInput();
+            return response()->json($exception->getMessage());
         }
     }
 }
