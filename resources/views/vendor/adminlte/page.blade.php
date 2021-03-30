@@ -96,6 +96,11 @@
                 <ul class="navbar-nav ml-auto @if(config('adminlte.layout_topnav') || View::getSection('layout_topnav'))order-1 order-md-3 navbar-no-expand @endif">
                     @yield('content_top_nav_right')
                     @if(Auth::user())
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url('https://wspace.io/app/landing/app')}}">
+                            wSpace <img class="mr-2" src="{{asset('/images/wspace_logo.jpg')}}" style="float:left;width:auto;height:100%;">
+                        </a>
+                    </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
