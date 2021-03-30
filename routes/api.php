@@ -19,10 +19,16 @@ Route::post('/leave/action/mobile','LeaveApplicationController@mobile_action');
 Route::post('/leave/total-pending/mobile','LeaveApplicationController@pending_count');
 
 //Workspace API
+//user_email
 Route::post('/wspace/get-my-pending','WorkspaceController@getMyPendingLeave');
+//user_email
 Route::post('/wspace/get-to-approve','WorkspaceController@getToApproveLeaves');
+//leave_app_id
 Route::post('/wspace/get-leave-details','WorkspaceController@getLeaveAppDetails');
+//leave_app_id, approver_email
 Route::post('/wspace/approve-leave','WorkspaceController@approveLeave');
+//leave_app_id, approver_email
 Route::post('/wspace/approve-replacement-leave','WorkspaceController@approveReplacementLeave');
+////leave_app_id, approver_email
 Route::post('/wspace/deny-leave','WorkspaceController@denyLeave');
 

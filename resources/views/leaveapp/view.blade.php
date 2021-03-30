@@ -6,7 +6,7 @@
 
 
 <section id="leaveapp-create">
-    <h4>View Leave Applicationss</h4>
+    <h4>View Leave Applications</h4>
     @cannot('view', $leaveApp)
     <div class="alert alert-danger" role="alert">
         You don't have permission to view this application
