@@ -79,8 +79,11 @@
                                                     {{ \Carbon\Carbon::parse($leaveApp->updated_at)->isoFormat('ddd, D MMM YYYY')}}</span>
                                             </h5>
                                             @elseif($leaveApp->status == 'CANCELLED')
+                                            <?php
+                                                $canceller = $leaveApp->histories->where('action', 'Cancelled')->first();
+                                            ?>
                                             <h5><span class="badge badge-secondary">This application is cancelled by
-                                                    {{$leaveApp->remarker->name}}</span></h5>
+                                                    {{$canceller->editor->name}}</span></h5>
                                             @endif
                                         </div>
                                     </div>

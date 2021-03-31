@@ -125,7 +125,7 @@ config('adminlte.sidebar_scrollbar_theme') : '') . ' ' . (config('adminlte.sideb
                     @if(Auth::user())
                     <li class="nav-item">
                         <a class="nav-link" href="{{url('https://wspace.io/app/landing/app')}}">
-                            wSpace <img class="mr-2" src="{{asset('/images/wspace_logo.jpg')}}"
+                            wSpace <img class="mr-2" src="{{asset('/images/logo-white.png')}}"
                                 style="float:left;width:auto;height:100%;">
                         </a>
                     </li>

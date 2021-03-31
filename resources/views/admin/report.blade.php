@@ -270,11 +270,11 @@
                             </td>
                             <td>{{\Carbon\Carbon::parse($la->created_at)->isoFormat('Y-MM-DD')}}</td>
                             <td align="center">
-                                <button type="button" id="change_status_btn" class="btn btn-warning btn-sm"
+                                {{-- <button type="button" id="change_status_btn" class="btn btn-warning btn-sm"
                                     data-toggle="tooltip" data-placement="left" title="Change Status"
                                     value="{{ $la->id }}">
                                     <i class="fas fa-edit"></i>
-                                </button>
+                                </button> --}}
                                 <button type="button" id="view_history_btn" class="btn btn-primary btn-sm"
                                     data-toggle="tooltip" data-placement="left" title="View History"
                                     value="{{ $la->id }}" data-user="{{ $la->user->name }}">
@@ -478,8 +478,8 @@
                 $('#la_status').html('Expired').addClass('btn-danger');
             }
 
-            // Todo 
-            
+            // Todo
+
 
             $('#change_status_modal').modal('show');
             spinner.hide();
