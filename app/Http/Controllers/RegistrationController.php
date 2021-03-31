@@ -78,7 +78,7 @@ class RegistrationController extends Controller
         $user_insesh = auth()->user();
         $users = User::orderBy('id', 'ASC')->get()->except($user->id);
         $authUsers = User::orderBy('name','ASC')->where(function ($query) {
-            $query->where('user_type', 'Admin')
+            $query->where('user_type', 'Admin')->where('Status','Active')
                 ->orWhere('user_type', 'Authority')
                 ->orWhere('user_type', 'Management');
         })->get();
