@@ -92,6 +92,7 @@ class LeaveService
     {
 
         $leave_app = LeaveApplication::findOrFail($leave_app_id);
+
         //Get leave application authorities ID
         $la_1 = $leave_app->approver_id_1;
         $la_2 = $leave_app->approver_id_2;
@@ -99,7 +100,7 @@ class LeaveService
         $approver_name = "";
 
         if ($operation == "APPROVE") {
-            if ($approver_id == $la_1) {
+            if ($approver_id == $la_1 && $leave_app->status == 'PENDING_1') {
                 $approver_name = $leave_app->approver_one->name;
                 if ($la_2 == null) {
                     $leave_app->status = 'APPROVED';
@@ -109,7 +110,7 @@ class LeaveService
                     $leave_app->status = 'PENDING_2';
                     $this->notifyAuthority($leave_app, 'APPROVER_TWO');
                 }
-            } else if ($approver_id == $la_2) {
+            } else if ($approver_id == $la_2 && $leave_app->status == 'PENDING_2') {
                 $approver_name = $leave_app->approver_two->name;
                 //if no authority 3, terus change to approved
                 if ($la_3 == null) {
@@ -120,9 +121,12 @@ class LeaveService
                     $leave_app->status = 'PENDING_3';
                     $this->notifyAuthority($leave_app, 'APPROVER_THREE');
                 }
-            } else {
+            } else if ($approver_id == $la_3 && $leave_app->status == 'PENDING_3'){
                 $approver_name = $leave_app->approver_three->name;
                 $leave_app->status = 'APPROVED';
+            }
+            else{
+                return $leave_app;
             }
 
             $action = "Approved by ".$approver_name;

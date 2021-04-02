@@ -181,6 +181,14 @@ class WorkspaceController extends Controller
             //Approve or Deny
             $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE");
 
+            //If somehow the approval is done when the leave is not pending on them
+            if($leave_app->status == $prev_status){
+                $data = [
+                    'error' => "Action is not executed: the leave application is not pending on your level."
+                ];
+                return response()->json($data);
+            }
+
             if ($leave_app->status == "APPROVED") {
 
                 //Add amount of days to taken leave
@@ -273,4 +281,6 @@ class WorkspaceController extends Controller
             return response()->json($exception->getMessage());
         }
     }
+
+    //isauthority
 }
