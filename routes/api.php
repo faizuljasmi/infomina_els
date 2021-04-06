@@ -20,15 +20,15 @@ Route::post('/leave/total-pending/mobile','LeaveApplicationController@pending_co
 
 //Workspace API
 //user_email
-Route::post('/wspace/get-my-pending','WorkspaceController@getMyPendingLeave');
+Route::post('/wspace/get-my-pending','WorkspaceController@getMyPendingLeave')->middleware('cors');
 //user_email
-Route::post('/wspace/get-to-approve','WorkspaceController@getToApproveLeaves');
+Route::post('/wspace/get-to-approve','WorkspaceController@getToApproveLeaves')->middleware('cors');
 //leave_app_id
-Route::post('/wspace/get-leave-details','WorkspaceController@getLeaveAppDetails');
+Route::post('/wspace/get-leave-details','WorkspaceController@getLeaveAppDetails')->middleware('cors');
 //leave_app_id, approver_email
-Route::post('/wspace/approve-leave','WorkspaceController@approveLeave');
+Route::post('/wspace/approve-leave','WorkspaceController@approveLeave')->middleware('cors');
 //leave_app_id, approver_email
-Route::post('/wspace/approve-replacement-leave','WorkspaceController@approveReplacementLeave');
+Route::post('/wspace/approve-replacement-leave','WorkspaceController@approveReplacementLeave')->middleware('cors');
 ////leave_app_id, approver_email
-Route::post('/wspace/deny-leave','WorkspaceController@denyLeave');
+Route::post('/wspace/deny-leave','WorkspaceController@denyLeave')->middleware('cors');
 
