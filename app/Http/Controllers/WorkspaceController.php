@@ -11,7 +11,6 @@ use App\ApprovalAuthority;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-define("PENDING_MSG", "Pending approval by ");
 
 
 class WorkspaceController extends Controller
@@ -31,7 +30,7 @@ class WorkspaceController extends Controller
             $date = Carbon::now()->subDays(14);
             $user = User::where('email', $user_email)->firstOrFail();
             $user_id = $user->id;
-            $pending_leaves = LeaveApplication::where('created_at', '>=', $date)->where(function ($query) use ($user_id) {
+            $pending_leaves = LeaveApplication::where(function ($query) use ($user_id) {
                 $query->where('status', 'PENDING_1')
                     ->where('user_id', $user_id);
             })->orWhere(function ($query) use ($user_id) {
@@ -44,13 +43,7 @@ class WorkspaceController extends Controller
 
             $trimmed = $pending_leaves->map(function ($item, $key) {
 
-                if ($item->status == "PENDING_1") {
-                    $status = PENDING_MSG . $item->approver_one->name;
-                } else if ($item->status == "PENDING_2") {
-                    $status = PENDING_MSG . $item->approver_two->name;
-                } else {
-                    $status = PENDING_MSG . $item->approver_three->name;
-                }
+                $status = $this->leaveService->getPendingAt($item);
 
                 return [
                     'leave_id' => $item->id,
@@ -59,6 +52,7 @@ class WorkspaceController extends Controller
                     'date_from' => $item->date_from,
                     'date_to' => $item->date_to,
                     'date_submitted' => $item->created_at,
+                    'apply_for' => $item->apply_for,
                     'total_days' => $item->total_days,
                     'status' => $status
                 ];
@@ -141,9 +135,11 @@ class WorkspaceController extends Controller
             $trimmed = [
                 'leave_id' => $leave_app->id,
                 'leave_type' => $leave_app->leaveType->name,
+                'status' => $status,
                 'applicant_name' => $leave_app->user->name,
                 'date_from' => $leave_app->date_from,
                 'date_to' => $leave_app->date_to,
+                'apply_for' => $leave_app->apply_for,
                 'date_submitted' => $leave_app->created_at,
                 'total_days' => $leave_app->total_days,
                 'resume_date' => $leave_app->date_resume,
@@ -152,8 +148,11 @@ class WorkspaceController extends Controller
                 'emergency_contact_name' => $leave_app->emergency_contact_name,
                 'emergency_contact_no' => $leave_app->emergency_contact_no,
                 'remarks' => $leave_app->remarks,
-                'attachment_url' => $leave_app->attachment_url,
-                'status' => $status
+                'remarker' => $leave_app->remarker ? $leave_app->remarker->name : ' ',
+                'approver_one' => $leave_app->approver_one->email ? $leave_app->approver_one->email : ' ',
+                'approver_two' => $leave_app->approver_two->email ? $leave_app->approver_two->email : ' ',
+                'approver_three' => $leave_app->approver_three->email ? $leave_app->approver_three->email : ' ',
+                'attachment_url' => $leave_app->attachment_url
             ];
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage());
@@ -166,7 +165,8 @@ class WorkspaceController extends Controller
     {
         //ni yg maleh ni
         //tgk leave type apa
-
+        $transaction_status = [];
+        $status = "";
         try {
             $leave_app_id = $request->leave_app_id;
             $approver_email = $request->approver_email;
@@ -175,37 +175,46 @@ class WorkspaceController extends Controller
             $prev_status = $leave_app->status;
             //Check balance
             if ($this->leaveService->isBalanceEnough($leave_app->user->id, $leave_app->leaveType->id, $leave_app->total_days) == false) {
-                return response()->json(['error' => "User does not have enough balance"]);
+                return response()->json(['warning' => "User does not have enough balance"]);
             }
 
             //Approve or Deny
             $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE");
 
             //If somehow the approval is done when the leave is not pending on them
-            if($leave_app->status == $prev_status){
+            if ($leave_app->status == $prev_status) {
                 $data = [
-                    'error' => "Action is not executed: the leave application is not pending on your level."
+                    'warning' => "Action is not executed: the leave application is not pending on your level."
                 ];
                 return response()->json($data);
-            }
+            } else {
+                
+                $status = $this->leaveService->getPendingAt($leave_app);
+                $transaction_status = [
+                    'old_status' => $prev_status,
+                    'new_status' => $status
+                ];
+                if ($leave_app->status == "APPROVED") {
 
-            if ($leave_app->status == "APPROVED") {
+                    //Add amount of days to taken leave
+                    $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Add');
+                    //Subtract amount of days from leave balance
+                    $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Subtract');
 
-                //Add amount of days to taken leave
-                $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Add');
-                //Subtract amount of days from leave balance
-                $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Subtract');
-
-                if ($leave_app->leaveType->name == 'Sick') {
-                    //Subtract amount of days from Hospitalization balance as well. [Hosp]
-                    $this->leaveService->setLeaveBalance($leave_app->user->id, 4, $leave_app->total_days, 'Subtract');
-                } else if ($leave_app->leaveType->name == 'Emergency') {
-                    //Subtract amount of days from leave balance [Annual]
-                    $this->leaveService->setLeaveBalance($leave_app->user->id, 1, $leave_app->total_days, 'Subtract');
+                    if ($leave_app->leaveType->name == 'Sick') {
+                        //Subtract amount of days from Hospitalization balance as well. [Hosp]
+                        $this->leaveService->setLeaveBalance($leave_app->user->id, 4, $leave_app->total_days, 'Subtract');
+                    } else if ($leave_app->leaveType->name == 'Emergency') {
+                        //Subtract amount of days from leave balance [Annual]
+                        $this->leaveService->setLeaveBalance($leave_app->user->id, 1, $leave_app->total_days, 'Subtract');
+                    }
                 }
             }
             $data = [
-                'leave_application' => $leave_app
+                'success' => [
+                    'desc' => $transaction_status,
+                    'leave_application' => $leave_app
+                ]
             ];
             //$data = $this->leaveService->setLeaveTaken(5,1,2,"Add");
             return response()->json($data);

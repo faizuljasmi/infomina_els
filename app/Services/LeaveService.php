@@ -14,6 +14,8 @@ use App\Notifications\NewApplication;
 use App\Notifications\StatusUpdate;
 use App\Notifications\CancelApplication;
 
+define("PENDING_MSG", "Pending approval by ");
+
 class LeaveService
 {
 
@@ -245,6 +247,18 @@ class LeaveService
         return $applyApps;
     }
 
+    public function getPendingAt($leave_application){
+
+        if ($leave_application->status == "PENDING_1") {
+            $status = PENDING_MSG . $leave_application->approver_one->name;
+        } else if ($leave_application->status == "PENDING_2") {
+            $status = PENDING_MSG . $leave_application->approver_two->name;
+        } else {
+            $status = PENDING_MSG . $leave_application->approver_three->name;
+        }
+        return $status;
+    }
+
     public function setTaken($leave_app)
     {
         $leave_app->status = "TAKEN";
@@ -263,6 +277,13 @@ class LeaveService
     public function isApply($leave_app)
     {
         if ($leave_app->remarks == "Apply") {
+            return true;
+        }
+        return false;
+    }
+
+    public function isAuthority($user){
+        if($user->user_type == "Authority" || $user->user_type == "Management" || $user->user_type == "Admin"){
             return true;
         }
         return false;
