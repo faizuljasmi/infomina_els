@@ -60,9 +60,9 @@ class WorkspaceController extends Controller
                     'status' => $item->status,
                     'status_desc' => $status,
                     'approver_email' => [
-                        'approver_one' => $item->approver_one->email,
-                        'approver_two' => $item->approver_two->email,
-                        'approver_three' => $item->approver_three->email,
+                        'approver_one' => $item->approver_one->email ? $item->approver_one->email : ' ',
+                        'approver_two' => $item->approver_two->email ? $item->approver_two->email : ' ',
+                        'approver_three' => $item->approver_three->email ? $item->approver_three->email : ' ',
                     ],
                     'apply_for' => $item->apply_for,
                     'date_from' => $item->date_from,
