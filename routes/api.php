@@ -20,7 +20,7 @@ Route::post('/leave/total-pending/mobile','LeaveApplicationController@pending_co
 
 //Workspace API
 //user_email
-Route::post('/wspace/get-my-pending','WorkspaceController@getMyPendingLeave')->middleware('cors');
+Route::post('/wspace/get-my-leaves','WorkspaceController@getMyLeave')->middleware('cors');
 //user_email
 Route::post('/wspace/get-to-approve','WorkspaceController@getToApproveLeaves')->middleware('cors');
 //leave_app_id
