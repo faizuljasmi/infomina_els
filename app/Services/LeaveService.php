@@ -253,8 +253,11 @@ class LeaveService
             $status = PENDING_MSG . $leave_application->approver_one->name;
         } else if ($leave_application->status == "PENDING_2") {
             $status = PENDING_MSG . $leave_application->approver_two->name;
-        } else {
+        } else if($leave_application->status == "PENDING_3") {
             $status = PENDING_MSG . $leave_application->approver_three->name;
+        }
+        else{
+            $status = 'Approved';
         }
         return $status;
     }
