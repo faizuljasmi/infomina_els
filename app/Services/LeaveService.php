@@ -28,12 +28,14 @@ class LeaveService
         return $leaveBal;
     }
 
-    public function getLeaveTaken($user_id, $leave_type_id){
-        $leaveTaken = TakenLeave::where('user_id', $user_id)->where('leave_type_id',$leave_type_id)->first();
+    public function getLeaveTaken($user_id, $leave_type_id)
+    {
+        $leaveTaken = TakenLeave::where('user_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
         return $leaveTaken;
     }
 
-    public function getLeaveEarning($user_id, $leave_type_id){
+    public function getLeaveEarning($user_id, $leave_type_id)
+    {
         $leaveEarning = LeaveEarning::where('user_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
         return $leaveEarning;
     }
@@ -75,16 +77,15 @@ class LeaveService
     public function setLeaveEarning($user_id, $leave_type_id, $no_of_days, $operation)
     {
 
-        $leaveEarning = LeaveEarning::where('uesr_id', $user_id)->where('leave_type_id',$leave_type_id)->first();
-        if($operation == "Add"){
+        $leaveEarning = LeaveEarning::where('uesr_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
+        if ($operation == "Add") {
             $leaveEarning->no_of_days += $no_of_days;
-        } else{
+        } else {
             $leaveEarning->no_of_days -= $no_of_days;
         }
         $leaveEarning->update();
 
         return $leaveEarning;
-
     }
 
     /**
@@ -123,17 +124,15 @@ class LeaveService
                     $leave_app->status = 'PENDING_3';
                     $this->notifyAuthority($leave_app, 'APPROVER_THREE');
                 }
-            } else if ($approver_id == $la_3 && $leave_app->status == 'PENDING_3'){
+            } else if ($approver_id == $la_3 && $leave_app->status == 'PENDING_3') {
                 $approver_name = $leave_app->approver_three->name;
                 $leave_app->status = 'APPROVED';
-            }
-            else{
+            } else {
                 return $leave_app;
             }
 
-            $action = "Approved by ".$approver_name;
-            $this->recordHistory($leave_app,$approver_id,$action);
-
+            $action = "Approved by " . $approver_name;
+            $this->recordHistory($leave_app, $approver_id, $action);
         } else if ($operation == "DENY") {
             if ($approver_id == $la_1) {
                 $approver_name = $leave_app->approver_one->name;
@@ -146,11 +145,10 @@ class LeaveService
                 $leave_app->status = 'DENIED_3';
             }
 
-            $action = "Denied by ".$approver_name;
-            $this->recordHistory($leave_app,$approver_id,$action);
-
+            $action = "Denied by " . $approver_name;
+            $this->recordHistory($leave_app, $approver_id, $action);
         } else if ($operation == "CANCEL") {
-            $this->recordHistory($leave_app,$approver_id,"Cancelled");
+            $this->recordHistory($leave_app, $approver_id, "Cancelled");
             $leave_app->status = 'CANCELLED';
         }
         $leave_app->update();
@@ -247,16 +245,16 @@ class LeaveService
         return $applyApps;
     }
 
-    public function getPendingAt($leave_application){
+    public function getPendingAt($leave_application)
+    {
 
         if ($leave_application->status == "PENDING_1") {
             $status = PENDING_MSG . $leave_application->approver_one->name;
         } else if ($leave_application->status == "PENDING_2") {
             $status = PENDING_MSG . $leave_application->approver_two->name;
-        } else if($leave_application->status == "PENDING_3") {
+        } else if ($leave_application->status == "PENDING_3") {
             $status = PENDING_MSG . $leave_application->approver_three->name;
-        }
-        else{
+        } else {
             $status = 'Approved';
         }
         return $status;
@@ -285,8 +283,9 @@ class LeaveService
         return false;
     }
 
-    public function isAuthority($user){
-        if($user->user_type == "Authority" || $user->user_type == "Management" || $user->user_type == "Admin"){
+    public function isAuthority($user)
+    {
+        if ($user->user_type == "Authority" || $user->user_type == "Management" || $user->user_type == "Admin") {
             return true;
         }
         return false;

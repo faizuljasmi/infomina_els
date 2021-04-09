@@ -74,16 +74,16 @@ class WorkspaceController extends Controller
                     ];
                 });
 
-                $res = [
+                $data = [
                     'total' => $count,
                     'data' => $trimmed
                 ];
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());
             }
-            return response()->json($res);
+            return response()->json($data);
         } else {
-            return response()->json('Authentication failed.');
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
         }
     }
 
@@ -134,7 +134,7 @@ class WorkspaceController extends Controller
                         ];
                     });
 
-                    $res = [
+                    $data = [
                         'total' => $count,
                         'data' => $trimmed
                     ];
@@ -142,9 +142,9 @@ class WorkspaceController extends Controller
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());
             }
-            return response()->json($res);
+            return response()->json($data);
         } else {
-            return response()->json('Authentication failed.');
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
         }
     }
 
@@ -159,14 +159,7 @@ class WorkspaceController extends Controller
             try {
                 $leave_app_id = $request->leave_app_id;
                 $leave_app = LeaveApplication::findOrFail($leave_app_id);
-                $status = "";
-                if ($leave_app->status == "PENDING_1") {
-                    $status = PENDING_MSG . $leave_app->approver_one->name;
-                } else if ($leave_app->status == "PENDING_2") {
-                    $status = PENDING_MSG . $leave_app->approver_two->name;
-                } else {
-                    $status = PENDING_MSG . $leave_app->approver_three->name;
-                }
+                $status = $this->leaveService->getPendingAt($leave_app);
 
                 $trimmed = [
                     'leave_id' => $leave_app->id,
@@ -195,7 +188,7 @@ class WorkspaceController extends Controller
             }
             return response()->json($trimmed);
         } else {
-            return response()->json('Authentication failed.');
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
         }
     }
 
@@ -215,7 +208,7 @@ class WorkspaceController extends Controller
                 $prev_status = $leave_app->status;
                 //Check balance
                 if ($this->leaveService->isBalanceEnough($leave_app->user->id, $leave_app->leaveType->id, $leave_app->total_days) == false) {
-                    return response()->json(['warning' => "User does not have enough balance"]);
+                    return response()->json(['error' => "User does not have enough balance"]);
                 }
 
                 //Approve or Deny
@@ -224,7 +217,7 @@ class WorkspaceController extends Controller
                 //If somehow the approval is done when the leave is not pending on them
                 if ($leave_app->status == $prev_status) {
                     $data = [
-                        'warning' => "Action is not executed: the leave application is not pending on your level."
+                        'error' => "Action is not executed: the leave application is not pending on your level."
                     ];
                     return response()->json($data);
                 } else {
@@ -262,7 +255,7 @@ class WorkspaceController extends Controller
                 return response()->json($exception->getMessage());
             }
         } else {
-            return response()->json('Authentication failed.');
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
         }
 
         //do operation tolak tambah
@@ -321,7 +314,7 @@ class WorkspaceController extends Controller
                 return response()->json($exception->getMessage());
             }
         } else {
-            return response()->json('Authentication failed.');
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
         }
     }
 
@@ -340,7 +333,7 @@ class WorkspaceController extends Controller
                 return response()->json($exception->getMessage());
             }
         } else {
-            return response()->json('Authentication failed.');
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
         }
     }
 
