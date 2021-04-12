@@ -13,6 +13,8 @@ use App\ReplacementRelation;
 use App\Notifications\NewApplication;
 use App\Notifications\StatusUpdate;
 use App\Notifications\CancelApplication;
+use GuzzleHttp\Client;
+use Carbon\Carbon;
 
 define("PENDING_MSG", "Pending approval by ");
 
@@ -153,7 +155,7 @@ class LeaveService
         }
         $leave_app->update();
         $this->notifyUser($leave_app, $leave_app->user);
-
+        $this->notifyWspace($leave_app);
         return $leave_app;
     }
 
@@ -301,5 +303,51 @@ class LeaveService
             return false;
         }
         return true;
+    }
+
+    public function notifyWspace($leave_app)
+    {
+
+        $to_email = "";
+        $title = $leave_app->leaveType->name . " Leave Application from " . $leave_app->user->name;
+        $dt = new Carbon($leave_app->created_at);
+        $dt = $dt->format('l, j F Y, h:i A');
+        $subtitle = 'submitted on ' . $dt;
+        if ($leave_app->status == 'PENDING_1') {
+            $to_email = $leave_app->approver_one->email;
+        } else if ($leave_app->status == 'PENDING_2') {
+            $to_email = $leave_app->approver_two->email;
+        } else if ($leave_app->status == 'PENDING_3') {
+            $to_email = $leave_app->approver_three->email;
+        } else if ($leave_app->status == 'APPROVED') {
+            $to_email = $leave_app->user->email;
+            $title = $leave_app->leaveType . " Leave Application Approved.";
+            $dt = new Carbon($leave_app->updated_at);
+            $dt = $dt->format('l, j F Y, h:i A');
+            $subtitle = "approved on " . $dt;
+        }else{
+            return [];
+        }
+
+        $data = [
+            "leave_id" => $leave_app->id,
+            "leave_type" => $leave_app->leaveType->name,
+            "name" => $leave_app->user->name,
+            "email" => $leave_app->user->email,
+            "apply_for" => $leave_app->apply_for,
+            "date_from" => $leave_app->date_from,
+            "date_to" => $leave_app->date_to,
+            "total_days" => $leave_app->total_days
+        ];
+        $client = new Client();
+        $response = $client->request('POST', 'http://128.199.123.181/api/v1/send-message', [
+            'form_params' => [
+                'to_email' => $to_email,
+                'title' => $title,
+                'subtitle' => $subtitle,
+                'body' => $data
+            ]
+        ]);
+        return $response;
     }
 }
