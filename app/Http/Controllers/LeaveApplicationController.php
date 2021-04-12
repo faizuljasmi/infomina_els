@@ -31,6 +31,7 @@ use App\History;
 use App\ReplacementRelation;
 use Carbon\Carbon;
 use App\Services\LeaveService;
+use App\Jobs\NotifyWspace;
 
 class LeaveApplicationController extends Controller
 {
@@ -907,7 +908,8 @@ class LeaveApplicationController extends Controller
 
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-        $this->leaveService->notifyWspace($leaveApplication);
+        //$this->leaveService->notifyWspace($leaveApplication);
+        NotifyWspace::dispatch($leaveApplication);
         return redirect()->to('/admin')->with('message', 'Leave application status updated succesfully');
     }
 
