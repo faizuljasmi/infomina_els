@@ -47,6 +47,15 @@ class WorkspaceController extends Controller
                     $query->where('status', 'PENDING_3')
                         ->where('user_id', $user_id);
                 })->orWhere(function ($query) use ($user_id) {
+                    $query->where('status', 'DENIED_1')
+                        ->where('user_id', $user_id);
+                })->orWhere(function ($query) use ($user_id) {
+                    $query->where('status', 'DENIED_2')
+                        ->where('user_id', $user_id);
+                })->orWhere(function ($query) use ($user_id) {
+                    $query->where('status', 'DENIED_3')
+                        ->where('user_id', $user_id);
+                })->orWhere(function ($query) use ($user_id) {
                     $query->where('status', 'APPROVED')
                         ->where('user_id', $user_id);
                 })->whereYear('created_at', date('Y'))->paginate($offset);
