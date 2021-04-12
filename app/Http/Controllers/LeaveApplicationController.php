@@ -30,6 +30,7 @@ use App\EmpGroup;
 use App\History;
 use App\ReplacementRelation;
 use Carbon\Carbon;
+use App\Services\LeaveService;
 
 class LeaveApplicationController extends Controller
 {
@@ -364,6 +365,7 @@ class LeaveApplicationController extends Controller
 
         $leaveApp->approver_one->notify(new NewApplication($leaveApp));
         //$this->mobile_notification($leaveApp,"authority_1");
+        $this->leaveService->notifyWspace($leaveApp);
 
         //STORE
         return redirect()->to('/home')->with('message', 'Leave application submitted succesfully');
@@ -898,7 +900,7 @@ class LeaveApplicationController extends Controller
 
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
-
+        $this->leaveService->notifyWspace($leaveApplication);
         return redirect()->to('/admin')->with('message', 'Leave application status updated succesfully');
     }
 
