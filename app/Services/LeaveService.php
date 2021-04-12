@@ -142,7 +142,7 @@ class LeaveService
             } else if ($approver_id == $la_2 && $leave_app->status == 'PENDING_2') {
                 $approver_name = $leave_app->approver_two->name;
                 $leave_app->status = 'DENIED_2';
-            } else if ($approver_id == $la_2 && $leave_app->status == 'PENDING_3') {
+            } else if ($approver_id == $la_3 && $leave_app->status == 'PENDING_3') {
                 $approver_name = $leave_app->approver_three->name;
                 $leave_app->status = 'DENIED_3';
             }
