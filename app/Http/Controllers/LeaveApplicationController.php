@@ -34,6 +34,12 @@ use App\Services\LeaveService;
 
 class LeaveApplicationController extends Controller
 {
+
+    protected $leaveService;
+    public function __construct(LeaveService $leaveService)
+    {
+        $this->leaveService = $leaveService;
+    }
     //Create New Application
     public function create()
     {
