@@ -909,7 +909,7 @@ class LeaveApplicationController extends Controller
         //Send status update email
         $leaveApplication->user->notify(new StatusUpdate($leaveApplication));
         //$this->leaveService->notifyWspace($leaveApplication);
-        NotifyWspace::dispatch($leaveApplication);
+        NotifyWspace::dispatch($leaveApplication, $this->leaveService);
         return redirect()->to('/admin')->with('message', 'Leave application status updated succesfully');
     }
 
