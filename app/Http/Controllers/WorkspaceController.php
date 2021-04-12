@@ -167,7 +167,8 @@ class WorkspaceController extends Controller
                 $trimmed = [
                     'leave_id' => $leave_app->id,
                     'leave_type' => $leave_app->leaveType->name,
-                    'status' => $status,
+                    'status' => $leave_app->status,
+                    'status_desc' => $status,
                     'applicant_name' => $leave_app->user->name,
                     'date_from' => $leave_app->date_from,
                     'date_to' => $leave_app->date_to,
