@@ -8,9 +8,12 @@ use App\Services\LeaveService;
 use App\User;
 use App\LeaveType;
 use App\ApprovalAuthority;
+use App\Jobs\NotifyAuthorityEmail;
 use Carbon\Carbon;
 use Config;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Jobs\NotifyWspace;
+use App\Jobs\NotifyUserEmail;
 
 
 
@@ -242,6 +245,9 @@ class WorkspaceController extends Controller
                             $this->leaveService->setLeaveBalance($leave_app->user->id, 1, $leave_app->total_days, 'Subtract');
                         }
                     }
+                    NotifyWspace::dispatch($leave_app, $this->leaveService)->delay(now()->addMinutes(1));
+                    NotifyUserEmail::dispatch($leave_app)->delay(now()->addMinutes(1));
+                    NotifyAuthorityEmail::dispatch($leave_app)->delay(now()->addMinutes(1));
                 }
                 $data = [
                     'success' => [
@@ -328,6 +334,7 @@ class WorkspaceController extends Controller
                 $approver = User::where('email', $approver_email)->firstOrFail();
                 $leave_app = LeaveApplication::findOrFail($leave_app_id);
                 $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver->id, "DENY");
+                NotifyUserEmail::dispatch($leave_app)->delay(now()->addMinutes(1));
                 return  response()->json($leave_app);
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());

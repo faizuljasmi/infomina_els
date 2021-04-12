@@ -17,6 +17,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Carbon\Carbon;
 
+
 define("PENDING_MSG", "Pending approval by ");
 
 class LeaveService
@@ -114,7 +115,6 @@ class LeaveService
                 //else update status to pending 2,
                 else {
                     $leave_app->status = 'PENDING_2';
-                    $this->notifyAuthority($leave_app, 'APPROVER_TWO');
                 }
             } else if ($approver_id == $la_2 && $leave_app->status == 'PENDING_2') {
                 $approver_name = $leave_app->approver_two->name;
@@ -125,7 +125,6 @@ class LeaveService
                 //else update status to pending 3
                 else {
                     $leave_app->status = 'PENDING_3';
-                    $this->notifyAuthority($leave_app, 'APPROVER_THREE');
                 }
             } else if ($approver_id == $la_3 && $leave_app->status == 'PENDING_3') {
                 $approver_name = $leave_app->approver_three->name;
@@ -155,23 +154,26 @@ class LeaveService
             $leave_app->status = 'CANCELLED';
         }
         $leave_app->update();
-        $this->notifyUser($leave_app, $leave_app->user);
-        $this->notifyWspace($leave_app);
+        // $this->notifyUser($leave_app, $leave_app->user);
+        // $this->notifyWspace($leave_app);
         return $leave_app;
     }
 
     /**
      * To notify approver authority
      */
-    public function notifyAuthority($leave_app, $to_notify)
+    public function notifyAuthority($leave_app)
     {
         try {
-            if ($to_notify == "APPROVER_ONE") {
+            if ($leave_app->status == "PENDING_1") {
                 $leave_app->approver_one->notify(new NewApplication($leave_app));
-            } else if ($to_notify == "APPROVER_TWO") {
+            } else if ($leave_app->status == "PENDING_2") {
                 $leave_app->approver_two->notify(new NewApplication($leave_app));
-            } else {
+            } else if($leave_app->status == "PENDING_3"){
                 $leave_app->approver_three->notify(new NewApplication($leave_app));
+            }
+            else{
+                return "Mail not sent";
             }
             return "Mail sent";
         } catch (\Exception $e) { // Using a generic exception

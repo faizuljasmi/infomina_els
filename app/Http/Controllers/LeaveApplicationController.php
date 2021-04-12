@@ -33,6 +33,7 @@ use Carbon\Carbon;
 use App\Services\LeaveService;
 use App\Jobs\NotifyWspace;
 use App\Jobs\NotifyUserEmail;
+use App\Jobs\NotifyAuthorityEmail;
 
 class LeaveApplicationController extends Controller
 {
@@ -372,7 +373,8 @@ class LeaveApplicationController extends Controller
         //Send email notification
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
-        $leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        //$leaveApp->approver_one->notify(new NewApplication($leaveApp));
+        NotifyAuthorityEmail::dispatch($leaveApp)->delay(now()->addMinutes(1));
         //$this->mobile_notification($leaveApp,"authority_1");
         NotifyWspace::dispatch($leaveApp, $this->leaveService)->delay(now()->addMinutes(1));
 
@@ -666,7 +668,7 @@ class LeaveApplicationController extends Controller
                 $leaveApplication->status = 'PENDING_2';
 
                 //Notify the second approver
-                $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
+               // $leaveApplication->approver_two->notify(new NewApplication($leaveApplication));
             }
         }
         //if user id same as approved id 2
@@ -679,7 +681,7 @@ class LeaveApplicationController extends Controller
             else {
                 $leaveApplication->status = 'PENDING_3';
                 //Notify the third approver
-                $leaveApplication->approver_three->notify(new NewApplication($leaveApplication));
+                //$leaveApplication->approver_three->notify(new NewApplication($leaveApplication));
             }
         }
         //If user id same as approved id 3, update status to approved
@@ -914,6 +916,7 @@ class LeaveApplicationController extends Controller
         //Send status update email
         //$leaveApplication->user->notify(new StatusUpdate($leaveApplication));
         NotifyUserEmail::dispatch($leaveApplication)->delay(now()->addMinutes(1));
+        NotifyAuthorityEmail::dispatch($leaveApplication)->delay(now()->addMinutes(1));
         //$this->leaveService->notifyWspace($leaveApplication);
         NotifyWspace::dispatch($leaveApplication, $this->leaveService)->delay(now()->addMinutes(1));
         return redirect()->to('/admin')->with('message', 'Leave application status updated succesfully');
