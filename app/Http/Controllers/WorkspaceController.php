@@ -333,7 +333,15 @@ class WorkspaceController extends Controller
                 $approver_email = $request->approver_email;
                 $approver = User::where('email', $approver_email)->firstOrFail();
                 $leave_app = LeaveApplication::findOrFail($leave_app_id);
+                $prev_status = $leave_app->status;
                 $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver->id, "DENY");
+                 //If somehow the approval is done when the leave is not pending on them
+                 if ($leave_app->status == $prev_status) {
+                    $data = [
+                        'error' => "Action is not executed: the leave application is not pending on your level."
+                    ];
+                    return response()->json($data);
+                }
                 NotifyUserEmail::dispatch($leave_app)->delay(now()->addMinutes(1));
                 return  response()->json($leave_app);
             } catch (ModelNotFoundException $exception) {
