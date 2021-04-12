@@ -15,6 +15,7 @@ class NotifyWspace implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $leave_app;
+    protected $leaveService;
 
     /**
      * Create a new job instance.
