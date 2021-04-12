@@ -337,5 +337,10 @@ class WorkspaceController extends Controller
         }
     }
 
+    public function notifyWspace(){
+        $leave_app = LeaveApplication::first();
+        return $this->leaveService->notifyWspace($leave_app);
+    }
+
     //isauthority
 }

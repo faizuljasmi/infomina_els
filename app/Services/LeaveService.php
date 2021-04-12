@@ -14,6 +14,7 @@ use App\Notifications\NewApplication;
 use App\Notifications\StatusUpdate;
 use App\Notifications\CancelApplication;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use Carbon\Carbon;
 
 define("PENDING_MSG", "Pending approval by ");
@@ -307,7 +308,6 @@ class LeaveService
 
     public function notifyWspace($leave_app)
     {
-
         $to_email = "";
         $title = $leave_app->leaveType->name . " Leave Application from " . $leave_app->user->name;
         $dt = new Carbon($leave_app->created_at);
@@ -321,11 +321,11 @@ class LeaveService
             $to_email = $leave_app->approver_three->email;
         } else if ($leave_app->status == 'APPROVED') {
             $to_email = $leave_app->user->email;
-            $title = $leave_app->leaveType . " Leave Application Approved.";
+            $title = $leave_app->leaveType->name . " Leave Application Approved.";
             $dt = new Carbon($leave_app->updated_at);
             $dt = $dt->format('l, j F Y, h:i A');
             $subtitle = "approved on " . $dt;
-        }else{
+        } else {
             return [];
         }
 
@@ -339,13 +339,18 @@ class LeaveService
             "date_to" => $leave_app->date_to,
             "total_days" => $leave_app->total_days
         ];
+       // return response()->json($data);
         $client = new Client();
-        $response = $client->request('POST', 'http://128.199.123.181/api/v1/send-message', [
+        $response = $client->request('POST', 'http://192.168.0.223:5010/api/v1/send-message', [
+            'headers' =>
+            [
+                'Authorization' => "Bearer els:g1iugk8f-ps4n-4jue-8laf-v22r612k75ov-rhgtvkpn-7c2a-4q8u-90nq-s5vmj34gdpsk"
+            ],
             'form_params' => [
                 'to_email' => $to_email,
                 'title' => $title,
                 'subtitle' => $subtitle,
-                'body' => $data
+                'body' => json_encode($data)
             ]
         ]);
         return $response;
