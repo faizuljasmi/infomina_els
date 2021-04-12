@@ -247,7 +247,7 @@ class WorkspaceController extends Controller
                     }
                     NotifyWspace::dispatch($leave_app, $this->leaveService)->delay(now()->addMinutes(1));
                     NotifyUserEmail::dispatch($leave_app)->delay(now()->addMinutes(1));
-                    NotifyAuthorityEmail::dispatch($leave_app)->delay(now()->addMinutes(1));
+                    NotifyAuthorityEmail::dispatch($leave_app, $this->leaveService)->delay(now()->addMinutes(1));
                 }
                 $data = [
                     'success' => [

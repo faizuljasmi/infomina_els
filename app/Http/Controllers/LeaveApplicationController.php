@@ -374,7 +374,7 @@ class LeaveApplicationController extends Controller
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
         //$leaveApp->approver_one->notify(new NewApplication($leaveApp));
-        NotifyAuthorityEmail::dispatch($leaveApp)->delay(now()->addMinutes(1));
+        NotifyAuthorityEmail::dispatch($leaveApp, $this->leaveService)->delay(now()->addMinutes(1));
         //$this->mobile_notification($leaveApp,"authority_1");
         NotifyWspace::dispatch($leaveApp, $this->leaveService)->delay(now()->addMinutes(1));
 
@@ -916,7 +916,7 @@ class LeaveApplicationController extends Controller
         //Send status update email
         //$leaveApplication->user->notify(new StatusUpdate($leaveApplication));
         NotifyUserEmail::dispatch($leaveApplication)->delay(now()->addMinutes(1));
-        NotifyAuthorityEmail::dispatch($leaveApplication)->delay(now()->addMinutes(1));
+        NotifyAuthorityEmail::dispatch($leaveApplication, $this->leaveService)->delay(now()->addMinutes(1));
         //$this->leaveService->notifyWspace($leaveApplication);
         NotifyWspace::dispatch($leaveApplication, $this->leaveService)->delay(now()->addMinutes(1));
         return redirect()->to('/admin')->with('message', 'Leave application status updated succesfully');
