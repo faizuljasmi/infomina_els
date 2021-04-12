@@ -31,5 +31,4 @@ Route::post('/wspace/approve-leave','WorkspaceController@approveLeave')->middlew
 Route::post('/wspace/approve-replacement-leave','WorkspaceController@approveReplacementLeave')->middleware('cors');
 ////leave_app_id, approver_email
 Route::post('/wspace/deny-leave','WorkspaceController@denyLeave')->middleware('cors');
-Route::post('/wspace/send-message','WorkspaceController@notifyWspace');
 
