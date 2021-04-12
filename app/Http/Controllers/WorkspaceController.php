@@ -74,9 +74,9 @@ class WorkspaceController extends Controller
                         'status' => $item->status,
                         'status_desc' => $status,
                         'approver_email' => [
-                            'approver_one' => $item->approver_one->email ? $item->approver_one->email : ' ',
-                            'approver_two' => $item->approver_two->email ? $item->approver_two->email : ' ',
-                            'approver_three' => $item->approver_three->email ? $item->approver_three->email : ' ',
+                            'approver_one' => $item->approver_one ? $item->approver_one->email : ' ',
+                            'approver_two' => $item->approver_two ? $item->approver_two->email : ' ',
+                            'approver_three' => $item->approver_three ? $item->approver_three->email : ' ',
                         ],
                         'apply_for' => $item->apply_for,
                         'date_from' => $item->date_from,
@@ -191,9 +191,9 @@ class WorkspaceController extends Controller
                     'emergency_contact_no' => $leave_app->emergency_contact_no,
                     'remarks' => $leave_app->remarks,
                     'remarker' => $leave_app->remarker ? $leave_app->remarker->name : ' ',
-                    'approver_one' => $leave_app->approver_one->email ? $leave_app->approver_one->email : ' ',
-                    'approver_two' => $leave_app->approver_two->email ? $leave_app->approver_two->email : ' ',
-                    'approver_three' => $leave_app->approver_three->email ? $leave_app->approver_three->email : ' ',
+                    'approver_one' => $leave_app->approver_one ? $leave_app->approver_one->email : ' ',
+                    'approver_two' => $leave_app->approver_two ? $leave_app->approver_two->email : ' ',
+                    'approver_three' => $leave_app->approver_three ? $leave_app->approver_three->email : ' ',
                     'attachment_url' => $leave_app->attachment_url
                 ];
             } catch (ModelNotFoundException $exception) {
