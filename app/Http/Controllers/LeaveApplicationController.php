@@ -40,6 +40,7 @@ class LeaveApplicationController extends Controller
     {
         $this->leaveService = $leaveService;
     }
+
     //Create New Application
     public function create()
     {
