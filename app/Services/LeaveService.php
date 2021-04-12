@@ -136,15 +136,18 @@ class LeaveService
             $action = "Approved by " . $approver_name;
             $this->recordHistory($leave_app, $approver_id, $action);
         } else if ($operation == "DENY") {
-            if ($approver_id == $la_1) {
+            if ($approver_id == $la_1 && $leave_app->status == 'PENDING_1') {
                 $approver_name = $leave_app->approver_one->name;
                 $leave_app->status = 'DENIED_1';
-            } else if ($approver_id == $la_2) {
+            } else if ($approver_id == $la_2 && $leave_app->status == 'PENDING_2') {
                 $approver_name = $leave_app->approver_two->name;
                 $leave_app->status = 'DENIED_2';
-            } else {
+            } else if ($approver_id == $la_2 && $leave_app->status == 'PENDING_3') {
                 $approver_name = $leave_app->approver_three->name;
                 $leave_app->status = 'DENIED_3';
+            }
+            else{
+                return $leave_app;
             }
 
             $action = "Denied by " . $approver_name;
