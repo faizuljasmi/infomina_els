@@ -179,6 +179,7 @@ class WorkspaceController extends Controller
                     'status' => $leave_app->status,
                     'status_desc' => $status,
                     'applicant_name' => $leave_app->user->name,
+                    'applicant_email' => $leave_app->user->email,
                     'date_from' => $leave_app->date_from,
                     'date_to' => $leave_app->date_to,
                     'apply_for' => $leave_app->apply_for,
