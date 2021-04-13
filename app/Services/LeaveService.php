@@ -51,7 +51,7 @@ class LeaveService
     {
 
         $leaveBal = LeaveBalance::where('user_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
-        if ($operation == "Add") {
+        if ($operation == "ADD") {
             $leaveBal->no_of_days += $no_of_days;
         } else {
             $leaveBal->no_of_days -= $no_of_days;
@@ -68,7 +68,7 @@ class LeaveService
     {
 
         $leaveTaken = TakenLeave::where('user_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
-        if ($operation == "Add") {
+        if ($operation == "ADD") {
             $leaveTaken->no_of_days += $no_of_days;
         } else {
             $leaveTaken->no_of_days -= $no_of_days;
@@ -82,7 +82,7 @@ class LeaveService
     {
 
         $leaveEarning = LeaveEarning::where('uesr_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
-        if ($operation == "Add") {
+        if ($operation == "ADD") {
             $leaveEarning->no_of_days += $no_of_days;
         } else {
             $leaveEarning->no_of_days -= $no_of_days;

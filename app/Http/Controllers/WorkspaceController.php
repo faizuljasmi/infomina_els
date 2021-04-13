@@ -244,16 +244,16 @@ class WorkspaceController extends Controller
                     if ($leave_app->status == "APPROVED") {
 
                         //Add amount of days to taken leave
-                        $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Add');
+                        $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
                         //Subtract amount of days from leave balance
-                        $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Subtract');
+                        $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'SUBTRACT');
 
                         if ($leave_app->leaveType->name == 'Sick') {
                             //Subtract amount of days from Hospitalization balance as well. [Hosp]
-                            $this->leaveService->setLeaveBalance($leave_app->user->id, 4, $leave_app->total_days, 'Subtract');
+                            $this->leaveService->setLeaveBalance($leave_app->user->id, 4, $leave_app->total_days, 'SUBTRACT');
                         } else if ($leave_app->leaveType->name == 'Emergency') {
                             //Subtract amount of days from leave balance [Annual]
-                            $this->leaveService->setLeaveBalance($leave_app->user->id, 1, $leave_app->total_days, 'Subtract');
+                            $this->leaveService->setLeaveBalance($leave_app->user->id, 1, $leave_app->total_days, 'SUBTRACT');
                         }
                     }
                     NotifyWspace::dispatch($leave_app, $this->leaveService)->delay(now()->addMinutes(1));
@@ -314,14 +314,14 @@ class WorkspaceController extends Controller
                     }
 
                     //Add amount of days to taken leave
-                    $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Add');
+                    $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
                     //Subtract amount of days from leave balance
-                    $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Subtract');
+                    $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'SUBTRACT');
                 } else if ($this->leaveService->isClaim($leave_app)) {
-                    //Add days to replacement leave earning
-                    $this->leaveService->setLeaveEarning($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Add');
-                    //Add days to replacement leave balance
-                    $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'Add');
+                    //ADD days to replacement leave earning
+                    $this->leaveService->setLeaveEarning($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
+                    //ADD days to replacement leave balance
+                    $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
                 }
 
                 //Approve or Deny
