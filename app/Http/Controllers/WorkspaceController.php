@@ -226,7 +226,7 @@ class WorkspaceController extends Controller
                 }
 
                 //Approve or Deny
-                $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE");
+                $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE", "wspace");
 
                 //If somehow the approval is done when the leave is not pending on them
                 if ($leave_app->status == $prev_status) {
@@ -325,7 +325,7 @@ class WorkspaceController extends Controller
                 }
 
                 //Approve or Deny
-                $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE");
+                $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE" , "wspace");
                 return response()->json($leave_app);
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());
@@ -345,7 +345,7 @@ class WorkspaceController extends Controller
                 $approver = User::where('email', $approver_email)->firstOrFail();
                 $leave_app = LeaveApplication::findOrFail($leave_app_id);
                 $prev_status = $leave_app->status;
-                $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver->id, "DENY");
+                $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver->id, "DENY" , "wspace");
                  //If somehow the approval is done when the leave is not pending on them
                  if ($leave_app->status == $prev_status) {
                     $data = [

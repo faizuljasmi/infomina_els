@@ -95,7 +95,7 @@ class LeaveService
     /**
      * To change leave application status based on approve or deny action
      */
-    public function approveOrDeny($leave_app_id, $approver_id, $operation)
+    public function approveOrDeny($leave_app_id, $approver_id, $operation, $from)
     {
 
         $leave_app = LeaveApplication::findOrFail($leave_app_id);
@@ -133,7 +133,7 @@ class LeaveService
                 return $leave_app;
             }
 
-            $action = "Approved by " . $approver_name;
+            $action = "Approved by " . $approver_name." from ".$from;
             $this->recordHistory($leave_app, $approver_id, $action);
         } else if ($operation == "DENY") {
             if ($approver_id == $la_1 && $leave_app->status == 'PENDING_1') {
@@ -150,7 +150,7 @@ class LeaveService
                 return $leave_app;
             }
 
-            $action = "Denied by " . $approver_name;
+            $action = "Denied by " . $approver_name." from ".$from;
             $this->recordHistory($leave_app, $approver_id, $action);
         } else if ($operation == "CANCEL") {
             $this->recordHistory($leave_app, $approver_id, "Cancelled");
