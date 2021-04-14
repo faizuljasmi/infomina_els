@@ -65,7 +65,7 @@ class NewApplication extends Notification
                     ->subject('[INFOMINA ELS] New Leave Application- '.$la->user->name)
                     ->greeting('Hi,')
                     ->line('Leave application by '.$la->user->name.' is waiting for your approval:')
-                    ->line('Leave type: '.$la->leaveType->name)
+                    ->line('Leave type: '.$la->leaveType->name.' ('.$la->remarks.')')
                     ->line('From: '.Carbon::parse($la->date_from)->isoFormat('ddd, D MMM YYYY'))
                     ->line('To: '.Carbon::parse($la->date_to)->isoFormat('ddd, D MMM YYYY'))
                     ->line('Total day(s): '.$la->total_days)

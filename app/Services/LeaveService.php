@@ -82,7 +82,7 @@ class LeaveService
     public function setLeaveEarning($user_id, $leave_type_id, $no_of_days, $operation)
     {
 
-        $leaveEarning = LeaveEarning::where('uesr_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
+        $leaveEarning = LeaveEarning::where('user_id', $user_id)->where('leave_type_id', $leave_type_id)->first();
         if ($operation == "ADD") {
             $leaveEarning->no_of_days += $no_of_days;
         } else {
