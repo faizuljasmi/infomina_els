@@ -19,6 +19,7 @@ use Carbon\Carbon;
 
 
 define("PENDING_MSG", "Pending approval by ");
+define("DENIED_MSG", "Denied by ");
 
 class LeaveService
 {
@@ -133,7 +134,7 @@ class LeaveService
                 return $leave_app;
             }
 
-            $action = "Approved by " . $approver_name." from ".$from;
+            $action = "Approved by " . $approver_name . " from " . $from;
             $this->recordHistory($leave_app, $approver_id, $action);
         } else if ($operation == "DENY") {
             if ($approver_id == $la_1 && $leave_app->status == 'PENDING_1') {
@@ -145,12 +146,11 @@ class LeaveService
             } else if ($approver_id == $la_3 && $leave_app->status == 'PENDING_3') {
                 $approver_name = $leave_app->approver_three->name;
                 $leave_app->status = 'DENIED_3';
-            }
-            else{
+            } else {
                 return $leave_app;
             }
 
-            $action = "Denied by " . $approver_name." from ".$from;
+            $action = "Denied by " . $approver_name . " from " . $from;
             $this->recordHistory($leave_app, $approver_id, $action);
         } else if ($operation == "CANCEL") {
             $this->recordHistory($leave_app, $approver_id, "Cancelled");
@@ -172,10 +172,9 @@ class LeaveService
                 $leave_app->approver_one->notify(new NewApplication($leave_app));
             } else if ($leave_app->status == "PENDING_2") {
                 $leave_app->approver_two->notify(new NewApplication($leave_app));
-            } else if($leave_app->status == "PENDING_3"){
+            } else if ($leave_app->status == "PENDING_3") {
                 $leave_app->approver_three->notify(new NewApplication($leave_app));
-            }
-            else{
+            } else {
                 return "Mail not sent";
             }
             return "Mail sent";
@@ -262,8 +261,18 @@ class LeaveService
             $status = PENDING_MSG . $leave_application->approver_two->name;
         } else if ($leave_application->status == "PENDING_3") {
             $status = PENDING_MSG . $leave_application->approver_three->name;
-        } else {
-            $status = 'Approved';
+        } else if ($leave_application->status == "DENIED_1") {
+            $status = DENIED_MSG . $leave_application->approver_one->name;
+        } else if ($leave_application->status == "DENIED_2") {
+            $status = DENIED_MSG . $leave_application->approver_two->name;
+        } else if ($leave_application->status == "DENIED_3") {
+            $status = DENIED_MSG . $leave_application->approver_three->name;
+        }
+        else if ($leave_application->status == "CANCELLED"){
+            $status = "Cancelled";
+        }
+        else{
+            $status = "Approved";
         }
         return $status;
     }
@@ -344,7 +353,7 @@ class LeaveService
             "date_to" => $leave_app->date_to,
             "total_days" => $leave_app->total_days
         ];
-       // return response()->json($data);
+        // return response()->json($data);
         $client = new Client();
         $response = $client->request('POST', 'https://wspace.io/api/v1/send-message', [
             'headers' =>

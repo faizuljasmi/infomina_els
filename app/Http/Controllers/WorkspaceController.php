@@ -187,7 +187,7 @@ class WorkspaceController extends Controller
                     'total_days' => $leave_app->total_days,
                     'resume_date' => $leave_app->date_resume,
                     'reason' => $leave_app->reason,
-                    'relief_personnel' => $leave_app->relief_personnel->name,
+                    'relief_personnel' => $leave_app->relief_personnel ? $leave_app->relief_personnel->name : ' ',
                     'emergency_contact_name' => $leave_app->emergency_contact_name,
                     'emergency_contact_no' => $leave_app->emergency_contact_no,
                     'remarks' => $leave_app->remarks,
