@@ -633,7 +633,8 @@
             event_date = $(this).find(':selected').data('event-date'); // To get event date of claim.
 
             // If claimed more than one day.
-            if (claimed_days > 1) {
+            if (claimed_days >= 1) {
+                //console.log(claimed_days, "CLAIMED DAYS");
                 $("input[name='replacement_applications']").each(function () {
                     var prev_apply = this.value;
                     // If there are leave applications submitted with the same claim selected.
@@ -873,7 +874,7 @@ $('#reason').keyup(function() {
 
             date_event.setDate(date_event.getDate() + 30); // Add 30 days.
             date_allow.setDate(date_allow.getDate() + count_balance); // Add the balance days of the claim.
-
+            // console.log(count_balance);
             if(calendar.isDateBigger(date_from, date_event)){
                 return "Attention: This replacement claim should be utilized within 30 days from the claimed event date.";
             }
