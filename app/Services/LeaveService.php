@@ -335,13 +335,15 @@ class LeaveService
             $to_email = $leave_app->approver_two->email;
         } else if ($leave_app->status == 'PENDING_3') {
             $to_email = $leave_app->approver_three->email;
-        } else if ($leave_app->status == 'APPROVED') {
-            $to_email = $leave_app->user->email;
-            $title = $leave_app->leaveType->name . " Leave Application Approved.";
-            $dt = new Carbon($leave_app->updated_at);
-            $dt = $dt->format('l, j F Y, h:i A');
-            $subtitle = "approved on " . $dt;
-        } else {
+        }
+        // } else if ($leave_app->status == 'APPROVED') {
+        //     $to_email = $leave_app->user->email;
+        //     $title = $leave_app->leaveType->name . " Leave Application Approved.";
+        //     $dt = new Carbon($leave_app->updated_at);
+        //     $dt = $dt->format('l, j F Y, h:i A');
+        //     $subtitle = "approved on " . $dt;
+        // } 
+        else {
             return [];
         }
 
