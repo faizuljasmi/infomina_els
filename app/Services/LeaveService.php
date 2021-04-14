@@ -252,7 +252,7 @@ class LeaveService
         return $applyApps;
     }
 
-    public function getPendingAt($leave_application)
+    public function getStatusDesc($leave_application)
     {
 
         if ($leave_application->status == "PENDING_1") {
@@ -267,12 +267,14 @@ class LeaveService
             $status = DENIED_MSG . $leave_application->approver_two->name;
         } else if ($leave_application->status == "DENIED_3") {
             $status = DENIED_MSG . $leave_application->approver_three->name;
-        }
-        else if ($leave_application->status == "CANCELLED"){
-            $status = "Cancelled";
-        }
-        else{
-            $status = "Approved";
+        } else if ($leave_application->status == "CANCELLED") {
+            $status = "Leave Application Has Been Cancelled";
+        } else if ($leave_application->status == "TAKEN") {
+            $status = "This Replacement Leave Claim Has Been Fully Used";
+        } else if ($leave_application->status == "EXPIRED") {
+            $status = "This Replacement Leave Claim Has Expired";
+        } else {
+            $status = "Leave Application Has Been Approved";
         }
         return $status;
     }

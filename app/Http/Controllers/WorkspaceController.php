@@ -64,7 +64,7 @@ class WorkspaceController extends Controller
 
                 $trimmed = $pending_leaves->map(function ($item, $key) {
 
-                    $status = $this->leaveService->getPendingAt($item);
+                    $status = $this->leaveService->getStatusDesc($item);
 
                     return [
                         'leave_id' => $item->id,
@@ -129,7 +129,7 @@ class WorkspaceController extends Controller
 
                     $trimmed = $leaveApps->map(function ($item, $key) {
 
-                        $status = $this->leaveService->getPendingAt($item);
+                        $status = $this->leaveService->getStatusDesc($item);
 
                         return [
                             'leave_id' => $item->id,
@@ -171,7 +171,7 @@ class WorkspaceController extends Controller
             try {
                 $leave_app_id = $request->leave_app_id;
                 $leave_app = LeaveApplication::findOrFail($leave_app_id);
-                $status = $this->leaveService->getPendingAt($leave_app);
+                $status = $this->leaveService->getStatusDesc($leave_app);
 
                 $trimmed = [
                     'leave_id' => $leave_app->id,
@@ -236,7 +236,7 @@ class WorkspaceController extends Controller
                     return response()->json($data);
                 } else {
 
-                    $status = $this->leaveService->getPendingAt($leave_app);
+                    $status = $this->leaveService->getStatusDesc($leave_app);
                     $transaction_status = [
                         'old_status' => $prev_status,
                         'new_status' => $status
@@ -282,51 +282,96 @@ class WorkspaceController extends Controller
 
     public function approveReplacementLeave(Request $request)
     {
+        //Init transaction status
+        $transaction_status = [];
+        //Init status
+        $status = "";
+        //Get bearer token from request
         $secret_key = $request->bearerToken();
+        //Check if secret key mathces
         if ($secret_key == config('wspace.secret')) {
             try {
+                //Get leave app id from request
                 $leave_app_id = $request->leave_app_id;
+                //Get approver_email from request
                 $approver_email = $request->approver_email;
+                //Get leave app from DB
                 $leave_app = LeaveApplication::findOrFail($leave_app_id);
+                //Get user who approves
                 $approver = User::where('email', $approver_email)->firstOrFail();
+                //Stor current status as prev status
                 $prev_status = $leave_app->status;
 
-                if ($this->leaveService->isApply($leave_app)) {
+                //Exceute Approve or Deny
+                $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE", "wspace");
 
-                    if ($this->leaveService->isBalanceEnough($leave_app->user->id, $leave_app->leaveType->id, $leave_app->total_days) == false) {
-                        return response()->json(['error' => "User does not have enough Replacement Claim balance"]);
+                //If somehow the approval is done when the leave is not pending on them
+                if ($leave_app->status == $prev_status) {
+                    $data = [
+                        'error' => "Action is not executed: the leave application is not pending on your level."
+                    ];
+                    return response()->json($data);
+                //If there is change is status
+                } else {
+                    //Compose transaction status
+                    $status = $this->leaveService->getStatusDesc($leave_app);
+                    $transaction_status = [
+                        'old_status' => $prev_status,
+                        'new_status' => $status
+                    ];
+                    //If replacement leave is approved
+                    if ($leave_app->status == "APPROVED") {
+                        //If the replacement leave is an apply leave
+                        if ($this->leaveService->isApply($leave_app)) {
+
+                            //Check if the balance is enough
+                            if ($this->leaveService->isBalanceEnough($leave_app->user->id, $leave_app->leaveType->id, $leave_app->total_days) == false) {
+                                //If not enough, change the leave status back to previous and return error
+                                $leave_app->status = $prev_status;
+                                $leave_app->save();
+                                return response()->json(['error' => "User does not have enough Replacement Claim balance"]);
+                            }
+
+                            //Get the claim application related to this app
+                            $claimApp = $this->leaveService->getReplacementClaim($leave_app);
+                            //Get all apply replacement applications related to this claim app
+                            $applyApps = $this->leaveService->getReplacementApplications($claimApp);
+                            //Get total days of all those applications
+                            $total_days = $this->leaveService->getTotalDays($applyApps);
+
+                            //If the total days is fully used including this application, set the claim application status to TAKEN
+                            if ($total_days == $claimApp->total_days) {
+                                $this->leaveService->setTaken($claimApp);
+                            } else if ($total_days > $claimApp->total_days) {
+                                $leave_app->status = $prev_status;
+                                $leave_app->save();
+                                return response()->json(['error' => "User does not have enough Replacement Claim balance."]);
+                            }
+
+                            //Add amount of days to taken leave
+                            $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
+                            //Subtract amount of days from leave balance
+                            $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'SUBTRACT');
+                        } else if ($this->leaveService->isClaim($leave_app)) {
+                            //ADD days to replacement leave earning
+                            $this->leaveService->setLeaveEarning($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
+                            //ADD days to replacement leave balance
+                            $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
+                        }
                     }
 
-                    //Get the claim application related to this app
-                    $claimApp = $this->leaveService->getReplacementClaim($leave_app);
-                    //Get all apply replacement applications related to this claim app
-                    $applyApps = $this->leaveService->getReplacementApplications($claimApp);
-                    //Get total days of all those applications
-                    $total_days = $this->leaveService->getTotalDays($applyApps);
-
-                    //If the total days is fully used including this application, set the claim application status to TAKEN
-                    if ($total_days == $claimApp->total_days) {
-                        $this->leaveService->setTaken($claimApp);
-                    } else if ($total_days > $claimApp->total_days) {
-                        $leave_app->status = $prev_status;
-                        $leave_app->save();
-                        return response()->json(['error' => "User does not have enough Replacement Leave balance."]);
-                    }
-
-                    //Add amount of days to taken leave
-                    $this->leaveService->setLeaveTaken($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
-                    //Subtract amount of days from leave balance
-                    $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'SUBTRACT');
-                } else if ($this->leaveService->isClaim($leave_app)) {
-                    //ADD days to replacement leave earning
-                    $this->leaveService->setLeaveEarning($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
-                    //ADD days to replacement leave balance
-                    $this->leaveService->setLeaveBalance($leave_app->user->id, $leave_app->leave_type_id, $leave_app->total_days, 'ADD');
+                    //Notify users
+                    NotifyWspace::dispatch($leave_app, $this->leaveService)->delay(now()->addMinutes(1));
+                    NotifyUserEmail::dispatch($leave_app)->delay(now()->addMinutes(1));
+                    NotifyAuthorityEmail::dispatch($leave_app, $this->leaveService)->delay(now()->addMinutes(1));
                 }
-
-                //Approve or Deny
-                $leave_app = $this->leaveService->approveOrDeny($leave_app_id, $approver->id, "APPROVE" , "wspace");
-                return response()->json($leave_app);
+                $data = [
+                    'success' => [
+                        'desc' => $transaction_status,
+                        'leave_application' => $leave_app
+                    ]
+                ];
+                return response()->json($data);
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());
             }
@@ -345,9 +390,9 @@ class WorkspaceController extends Controller
                 $approver = User::where('email', $approver_email)->firstOrFail();
                 $leave_app = LeaveApplication::findOrFail($leave_app_id);
                 $prev_status = $leave_app->status;
-                $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver->id, "DENY" , "wspace");
-                 //If somehow the approval is done when the leave is not pending on them
-                 if ($leave_app->status == $prev_status) {
+                $leave_app = $this->leaveService->approveOrDeny($leave_app->id, $approver->id, "DENY", "wspace");
+                //If somehow the approval is done when the leave is not pending on them
+                if ($leave_app->status == $prev_status) {
                     $data = [
                         'error' => "Action is not executed: the leave application is not pending on your level."
                     ];
