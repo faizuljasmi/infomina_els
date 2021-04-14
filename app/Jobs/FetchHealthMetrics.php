@@ -43,30 +43,30 @@ class FetchHealthMetrics implements ShouldQueue
     {
         $client = Client::account('gmail'); // Setup imap.php
         $client->connect();
-        
+
         $inbox = $client->getFolder('INBOX');
-    
+
         $dateToday = date('d.m.Y');
-        
+
         // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
         $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
-        
+
         foreach($mails as $mail){
             $body = $mail->getHTMLBody();
-            
-            (date('j') < 10) ? $countDate = 1 : $countDate = 2; 
+
+            (date('j') < 10) ? $countDate = 1 : $countDate = 2;
             (date('n') < 10) ? $countMonth = 1 : $countMonth = 2;
-            
+
             // Find employee ID.
             $staffIDPos = strpos($body, ': IF');
             $staffID = substr($body, $staffIDPos +2, 6);
             // dd($staffID);
-            
+
             // Find total days.
             $totalDaysPos = strpos($body, '-day');
             $totalDaysStr = substr($body, $totalDaysPos -2, 2);
             $totalDays = trim(preg_replace('/\D/', '', $totalDaysStr));
-            
+
             // Find leave date from.
             $leaveFromPos = strpos($body, '(MC) from');
             $leaveFromStr = substr($body, $leaveFromPos + 10, $countDate + $countMonth + 6); // Receiving format Y/d/m.
@@ -74,7 +74,7 @@ class FetchHealthMetrics implements ShouldQueue
             $leaveFrom = date('Y-m-d', strtotime($dFrom[1].'/'.$dFrom[0].'/'.$dFrom[2])); // Convert to Y-m-d.
             $validLF = DateTime::createFromFormat('Y-m-d', $leaveFrom);
             $isLFValid = ($validLF && $validLF->format('Y-m-d') === $leaveFrom); // Check is a date.
-            
+
             // Find leave date to.
             $leaveToPos = strpos($body, '/'.date('Y').' to <strong>');
             $leaveToStr = substr($body, $leaveToPos + 17 , $countDate + $countMonth + 6); // Receiving format Y/d/m.
@@ -83,7 +83,7 @@ class FetchHealthMetrics implements ShouldQueue
             $validLT = DateTime::createFromFormat('Y-m-d', $leaveTo);
             $isLTValid = ($validLT && $validLT->format('Y-m-d') === $leaveTo); // Check is a date.
 
-            
+
             // Find MC link.
             $htmlLink = $mail->getHTMLBody();
             preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $htmlLink, $result);
@@ -107,7 +107,7 @@ class FetchHealthMetrics implements ShouldQueue
                         $nextWorkDay = date('Y-m-d', strtotime($leaveTo.' +'.$plusDay.' Weekday'));
                         $publicHolidays = Holiday::where('date_from', $nextWorkDay)->orWhere('date_to', $nextWorkDay)->get();
                     } while ($publicHolidays->isEmpty() == false);
-                    
+
                     $leaveApp = new LeaveApplication;
                     $leaveApp->user_id = $emp->id;
                     $leaveApp->leave_type_id = 3; // Sick Leave
@@ -119,27 +119,33 @@ class FetchHealthMetrics implements ShouldQueue
                     $leaveApp->date_to = $leaveTo;
                     $leaveApp->date_resume = $nextWorkDay;
                     $leaveApp->total_days = $totalDays;
-    
+
                     if (intval($totalDays) < 1) {
                         $leaveApp->apply_for = 'half-day-am';
                     } else {
                         $leaveApp->apply_for = 'full-day';
                     }
-    
+
                     $leaveApp->reason = 'Health Metrics Auto Apply';
                     $leaveApp->relief_personnel_id = null;
                     $leaveApp->emergency_contact_name = $emp->emergency_contact_name;
                     $leaveApp->emergency_contact_no = $emp->emergency_contact_no;
                     $leaveApp->save();
-    
+
+
                     $leaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
                     $leaveBal->no_of_days = $leaveBal->no_of_days - intval($totalDays);
                     $leaveBal->update();
 
+                    //SUBSTRACT HOSPITALIZATION BALANCE. ADDED BY FAIZUL
+                    $hospLeaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 4)->first();
+                    $hospLeaveBal->no_of_days = $hospLeaveBal->no_of_days - intval($totalDays);
+                    $hospLeaveBal->update();
+
                     $takenLeave = TakenLeave::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
                     $takenLeave->no_of_days = $takenLeave->no_of_days + intval($totalDays);
                     $takenLeave->update();
-    
+
                     $hm = new HealthMetric;
                     $hm->user_id = $emp->id;
                     $hm->application_id = $leaveApp->id;
@@ -162,23 +168,23 @@ class FetchHealthMetrics implements ShouldQueue
             if ($error == 0) {
                 $healthUpdate = [
                     'name' => $emp->name,
-                    'date_from' => $leaveFrom, 
-                    'date_to' => $leaveTo, 
-                    'total_days' => $totalDays, 
+                    'date_from' => $leaveFrom,
+                    'date_to' => $leaveTo,
+                    'total_days' => $totalDays,
                 ];
-                
+
                 $emp->notify(new HealthMetricsUpdate($healthUpdate));
 
                 foreach($admins as $admin) {
                     $healthUpdateHR = [
                         'hr_name' => $admin->name,
                         'name' => $emp->name,
-                        'date_from' => $leaveFrom, 
-                        'date_to' => $leaveTo, 
-                        'total_days' => $totalDays, 
+                        'date_from' => $leaveFrom,
+                        'date_to' => $leaveTo,
+                        'total_days' => $totalDays,
                         'status' => 'success',
                     ];
-                    
+
                     $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
                 }
             } else {
@@ -192,7 +198,7 @@ class FetchHealthMetrics implements ShouldQueue
                     $admin->notify(new HealthMetricsHRUpdate($healthUpdateHR));
                 }
             }
-            
+
             $mail->setFlag('answered');
 
         }
