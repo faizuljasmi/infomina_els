@@ -112,6 +112,7 @@ class WorkspaceController extends Controller
                 $user_email = $request->user_email;
                 $user = User::where('email', $user_email)->firstOrFail();
                 $trimmed = [];
+                $data = [];
                 if ($this->leaveService->isAuthority($user)) {
 
                     $leaveApps = LeaveApplication::where(function ($query) use ($user) {
