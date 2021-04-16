@@ -42,8 +42,7 @@
     <script src='{{asset('assets/fullcalendar/packages/daygrid/main.js')}}'></script>
 
     <script>
-
-      document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var evnts = {!! json_encode($events, JSON_HEX_TAG) !!};
         console.log(evnts);
@@ -68,14 +67,12 @@
 
     </script>
     <style>
-
-      #calendar {
-        max-width: auto;
-        margin: 0 auto;
-      }
-
+        #calendar {
+            max-width: auto;
+            margin: 0 auto;
+        }
     </style>
-    </head>
+</head>
 
 
 @stop
@@ -252,438 +249,477 @@
                                 <!-- Calendar -->
                                 <!-- Vanilla Calendar -->
 
-                                    <div class="myCalendar vanilla-calendar" style="margin: 30px auto"></div>
-                                    <div class="text-center" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-warning" data-toggle="modal"
-                                            data-target="#viewColleague">Team Members Applications</button>
-                                    </div>
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="viewColleague" tabindex="-1" role="dialog"
-                                        aria-labelledby="viewColleagueTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="viewColleagueTitle">Team Members
-                                                        Applications
-                                                    </h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="col-md-12">
-                                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                            @if(isset($user->emp_group_id))
-                                                            <li class="nav-item">
-                                                                <a class="nav-link active" id="group-one-tab"
-                                                                    data-toggle="tab" href="#groupone" role="tab"
-                                                                    aria-controls="groupone"
-                                                                    aria-selected="true">{{$user->emp_group->name}}</a>
-                                                            </li>
-                                                            @endif
-                                                            @if(isset($user->emp_group_two_id))
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" id="group-two-tab" data-toggle="tab"
-                                                                    href="#grouptwo" role="tab" aria-controls="grouptwo"
-                                                                    aria-selected="true">{{$user->emp_group_two->name}}</a>
-                                                            </li>
-                                                            @endif
-                                                            @if(isset($user->emp_group_three_id))
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" id="group-three-tab"
-                                                                    data-toggle="tab" href="#groupthree" role="tab"
-                                                                    aria-controls="groupthree"
-                                                                    aria-selected="true">{{$user->emp_group_three->name}}</a>
-                                                            </li>
-                                                            @endif
-                                                            @if(isset($user->emp_group_four_id))
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" id="group-four-tab"
-                                                                    data-toggle="tab" href="#groupfour" role="tab"
-                                                                    aria-controls="groupfour"
-                                                                    aria-selected="true">{{$user->emp_group_four->name}}</a>
-                                                            </li>
-                                                            @endif
-                                                            @if(isset($user->emp_group_five_id))
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" id="group-five-tab"
-                                                                    data-toggle="tab" href="#groupfive" role="tab"
-                                                                    aria-controls="groupfive"
-                                                                    aria-selected="true">{{$user->emp_group_five->name}}</a>
-                                                            </li>
-                                                            @endif
-                                                        </ul>
-                                                        <div class="tab-content" id="myTabContent">
-                                                            @if(isset($user->emp_group_id))
-                                                            <div class="tab-pane fade show active" id="groupone"
-                                                                role="tabpanel" aria-labelledby="group-one-tab">
-                                                                @foreach ($groupLeaveApps as $gla => $apps)
-                                                                <h5><span class="badge badge-dark">{{$gla}}</span></h5>
-                                                                <table
-                                                                    class="table table-sm table-bordered table-striped">
-                                                                    <tr class="bg-primary">
-                                                                        <th style="width: 50%">Colleague Name</th>
-                                                                        <th>Leave Type</th>
-                                                                        <th>From</th>
-                                                                        <th>To</th>
-                                                                        <th style="width: 5%">Status</th>
-                                                                    </tr>
-                                                                    <?php $count = 0 ?>
-                                                                    @foreach ($apps as $app)
-                                                                    @if(( $user->emp_group_id ==
-                                                                    $app->user->emp_group_id ||
-                                                                    $user->emp_group_id ==
-                                                                    $app->user->emp_group_two_id ||
-                                                                    $user->emp_group_id ==
-                                                                    $app->user->emp_group_three_id ||
-                                                                    $user->emp_group_id ==
-                                                                    $app->user->emp_group_four_id ||
-                                                                    $user->emp_group_id ==
-                                                                    $app->user->emp_group_five_id))
-                                                                    <?php ++$count ?>
-                                                                    <tr>
-                                                                        <td><strong>{{$app->user->name}}</strong></td>
-                                                                        <td>{{$app->leaveType->name}}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            @if($app->status == 'APPROVED')
-                                                                            <span class="badge badge-success"><i
-                                                                                    class="far fa-check-circle"></i></span>
-                                                                            @else
-                                                                            <span class="badge badge-warning"><i
-                                                                                    class="far fa-clock"></i></span>
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                    @endif
-                                                                    @endforeach
-                                                                    @if($count == 0)
-                                                                    <tr>
-                                                                        <td colspan="5"><strong>No Leave
-                                                                                Applications</strong></td>
-                                                                    </tr>
-                                                                    @endif
-                                                                </table>
+                                <div class="myCalendar vanilla-calendar" style="margin: 30px auto"></div>
+                                <div class="text-center" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-warning" data-toggle="modal"
+                                        data-target="#viewColleague">Team Members Applications</button>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#viewHolidays">
+                                        View Holidays
+                                    </button>
+                                </div>
+                                <div class="modal fade" id="viewColleague" tabindex="-1" role="dialog"
+                                    aria-labelledby="viewColleagueTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="viewColleagueTitle">Team Members
+                                                    Applications
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="col-md-12">
+                                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                        @if(isset($user->emp_group_id))
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" id="group-one-tab"
+                                                                data-toggle="tab" href="#groupone" role="tab"
+                                                                aria-controls="groupone"
+                                                                aria-selected="true">{{$user->emp_group->name}}</a>
+                                                        </li>
+                                                        @endif
+                                                        @if(isset($user->emp_group_two_id))
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="group-two-tab" data-toggle="tab"
+                                                                href="#grouptwo" role="tab" aria-controls="grouptwo"
+                                                                aria-selected="true">{{$user->emp_group_two->name}}</a>
+                                                        </li>
+                                                        @endif
+                                                        @if(isset($user->emp_group_three_id))
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="group-three-tab" data-toggle="tab"
+                                                                href="#groupthree" role="tab" aria-controls="groupthree"
+                                                                aria-selected="true">{{$user->emp_group_three->name}}</a>
+                                                        </li>
+                                                        @endif
+                                                        @if(isset($user->emp_group_four_id))
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="group-four-tab" data-toggle="tab"
+                                                                href="#groupfour" role="tab" aria-controls="groupfour"
+                                                                aria-selected="true">{{$user->emp_group_four->name}}</a>
+                                                        </li>
+                                                        @endif
+                                                        @if(isset($user->emp_group_five_id))
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="group-five-tab" data-toggle="tab"
+                                                                href="#groupfive" role="tab" aria-controls="groupfive"
+                                                                aria-selected="true">{{$user->emp_group_five->name}}</a>
+                                                        </li>
+                                                        @endif
+                                                    </ul>
+                                                    <div class="tab-content" id="myTabContent">
+                                                        @if(isset($user->emp_group_id))
+                                                        <div class="tab-pane fade show active" id="groupone"
+                                                            role="tabpanel" aria-labelledby="group-one-tab">
+                                                            @foreach ($groupLeaveApps as $gla => $apps)
+                                                            <h5><span class="badge badge-dark">{{$gla}}</span></h5>
+                                                            <table class="table table-sm table-bordered table-striped">
+                                                                <tr class="bg-primary">
+                                                                    <th style="width: 50%">Colleague Name</th>
+                                                                    <th>Leave Type</th>
+                                                                    <th>From</th>
+                                                                    <th>To</th>
+                                                                    <th style="width: 5%">Status</th>
+                                                                </tr>
+                                                                <?php $count = 0 ?>
+                                                                @foreach ($apps as $app)
+                                                                @if(( $user->emp_group_id ==
+                                                                $app->user->emp_group_id ||
+                                                                $user->emp_group_id ==
+                                                                $app->user->emp_group_two_id ||
+                                                                $user->emp_group_id ==
+                                                                $app->user->emp_group_three_id ||
+                                                                $user->emp_group_id ==
+                                                                $app->user->emp_group_four_id ||
+                                                                $user->emp_group_id ==
+                                                                $app->user->emp_group_five_id))
+                                                                <?php ++$count ?>
+                                                                <tr>
+                                                                    <td><strong>{{$app->user->name}}</strong></td>
+                                                                    <td>{{$app->leaveType->name}}</td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($app->status == 'APPROVED')
+                                                                        <span class="badge badge-success"><i
+                                                                                class="far fa-check-circle"></i></span>
+                                                                        @else
+                                                                        <span class="badge badge-warning"><i
+                                                                                class="far fa-clock"></i></span>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
                                                                 @endforeach
-                                                                <div class="float-right"><strong>Legends:</strong>
-                                                                    <span class="badge badge-success"><i
-                                                                            class="far fa-check-circle"></i>
-                                                                        Approved</span>
-                                                                    <span class="badge badge-warning"><i
-                                                                            class="far fa-clock"></i>Pending</span>
-                                                                </div>
+                                                                @if($count == 0)
+                                                                <tr>
+                                                                    <td colspan="5"><strong>No Leave
+                                                                            Applications</strong></td>
+                                                                </tr>
+                                                                @endif
+                                                            </table>
+                                                            @endforeach
+                                                            <div class="float-right"><strong>Legends:</strong>
+                                                                <span class="badge badge-success"><i
+                                                                        class="far fa-check-circle"></i>
+                                                                    Approved</span>
+                                                                <span class="badge badge-warning"><i
+                                                                        class="far fa-clock"></i>Pending</span>
                                                             </div>
-                                                            @endif
-                                                            @if(isset($user->emp_group_two_id))
-                                                            <div class="tab-pane fade" id="grouptwo" role="tabpanel"
-                                                                aria-labelledby="group-two-tab">
-                                                                @foreach ($groupLeaveApps as $gla => $apps)
-                                                                <h5><span class="badge badge-dark">{{$gla}}</span></h5>
-                                                                <table
-                                                                    class="table table-sm table-bordered table-striped">
-                                                                    <tr class="bg-primary">
-                                                                        <th style="width: 50%">Colleague Name</th>
-                                                                        <th>Leave Type</th>
-                                                                        <th>From</th>
-                                                                        <th>To</th>
-                                                                        <th style="width: 5%">Status</th>
-                                                                    </tr>
-                                                                    <?php $count = 0 ?>
-                                                                    @foreach ($apps as $app)
-                                                                    @if(( $user->emp_group_two_id ==
-                                                                    $app->user->emp_group_id ||
-                                                                    $user->emp_group_two_id ==
-                                                                    $app->user->emp_group_two_id ||
-                                                                    $user->emp_group_two_id ==
-                                                                    $app->user->emp_group_three_id ||
-                                                                    $user->emp_group_two_id ==
-                                                                    $app->user->emp_group_four_id ||
-                                                                    $user->emp_group_two_id ==
-                                                                    $app->user->emp_group_five_id))
-                                                                    <?php ++$count ?>
-                                                                    <tr>
-                                                                        <td><strong>{{$app->user->name}}</strong></td>
-                                                                        <td>{{$app->leaveType->name}}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            @if($app->status == 'APPROVED')
-                                                                            <span class="badge badge-success"><i
-                                                                                    class="far fa-check-circle"></i></span>
-                                                                            @else
-                                                                            <span class="badge badge-warning"><i
-                                                                                    class="far fa-clock"></i></span>
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                    @endif
-                                                                    @endforeach
-                                                                    @if($count == 0)
-                                                                    <tr>
-                                                                        <td colspan="5"><strong>No Leave
-                                                                                Applications</strong></td>
-                                                                    </tr>
-                                                                    @endif
-                                                                </table>
-                                                                @endforeach
-                                                                <div class="float-right"><strong>Legends:</strong>
-                                                                    <span class="badge badge-success"><i
-                                                                            class="far fa-check-circle"></i>
-                                                                        Approved</span>
-                                                                    <span class="badge badge-warning"><i
-                                                                            class="far fa-clock"></i>Pending</span>
-                                                                </div>
-                                                            </div>
-                                                            @endif
-                                                            @if(isset($user->emp_group_three_id))
-                                                            <div class="tab-pane fade" id="groupthree" role="tabpanel"
-                                                                aria-labelledby="group-three-tab">
-                                                                @foreach ($groupLeaveApps as $gla => $apps)
-                                                                <h5><span class="badge badge-dark">{{$gla}}</span></h5>
-                                                                <table
-                                                                    class="table table-sm table-bordered table-striped">
-                                                                    <tr class="bg-primary">
-                                                                        <th style="width: 50%">Colleague Name</th>
-                                                                        <th>Leave Type</th>
-                                                                        <th>From</th>
-                                                                        <th>To</th>
-                                                                        <th style="width: 5%">Status</th>
-                                                                    </tr>
-                                                                    <?php $count = 0 ?>
-                                                                    @foreach ($apps as $app)
-                                                                    @if(( $user->emp_group_three_id ==
-                                                                    $app->user->emp_group_id ||
-                                                                    $user->emp_group_three_id ==
-                                                                    $app->user->emp_group_two_id ||
-                                                                    $user->emp_group_three_id ==
-                                                                    $app->user->emp_group_three_id ||
-                                                                    $user->emp_group_three_id ==
-                                                                    $app->user->emp_group_four_id ||
-                                                                    $user->emp_group_three_id ==
-                                                                    $app->user->emp_group_five_id))
-                                                                    <?php ++$count ?>
-                                                                    <tr>
-                                                                        <td><strong>{{$app->user->name}}</strong></td>
-                                                                        <td>{{$app->leaveType->name}}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            @if($app->status == 'APPROVED')
-                                                                            <span class="badge badge-success"><i
-                                                                                    class="far fa-check-circle"></i></span>
-                                                                            @else
-                                                                            <span class="badge badge-warning"><i
-                                                                                    class="far fa-clock"></i></span>
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                    @endif
-                                                                    @endforeach
-                                                                    @if($count == 0)
-                                                                    <tr>
-                                                                        <td colspan="5"><strong>No Leave
-                                                                                Applications</strong></td>
-                                                                    </tr>
-                                                                    @endif
-                                                                </table>
-                                                                @endforeach
-                                                                <div class="float-right"><strong>Legends:</strong>
-                                                                    <span class="badge badge-success"><i
-                                                                            class="far fa-check-circle"></i>
-                                                                        Approved</span>
-                                                                    <span class="badge badge-warning"><i
-                                                                            class="far fa-clock"></i>Pending</span>
-                                                                </div>
-                                                            </div>
-                                                            @endif
-                                                            @if(isset($user->emp_group_four_id))
-                                                            <div class="tab-pane fade" id="groupfour" role="tabpanel"
-                                                                aria-labelledby="group-four-tab">
-                                                                @foreach ($groupLeaveApps as $gla => $apps)
-                                                                <h5><span class="badge badge-dark">{{$gla}}</span></h5>
-                                                                <table
-                                                                    class="table table-sm table-bordered table-striped">
-                                                                    <tr class="bg-primary">
-                                                                        <th style="width: 50%">Colleague Name</th>
-                                                                        <th>Leave Type</th>
-                                                                        <th>From</th>
-                                                                        <th>To</th>
-                                                                        <th style="width: 5%">Status</th>
-                                                                    </tr>
-                                                                    <?php $count = 0 ?>
-                                                                    @foreach ($apps as $app)
-                                                                    @if(( $user->emp_group_four_id ==
-                                                                    $app->user->emp_group_id ||
-                                                                    $user->emp_group_four_id ==
-                                                                    $app->user->emp_group_two_id ||
-                                                                    $user->emp_group_four_id ==
-                                                                    $app->user->emp_group_three_id ||
-                                                                    $user->emp_group_four_id ==
-                                                                    $app->user->emp_group_four_id ||
-                                                                    $user->emp_group_four_id ==
-                                                                    $app->user->emp_group_five_id))
-                                                                    <?php ++$count ?>
-                                                                    <tr>
-                                                                        <td><strong>{{$app->user->name}}</strong></td>
-                                                                        <td>{{$app->leaveType->name}}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            @if($app->status == 'APPROVED')
-                                                                            <span class="badge badge-success"><i
-                                                                                    class="far fa-check-circle"></i></span>
-                                                                            @else
-                                                                            <span class="badge badge-warning"><i
-                                                                                    class="far fa-clock"></i></span>
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                    @endif
-                                                                    @endforeach
-                                                                    @if($count == 0)
-                                                                    <tr>
-                                                                        <td colspan="5"><strong>No Leave
-                                                                                Applications</strong></td>
-                                                                    </tr>
-                                                                    @endif
-                                                                </table>
-                                                                @endforeach
-                                                                <div class="float-right"><strong>Legends:</strong>
-                                                                    <span class="badge badge-success"><i
-                                                                            class="far fa-check-circle"></i>
-                                                                        Approved</span>
-                                                                    <span class="badge badge-warning"><i
-                                                                            class="far fa-clock"></i>Pending</span>
-                                                                </div>
-                                                            </div>
-                                                            @endif
-                                                            @if(isset($user->emp_group_five_id))
-                                                            <div class="tab-pane fade" id="groupfive" role="tabpanel"
-                                                                aria-labelledby="group-five-tab">
-                                                                @foreach ($groupLeaveApps as $gla => $apps)
-                                                                <h5><span class="badge badge-dark">{{$gla}}</span></h5>
-                                                                <table
-                                                                    class="table table-sm table-bordered table-striped">
-                                                                    <tr class="bg-primary">
-                                                                        <th style="width: 50%">Colleague Name</th>
-                                                                        <th>Leave Type</th>
-                                                                        <th>From</th>
-                                                                        <th>To</th>
-                                                                        <th style="width: 5%">Status</th>
-                                                                    </tr>
-                                                                    <?php $count = 0 ?>
-                                                                    @foreach ($apps as $app)
-                                                                    @if(( $user->emp_group_five_id ==
-                                                                    $app->user->emp_group_id ||
-                                                                    $user->emp_group_five_id ==
-                                                                    $app->user->emp_group_two_id ||
-                                                                    $user->emp_group_five_id ==
-                                                                    $app->user->emp_group_three_id ||
-                                                                    $user->emp_group_five_id ==
-                                                                    $app->user->emp_group_four_id ||
-                                                                    $user->emp_group_five_id ==
-                                                                    $app->user->emp_group_five_id))
-                                                                    <?php ++$count ?>
-                                                                    <tr>
-                                                                        <td><strong>{{$app->user->name}}</strong></td>
-                                                                        <td>{{$app->leaveType->name}}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            @if($app->status == 'APPROVED')
-                                                                            <span class="badge badge-success"><i
-                                                                                    class="far fa-check-circle"></i></span>
-                                                                            @else
-                                                                            <span class="badge badge-warning"><i
-                                                                                    class="far fa-clock"></i></span>
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                    @endif
-                                                                    @endforeach
-                                                                    @if($count == 0)
-                                                                    <tr>
-                                                                        <td colspan="5"><strong>No Leave
-                                                                                Applications</strong></td>
-                                                                    </tr>
-                                                                    @endif
-                                                                </table>
-                                                                @endforeach
-                                                                <div class="float-right"><strong>Legends:</strong>
-                                                                    <span class="badge badge-success"><i
-                                                                            class="far fa-check-circle"></i>
-                                                                        Approved</span>
-                                                                    <span class="badge badge-warning"><i
-                                                                            class="far fa-clock"></i>Pending</span>
-                                                                </div>
-                                                            </div>
-                                                            @endif
                                                         </div>
+                                                        @endif
+                                                        @if(isset($user->emp_group_two_id))
+                                                        <div class="tab-pane fade" id="grouptwo" role="tabpanel"
+                                                            aria-labelledby="group-two-tab">
+                                                            @foreach ($groupLeaveApps as $gla => $apps)
+                                                            <h5><span class="badge badge-dark">{{$gla}}</span></h5>
+                                                            <table class="table table-sm table-bordered table-striped">
+                                                                <tr class="bg-primary">
+                                                                    <th style="width: 50%">Colleague Name</th>
+                                                                    <th>Leave Type</th>
+                                                                    <th>From</th>
+                                                                    <th>To</th>
+                                                                    <th style="width: 5%">Status</th>
+                                                                </tr>
+                                                                <?php $count = 0 ?>
+                                                                @foreach ($apps as $app)
+                                                                @if(( $user->emp_group_two_id ==
+                                                                $app->user->emp_group_id ||
+                                                                $user->emp_group_two_id ==
+                                                                $app->user->emp_group_two_id ||
+                                                                $user->emp_group_two_id ==
+                                                                $app->user->emp_group_three_id ||
+                                                                $user->emp_group_two_id ==
+                                                                $app->user->emp_group_four_id ||
+                                                                $user->emp_group_two_id ==
+                                                                $app->user->emp_group_five_id))
+                                                                <?php ++$count ?>
+                                                                <tr>
+                                                                    <td><strong>{{$app->user->name}}</strong></td>
+                                                                    <td>{{$app->leaveType->name}}</td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($app->status == 'APPROVED')
+                                                                        <span class="badge badge-success"><i
+                                                                                class="far fa-check-circle"></i></span>
+                                                                        @else
+                                                                        <span class="badge badge-warning"><i
+                                                                                class="far fa-clock"></i></span>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
+                                                                @endforeach
+                                                                @if($count == 0)
+                                                                <tr>
+                                                                    <td colspan="5"><strong>No Leave
+                                                                            Applications</strong></td>
+                                                                </tr>
+                                                                @endif
+                                                            </table>
+                                                            @endforeach
+                                                            <div class="float-right"><strong>Legends:</strong>
+                                                                <span class="badge badge-success"><i
+                                                                        class="far fa-check-circle"></i>
+                                                                    Approved</span>
+                                                                <span class="badge badge-warning"><i
+                                                                        class="far fa-clock"></i>Pending</span>
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                        @if(isset($user->emp_group_three_id))
+                                                        <div class="tab-pane fade" id="groupthree" role="tabpanel"
+                                                            aria-labelledby="group-three-tab">
+                                                            @foreach ($groupLeaveApps as $gla => $apps)
+                                                            <h5><span class="badge badge-dark">{{$gla}}</span></h5>
+                                                            <table class="table table-sm table-bordered table-striped">
+                                                                <tr class="bg-primary">
+                                                                    <th style="width: 50%">Colleague Name</th>
+                                                                    <th>Leave Type</th>
+                                                                    <th>From</th>
+                                                                    <th>To</th>
+                                                                    <th style="width: 5%">Status</th>
+                                                                </tr>
+                                                                <?php $count = 0 ?>
+                                                                @foreach ($apps as $app)
+                                                                @if(( $user->emp_group_three_id ==
+                                                                $app->user->emp_group_id ||
+                                                                $user->emp_group_three_id ==
+                                                                $app->user->emp_group_two_id ||
+                                                                $user->emp_group_three_id ==
+                                                                $app->user->emp_group_three_id ||
+                                                                $user->emp_group_three_id ==
+                                                                $app->user->emp_group_four_id ||
+                                                                $user->emp_group_three_id ==
+                                                                $app->user->emp_group_five_id))
+                                                                <?php ++$count ?>
+                                                                <tr>
+                                                                    <td><strong>{{$app->user->name}}</strong></td>
+                                                                    <td>{{$app->leaveType->name}}</td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($app->status == 'APPROVED')
+                                                                        <span class="badge badge-success"><i
+                                                                                class="far fa-check-circle"></i></span>
+                                                                        @else
+                                                                        <span class="badge badge-warning"><i
+                                                                                class="far fa-clock"></i></span>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
+                                                                @endforeach
+                                                                @if($count == 0)
+                                                                <tr>
+                                                                    <td colspan="5"><strong>No Leave
+                                                                            Applications</strong></td>
+                                                                </tr>
+                                                                @endif
+                                                            </table>
+                                                            @endforeach
+                                                            <div class="float-right"><strong>Legends:</strong>
+                                                                <span class="badge badge-success"><i
+                                                                        class="far fa-check-circle"></i>
+                                                                    Approved</span>
+                                                                <span class="badge badge-warning"><i
+                                                                        class="far fa-clock"></i>Pending</span>
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                        @if(isset($user->emp_group_four_id))
+                                                        <div class="tab-pane fade" id="groupfour" role="tabpanel"
+                                                            aria-labelledby="group-four-tab">
+                                                            @foreach ($groupLeaveApps as $gla => $apps)
+                                                            <h5><span class="badge badge-dark">{{$gla}}</span></h5>
+                                                            <table class="table table-sm table-bordered table-striped">
+                                                                <tr class="bg-primary">
+                                                                    <th style="width: 50%">Colleague Name</th>
+                                                                    <th>Leave Type</th>
+                                                                    <th>From</th>
+                                                                    <th>To</th>
+                                                                    <th style="width: 5%">Status</th>
+                                                                </tr>
+                                                                <?php $count = 0 ?>
+                                                                @foreach ($apps as $app)
+                                                                @if(( $user->emp_group_four_id ==
+                                                                $app->user->emp_group_id ||
+                                                                $user->emp_group_four_id ==
+                                                                $app->user->emp_group_two_id ||
+                                                                $user->emp_group_four_id ==
+                                                                $app->user->emp_group_three_id ||
+                                                                $user->emp_group_four_id ==
+                                                                $app->user->emp_group_four_id ||
+                                                                $user->emp_group_four_id ==
+                                                                $app->user->emp_group_five_id))
+                                                                <?php ++$count ?>
+                                                                <tr>
+                                                                    <td><strong>{{$app->user->name}}</strong></td>
+                                                                    <td>{{$app->leaveType->name}}</td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($app->status == 'APPROVED')
+                                                                        <span class="badge badge-success"><i
+                                                                                class="far fa-check-circle"></i></span>
+                                                                        @else
+                                                                        <span class="badge badge-warning"><i
+                                                                                class="far fa-clock"></i></span>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
+                                                                @endforeach
+                                                                @if($count == 0)
+                                                                <tr>
+                                                                    <td colspan="5"><strong>No Leave
+                                                                            Applications</strong></td>
+                                                                </tr>
+                                                                @endif
+                                                            </table>
+                                                            @endforeach
+                                                            <div class="float-right"><strong>Legends:</strong>
+                                                                <span class="badge badge-success"><i
+                                                                        class="far fa-check-circle"></i>
+                                                                    Approved</span>
+                                                                <span class="badge badge-warning"><i
+                                                                        class="far fa-clock"></i>Pending</span>
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                        @if(isset($user->emp_group_five_id))
+                                                        <div class="tab-pane fade" id="groupfive" role="tabpanel"
+                                                            aria-labelledby="group-five-tab">
+                                                            @foreach ($groupLeaveApps as $gla => $apps)
+                                                            <h5><span class="badge badge-dark">{{$gla}}</span></h5>
+                                                            <table class="table table-sm table-bordered table-striped">
+                                                                <tr class="bg-primary">
+                                                                    <th style="width: 50%">Colleague Name</th>
+                                                                    <th>Leave Type</th>
+                                                                    <th>From</th>
+                                                                    <th>To</th>
+                                                                    <th style="width: 5%">Status</th>
+                                                                </tr>
+                                                                <?php $count = 0 ?>
+                                                                @foreach ($apps as $app)
+                                                                @if(( $user->emp_group_five_id ==
+                                                                $app->user->emp_group_id ||
+                                                                $user->emp_group_five_id ==
+                                                                $app->user->emp_group_two_id ||
+                                                                $user->emp_group_five_id ==
+                                                                $app->user->emp_group_three_id ||
+                                                                $user->emp_group_five_id ==
+                                                                $app->user->emp_group_four_id ||
+                                                                $user->emp_group_five_id ==
+                                                                $app->user->emp_group_five_id))
+                                                                <?php ++$count ?>
+                                                                <tr>
+                                                                    <td><strong>{{$app->user->name}}</strong></td>
+                                                                    <td>{{$app->leaveType->name}}</td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_from)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>{{ \Carbon\Carbon::parse($app->date_to)->isoFormat('ddd, D MMM')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($app->status == 'APPROVED')
+                                                                        <span class="badge badge-success"><i
+                                                                                class="far fa-check-circle"></i></span>
+                                                                        @else
+                                                                        <span class="badge badge-warning"><i
+                                                                                class="far fa-clock"></i></span>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
+                                                                @endforeach
+                                                                @if($count == 0)
+                                                                <tr>
+                                                                    <td colspan="5"><strong>No Leave
+                                                                            Applications</strong></td>
+                                                                </tr>
+                                                                @endif
+                                                            </table>
+                                                            @endforeach
+                                                            <div class="float-right"><strong>Legends:</strong>
+                                                                <span class="badge badge-success"><i
+                                                                        class="far fa-check-circle"></i>
+                                                                    Approved</span>
+                                                                <span class="badge badge-warning"><i
+                                                                        class="far fa-clock"></i>Pending</span>
+                                                            </div>
+                                                        </div>
+                                                        @endif
                                                     </div>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">Close</button>
-                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="modal fade" id="viewHolidays" tabindex="-1" role="dialog"
+                                    aria-labelledby="viewHolidaysLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @foreach ($holsPaginated as $hp => $hols)
+                                                <h5><span class="badge badge-dark">{{$hp}}</span></h5>
+                                                <table class="table table table-bordered table-striped">
+                                                    <tr class="bg-primary">
+                                                        <th style="width: 40%">Holiday Name</th>
+                                                        <th>From</th>
+                                                        <th>To</th>
+                                                        <th>Country</th>
+                                                        <th>State</th>
+                                                    </tr>
+                                                    @foreach ($hols as $hol)
+                                                    <tr>
+                                                        <td><strong>{{$hol->name}}</strong></td>
+                                                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('ddd, D MMM')}}
+                                                        </td>
+                                                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('ddd, D MMM')}}
+                                                        </td>
+                                                        <td>{{$hol->country ? $hol->country->name:''}}</td>
+                                                        <td>{{$hol->state ? $hol->state->name:''}}</td>
+                                                    </tr>
+                                                    @endforeach
+                                                </table>
+                                                @endforeach
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.col -->
                             </div>
                             <!-- /.col -->
                         </div>
-                        <!-- /.col -->
+                        <!-- /.row -->
                     </div>
-                    <!-- /.row -->
+                    <!-- ./card-body -->
                 </div>
-                <!-- ./card-body -->
+                <!-- /.card -->
             </div>
-            <!-- /.card -->
+
+            <!-- /.col -->
         </div>
+        <!-- /.row -->
 
-        <!-- /.col -->
-    </div>
-    <!-- /.row -->
+        <!-- Main row -->
+        <div class="row">
+            <!-- Left col -->
+            <div class="col-md-12">
+                <!-- MAP & BOX PANE -->
+                <div class="card">
+                    <div class="card-header bg-teal">
+                        <h3 class="card-title">Leave Calendar</h3>
 
-    <!-- Main row -->
-    <div class="row">
-        <!-- Left col -->
-        <div class="col-md-12">
-            <!-- MAP & BOX PANE -->
-            <div class="card">
-                <div class="card-header bg-teal">
-                    <h3 class="card-title">Leave Calendar</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div>
-                        <span>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#remark_modal">Add Remarks</button>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#view_modal">View Remarks</button>
-                        </span>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div>
+                            <span>
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#remark_modal">Add Remarks</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#view_modal">View Remarks</button>
+                            </span>
+                        </div>
+                        <div id='calendar'></div>
                     </div>
-                    <div id='calendar'></div>
-                </div>
                     <!-- /.card-body -->
                 </div>
                 <!-- /.card -->
@@ -697,125 +733,129 @@
     </div>
     <!--/. container-fluid -->
 
-        <!-- Main row -->
-        <div class="row">
-            <!-- Left col -->
-            <div class="col-md-12">
-                <!-- MAP & BOX PANE -->
-                <div class="card">
-                    <div class="card-header bg-teal">
-                        <h3 class="card-title">Leave Application History</h3>
+    <!-- Main row -->
+    <div class="row">
+        <!-- Left col -->
+        <div class="col-md-12">
+            <!-- MAP & BOX PANE -->
+            <div class="card">
+                <div class="card-header bg-teal">
+                    <h3 class="card-title">Leave Application History</h3>
 
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <!-- /.card-header -->
-                    <div class="card-body" style="overflow-x:auto;">
-                        <div class="col-md-3 float-right mb-3">
-                            <form action="{{ route('admin__leave_search') }}" method="get">
-                                <div class="input-group">
-                                    <input type="search" name="search" class="form-control">
-                                    <span class="input-group-prepend">
-                                        <button type="submit" class="btn btn-primary">Search</button>
-                                    </span>
-                                </div>
-                            </form>
-                        </div>
-                        <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
-                        </h6>
-                        <table class="table table-striped table-bordered">
-                            @if($leaveHist->count() > 0)
-                            <thead>
-                                <tr>
-                                    <th scope="col">No.</th>
-                                    <th scope="col">Submitted by</th>
-                                    <th scope="col">Leave Type @sortablelink('leaveType.name','',[])</th>
-                                    <th scope="col">Duration @sortablelink('total_days','',[])</th>
-                                    <th scope="col">From @sortablelink('date_from','',[])</th>
-                                    <th scope="col">To @sortablelink('date_to','',[])</th>
-                                    <th scope="col">Status @sortablelink('status','',[])</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php $count = ($leaveHist->currentPage()-1) * $leaveHist->perPage(); @endphp
-                                @foreach($leaveHist as $lh)
-                                <tr>
-                                    <th scope="row">{{++$count}}</th>
-                                    <td>{{$lh->user->name}}</td>
-                                    <td>{{$lh->leaveType->name}}</td>
-                                    <td>{{$lh->total_days}} day(s)</td>
-                                    <td>{{ \Carbon\Carbon::parse($lh->date_from)->isoFormat('ddd, D MMM YY')}}</td>
-                                    <td>{{ \Carbon\Carbon::parse($lh->date_to)->isoFormat('ddd, D MMM YY')}}</td>
-                                    <td>
-                                        @if($lh->status == 'APPROVED')
-                                        <span class="badge badge-pill badge-success">Approved</span>
-                                        @elseif($lh->status == 'CANCELLED')
-                                        <span class="badge badge-pill badge-secondary">Cancelled</span>
-                                        @endif
-                                    </td>
-                                    <td><a href="{{route('view_application', $lh->id)}}"
-                                            class="btn btn-success btn-sm" data-toggle="tooltip"
-                                            title="View leave application">View</a></td>
-                                </tr>
-                                @endforeach
-                                @else
-                                <th>No Record Found</th>
-                                @endif
-                            </tbody>
-                        </table>
-                        {!! $leaveHist->appends(\Request::except('page'),['history' =>
-                        $leaveHist->currentPage()])->render() !!}
-                    </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
-
-
-
                 </div>
-                <!-- /.col -->
+                <!-- /.card-header -->
+                <div class="card-body" style="overflow-x:auto;">
+                    <div class="col-md-3 float-right mb-3">
+                        <form action="{{ route('admin__leave_search') }}" method="get">
+                            <div class="input-group">
+                                <input type="search" name="search" class="form-control">
+                                <span class="input-group-prepend">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <h6><strong>Displaying {{$leaveHist->count()}} of {{$leaveHist->total()}} records.</strong>
+                    </h6>
+                    <table class="table table-striped table-bordered">
+                        @if($leaveHist->count() > 0)
+                        <thead>
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">Submitted by</th>
+                                <th scope="col">Leave Type @sortablelink('leaveType.name','',[])</th>
+                                <th scope="col">Duration @sortablelink('total_days','',[])</th>
+                                <th scope="col">From @sortablelink('date_from','',[])</th>
+                                <th scope="col">To @sortablelink('date_to','',[])</th>
+                                <th scope="col">Status @sortablelink('status','',[])</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $count = ($leaveHist->currentPage()-1) * $leaveHist->perPage(); @endphp
+                            @foreach($leaveHist as $lh)
+                            <tr>
+                                <th scope="row">{{++$count}}</th>
+                                <td>{{$lh->user->name}}</td>
+                                <td>{{$lh->leaveType->name}}</td>
+                                <td>{{$lh->total_days}} day(s)</td>
+                                <td>{{ \Carbon\Carbon::parse($lh->date_from)->isoFormat('ddd, D MMM YY')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($lh->date_to)->isoFormat('ddd, D MMM YY')}}</td>
+                                <td>
+                                    @if($lh->status == 'APPROVED')
+                                    <span class="badge badge-pill badge-success">Approved</span>
+                                    @elseif($lh->status == 'CANCELLED')
+                                    <span class="badge badge-pill badge-secondary">Cancelled</span>
+                                    @endif
+                                </td>
+                                <td><a href="{{route('view_application', $lh->id)}}" class="btn btn-success btn-sm"
+                                        data-toggle="tooltip" title="View leave application">View</a></td>
+                            </tr>
+                            @endforeach
+                            @else
+                            <th>No Record Found</th>
+                            @endif
+                        </tbody>
+                    </table>
+                    {!! $leaveHist->appends(\Request::except('page'),['history' =>
+                    $leaveHist->currentPage()])->render() !!}
+                </div>
+                <!-- /.card-body -->
             </div>
+            <!-- /.card -->
+
+
 
         </div>
-        <!--/. container-fluid -->
+        <!-- /.col -->
+    </div>
+
+    </div>
+    <!--/. container-fluid -->
 
 
     <!-- Remark Modal -->
-    <div class="modal fade" id="remark_modal" style="z-index:9999999;"  role="dialog">
+    <div class="modal fade" id="remark_modal" style="z-index:9999999;" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header"><h5><b>New Remark</b></h5></div>
+                <div class="modal-header">
+                    <h5><b>New Remark</b></h5>
+                </div>
                 <div class="modal-body">
-                <form id="remark_form" action="{{ route('add_remark') }}" method="get">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fa fa-calendar-day"></i>
-                            </span>
+                    <form id="remark_form" action="{{ route('add_remark') }}" method="get">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fa fa-calendar-day"></i>
+                                </span>
+                            </div>
+                            <input placeholder="Select Date From" class="form-control" type="text"
+                                onfocus="(this.type='date')" name="remark_date_from" id="remark_date_from">
                         </div>
-                        <input placeholder="Select Date From" class="form-control" type="text" onfocus="(this.type='date')" name="remark_date_from" id="remark_date_from">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fa fa-calendar-day"></i>
-                            </span>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fa fa-calendar-day"></i>
+                                </span>
+                            </div>
+                            <input placeholder="Select Date To" class="form-control" type="text"
+                                onfocus="(this.type='date')" name="remark_date_to" id="remark_date_to">
                         </div>
-                        <input placeholder="Select Date To" class="form-control" type="text" onfocus="(this.type='date')" name="remark_date_to" id="remark_date_to">
-                    </div>
-                    <div class="d-flex justify-content-end mb-3">
-                        <button id="this_date" type="button" class="btn btn-success">Remark for today</button>
-                    </div>
-                    <div class="input-group mb-3">
-                        <textarea class="form-control" name="remark_text" id="remark_text" placeholder="Add Remarks"></textarea>
-                    </div>
+                        <div class="d-flex justify-content-end mb-3">
+                            <button id="this_date" type="button" class="btn btn-success">Remark for today</button>
+                        </div>
+                        <div class="input-group mb-3">
+                            <textarea class="form-control" name="remark_text" id="remark_text"
+                                placeholder="Add Remarks"></textarea>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -827,13 +867,16 @@
     </div>
 
     <!-- View Remark Modal -->
-    <div class="modal fade" id="view_modal" style="z-index:9999999;"  role="dialog">
+    <div class="modal fade" id="view_modal" style="z-index:9999999;" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header"><h5><b>All Remarks</b></h5></div>
+                <div class="modal-header">
+                    <h5><b>All Remarks</b></h5>
+                </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type="text" name="search_remark" id="search_remark" class="form-control" placeholder="Search"/>
+                        <input type="text" name="search_remark" id="search_remark" class="form-control"
+                            placeholder="Search" />
                     </div>
                     <table class="table table-sm table-bordered table-striped table-hover" id="remark_table">
                         <thead>
