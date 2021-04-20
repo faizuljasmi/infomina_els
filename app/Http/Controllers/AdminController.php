@@ -30,6 +30,7 @@ use App\BroughtForwardLeave;
 use App\BurntLeave;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AdminController extends Controller
 {
@@ -45,8 +46,8 @@ class AdminController extends Controller
 
         if ($search_name) {
             $query->join('users', 'users.id', '=', 'leave_applications.user_id')
-                  ->where('users.name', 'like', '%'.$search_name.'%')
-                  ->select('leave_applications.*');
+                ->where('users.name', 'like', '%' . $search_name . '%')
+                ->select('leave_applications.*');
         }
 
         if ($date_from && $date_to) {
@@ -60,9 +61,9 @@ class AdminController extends Controller
 
         if ($leave_status) {
             if ($leave_status == 'PENDING') {
-                $query->where('status','like','PENDING_%');
+                $query->where('status', 'like', 'PENDING_%');
             } else if ($leave_status == 'DENIED') {
-                $query->where('status','like','DENIED_%');
+                $query->where('status', 'like', 'DENIED_%');
             } else {
                 $query->where('status', $leave_status);
             }
@@ -70,13 +71,13 @@ class AdminController extends Controller
 
         $leave_app = $query->sortable()->paginate(15);
 
-        $count_approve = LeaveApplication::where('status','APPROVED')->count();
+        $count_approve = LeaveApplication::where('status', 'APPROVED')->count();
 
-        $count_cancel = LeaveApplication::where('status','CANCELLED')->count();
+        $count_cancel = LeaveApplication::where('status', 'CANCELLED')->count();
 
-        $count_pending = LeaveApplication::where('status','like','PENDING_%')->count();
+        $count_pending = LeaveApplication::where('status', 'like', 'PENDING_%')->count();
 
-        $count_reject = LeaveApplication::where('status','like','DENIED_%')->count();
+        $count_reject = LeaveApplication::where('status', 'like', 'DENIED_%')->count();
 
         return view('admin/report')->with(compact('leave_app', 'count_approve', 'count_pending', 'count_reject', 'count_cancel', 'search_name', 'date_from', 'date_to', 'leave_type', 'leave_status',));
     }
@@ -107,32 +108,32 @@ class AdminController extends Controller
                         $leave_app->status = 'CANCELLED';
                     }
                     // If existing status is approved.
-                    if ( $leave_app->status == "APPROVED" ) { 
+                    if ($leave_app->status == "APPROVED") {
 
                         // For the rest of the leave type other than replacement leave.
-                        if ( $leave_app->leave_type_id != '12' ) {
+                        if ($leave_app->leave_type_id != '12') {
                             $leave_bal->no_of_days += $leave_app->total_days; // Add in balance.
                             $leave_taken->no_of_days -= $leave_app->total_days; // Substract in taken.
                         }
-    
+
                         // If Replacement leave.
-                        if ( $leave_app->leave_type_id == '12') { 
+                        if ($leave_app->leave_type_id == '12') {
                             $replacement_earn = LeaveEarning::where('user_id', $leave_app->user_id)->where('leave_type_id', '12')->first();
                             $replacement_bal = LeaveBalance::where('user_id', $leave_app->user_id)->where('leave_type_id', '12')->first();
-    
+
                             $replacement_earn->no_of_days -= $leave_app->total_days; // Subtract replacement leave earned.
                             $replacement_bal->no_of_days -= $leave_app->total_days; // Subtract replacement leave balance.
-    
+
                             // Get the claim application related to this use replacement application.
                             $this_claim_apply = ReplacementRelation::where('leave_id', $leave_app->id)->first();
                             $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
-                            if($claimApp->status == "TAKEN"){
+                            if ($claimApp->status == "TAKEN") {
                                 $claimApp->status = 'APPROVED';
                                 $claimApp->save();
                             }
                             $this_claim_apply->delete();
                         }
-    
+
                         // If Emergency leave.
                         if ($leave_app->leave_type_id == '6') {
                             $annual_bal = LeaveBalance::where('user_id', $leave_app->user_id)->where('leave_type_id', '1')->first();
@@ -149,7 +150,7 @@ class AdminController extends Controller
                 } else if ($new_status == 'APPROVE') {
                     $leave_app->status = 'APPROVED';
                     // For the rest of the leave type other than replacement leave.
-                    if($leave_app->leave_type_id != '12'){
+                    if ($leave_app->leave_type_id != '12') {
                         $leave_bal->no_of_days -= $leave_app->total_days; // Substract in balance.
                         $leave_taken->no_of_days += $leave_app->total_days; // Add in taken.
                     }
@@ -162,16 +163,15 @@ class AdminController extends Controller
                         if ($leave_app->remarks == "Claim") {
                             $replacement_earn->no_of_days += $leave_app->total_days; // Add replacement leave earning.
                             $replacement_bal->no_of_days += $leave_app->total_days; // Add replacement leave balance.
-                        }
-                        else if ($leave_app->remarks == "Apply") {
+                        } else if ($leave_app->remarks == "Apply") {
                             $this_claim_apply = ReplacementRelation::where('leave_id', $leave_app->id)->first(); // Get the claim application related to this use replacement application.
                             $claimApp = LeaveApplication::where('id', $this_claim_apply->claim_id)->first();
                             $all_claim_apply = ReplacementRelation::where('claim_id', $this_claim_apply->claim_id)->get(); // Get related claim records.
                             $total_days = 0;
 
-                            foreach($all_claim_apply as $aca) {
+                            foreach ($all_claim_apply as $aca) {
                                 $leaveApp = LeaveApplication::where('id', $aca->leave_id)->first();
-                                if($leaveApp->status != 'CANCELLED') {
+                                if ($leaveApp->status != 'CANCELLED') {
                                     $total_days += $leaveApp->total_days;
                                 }
                             }
@@ -180,12 +180,11 @@ class AdminController extends Controller
                             if ($total_days == $claimApp->total_days) {
                                 $claimApp->status = "TAKEN";
                                 $claimApp->save();
-                            }
-                            else if ($total_days > $claimApp->total_days) {
+                            } else if ($total_days > $claimApp->total_days) {
                                 $leave_app->status = "CANCELLED";
                                 $leave_app->save();
                             }
-                            
+
                             $leave_taken->no_of_days += $leave_app->total_days; // Add replacement taken leave.
                             $replacement_bal->no_of_days -= $leave_app->total_days; // Minum from replacement balance
                         }
@@ -193,7 +192,7 @@ class AdminController extends Controller
                         $replacement_earn->update();
                         $replacement_bal->update();
                     }
-                    
+
                     // If Emergency leave.
                     if ($leave_app->leave_type_id == '6') {
                         $annual_bal = LeaveBalance::where('user_id', $leave_app->user_id)->where('leave_type_id', '1')->first();
@@ -218,19 +217,19 @@ class AdminController extends Controller
                 $hist->user_id = auth()->user()->id;
                 $hist->remarks = $status_remarks;
 
-                if ( $new_status == "APPROVE" ) {
+                if ($new_status == "APPROVE") {
                     $hist->action = "Approved";
                     // $leave_app->user->notify(new StatusUpdate($leave_app)); // Email
-                } else if ( $new_status == "REJECT" ) {
+                } else if ($new_status == "REJECT") {
                     $hist->action = "Rejected";
-                } else if ( $new_status == "CANCEL" ) {
+                } else if ($new_status == "CANCEL") {
                     $hist->action = "Cancelled";
                 }
 
                 $hist->save();
             }
         }
-        
+
         return response()->json(['leave_app' => $leave_app]);
     }
 
@@ -247,7 +246,7 @@ class AdminController extends Controller
     {
         $user_name = $request->get('name');
 
-        $user_list = User::where('name','like','%'.$user_name.'%')->get();
+        $user_list = User::where('name', 'like', '%' . $user_name . '%')->get();
 
         return response()->json($user_list);
     }
@@ -256,14 +255,14 @@ class AdminController extends Controller
     {
         $this->validate($request, [
             'import_file'  => 'required|mimes:xls,xlsx'
-           ]);
+        ]);
 
         Excel::import(new Import(), request()->file('import_file'));
 
         return back()->with('success', 'Data imported successfully.');
     }
 
-    public function export(Request $request) 
+    public function export(Request $request)
     {
         $search_name = $request->get('excel_name');
         $date_from = $request->get('excel_date_from');
@@ -275,8 +274,8 @@ class AdminController extends Controller
 
         if ($search_name) {
             $query->join('users', 'users.id', '=', 'leave_applications.user_id')
-                  ->where('users.name', 'like', '%'.$search_name.'%')
-                  ->select('leave_applications.*');
+                ->where('users.name', 'like', '%' . $search_name . '%')
+                ->select('leave_applications.*');
         }
 
         if ($date_from && $date_to) {
@@ -290,9 +289,9 @@ class AdminController extends Controller
 
         if ($leave_status) {
             if ($leave_status == 'PENDING') {
-                $query->where('status','like','PENDING_%');
+                $query->where('status', 'like', 'PENDING_%');
             } else if ($leave_status == 'DENIED') {
-                $query->where('status','like','DENIED_%');
+                $query->where('status', 'like', 'DENIED_%');
             } else {
                 $query->where('status', $leave_status);
             }
@@ -326,7 +325,7 @@ class AdminController extends Controller
         $rows = 2;
         $count = 1;
 
-        foreach($leave_app as $la) {
+        foreach ($leave_app as $la) {
             $sheet->getColumnDimension('A')->setAutoSize(true);
             $sheet->setCellValue('A' . $rows, $count++);
             $sheet->getColumnDimension('B')->setAutoSize(true);
@@ -360,44 +359,44 @@ class AdminController extends Controller
     public function export_leave_balance()
     {
         $annual = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->select('users.id as user_id', 'users.*', 'leave_balances.*')
-        ->where('leave_balances.leave_type_id', '=', '1' )->get();
+            ->select('users.id as user_id', 'users.*', 'leave_balances.*')
+            ->where('leave_balances.leave_type_id', '=', '1')->get();
 
         $brought_forw = User::leftjoin('brought_forward_leaves', 'brought_forward_leaves.user_id', '=', 'users.id')
-        ->where('brought_forward_leaves.leave_type_id', '=', '1' )->get();
+            ->where('brought_forward_leaves.leave_type_id', '=', '1')->get();
 
         $calamity = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '2' )->get();
+            ->where('leave_balances.leave_type_id', '=', '2')->get();
 
         $sick = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '3' )->get();
+            ->where('leave_balances.leave_type_id', '=', '3')->get();
 
         $hospitalization = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '4' )->get();
+            ->where('leave_balances.leave_type_id', '=', '4')->get();
 
         $compassionate = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '5' )->get();
+            ->where('leave_balances.leave_type_id', '=', '5')->get();
 
         $emergency = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '6' )->get();
+            ->where('leave_balances.leave_type_id', '=', '6')->get();
 
         $marriage = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '7' )->get();
+            ->where('leave_balances.leave_type_id', '=', '7')->get();
 
         $maternity = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '8' )->get();
+            ->where('leave_balances.leave_type_id', '=', '8')->get();
 
         $paternity = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '9' )->get();
+            ->where('leave_balances.leave_type_id', '=', '9')->get();
 
         $traning = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '10' )->get();
+            ->where('leave_balances.leave_type_id', '=', '10')->get();
 
         $unpaid = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '11' )->get();
+            ->where('leave_balances.leave_type_id', '=', '11')->get();
 
         $replacement = User::leftjoin('leave_balances', 'leave_balances.user_id', '=', 'users.id')
-        ->where('leave_balances.leave_type_id', '=', '12' )->get();
+            ->where('leave_balances.leave_type_id', '=', '12')->get();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -444,62 +443,62 @@ class AdminController extends Controller
         $countapp = count($annual);
         $count = 1;
 
-        for($d=0; $d<$countapp; $d++) {
+        for ($d = 0; $d < $countapp; $d++) {
             $sheet->getColumnDimension('A')->setAutoSize(true);
             $sheet->setCellValue('A' . $rows, $count++);
             $sheet->getColumnDimension('B')->setAutoSize(true);
             $sheet->setCellValue('B' . $rows, $annual[$d]->name);
             $sheet->getColumnDimension('C')->setAutoSize(true);
             $sheet->setCellValue('C' . $rows, $annual[$d]->staff_id);
-            if ( $annual ) {
+            if ($annual) {
                 $sheet->getColumnDimension('D')->setAutoSize(true);
                 $sheet->setCellValue('D' . $rows, $annual[$d]->no_of_days);
             }
-            if ( $calamity ) {
+            if ($calamity) {
                 $sheet->getColumnDimension('E')->setAutoSize(true);
                 $sheet->setCellValue('E' . $rows, $calamity[$d]->no_of_days);
             }
-            if ( $sick ) {
+            if ($sick) {
                 $sheet->getColumnDimension('F')->setAutoSize(true);
                 $sheet->setCellValue('F' . $rows, $sick[$d]->no_of_days);
             }
-            if ( $hospitalization ) {
+            if ($hospitalization) {
                 $sheet->getColumnDimension('G')->setAutoSize(true);
                 $sheet->setCellValue('G' . $rows, $hospitalization[$d]->no_of_days);
             }
-            if ( $compassionate ) {
+            if ($compassionate) {
                 $sheet->getColumnDimension('H')->setAutoSize(true);
                 $sheet->setCellValue('H' . $rows, $compassionate[$d]->no_of_days);
             }
-            if ( $emergency ) {
+            if ($emergency) {
                 $sheet->getColumnDimension('I')->setAutoSize(true);
                 $sheet->setCellValue('I' . $rows, $emergency[$d]->no_of_days);
             }
-            if ( $marriage ) {
+            if ($marriage) {
                 $sheet->getColumnDimension('J')->setAutoSize(true);
                 $sheet->setCellValue('J' . $rows, $marriage[$d]->no_of_days);
             }
-            if ( $maternity ) {
+            if ($maternity) {
                 $sheet->getColumnDimension('K')->setAutoSize(true);
                 $sheet->setCellValue('K' . $rows, $maternity[$d]->no_of_days);
             }
-            if ( $paternity ) {
+            if ($paternity) {
                 $sheet->getColumnDimension('L')->setAutoSize(true);
                 $sheet->setCellValue('L' . $rows, $paternity[$d]->no_of_days);
             }
-            if ( $traning ) {
+            if ($traning) {
                 $sheet->getColumnDimension('M')->setAutoSize(true);
                 $sheet->setCellValue('M' . $rows, $traning[$d]->no_of_days);
             }
-            if ( $unpaid ) {
+            if ($unpaid) {
                 $sheet->getColumnDimension('N')->setAutoSize(true);
                 $sheet->setCellValue('N' . $rows, $unpaid[$d]->no_of_days);
             }
-            if ( $replacement ) {
+            if ($replacement) {
                 $sheet->getColumnDimension('O')->setAutoSize(true);
                 $sheet->setCellValue('O' . $rows, $replacement[$d]->no_of_days);
             }
-            if ( $annual ) {
+            if ($annual) {
                 $sheet->getColumnDimension('P')->setAutoSize(true);
                 $sheet->getColumnDimension('Q')->setAutoSize(true);
                 $sheet->getColumnDimension('R')->setAutoSize(true);
@@ -508,10 +507,10 @@ class AdminController extends Controller
                 $this_user_id = $annual[$d]->user_id;
 
                 $total_ent = LeaveEntitlement::where('emp_type_id', $this_emp_type)
-                ->where('leave_type_id', '1')->first();
+                    ->where('leave_type_id', '1')->first();
 
                 $total_earn = LeaveEarning::where('user_id', $this_user_id)
-                ->where('leave_type_id', '1')->first();
+                    ->where('leave_type_id', '1')->first();
 
                 // dd($total_earn);
 
@@ -521,7 +520,7 @@ class AdminController extends Controller
                 $sheet->setCellValue('Q' . $rows, $total_earn->no_of_days);
                 $sheet->setCellValue('R' . $rows, $join_date->join_date);
             }
-            if ( $brought_forw ) {
+            if ($brought_forw) {
                 $sheet->getColumnDimension('S')->setAutoSize(true);
                 $sheet->setCellValue('S' . $rows, $brought_forw[$d]->no_of_days);
             }
@@ -533,24 +532,24 @@ class AdminController extends Controller
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment; filename="Leave_Balance.xlsx"');
         $writer->save("php://output");
-
     }
 
-    public function deduct_burnt(){
-        $users = User::where('status','Active')->get();
-        $bfwd = BroughtForwardLeave::where('leave_type_id',1)->where('no_of_days','>',0)->get();
+    public function deduct_burnt()
+    {
+        $users = User::where('status', 'Active')->get();
+        $bfwd = BroughtForwardLeave::where('leave_type_id', 1)->where('no_of_days', '>', 0)->get();
 
-        foreach($users as $user){
-            foreach($bfwd as $bf){
-                if($user->id == $bf->user_id){
-                    $ann_taken_first_half = LeaveApplication::where('user_id',$user->id)->where('status','Approved')->where('leave_type_id',1)->whereBetween('created_at' ,['2021-01-01', '2021-06-30'])->get();
-                    $cur_ann_leave_bal = LeaveBalance::where('user_id',$user->id)->where('leave_type_id',1)->first();
+        foreach ($users as $user) {
+            foreach ($bfwd as $bf) {
+                if ($user->id == $bf->user_id) {
+                    $ann_taken_first_half = LeaveApplication::where('user_id', $user->id)->where('status', 'Approved')->where('leave_type_id', 1)->whereBetween('created_at', ['2021-01-01', '2021-06-30'])->get();
+                    $cur_ann_leave_bal = LeaveBalance::where('user_id', $user->id)->where('leave_type_id', 1)->first();
                     $total_days = 0;
-                    foreach($ann_taken_first_half as $ann){
+                    foreach ($ann_taken_first_half as $ann) {
                         $total_days += $ann->total_days;
                     }
                     $bf_balance = $bf->no_of_days - $total_days;
-                    if($bf_balance < 0){
+                    if ($bf_balance < 0) {
                         $bf_balance = 0;
                     }
                     $new_ann_balance = $cur_ann_leave_bal->no_of_days - $bf_balance;
@@ -569,34 +568,39 @@ class AdminController extends Controller
         dd("Done");
     }
 
-    public function sso_login(Request $request){
+    public function sso_login(Request $request)
+    {
 
         // $response = Http::post('https://wspace.io/api/other/validate-token', [
         //     'token' => $token,
         // ]);
-            $endpoint = "https://wspace.io/api/other/validate-token";
-            $client = new \GuzzleHttp\Client(['http_errors' => false]);
-            $token = $request->token;
+        $endpoint = "https://wspace.io/api/other/validate-token";
+        $client = new \GuzzleHttp\Client(['http_errors' => false]);
+        $token = $request->token;
 
-            $response = $client->request('POST', $endpoint, [
-                'form_params' => [
-                    'token' => $token
-                ]
-            ]);
+        $response = $client->request('POST', $endpoint, [
+            'form_params' => [
+                'token' => $token
+            ]
+        ]);
 
-            // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
+        // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
 
-            $statusCode = $response->getStatusCode();
-            $content = $response->getBody();
+        $statusCode = $response->getStatusCode();
+        $content = $response->getBody();
 
-            // or when your server returns json
-            $content = json_decode($response->getBody(), true);
-            if(array_key_exists('error', $content)){
+        // or when your server returns json
+        $content = json_decode($response->getBody(), true);
+        if (array_key_exists('error', $content)) {
+            return redirect('/');
+        } else {
+            try {
+                $user = User::where('email', $content['data']['email'])->firstOrFail();
+                Auth::login($user);
+                return redirect('home');
+            } catch (ModelNotFoundException $exception) {
                 return redirect('/');
             }
-            else{
-                Auth::loginUsingId($content['data']['id']);
-                return redirect('home');
-            }
+        }
     }
 }
