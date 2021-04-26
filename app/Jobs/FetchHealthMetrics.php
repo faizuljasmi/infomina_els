@@ -12,7 +12,8 @@ use Webklex\IMAP\Facades\Client;
 use App\Notifications\HealthMetricsUpdate;
 use App\Notifications\HealthMetricsHRUpdate;
 use App\User;
-use App\HealthMetric;
+use App\HealthMetricsMC;
+use App\HealthMetricsCheckin;
 use App\Holiday;
 use App\LeaveApplication;
 use App\LeaveBalance;
@@ -49,7 +50,8 @@ class FetchHealthMetrics implements ShouldQueue
         $dateToday = date('d.m.Y');
 
         // $mails = $inbox->messages()->unanswered()->since('02.03.2020')->subject('HMS medical certificate issued')->get();
-        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        // $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('HMS medical certificate issued')->get();
+        $mails = $inbox->messages()->since($dateToday)->subject('HMS medical certificate issued')->get();
 
         foreach($mails as $mail){
             $body = $mail->getHTMLBody();
@@ -61,6 +63,14 @@ class FetchHealthMetrics implements ShouldQueue
             $staffIDPos = strpos($body, ': IF');
             $staffID = substr($body, $staffIDPos +2, 6);
             // dd($staffID);
+
+            // Find clinic name.
+            $clinicNameStartPos = strpos($body, '<strong>') + 8;
+            $clinicNameEndPos = strpos($body, '</strong> has just issued');
+            $stringLength = $clinicNameEndPos - $clinicNameStartPos;
+            $clinicNameX = substr($body, $clinicNameStartPos, $stringLength);
+            $clinicName = str_replace('&amp;', '&', $clinicNameX);
+            // dd($clinicName);
 
             // Find total days.
             $totalDaysPos = strpos($body, '-day');
@@ -82,7 +92,6 @@ class FetchHealthMetrics implements ShouldQueue
             $leaveTo = date('Y-m-d', strtotime($dTo[1].'/'.$dTo[0].'/'.$dTo[2])); // // Convert to Y-m-d.
             $validLT = DateTime::createFromFormat('Y-m-d', $leaveTo);
             $isLTValid = ($validLT && $validLT->format('Y-m-d') === $leaveTo); // Check is a date.
-
 
             // Find MC link.
             $htmlLink = $mail->getHTMLBody();
@@ -146,9 +155,13 @@ class FetchHealthMetrics implements ShouldQueue
                     $takenLeave->no_of_days = $takenLeave->no_of_days + intval($totalDays);
                     $takenLeave->update();
 
-                    $hm = new HealthMetric;
+                    $last_checkin = HealthMetricsCheckin::orderBy('id', 'DESC')->where('user_id', $emp->id)->where('clinic_name', $clinicName)->first();
+                    
+                    $hm = new HealthMetricsMc;
                     $hm->user_id = $emp->id;
                     $hm->application_id = $leaveApp->id;
+                    $hm->checkin_id = ($last_checkin != null) ? $last_checkin->id : null;
+                    $hm->clinic_name = $clinicName;
                     $hm->leave_from = $leaveFrom;
                     $hm->leave_to = $leaveTo;
                     $hm->total_days = $totalDays;

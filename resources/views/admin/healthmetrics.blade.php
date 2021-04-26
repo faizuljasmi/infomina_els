@@ -37,8 +37,13 @@
         <div class="card-body">
             <form id="search_form" class="input-horizontal" action="{{ route('healthmetric_search') }}" method="get">
                 <div class="form-inline form-group">
-                    <!-- Date From -->
                     <div class="input-group col-4">
+                        <input type="search" name="name" id="name" placeholder="Name"
+                            class="form-control"
+                            autocomplete="off">
+                    </div>
+                    <!-- Date From -->
+                    <div class="input-group col-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
                                 <i class="fa fa-calendar-day"></i>
@@ -47,7 +52,7 @@
                         <input placeholder="Date From" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_from)? $date_from: '' }}" name="date_from" id="date_from">
                     </div>
                     <!-- Date To -->
-                    <div class="input-group col-4">
+                    <div class="input-group col-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
                                 <i class="fa fa-calendar-day"></i>
@@ -63,66 +68,95 @@
             </form>
             <div>
             </div>
-            @if ($medical_certs->count() > 0)
-                <h6><strong>Displaying {{$medical_certs->count()}} out of {{$medical_certs->total()}} entries.</strong></h6>
+            @if ($checkins->count() > 0)
+                <h6><strong>Displaying {{$checkins->count()}} out of {{$checkins->total()}} entries.</strong></h6>
             @endif
             <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
                     <tr>
                         <th>No.</th>
                         <th>Name</th>
-                        <th>Day(s)</th>
-                        <th>From Date</th>
-                        <th>To Date</th>
+                        <th>Checkin Date</th>
+                        <th>Checkin Time</th>
+                        <th>Clinic</th>
+                        <th>MC</th>
+                        <th>Leave From</th>
+                        <th>Leave To</th>
+                        <th>Total Days</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="healthmetrics_table">
-                @php $count = ($medical_certs->currentPage()-1) * $medical_certs->perPage(); @endphp
-                @foreach($medical_certs as $mc)
+                @php $count = ($checkins->currentPage()-1) * $checkins->perPage(); @endphp
+                @foreach($checkins as $chk)
                     <tr>
-                        <td class="d-none">{{ $mc->application_id }}</td>
+                        @php $leave_id = ($chk->mc != null) ? $chk->mc->application_id : null; @endphp
+                        <td class="d-none">{{ $leave_id }}</td>
                         <td>{{ ++$count }}</td>
-                        <td>{{ $mc->user->name }}</td>
-                        <td>{{ $mc->total_days }}</td>
-                        <td>{{ $mc->leave_from }}</td>
-                        <td>{{ $mc->leave_to }}</td>
-                        <td>
-                            @if ( $mc->status == 'Auto Applied' )
-                                <span class="badge badge-pill badge-success">{{ $mc->status }}</span>
-                            @else
-                                <span class="badge badge-pill badge-warning">{{ $mc->status }}</span>
-                            @endif
-                        </td>
-                        <td>
-                            <a href="{{ route('view_application', $mc->application_id) }}">
-                                <button type="button" class="btn btn-info btn-sm" title="View Application">
-                                    <i class="fas fa-eye"></i>
+                        <td>{{ $chk->user->name }}</td>
+                        <td>{{ $chk->check_in_date }}</td>
+                        <td>{{ $chk->check_in_time }}</td>
+                        <td>{{ $chk->clinic_name }}</td>
+                        @php $mc = ($chk->mc != null) ? 'YES' : 'NO'; @endphp
+                        <td><span class="badge badge-pill bg-indigo">{{ $mc }}</span></td>
+                        @if ($chk->mc != null)
+                            <td>{{ $chk->mc->leave_from }}</td>
+                            <td>{{ $chk->mc->leave_to }}</td>
+                            <td>{{ $chk->mc->total_days }}</td>
+                            <td>
+                                @if ( $chk->mc->status == 'Auto Applied' )
+                                    <span class="badge badge-pill badge-success">{{ $chk->mc->status }}</span>
+                                @else
+                                    <span class="badge badge-pill badge-warning">{{ $chk->mc->status }}</span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="dropdown dropleft">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-wrench"></i>
                                 </button>
-                            </a>
-                            <a href="{{ $mc->link }}" target="_blank">
-                                <button type="button" class="btn btn-sm btn-danger" title="View MC">
-                                    <i class="fas fa-file-medical-alt"></i>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{{ route('view_application', $chk->mc->application_id) }}">View Application <i class="fas fa-eye"></i></a>
+                                    <a class="dropdown-item" href="{{ $chk->mc->link }}" target="_blank">View MC <i class="fas fa-file-medical-alt"></i></a>
+                                    @if ($chk->mc->status == 'Reverted')
+                                        <a class="dropdown-item disabled" href="#">Revert Changes <i class="fas fa-undo-alt"></i></a>
+                                    @else
+                                        <a class="dropdown-item action-revert" href="#">Revert Changes <i class="fas fa-undo-alt"></i></a>
+                                    @endif
+                                </div>
+                                </div>
+                            </td>
+                        @else 
+                            <td>N/A</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                            <td>
+                                <span class="badge badge-pill badge-info">Pending</span>
+                            </td>
+                            <td>
+                            <div class="dropdown dropleft">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-wrench"></i>
                                 </button>
-                            </a>
-                            @if ( $mc->status == 'Reverted' )
-                                <button type="button" class="btn btn-sm btn-warning action-revert" title="Revert Changes" disabled><i class="fas fa-undo-alt"></i></button>
-                            @else
-                                <button type="button" class="btn btn-sm btn-warning action-revert" title="Revert Changes"><i class="fas fa-undo-alt"></i></button>
-                            @endif
-                        </td>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item disabled" href="#">No actions available.</a>
+                                </div>
+                                </div>
+                            </td>
+                        @endif
+                        
                     </tr>
                 @endforeach
-                @if ($medical_certs->count() == 0)
+                @if ($checkins->count() == 0)
                     <tr align="center">
-                        <td colspan="7"><strong>No records found.</strong></td>
+                        <td colspan="11"><strong>No records found.</strong></td>
                     </tr>
                 @endif
                 </tbody>
             </table>
             <br>
-            {!! $medical_certs->appends(\Request::except('page'))->render() !!}
+            {!! $checkins->appends(\Request::except('page'))->render() !!}
         </div>
     </div>
 </div>
@@ -161,6 +195,15 @@
 <script>
 $( document ).ready(function() 
 {
+    var route = "{{ url('reports/autocomplete') }}";
+    $('#name').typeahead({
+    source:  function (name, process) {
+    return $.get(route, { name: name }, function (data) {
+            // console.log(data);
+            return process(data);
+        });
+    }
+    });
 
     $('[data-toggle="popover"]').popover();
 
@@ -189,8 +232,8 @@ $( document ).ready(function()
 
     $('#btn_checkin').click(function() 
     {
-        var spinner = $('#loading');
-        spinner.show();
+        // var spinner = $('#loading');
+        // spinner.show();
 
         $.ajaxSetup({
         headers: {
@@ -214,6 +257,7 @@ $( document ).ready(function()
     {
         let row = $(this).closest('tr');
         var application_id = $(row).find('td:eq(0)').text();
+        console.log(application_id)
 
         $('#application_id').val(application_id);
 

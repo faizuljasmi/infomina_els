@@ -8,6 +8,7 @@ use App\Jobs\TestCron;
 use App\Jobs\ReplacementValidator;
 use App\Jobs\CalculateEarning;
 use App\Jobs\CalculateProrate;
+use App\Jobs\FetchHMCheckins;
 use App\Jobs\FetchHealthMetrics;
 
 class Kernel extends ConsoleKernel
@@ -37,7 +38,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new CalculateProrate)->monthlyOn(1, '08:30')->withoutOverlapping();
 
-        $schedule->job(new FetchHealthMetrics)->hourly()->withoutOverlapping();
+        $schedule->job(new FetchHMCheckins)->hourly()->withoutOverlapping();
+
+        $schedule->job(new FetchHealthMetrics)->hourlyAt(30)->withoutOverlapping();
 
 
     }
