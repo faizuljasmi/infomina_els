@@ -342,7 +342,7 @@ class LeaveService
         //     $dt = new Carbon($leave_app->updated_at);
         //     $dt = $dt->format('l, j F Y, h:i A');
         //     $subtitle = "approved on " . $dt;
-        // } 
+        // }
         else {
             return [];
         }
@@ -361,10 +361,10 @@ class LeaveService
         $client = new Client();
         //http://128.199.123.181
         //https://wspace.io
-        $response = $client->request('POST', 'https://wspace.io/api/v1/send-message', [
+        $response = $client->request('POST', 'http://128.199.123.181/api/v1/send-message', [
             'headers' =>
             [
-                'Authorization' => "Bearer els:g1iugk8f-ps4n-4jue-8laf-v22r612k75ov-rhgtvkpn-7c2a-4q8u-90nq-s5vmj34gdpsk"
+                'Authorization' => "Bearer ".config('wspace.els_secret')
             ],
             'form_params' => [
                 'to_email' => $to_email,
