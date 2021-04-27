@@ -994,7 +994,11 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        $holidays = Holiday::all();
+        //$holidays = Holiday::all();
+        $state_hols = $leaveApp->user->state_holidays;
+        $natioanl_hols = $leaveApp->user->national_holidays;
+
+        $holidays = $state_hols->merge($natioanl_hols)->sortBy('date_from');
         $hol_dates = array();
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
