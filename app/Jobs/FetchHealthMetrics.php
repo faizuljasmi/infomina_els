@@ -12,7 +12,7 @@ use Webklex\IMAP\Facades\Client;
 use App\Notifications\HealthMetricsUpdate;
 use App\Notifications\HealthMetricsHRUpdate;
 use App\User;
-use App\HealthMetricsMC;
+use App\HealthMetricsMc;
 use App\HealthMetricsCheckin;
 use App\Holiday;
 use App\LeaveApplication;
