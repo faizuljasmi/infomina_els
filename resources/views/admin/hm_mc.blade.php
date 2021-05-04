@@ -32,10 +32,10 @@
 <div class="mt-2 col-md-12">
     <div class="card">
         <div class="card-header bg-teal">
-            <b>Health Metrics Records</b>
+            <b>Health Metrics Medical Certs</b>
         </div>
         <div class="card-body">
-            <form id="search_form" class="input-horizontal" action="{{ route('healthmetric_search') }}" method="get">
+            <form id="search_form" class="input-horizontal" action="{{ route('healthmetric_mc_search') }}" method="get">
                 <div class="form-inline form-group">
                     <div class="input-group col-4">
                         <input type="search" name="name" id="name" placeholder="Name"
@@ -61,94 +61,63 @@
                         <input placeholder="Date To" class="form-control" type="text" onfocus="(this.type='date')" value="{{ isset($date_to)? $date_to: '' }}" name="date_to" id="date_to">
                     </div>
                     <button form="search_form" type="submit" class="btn btn-primary mr-1">Search</button>
-                    <a href="{{ route('healthmetric_index') }}"><button type="button" class="btn btn-secondary mr-1">Reset</button></a>
-                    <button type="button" class="btn btn-success" id="btn_fetch">Fetch</button>
-                    <button type="button" class="btn btn-success" id="btn_checkin">Checkin</button>
+                    <a href="{{ route('healthmetric_mc_index') }}"><button type="button" class="btn btn-secondary mr-1">Reset</button></a>
                 </div>
             </form>
             <div>
             </div>
-            @if ($checkins->count() > 0)
-                <h6><strong>Displaying {{$checkins->count()}} out of {{$checkins->total()}} entries.</strong></h6>
+            @if ($mcs->count() > 0)
+                <h6><strong>Displaying {{$mcs->count()}} out of {{$mcs->total()}} entries.</strong></h6>
             @endif
             <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
                     <tr>
                         <th>No.</th>
                         <th>Name</th>
-                        <th>Checkin Date</th>
-                        <th>Checkin Time</th>
-                        <th>Clinic</th>
-                        <th>MC</th>
-                        <th>Leave From</th>
-                        <th>Leave To</th>
-                        <th>Total Days</th>
+                        <th>Day(s)</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="healthmetrics_table">
-                @php $count = ($checkins->currentPage()-1) * $checkins->perPage(); @endphp
-                @foreach($checkins as $chk)
+                @php $count = ($mcs->currentPage()-1) * $mcs->perPage(); @endphp
+                @foreach($mcs as $mc)
                     <tr>
-                        @php $leave_id = ($chk->mc != null) ? $chk->mc->application_id : null; @endphp
-                        <td class="d-none">{{ $leave_id }}</td>
+                    <td class="d-none">{{ $mc->application_id }}</td>
                         <td>{{ ++$count }}</td>
-                        <td>{{ $chk->user->name }}</td>
-                        <td>{{ $chk->check_in_date }}</td>
-                        <td>{{ $chk->check_in_time }}</td>
-                        <td>{{ $chk->clinic_name }}</td>
-                        @php $mc = ($chk->mc != null) ? 'YES' : 'NO'; @endphp
-                        <td><span class="badge badge-pill bg-indigo">{{ $mc }}</span></td>
-                        @if ($chk->mc != null)
-                            <td>{{ $chk->mc->leave_from }}</td>
-                            <td>{{ $chk->mc->leave_to }}</td>
-                            <td>{{ $chk->mc->total_days }}</td>
-                            <td>
-                                @if ( $chk->mc->status == 'Auto Applied' )
-                                    <span class="badge badge-pill badge-success">{{ $chk->mc->status }}</span>
-                                @else
-                                    <span class="badge badge-pill badge-warning">{{ $chk->mc->status }}</span>
-                                @endif
-                            </td>
-                            <td>
-                                <div class="dropdown dropleft">
-                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-wrench"></i>
+                        <td>{{ $mc->user->name }}</td>
+                        <td>{{ $mc->total_days }}</td>
+                        <td>{{ $mc->leave_from }}</td>
+                        <td>{{ $mc->leave_to }}</td>
+                        <td>
+                            @if ( $mc->status == 'Auto Applied' )
+                                <span class="badge badge-pill badge-success">{{ $mc->status }}</span>
+                            @else
+                                <span class="badge badge-pill badge-warning">{{ $mc->status }}</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('view_application', $mc->application_id) }}">
+                                <button type="button" class="btn btn-info btn-sm" title="View Application">
+                                    <i class="fas fa-eye"></i>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="{{ route('view_application', $chk->mc->application_id) }}">View Application <i class="fas fa-eye"></i></a>
-                                    <a class="dropdown-item" href="{{ $chk->mc->link }}" target="_blank">View MC <i class="fas fa-file-medical-alt"></i></a>
-                                    @if ($chk->mc->status == 'Reverted')
-                                        <a class="dropdown-item disabled" href="#">Revert Changes <i class="fas fa-undo-alt"></i></a>
-                                    @else
-                                        <a class="dropdown-item action-revert" href="#">Revert Changes <i class="fas fa-undo-alt"></i></a>
-                                    @endif
-                                </div>
-                                </div>
-                            </td>
-                        @else 
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>
-                                <span class="badge badge-pill badge-info">Pending</span>
-                            </td>
-                            <td>
-                            <div class="dropdown dropleft">
-                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-wrench"></i>
+                            </a>
+                            <a href="{{ $mc->link }}" target="_blank">
+                                <button type="button" class="btn btn-sm btn-danger" title="View MC">
+                                    <i class="fas fa-file-medical-alt"></i>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item disabled" href="#">No actions available.</a>
-                                </div>
-                                </div>
-                            </td>
-                        @endif
-                        
+                            </a>
+                            @if ( $mc->status == 'Reverted' )
+                                <button type="button" class="btn btn-sm btn-warning action-revert" title="Revert Changes" disabled><i class="fas fa-undo-alt"></i></button>
+                            @else
+                                <button type="button" class="btn btn-sm btn-warning action-revert" title="Revert Changes"><i class="fas fa-undo-alt"></i></button>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
-                @if ($checkins->count() == 0)
+                @if ($mcs->count() == 0)
                     <tr align="center">
                         <td colspan="11"><strong>No records found.</strong></td>
                     </tr>
@@ -156,7 +125,7 @@
                 </tbody>
             </table>
             <br>
-            {!! $checkins->appends(\Request::except('page'))->render() !!}
+            {!! $mcs->appends(\Request::except('page'))->render() !!}
         </div>
     </div>
 </div>

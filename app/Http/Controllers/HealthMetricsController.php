@@ -20,19 +20,24 @@ use DateTime;
 
 class HealthMetricsController extends Controller
 {
-    public function index() {
+    public function checkin_index() {
         $checkins = HealthMetricsCheckin::orderBy('id', 'DESC')->paginate(15);
 
-        return view('admin.healthmetrics')->with(compact('checkins'));
+        return view('admin.hm_checkin')->with(compact('checkins'));
     }
 
-    public function search(Request $request) {
+    public function mc_index() {
+        $mcs = HealthMetricsMc::orderBy('id', 'DESC')->paginate(15);
+
+        return view('admin.hm_mc')->with(compact('mcs'));
+    }
+
+    public function search_checkin(Request $request) {
         $name = $request->get('name');
         $date_from = $request->get('date_from');
         $date_to = $request->get('date_to');
 
         $query = HealthMetricsCheckin::join('users', 'health_metrics_checkins.user_id', '=', 'users.id');
-        
         
         if ($name != null) {
             $query->where('users.name', $name);
@@ -47,7 +52,28 @@ class HealthMetricsController extends Controller
         $checkins = $query->select('health_metrics_checkins.*')->paginate(15);
         // dd($checkins);
 
-        return view('admin.healthmetrics')->with(compact('checkins'));
+        return view('admin.hm_checkin')->with(compact('checkins'));
+    }
+
+    public function search_mc(Request $request) {
+        $name = $request->get('name');
+        $date_from = $request->get('date_from');
+        $date_to = $request->get('date_to');
+
+        $query = HealthMetricsMc::join('users', 'health_metrics_mcs.user_id', '=', 'users.id');
+
+        if ($name != null) {
+            $query->where('users.name', $name);
+        }
+        
+        if ($date_from != null && $date_to != null) {
+            $query->whereBetween('health_metrics_mcs.leave_from', [$date_from, $date_to])
+                  ->orWhereBetween('health_metrics_mcs.leave_to', [$date_from, $date_to]);
+        }
+         
+        $mcs = $query->paginate(15);
+
+        return view('admin.hm_mc')->with(compact('mcs'));
     }
 
     public function fetch() {

@@ -42,8 +42,8 @@ class FetchHMCheckins implements ShouldQueue
         $dateToday = date('d.m.Y');
 
         // $mails = $inbox->messages()->unanswered()->since('22.04.2021')->subject('Employee check-in with HMS')->get();
-        // $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('Employee check-in with HMS')->get();
-        $mails = $inbox->messages()->since($dateToday)->subject('Employee check-in with HMS')->get();
+        $mails = $inbox->messages()->unanswered()->since($dateToday)->subject('Employee check-in with HMS')->get();
+        // $mails = $inbox->messages()->since($dateToday)->subject('Employee check-in with HMS')->get();
 
         foreach($mails as $mail){
             $body = $mail->getHTMLBody();

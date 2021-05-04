@@ -71,8 +71,10 @@ Route::middleware('can:employee-data')->group(function(){
     Route::get('reports/autocomplete', 'AdminController@autocomplete');
 
     //HM
-    Route::get('/healthmetrics','HealthMetricsController@index')->name('healthmetric_index')->middleware('auth');
-    Route::get('/healthmetrics/search','HealthMetricsController@search')->name('healthmetric_search')->middleware('auth');
+    Route::get('/healthmetrics','HealthMetricsController@checkin_index')->name('healthmetric_index')->middleware('auth');
+    Route::get('/healthmetrics/search','HealthMetricsController@search_checkin')->name('healthmetric_search')->middleware('auth');
+    Route::get('/healthmetrics/medical-certs','HealthMetricsController@mc_index')->name('healthmetric_mc_index')->middleware('auth');
+    Route::get('/healthmetrics/medical-certs/search','HealthMetricsController@search_mc')->name('healthmetric_mc_search')->middleware('auth');
     Route::post('/fetch-healthmetrics','HealthMetricsController@fetch')->middleware('auth');
     Route::post('/revert-healthmetrics','HealthMetricsController@revert')->middleware('auth');
     Route::post('/fetch-checkins','HealthMetricsController@fetch_checkins')->middleware('auth');
