@@ -32,7 +32,6 @@ class NotifyUserEmail implements ShouldQueue
      */
     public function handle()
     {
-
         $this->leave_app->user->notify(new StatusUpdate($this->leave_app));
     }
 }
