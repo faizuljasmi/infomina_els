@@ -37,7 +37,7 @@ class WorkspaceController extends Controller
                 $offset = $request->offset;
                 $user = User::where('email', $user_email)->firstOrFail();
                 $user_id = $user->id;
-                $pending_leaves = LeaveApplication::orderBy('status')->where(function ($query) use ($user_id) {
+                $pending_leaves = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user_id) {
                     $query->where('status', 'PENDING_1')
                         ->where('user_id', $user_id);
                 })->orWhere(function ($query) use ($user_id) {
