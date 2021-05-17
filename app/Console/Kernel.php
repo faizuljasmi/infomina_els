@@ -38,9 +38,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new CalculateProrate)->monthlyOn(1, '08:30')->withoutOverlapping();
 
-        $schedule->job(new FetchHMCheckins)->hourly()->withoutOverlapping();
+        $schedule->job(new FetchHMCheckins)->everyFifteenMinutes()->withoutOverlapping();
 
-        $schedule->job(new FetchHealthMetrics)->hourlyAt(30)->withoutOverlapping();
+        $schedule->job(new FetchHealthMetrics)->everyThirtyMinutes()->withoutOverlapping();
 
 
     }

@@ -12,6 +12,7 @@ use Webklex\IMAP\Facades\Client;
 use App\Notifications\HealthMetricsUpdate;
 use App\Notifications\HealthMetricsHRUpdate;
 use App\User;
+use App\ApprovalAuthority;
 use App\HealthMetricsMc;
 use App\HealthMetricsCheckin;
 use App\Holiday;
@@ -177,7 +178,7 @@ class FetchHealthMetrics implements ShouldQueue
 
             // Get admin users to notify the affected employees.
             $admins = User::where('user_type', 'Admin')->get();
-
+            
             if ($error == 0) {
                 $healthUpdate = [
                     'name' => $emp->name,
@@ -185,8 +186,22 @@ class FetchHealthMetrics implements ShouldQueue
                     'date_to' => $leaveTo,
                     'total_days' => $totalDays,
                 ];
+                
+                $emp->notify(new HealthMetricsUpdate($healthUpdate)); 
 
-                $emp->notify(new HealthMetricsUpdate($healthUpdate));
+                $authorities = ApprovalAuthority::where('user_id', $emp->id)->first();
+                $supervisor = $authorities->authority_one;
+
+                $healthUpdateSupervisor = [
+                    'hr_name' => $supervisor->name,
+                    'name' => $emp->name,
+                    'date_from' => $leaveFrom,
+                    'date_to' => $leaveTo,
+                    'total_days' => $totalDays,
+                    'status' => 'success',
+                ];
+
+                $supervisor->notify(new HealthMetricsHRUpdate($healthUpdateSupervisor));
 
                 foreach($admins as $admin) {
                     $healthUpdateHR = [
