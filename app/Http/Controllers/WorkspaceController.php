@@ -37,7 +37,7 @@ class WorkspaceController extends Controller
                 $offset = $request->offset;
                 $user = User::where('email', $user_email)->firstOrFail();
                 $user_id = $user->id;
-                $pending_leaves = LeaveApplication::orderBy('status')->where(function ($query) use ($user_id) {
+                $pending_leaves = LeaveApplication::orderBy('created_at', 'DESC')->where(function ($query) use ($user_id) {
                     $query->where('status', 'PENDING_1')
                         ->where('user_id', $user_id);
                 })->orWhere(function ($query) use ($user_id) {
@@ -312,7 +312,7 @@ class WorkspaceController extends Controller
                         'error' => "Action is not executed: the leave application is not pending on your level."
                     ];
                     return response()->json($data);
-                //If there is change is status
+                    //If there is change is status
                 } else {
                     //Compose transaction status
                     $status = $this->leaveService->getStatusDesc($leave_app);
@@ -410,4 +410,31 @@ class WorkspaceController extends Controller
     }
 
     //isauthority
+
+    //ispending
+    /**
+     * leave app id in array
+     * approver_email
+     */
+    public function is_pending(Request $request)
+    {
+        $secret_key = $request->bearerToken();
+        if ($secret_key == config('wspace.secret')) {
+            $res = [];
+            try {
+                $leave_apps = $request->leave_app_id;
+                $approver_email = $request->approver_email;
+                for ($i = 0; $i < count($leave_apps); $i++) {
+                    $is_pending = $this->leaveService->is_pending_at_user($leave_apps[$i], $approver_email);
+                    //assign value is_pending to key leave_id and populate in array res as an object
+                    $res[$leave_apps[$i]] = $is_pending;
+                }
+                return $res;
+            } catch (ModelNotFoundException $exception) {
+                return response()->json($exception->getMessage());
+            }
+        } else {
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
+        }
+    }
 }

@@ -686,7 +686,7 @@ const validation = {
         return "Attention: Annual leave cannot be applied on passed dates.";
       }
       if(calendar.isDateSmaller(date_from, next2)){
-        return "Attention: Annual leave must be applied at least 2 days prior to the leave date.";
+        return "Attention: Annual leave must be applied at least 2 working days prior to the leave date.";
       }
     }
 
@@ -752,12 +752,12 @@ const validation = {
 
       if(calendar.isDateSmaller(date_from,calendar.today())){
       if(calendar.isDateSmaller(date_from, prev3)){
-        return "Attention: Unpaid leave must be applied within 3 days after the day of leave.";
+        return "Attention: Unpaid leave must be applied within 3 working days after the day of leave.";
       }
     }
     if(calendar.isDateBigger(date_from,calendar.today())){
       if(calendar.isDateSmaller(date_from,next2)){
-        return "Attention: Unpaid leave must be applied within 2 days before the day of leave.";
+        return "Attention: Unpaid leave must be applied within 2 working days before the day of leave.";
       }
     }
     }

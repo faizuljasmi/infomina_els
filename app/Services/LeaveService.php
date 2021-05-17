@@ -16,7 +16,7 @@ use App\Notifications\CancelApplication;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Carbon\Carbon;
-
+use App\User;
 
 define("PENDING_MSG", "Pending approval by ");
 define("DENIED_MSG", "Denied by ");
@@ -361,7 +361,7 @@ class LeaveService
         $client = new Client();
         //http://128.199.123.181
         //https://wspace.io
-        $response = $client->request('POST', 'http://128.199.123.181/api/v1/send-message', [
+        $response = $client->request('POST', 'https://wspace.io/api/v1/send-message', [
             'headers' =>
             [
                 'Authorization' => "Bearer ".config('wspace.els_secret')
@@ -374,5 +374,23 @@ class LeaveService
             ]
         ]);
         return $response;
+    }
+
+    public function is_pending_at_user($leave_app_id, $approver_email)
+    {
+        //$user = User::where('email',$approver_email)->firstOrFail();
+        try {
+            $leave_app = LeaveApplication::where('id', $leave_app_id)->firstOrFail();
+            if ($leave_app->status == "PENDING_1" && $leave_app->approver_one->email == $approver_email) {
+                return true;
+            } else if ($leave_app->status == "PENDING_2" && $leave_app->approver_two->email == $approver_email) {
+                return true;
+            } else if ($leave_app->status == "PENDING_3" && $leave_app->approver_three->email == $approver_email) {
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) { // Using a generic exception
+            return 'Leave app not found';
+        }
     }
 }

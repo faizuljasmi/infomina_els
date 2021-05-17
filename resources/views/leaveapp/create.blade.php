@@ -717,6 +717,7 @@ $('#reason').keyup(function() {
     var balances= {!! json_encode($leaveBal, JSON_HEX_TAG) !!};
     var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
     var userGroup = {!! json_encode($user->emp_group->name, JSON_HEX_TAG) !!};
+    var rep_claims = {!! json_encode($all_rep_claims, JSON_HEX_TAG) !!};
     console.log((userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'));
 
     //console.log("MY APP:",myapplications);
@@ -820,11 +821,14 @@ $('#reason').keyup(function() {
           		next2 = calendar.nextDay(next2);
                 next2 = calendar.nextDay(next2);
           		next2 = calendar.getDateDb(next2);
+                if(Array.isArray(rep_claims) && rep_claims.length) {  
+                    return "Attention: You have unused Replacement Leave Claim balance. Please utilize the claim first before utilizing your annual leave balance";
+                } 
           		if(calendar.isDateSmaller(date_from, calendar.today())){
             			return "Attention: Annual leave cannot be applied on passed dates.";
           		}
           		if(calendar.isDateSmaller(date_from, next2)){
-            			return "Attention: Annual leave must be applied at least 3 days prior to the leave date.";
+            			return "Attention: Annual leave must be applied at least 3 working days prior to the leave date.";
           		}
 		}
 		else{
@@ -832,11 +836,14 @@ $('#reason').keyup(function() {
           		next2 = calendar.getNextWorkingDay(next2);
                 next2 = calendar.getNextWorkingDay(next2);
           		next2 = calendar.getDateDb(next2);
+                if(Array.isArray(rep_claims) && rep_claims.length) {  
+                    return "Attention: You have unused Replacement Leave Claim balance. Please utilize the claim first before utilizing your annual leave balance";
+                } 
           		if(calendar.isDateSmaller(date_from, calendar.today())){
             			return "Attention: Annual leave cannot be applied on passed dates.";
           		}
           		if(calendar.isDateSmaller(date_from, next2)){
-            			return "Attention: Annual leave must be applied at least 3 days prior to the leave date.";
+            			return "Attention: Annual leave must be applied at least 3 working days prior to the leave date.";
           		}
 		}
         }
@@ -938,12 +945,12 @@ $('#reason').keyup(function() {
 
           if(calendar.isDateSmaller(date_from,calendar.today())){
           if(calendar.isDateSmaller(date_from, prev3)){
-            return "Attention: Unpaid leave must be applied within 3 days after the day of leave.";
+            return "Attention: Unpaid leave must be applied within 3 working days after the day of leave.";
           }
         }
         if(calendar.isDateBigger(date_from,calendar.today())){
           if(calendar.isDateSmaller(date_from,next2)){
-            return "Attention: Unpaid leave must be applied within 2 days before the day of leave.";
+            return "Attention: Unpaid leave must be applied within 2 working days before the day of leave.";
           }
         }
         }
