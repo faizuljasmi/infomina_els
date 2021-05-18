@@ -45,9 +45,8 @@ class CalculateProrate extends Command
      */
     public function handle()
     {
-        $today = Carbon::now();
-        $currentMonth = $today->month;
-        $currentYear = $today->year;
+        $currentMonth = date('m');
+        $currentYear = date('Y');
 
         $al_prorated_names = [];
         $mc_prorated_names = [];
@@ -56,13 +55,13 @@ class CalculateProrate extends Command
         if ($currentMonth != 1) {
             // Get this month joined employees
             $monthEmp = User::where('join_date', 'LIKE', '%-'.$currentMonth.'-%')->get();
-
+            
             foreach($monthEmp as $emp)
             {
                 $from = Carbon::parse($emp->join_date);
                 $to = Carbon::parse($currentYear.'-'.$currentMonth);
                 $diff = $from->diffInMonths($to);
-
+                
                 if ($emp->emp_type_id != 3 || $emp->emp_type_id != 4 || $emp->emp_type_id != 5) // Executive and Non-Executive Staff Only.
                 {
                     // Calculate AL Prorate
@@ -75,13 +74,13 @@ class CalculateProrate extends Command
                         $defaultAL = 12;
                     }
                 
-                    if (($diff + 1) == 36) { // If 3 Years
+                    if (($diff + 1) == 36 || $diff == 36) { // If 3 Years
                         if ($emp->emp_type_id == 1 || $emp->emp_type_id == 6 || $emp->emp_type_id == 7 || $emp->emp_type_id == 8) { // Executive
                             $prorateAL = 16;
                         } else if ($emp->emp_type_id == 2) { // Non Executive
                             $prorateAL = 14;
                         }
-                    } else if (($diff + 1) == 60) { // If 5 Years
+                    } else if (($diff + 1) == 60 || $diff == 60) { // If 5 Years
                         if ($emp->emp_type_id == 1 || $emp->emp_type_id == 6 || $emp->emp_type_id == 7 || $emp->emp_type_id == 8) { // Executive
                             $prorateAL = 18;
                         } else if ($emp->emp_type_id == 2) { // Non Executive
@@ -96,6 +95,7 @@ class CalculateProrate extends Command
                         $annualAfter = ceil($annualAfter);
 
                         $gainAL = ($annualBefore + $annualAfter) - $defaultAL;
+                        // print_r($emp->name.' + '.$gainAL);
 
                         // If there is a gain after prorate.
                         if ($gainAL > 0) {
@@ -125,9 +125,9 @@ class CalculateProrate extends Command
                     $mcAfter = 0;
                     $defaultMC = 14;
                     
-                    if (($diff + 1) == 24) { // If 2 Years
+                    if (($diff + 1) == 24 || $diff == 24) { // If 2 Years
                         $prorateMC = 18;
-                    } else if (($diff + 1) == 60) { // If 5 Years
+                    } else if (($diff + 1) == 60 || $diff == 60) { // If 5 Years
                         $prorateMC = 22;
                     } 
                     
@@ -178,6 +178,8 @@ class CalculateProrate extends Command
                 }
             }
         }
+
+        // print_r($al_prorated_names);
 
         // Get admin users to notify the affected employees.
         $admins = User::where('user_type', 'Admin')->get();

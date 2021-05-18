@@ -66,13 +66,13 @@ class CalculateProrate implements ShouldQueue
                         $defaultAL = 12;
                     }
                 
-                    if (($diff + 1) == 36) { // If 3 Years
+                    if (($diff + 1) == 36 || $diff == 36) { // If 3 Years
                         if ($emp->emp_type_id == 1 || $emp->emp_type_id == 6 || $emp->emp_type_id == 7 || $emp->emp_type_id == 8) { // Executive
                             $prorateAL = 16;
                         } else if ($emp->emp_type_id == 2) { // Non Executive
                             $prorateAL = 14;
                         }
-                    } else if (($diff + 1) == 60) { // If 5 Years
+                    } else if (($diff + 1) == 60 || $diff == 60) { // If 5 Years
                         if ($emp->emp_type_id == 1 || $emp->emp_type_id == 6 || $emp->emp_type_id == 7 || $emp->emp_type_id == 8) { // Executive
                             $prorateAL = 18;
                         } else if ($emp->emp_type_id == 2) { // Non Executive
@@ -116,9 +116,9 @@ class CalculateProrate implements ShouldQueue
                     $mcAfter = 0;
                     $defaultMC = 14;
                     
-                    if (($diff + 1) == 24) { // If 2 Years
+                    if (($diff + 1) == 24 || $diff == 24) { // If 2 Years
                         $prorateMC = 18;
-                    } else if (($diff + 1) == 60) { // If 5 Years
+                    } else if (($diff + 1) == 60 || $diff == 60) { // If 5 Years
                         $prorateMC = 22;
                     } 
                     
