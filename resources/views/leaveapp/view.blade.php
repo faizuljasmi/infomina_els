@@ -216,7 +216,12 @@
                                     <div class="form-group">
                                         <label>Attachment</label>
                                         <div class="input-group">
-                                            <a href="{{$leaveApp->attachment_url}}" target="_blank">View Attachment</a>
+                                        @if($leaveApp->attachment_url == null)
+                        
+                        <p style="color:gray">No Attachment</p>
+                        @else
+                        <a href="{{$leaveApp->attachment_url}}" target="_blank">View Attachment</a>
+                        @endif
                                         </div>
                                     </div>
                                     @if($leaveApp->leave_type_id != '12')

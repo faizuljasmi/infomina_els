@@ -79,7 +79,7 @@ class LeaveApplication extends Model
     }
 
     public function getAttachmentUrlAttribute(){
-        return $this->attributes['attachment'] ? url('/storage/'.$this->attributes['attachment']) : 'https://placehold.it/900x300';
+        return $this->attributes['attachment'] ? url('/storage/'.$this->attributes['attachment']) : null;
       }
 
 }
