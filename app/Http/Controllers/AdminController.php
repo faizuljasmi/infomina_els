@@ -49,16 +49,12 @@ class AdminController extends Controller
                 ->where('users.name', 'like', '%' . $search_name . '%')
                 ->select('leave_applications.*');
         }
-
-        if ($date_from && $date_to) {
-            $query->wherebetween('date_from', [$date_from, $date_to]);
-            $query->orwherebetween('date_to', [$date_from, $date_to]);
-        }
-
+        
         if ($leave_type) {
+            // dd($leave_type);
             $query->where('leave_type_id', $leave_type);
         }
-
+        
         if ($leave_status) {
             if ($leave_status == 'PENDING') {
                 $query->where('status', 'like', 'PENDING_%');
@@ -67,6 +63,11 @@ class AdminController extends Controller
             } else {
                 $query->where('status', $leave_status);
             }
+        }
+        
+        if ($date_from && $date_to) {
+            $query->wherebetween('date_from', [$date_from, $date_to]);
+            // $query->orwherebetween('date_to', [$date_from, $date_to]);
         }
 
         $leave_app = $query->sortable()->paginate(15);
@@ -280,7 +281,7 @@ class AdminController extends Controller
 
         if ($date_from && $date_to) {
             $query->wherebetween('date_from', [$date_from, $date_to]);
-            $query->orwherebetween('date_to', [$date_from, $date_to]);
+            // $query->orwherebetween('date_to', [$date_from, $date_to]);
         }
 
         if ($leave_type) {

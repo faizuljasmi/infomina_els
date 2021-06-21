@@ -207,7 +207,6 @@
                 @if ($leave_app->count() > 0)
                 <h6><strong>Displaying {{$leave_app->count()}} out of {{$leave_app->total()}} leave
                         applications.</strong></h6>
-                <h6><span class="badge badge-info">{{ isset($leave_type)? $leave_type: '' }}</span></h6>
                 @endif
                 <table class="table table-sm table-bordered table-striped table-hover" id="la_table">
                     <thead>
