@@ -81,7 +81,7 @@ Route::middleware('can:employee-data')->group(function(){
 
     // Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
 });
-//Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
+Route::get('deduct/burnt', 'AdminController@deduct_burnt')->name('deduct-burnt');
 
 Route::middleware('can:edit_settings')->group(function() {
 

@@ -556,11 +556,20 @@ class AdminController extends Controller
                     $cur_ann_leave_bal->no_of_days = $new_ann_balance;
                     $cur_ann_leave_bal->save();
 
-                    $burnt = new BurntLeave;
-                    $burnt->leave_type_id = 1;
-                    $burnt->user_id = $user->id;
-                    $burnt->no_of_days = $bf_balance;
-                    $burnt->save();
+                    if($user->burnt_leaves->where('leave_type_id',1)->isEmpty()){
+                        $burnt = new BurntLeave;
+                        $burnt->leave_type_id = 1;
+                        $burnt->user_id = $user->id;
+                        $burnt->no_of_days = $bf_balance;
+                        $burnt->save();
+                    }
+                    else{
+                        $bl = $user->burnt_leaves->where('leave_type_id',1)->first();
+                        $bl->leave_type_id = 1;
+                        $bl->user_id = $user->id;
+                        $bl->no_of_days = $bf_balance;
+                        $bl->save();
+                    }
                     //dd("Total Annual Taken ".$total_days." Brought Forward ".$bf->no_of_days." Annual Balance ".$user->leave_balances[0]->no_of_days);
                 }
             }
