@@ -12,7 +12,7 @@
 */
 
 Route::get('/login', function () {
-    return redirect("http://128.199.123.181/app");
+    return redirect("https://wspace.io");
 });
 
 Route::get('/admin-login', function () {
@@ -27,7 +27,9 @@ Route::get('/', function () {
         return redirect('/home');
     }
     else{
-        return redirect("http://128.199.123.181/app");
+        //https://wspace.io
+        //http://128.199.123.181/app
+        return redirect("https://wspace.io");
     }
 });
 

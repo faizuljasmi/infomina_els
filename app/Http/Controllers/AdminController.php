@@ -584,8 +584,8 @@ class AdminController extends Controller
         // $response = Http::post('https://wspace.io/api/other/validate-token', [
         //     'token' => $token,
         // ]);
-        http://128.199.123.181/app
-        $endpoint = "http://128.199.123.181/api/other/validate-token";
+        //http://128.199.123.181/app
+        $endpoint = "https://wspace.io/api/other/validate-token";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $token = $request->token;
 
@@ -620,7 +620,7 @@ class AdminController extends Controller
         // $response = Http::post('https://wspace.io/api/other/validate-token', [
         //     'token' => $token,
         // ]);
-        $endpoint = "http://128.199.123.181/api/other/validate-token";
+        $endpoint = "https://wspace.io/api/other/validate-token";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $token = $request->token;
 
