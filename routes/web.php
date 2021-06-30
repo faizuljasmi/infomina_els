@@ -12,6 +12,10 @@
 */
 
 Route::get('/login', function () {
+    return redirect("http://128.199.123.181/app");
+});
+
+Route::get('/admin-login', function () {
     return view('adminlte::login');
 });
 
@@ -19,8 +23,11 @@ Route::get('/', function () {
     if (Auth::user() != null && (Auth::user()->user_type == 'Admin' || Auth::user()->user_type == 'Management')) {
         return redirect('/admin');
     }
+    else if (Auth::user() != null && Auth::user()->user_type == 'Employee'){
+        return redirect('/home');
+    }
     else{
-        return redirect('/login');
+        return redirect("http://128.199.123.181/app");
     }
 });
 
