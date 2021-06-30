@@ -125,11 +125,11 @@ config('adminlte.sidebar_scrollbar_theme') : '') . ' ' . (config('adminlte.sideb
                     @if(Auth::user())
                     <li class="nav-item">
                         <a class="nav-link" href="{{url('https://wspace.io/app/landing/app')}}">
-                            wSpace <img class="mr-2" src="{{asset('/images/logo-white.png')}}"
+                            Wspace <img class="mr-2" src="{{asset('/images/logo-white.png')}}"
                                 style="float:left;width:auto;height:100%;">
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="#"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="fa fa-fw fa-power-off"></i> {{ __('adminlte::adminlte.log_out') }}
@@ -140,7 +140,7 @@ config('adminlte.sidebar_scrollbar_theme') : '') . ' ' . (config('adminlte.sideb
                             @endif
                             {{ csrf_field() }}
                         </form>
-                    </li>
+                    </li> -->
                     @endif
                     @if(config('adminlte.right_sidebar'))
                     <li class="nav-item">
