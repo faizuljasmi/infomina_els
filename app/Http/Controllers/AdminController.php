@@ -642,7 +642,9 @@ class AdminController extends Controller
         } else {
             try {
                 $user = User::where('email', $content['data']['email'])->firstOrFail();
-                Auth::logout($user);
+                Auth::setUser($user);
+                Auth::logout();
+                $request->session()->invalidate();
                 return response()->json('User succesfully logged out');
             } catch (ModelNotFoundException $exception) {
                 return response()->json('User not found, log out operation was not executed');
