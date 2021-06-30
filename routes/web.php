@@ -32,7 +32,7 @@ Route::get('/', function () {
 });
 
 Route::get('/sso-login/{token}', 'AdminController@sso_login');
-Route::get('/sso-logout/{token}', 'AdminController@sso_logout');
+Route::post('/sso-logout/{token}', 'AdminController@sso_logout');
 //Route::get('/mobile/notification', 'LeaveApplicationController@mobile_notification');
 
 //Auth::routes();
