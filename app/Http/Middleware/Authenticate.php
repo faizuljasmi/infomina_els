@@ -16,7 +16,8 @@ class Authenticate extends Middleware
     {
         if (! $request->expectsJson()) {
             //return route('login');
-            return redirect("http://128.199.123.181/app");
+            //return redirect("http://128.199.123.181/app");
+            return url("/login");
         }
     }
 }
