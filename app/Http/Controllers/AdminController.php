@@ -31,6 +31,7 @@ use App\BurntLeave;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Auth\UserInterface;
 
 class AdminController extends Controller
 {
@@ -641,8 +642,7 @@ class AdminController extends Controller
         } else {
             try {
                 $user = User::where('email', $content['data']['email'])->firstOrFail();
-                Auth::setUser($user);
-                Auth::logout();
+                Auth::logout($user);
             } catch (ModelNotFoundException $exception) {
                 //return redirect('/');
             }
