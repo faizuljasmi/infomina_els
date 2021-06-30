@@ -643,7 +643,7 @@ class AdminController extends Controller
             try {
                 $user = User::where('email', $content['data']['email'])->firstOrFail();
                 Auth::setUser($user);
-                Auth::logout();
+                return route('logout');
                 //$request->session()->invalidate();
                 return response()->json('User succesfully logged out');
             } catch (ModelNotFoundException $exception) {
