@@ -32,7 +32,6 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\UserInterface;
-use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
