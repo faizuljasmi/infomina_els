@@ -49,12 +49,12 @@ class AdminController extends Controller
                 ->where('users.name', 'like', '%' . $search_name . '%')
                 ->select('leave_applications.*');
         }
-        
+
         if ($leave_type) {
             // dd($leave_type);
             $query->where('leave_type_id', $leave_type);
         }
-        
+
         if ($leave_status) {
             if ($leave_status == 'PENDING') {
                 $query->where('status', 'like', 'PENDING_%');
@@ -64,7 +64,7 @@ class AdminController extends Controller
                 $query->where('status', $leave_status);
             }
         }
-        
+
         if ($date_from && $date_to) {
             $query->wherebetween('date_from', [$date_from, $date_to]);
             // $query->orwherebetween('date_to', [$date_from, $date_to]);
@@ -557,15 +557,14 @@ class AdminController extends Controller
                     $cur_ann_leave_bal->no_of_days = $new_ann_balance;
                     $cur_ann_leave_bal->save();
 
-                    if($user->burnt_leaves->where('leave_type_id',1)->isEmpty()){
+                    if ($user->burnt_leaves->where('leave_type_id', 1)->isEmpty()) {
                         $burnt = new BurntLeave;
                         $burnt->leave_type_id = 1;
                         $burnt->user_id = $user->id;
                         $burnt->no_of_days = $bf_balance;
                         $burnt->save();
-                    }
-                    else{
-                        $bl = $user->burnt_leaves->where('leave_type_id',1)->first();
+                    } else {
+                        $bl = $user->burnt_leaves->where('leave_type_id', 1)->first();
                         $bl->leave_type_id = 1;
                         $bl->user_id = $user->id;
                         $bl->no_of_days = $bf_balance;
@@ -610,6 +609,42 @@ class AdminController extends Controller
                 return redirect('home');
             } catch (ModelNotFoundException $exception) {
                 return redirect('/');
+            }
+        }
+    }
+
+    public function sso_logout(Request $request)
+    {
+        // $response = Http::post('https://wspace.io/api/other/validate-token', [
+        //     'token' => $token,
+        // ]);
+        $endpoint = "https://wspace.io/api/other/validate-token";
+        $client = new \GuzzleHttp\Client(['http_errors' => false]);
+        $token = $request->token;
+
+        $response = $client->request('POST', $endpoint, [
+            'form_params' => [
+                'token' => $token
+            ]
+        ]);
+
+        // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getBody();
+
+        // or when your server returns json
+        $content = json_decode($response->getBody(), true);
+        if (array_key_exists('error', $content)) {
+            return redirect('/');
+        } else {
+            try {
+                $user = User::where('email', $content['data']['email'])->firstOrFail();
+                Auth::setUser($user);
+                Auth::logout();
+                //return redirect('home');
+            } catch (ModelNotFoundException $exception) {
+                //return redirect('/');
             }
         }
     }
