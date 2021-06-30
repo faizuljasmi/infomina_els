@@ -129,7 +129,7 @@ config('adminlte.sidebar_scrollbar_theme') : '') . ' ' . (config('adminlte.sideb
                                 style="float:left;width:auto;height:100%;">
                         </a>
                     </li>
-                    <!-- <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="#"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="fa fa-fw fa-power-off"></i> {{ __('adminlte::adminlte.log_out') }}
@@ -140,7 +140,7 @@ config('adminlte.sidebar_scrollbar_theme') : '') . ' ' . (config('adminlte.sideb
                             @endif
                             {{ csrf_field() }}
                         </form>
-                    </li> -->
+                    </li>
                     @endif
                     @if(config('adminlte.right_sidebar'))
                     <li class="nav-item">
