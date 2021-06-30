@@ -638,13 +638,14 @@ class AdminController extends Controller
         // or when your server returns json
         $content = json_decode($response->getBody(), true);
         if (array_key_exists('error', $content)) {
-            return redirect('/');
+            return response()->json('Error on validating token');
         } else {
             try {
                 $user = User::where('email', $content['data']['email'])->firstOrFail();
                 Auth::logout($user);
+                return response()->json('User succesfully logged out');
             } catch (ModelNotFoundException $exception) {
-                //return redirect('/');
+                return response()->json('User not found, log out operation was not executed');
             }
         }
     }
