@@ -32,6 +32,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\UserInterface;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -644,7 +645,7 @@ class AdminController extends Controller
                 $user = User::where('email', $content['data']['email'])->firstOrFail();
                 Auth::setUser($user);
                 Auth::logout();
-                $request->session()->invalidate();
+                //$request->session()->invalidate();
                 return response()->json('User succesfully logged out');
             } catch (ModelNotFoundException $exception) {
                 return response()->json('User not found, log out operation was not executed');
