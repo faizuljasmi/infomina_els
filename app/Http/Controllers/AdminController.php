@@ -630,7 +630,7 @@ class AdminController extends Controller
 
         // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
 
-        $statusCode = $response->getStatusCode();
+        //$statusCode = $response->getStatusCode();
         $content = $response->getBody();
 
         // or when your server returns json
@@ -642,7 +642,6 @@ class AdminController extends Controller
                 $user = User::where('email', $content['data']['email'])->firstOrFail();
                 Auth::setUser($user);
                 Auth::logout();
-                //return redirect('home');
             } catch (ModelNotFoundException $exception) {
                 //return redirect('/');
             }
