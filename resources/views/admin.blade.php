@@ -246,6 +246,7 @@
                                 $leaveApps->currentPage()])->render() !!}
                             </div>
                             <div class="col-lg-4 connectedSortable ui-sortable">
+                                
                                 <!-- Calendar -->
                                 <!-- Vanilla Calendar -->
 
@@ -644,7 +645,20 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                @foreach ($holsPaginated as $hp => $hols)
+                                            <div class="col-md-12">
+                                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                @foreach ($countries as $country )
+                                                <li class="nav-item">
+                                                    <a @if($country->name == 'Malaysia') class="nav-link active" @else class="nav-link" @endif  id="pills-{{$country->name}}-tab" data-toggle="pill" href="#pills-{{$country->name}}" role="tab" aria-controls="pills-{{$country->name}}" aria-selected="true">{{$country->name}}</a>
+                                                </li>
+                                                @endforeach
+
+
+</ul>
+<div class="tab-content" id="pills-tabContent">
+    @foreach ($countries as $country)
+    <div @if($country->name == 'Malaysia') class="tab-pane fade show active" @else class="tab-pane fade show" @endif  id="pills-{{$country->name}}" role="tabpanel" aria-labelledby="pills-{{$country->name}}-tab">
+    @foreach ($holsPaginated as $hp => $hols)
                                                 <h5><span class="badge badge-dark">{{$hp}}</span></h5>
                                                 <table class="table table table-bordered table-striped">
                                                     <tr class="bg-primary">
@@ -655,6 +669,7 @@
                                                         <th>State</th>
                                                     </tr>
                                                     @foreach ($hols as $hol)
+                                                    @if($hol->country->name == $country->name)
                                                     <tr>
                                                         <td><strong>{{$hol->name}}</strong></td>
                                                         <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('ddd, D MMM')}}
@@ -664,9 +679,13 @@
                                                         <td>{{$hol->country ? $hol->country->name:''}}</td>
                                                         <td>{{$hol->state ? $hol->state->name:''}}</td>
                                                     </tr>
+                                                    @endif
                                                     @endforeach
                                                 </table>
                                                 @endforeach
+    </div>
+    @endforeach
+</div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"

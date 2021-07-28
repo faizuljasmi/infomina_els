@@ -23,6 +23,7 @@ use App\BurntLeave;
 use App\LeaveBalance;
 use App\TakenLeave;
 use App\Holiday;
+use App\Country;
 use App\CalanderRemark;
 use Carbon\Carbon;
 use DateTime;
@@ -172,7 +173,8 @@ class HomeController extends Controller
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-
+        $holidays = Holiday::all();
+        $countries = Country::all();
         if ($user->user_type == 'Admin') {
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
@@ -183,7 +185,7 @@ class HomeController extends Controller
                 $query->where('status', 'PENDING_3');
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
-            $holidays = Holiday::all();
+            
         } else {
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
@@ -197,10 +199,6 @@ class HomeController extends Controller
                     ->where('approver_id_3', $user->id);
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
-            $state_hols = $user->state_holidays;
-            $natioanl_hols = $user->national_holidays;
-
-            $holidays = $state_hols->merge($natioanl_hols)->sortBy('date_from');
         }
 
 
@@ -358,7 +356,7 @@ class HomeController extends Controller
             array_push($events, $eventDetails);
         }
 
-        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events', 'allremarks', 'holsPaginated'));
+        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events','countries', 'allremarks', 'holsPaginated'));
     }
 
     public function search(Request $request)
@@ -369,6 +367,8 @@ class HomeController extends Controller
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
+        $countries = Country::all();
+        $holidays = Holiday::all();
         if ($user->user_type == 'Admin') {
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
@@ -379,7 +379,6 @@ class HomeController extends Controller
                 $query->where('status', 'PENDING_3');
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
-            $holidays = Holiday::all();
         } else {
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
@@ -392,11 +391,6 @@ class HomeController extends Controller
                 $query->where('status', 'PENDING_3')
                     ->where('approver_id_3', $user->id);
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
-
-            $state_hols = $user->state_holidays;
-            $natioanl_hols = $user->national_holidays;
-
-            $holidays = $state_hols->merge($natioanl_hols)->sortBy('date_from');
         }
 
         $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->whereDate('created_at', '>', '2020-12-30')->get();
@@ -566,7 +560,7 @@ class HomeController extends Controller
             return Carbon::parse($val->date_from)->format('F');
         });
 
-        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates', 'holidays', 'events','holsPaginated'));
+        return view('admin')->with(compact('user', 'emptype', 'empTypes', 'leaveTypes', 'leaveApps', 'groupLeaveApps', 'leaveHist', 'all_dates', 'applied_dates', 'approved_dates','countries', 'holidays', 'events','holsPaginated'));
     }
 
     public function store_remarks(Request $request)
