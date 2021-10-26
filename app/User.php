@@ -146,6 +146,11 @@ class User extends Authenticatable
     public function state_holidays(){
         return $this->branch->state->state_wide_holidays();
     }
+    
+    // Added by GR
+    public function state(){
+        return $this->branch->state();
+    }
 
     public function national_holidays(){
         return $this->branch->country->country_wide_holidays();

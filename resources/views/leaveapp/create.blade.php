@@ -77,6 +77,9 @@
                             </div>
                             <div class="card-body">
 
+                                <!-- Added by GR -->
+                                <input type="hidden" id="user_state" value="{{Auth::user()->state->id}}"/>
+
                                 <!-- Leave Type -->
                                 <div class="form-group">
                                     <label>Leave Type <font color="red">*</font></label>
@@ -685,6 +688,9 @@ $('#reason').keyup(function() {
     }
 });
 
+// Added by GR - Get user state on load.
+var user_state = $('#user_state').val();
+
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (function() {
   'use strict';
@@ -956,13 +962,24 @@ $('#reason').keyup(function() {
         }
 
         if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
-            if(
-            (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
-            ||
-            (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
-          ){
-            return "Selected date is a Weekend day. Please select another date.";
-          }
+            // Added by GR - Later if need to add states that have diff weekend, add in here ##user_state. 
+            if ( user_state == 9 ) { // Johor Bahru
+                if(
+                (name == FC.date_from.name && calendar.isWeekendFriday(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                ||
+                (name == FC.date_to.name && calendar.isWeekendFriday(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                ){
+                    return "Selected date is a Weekend day. Please select another date.";
+                }
+            } else {
+                if(
+                (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                ||
+                (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                ){
+                    return "Selected date is a Weekend day. Please select another date.";
+                }
+            }
         }
 
 

@@ -123,6 +123,11 @@ let VanillaCalendar = (function() {
             return [0, 6].indexOf(dateObj.getDay()) >= 0;
         };
 
+        // Added by GR - Weekend on Fri & Sat
+        const isWeekendFriday = function(dateObj) {
+            return [5, 6].indexOf(dateObj.getDay()) >= 0;
+        };
+
         const isHoliday = function(dateObj) {
             let dateDb = getDateDb(dateObj);
             return opts.holiday.indexOf(dateDb) >= 0;
@@ -402,6 +407,12 @@ let VanillaCalendar = (function() {
         this.isWeekend = function(dateStr) {
             let dateObj = getDateObj(dateStr);
             return isWeekend(dateObj);
+        };
+
+        // Added by GR
+        this.isWeekendFriday = function(dateStr) {
+            let dateObj = getDateObj(dateStr);
+            return isWeekendFriday(dateObj);
         };
 
         this.isHoliday = function(dateStr) {
