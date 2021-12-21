@@ -1101,6 +1101,13 @@ class LeaveApplicationController extends Controller
         $leaveApplication->status = "CANCELLED";
         $leaveApplication->save();
 
+        //Record in activity history
+        $hist = new History;
+        $hist->leave_application_id = $leaveApplication->id;
+        $hist->user_id = auth()->user()->id;
+        $hist->action = "Cancelled";
+        $hist->save();
+
         if (($leaveApplication->remarker_id == $leaveApplication->approver_id_3)) {
             if (($prevStatus == 'PENDING_2') || ($prevStatus == 'PENDING_3') || ($prevStatus == 'APPROVED')) {
                 $leaveApplication->approver_two->notify(new CancelApplication($leaveApplication));
