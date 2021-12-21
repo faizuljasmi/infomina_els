@@ -46,7 +46,7 @@ class CalculateEarning extends Command
      */
     public function handle()
     {
-        $employees = User::get();
+        $employees = User::where('status', 'Active')->get();
 
         $today = Carbon::now();
         $currentMonth = $today->month;
