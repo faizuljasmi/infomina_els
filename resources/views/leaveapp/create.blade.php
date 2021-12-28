@@ -273,9 +273,11 @@
                                         <select class="form-control" name="relief_personnel_id" required>
                                             <option selected value="">Choose Person</option>
                                             @foreach($groupMates as $emp)
+                                            @if($emp->status == 'Active')
                                             <option value="{{$emp->id}}"
                                                 {{ (old('relief_personnel_id') == $emp->id ? "selected":"") }}>
                                                 {{$emp->name}}</option>
+                                            @endif
                                             @endforeach
                                         </select>
                                         <div class="invalid-feedback">

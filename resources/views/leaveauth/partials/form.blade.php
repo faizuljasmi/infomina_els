@@ -7,9 +7,11 @@
             <select class="form-control" id="authority_1_id" name="authority_1_id" onchange= "resetAndChange()" required>
                 <option value="">NA</option>
                 @foreach($authUsers as $u)
+                @if($u->status == 'Active')
                 <option value="{{$u->id}}"
                     {{isset($empAuth->authority_1_id) && $empAuth->authority_one->name == $u->name ? 'selected':''}}>
                     {{$u->name}}</option>
+                @endif
                 @endforeach
             </select>
             <div class="invalid-feedback">
@@ -22,9 +24,11 @@
             <select class="form-control" id="authority_2_id" name="authority_2_id" onchange= "resetAndChange()">
                 <option value="">NA</option>
                 @foreach($authUsers as $u)
+                @if($u->status == 'Active')
                 <option value="{{$u->id}}"
                     {{isset($empAuth->authority_2_id) && $empAuth->authority_two->name == $u->name ? 'selected':''}}>
                     {{$u->name}}</option>
+                @endif
                 @endforeach
             </select>
             <div class="invalid-feedback">
@@ -37,9 +41,11 @@
             <select class="form-control" id="authority_3_id" name="authority_3_id" onchange= "resetAndChange()">
                 <option value="">NA</option>
                 @foreach($authUsers as $u)
+                @if($u->status == 'Active')
                 <option value="{{$u->id}}"
                     {{isset($empAuth->authority_3_id) && $empAuth->authority_three->name == $u->name ? 'selected':''}}>
                     {{$u->name}}</option>
+                @endif
                 @endforeach
             </select>
         </div>
