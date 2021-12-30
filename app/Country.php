@@ -19,6 +19,6 @@ class Country extends Model
     }
 
     public function country_wide_holidays(){
-        return $this->holidays()->where('state_id',null);
+        return $this->holidays()->whereYear('date_from', date("Y"))->where('state_id',null);
     }
 }

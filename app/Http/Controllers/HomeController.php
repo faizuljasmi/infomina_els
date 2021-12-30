@@ -173,7 +173,7 @@ class HomeController extends Controller
         $emptype = $user->emp_types;
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
-        $holidays = Holiday::all();
+        $holidays = Holiday::whereYear('date_from', date("Y"))->get();
         $countries = Country::all();
         if ($user->user_type == 'Admin') {
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
@@ -368,7 +368,7 @@ class HomeController extends Controller
         $empTypes = EmpType::orderBy('id', 'ASC')->get();
         $leaveTypes = LeaveType::orderBy('id', 'ASC')->get();
         $countries = Country::all();
-        $holidays = Holiday::all();
+        $holidays = Holiday::whereYear('date_from', date("Y"))->get();
         if ($user->user_type == 'Admin') {
             //Mantop ni. Only get leave applications that are currently waiting for THIS authority to approve, yang lain tak tarik.
             $leaveApps = LeaveApplication::where(function ($query) use ($user) {
