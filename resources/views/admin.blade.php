@@ -638,7 +638,7 @@
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
+                                                <h5 class="modal-title" id="viewHolidaysLabel">{{date("Y")}} Public Holidays</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -672,9 +672,9 @@
                                                     @if($hol->country->name == $country->name)
                                                     <tr>
                                                         <td><strong>{{$hol->name}}</strong></td>
-                                                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('dddd, D MMM YYYY')}}
+                                                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('dddd, D/MM')}}
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('dddd, D MMM YYYY')}}
+                                                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('dddd, D/MM')}}
                                                         </td>
                                                         <td>{{$hol->country ? $hol->country->name:''}}</td>
                                                         <td>{{$hol->state ? $hol->state->name:''}}</td>

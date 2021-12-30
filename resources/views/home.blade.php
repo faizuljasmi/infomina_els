@@ -512,7 +512,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
+                <h5 class="modal-title" id="viewHolidaysLabel">{{date("Y")}} Public Holidays</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -522,15 +522,15 @@
                 <h5><span class="badge badge-dark">{{$hp}}</span></h5>
                 <table class="table table-sm table-bordered table-striped">
                     <tr class="bg-primary">
-                        <th style="width: 40%">Holiday Name</th>
+                        <th style="width: 50%">Holiday Name</th>
                         <th>From</th>
                         <th>To</th>
                     </tr>
                     @foreach ($hols as $hol)
                     <tr>
                         <td><strong>{{$hol->name}}</strong></td>
-                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('dddd, D MMM YYYY')}}</td>
-                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('dddd, D MMM YYYY')}}</td>
+                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('dddd, D/MM')}}</td>
+                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('dddd, D/MM')}}</td>
                     </tr>
                     @endforeach
                 </table>
