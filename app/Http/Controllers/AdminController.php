@@ -580,7 +580,6 @@ class AdminController extends Controller
 
     public function sso_login(Request $request)
     {
-        return response()->json($request->token);
         // $response = Http::post('https://wspace.io/api/other/validate-token', [
         //     'token' => $token,
         // ]);
