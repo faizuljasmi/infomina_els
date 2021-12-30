@@ -509,7 +509,7 @@
 <!-- Modal -->
 <div class="modal fade" id="viewHolidays" tabindex="-1" role="dialog" aria-labelledby="viewHolidaysLabel"
     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="viewHolidaysLabel">Public Holidays</h5>
@@ -522,7 +522,7 @@
                 <h5><span class="badge badge-dark">{{$hp}}</span></h5>
                 <table class="table table-sm table-bordered table-striped">
                     <tr class="bg-primary">
-                        <th style="width: 60%">Holiday Name</th>
+                        <th style="width: 40%">Holiday Name</th>
                         <th>From</th>
                         <th>To</th>
                     </tr>

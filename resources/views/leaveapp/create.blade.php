@@ -461,7 +461,7 @@
                         <h5><span class="badge badge-dark">{{$hp}}</span></h5>
                         <table class="table table-sm table-bordered table-striped">
                             <tr class="bg-primary">
-                                <th style="width: 60%">Holiday Name</th>
+                                <th style="width: 40%">Holiday Name</th>
                                 <th>From</th>
                                 <th>To</th>
                             </tr>
