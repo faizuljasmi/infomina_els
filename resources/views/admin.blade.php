@@ -672,9 +672,9 @@
                                                     @if($hol->country->name == $country->name)
                                                     <tr>
                                                         <td><strong>{{$hol->name}}</strong></td>
-                                                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('ddd, D MMM')}}
+                                                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('dddd, D MMM YYYY')}}
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('ddd, D MMM')}}
+                                                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('dddd, D MMM YYYY')}}
                                                         </td>
                                                         <td>{{$hol->country ? $hol->country->name:''}}</td>
                                                         <td>{{$hol->state ? $hol->state->name:''}}</td>

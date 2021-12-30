@@ -529,8 +529,8 @@
                     @foreach ($hols as $hol)
                     <tr>
                         <td><strong>{{$hol->name}}</strong></td>
-                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('ddd, D MMM')}}</td>
-                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('ddd, D MMM')}}</td>
+                        <td>{{ \Carbon\Carbon::parse($hol->date_from)->isoFormat('dddd, D MMM YYYY')}}</td>
+                        <td>{{ \Carbon\Carbon::parse($hol->date_to)->isoFormat('dddd, D MMM YYYY')}}</td>
                     </tr>
                     @endforeach
                 </table>
