@@ -443,7 +443,7 @@ class WorkspaceController extends Controller
 
         if ($secret_key == config('wspace.secret')) {
             //FOR MOCK
-            //return response()->json("SUCCESS: ON LEAVE TODAY".$request->user_email);
+            return response()->json("SUCCESS: ON LEAVE TODAY".$request->user_email);
             try {
                 $user_email = $request->user_email;
                 $user = User::where('email', $user_email)->firstOrFail();
