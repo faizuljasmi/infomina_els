@@ -437,4 +437,46 @@ class WorkspaceController extends Controller
             return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
         }
     }
+
+    public function getLeaveStatus(Request $request){
+        $secret_key = $request->bearerToken();
+
+        if ($secret_key == config('wspace.secret')) {
+            //FOR MOCK
+            //return response()->json("SUCCESS: ON LEAVE TODAY".$request->user_email);
+            try {
+                $user_email = $request->user_email;
+                $user = User::where('email', $user_email)->firstOrFail();
+                $toret = [];
+                $leave = LeaveApplication::where('user_id',$user->id)->where('status','APPROVED')->where('date_from','>=',Carbon::now()->addDays(14))->orderBy('date_from', 'ASC')->with(['leaveType'])->first();
+                $wordings = "";
+                if(Carbon::today()->toDateString() == $leave->date_from){
+                    if($leave->total_days > 1){
+                        $date_to = Carbon::parse($leave->date_to)->format('M d Y');
+                        $wordings = "On Leave Today Until ".$date_to;
+                    }
+                    else{
+                        $wordings = "On Leave Today";
+                    }
+                }
+                else{
+                    $leave_date = Carbon::parse($leave->date_from)->format('M d Y');
+                    $wordings = "Upcoming Leave: ".$leave_date;
+                }
+                $toret = [
+                    "leave_type" => $leave->leaveType->name,
+                    "date_from" => $leave->date_from,
+                    "date_to" => $leave->date_to,
+                    "total_days" => $leave->total_days,
+                    "status" => $wordings
+                ];
+                return response()->json($toret);
+            } catch (ModelNotFoundException $exception) {
+                return response()->json($exception->getMessage());
+            }
+        }
+        else {
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
+        }
+    }
 }
