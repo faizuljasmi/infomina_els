@@ -445,7 +445,13 @@ class LeaveApplicationController extends Controller
         //Get leave applications from same group
         $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->get()->except($leaveApplication->id);
 
-        $holidays = Holiday::all();
+        $state_hols = $user->state_holidays;
+        $natioanl_hols = $user->national_holidays;
+
+        $holidays = $state_hols->merge($natioanl_hols)->sortBy('date_from');
+        $holsPaginated = $holidays->groupBy(function ($val) {
+            return Carbon::parse($val->date_from)->format('F');
+        });
         $all_dates = array();
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
