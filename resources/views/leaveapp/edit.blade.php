@@ -135,7 +135,7 @@
 
                 <!-- Reason -->
                 <div class="form-group">
-                  <label>Reasonnnnn <small>(5 characters minimum)</small>
+                  <label>Reason <small>(5 characters minimum)</small>
                     <font color="red">*</font>
                   </label>
                   <textarea class="form-control" rows="5" name="reason" id="reason" minlength="5" required>{{$leaveApplication->reason}}</textarea>
