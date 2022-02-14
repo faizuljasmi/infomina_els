@@ -393,7 +393,7 @@ class HomeController extends Controller
             })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
         }
 
-        $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->whereDate('created_at', '>', '2020-12-30')->get();
+        $allLeaveApps = LeaveApplication::orderBy('date_from', 'ASC')->whereDate('created_at', '>', '2021-12-30')->get();
 
         $leaveHist = LeaveApplication::where(function ($query) use ($user, $search) {
             $query->where('status', 'APPROVED')
