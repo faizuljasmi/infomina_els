@@ -135,10 +135,10 @@
 
                 <!-- Reason -->
                 <div class="form-group">
-                  <label>Reason <small>(5 characters minimum)</small>
+                  <label>Reasonnnnn <small>(5 characters minimum)</small>
                     <font color="red">*</font>
                   </label>
-                  <textarea class="form-control" rows="5" name="reason" id="reason" value="{{$leaveApplication->reason}}" minlength="5" required></textarea>
+                  <textarea class="form-control" rows="5" name="reason" id="reason" minlength="5" required>{{$leaveApplication->reason}}</textarea>
                   <h6 class="float-right" id="count_reason"></h6>
                   <div class="invalid-feedback">
                     Reason is required
@@ -566,24 +566,12 @@
 
     function MainLeaveApplicationCreate() {
 
-      var dates = {
-        !!json_encode($all_dates, JSON_HEX_TAG) !!
-      };
-      var applied = {
-        !!json_encode($applied_dates, JSON_HEX_TAG) !!
-      };
-      var approved = {
-        !!json_encode($approved_dates, JSON_HEX_TAG) !!
-      };
-      var balances = {
-        !!json_encode($leaveBal, JSON_HEX_TAG) !!
-      };
-      var myapplications = {
-        !!json_encode($myApplication, JSON_HEX_TAG) !!
-      };
-      var userGroup = {
-        !!json_encode($user - > emp_group - > name, JSON_HEX_TAG) !!
-      };
+      var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
+      var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
+      var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
+      var balances= {!! json_encode($leaveBal, JSON_HEX_TAG) !!};
+      var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
+      var userGroup = {!! json_encode($user->emp_group->name, JSON_HEX_TAG) !!};
 
       //console.log("MY APP:",myapplications);
 
