@@ -449,27 +449,39 @@ class WorkspaceController extends Controller
                 $toret = [];
                 $leave = LeaveApplication::where('user_id',$user->id)->where('status','APPROVED')->where('date_from','>=',Carbon::now()->addDays(14))->orderBy('date_from', 'ASC')->with(['leaveType'])->first();
                 $wordings = "";
-                if(Carbon::today()->toDateString() == $leave->date_from){
-                    if($leave->total_days > 1){
-                        $date_to = Carbon::parse($leave->date_to)->format('M d Y');
-                        $wordings = "On Leave Today Until ".$date_to;
+                if($leave){
+                    if(Carbon::today()->toDateString() == $leave->date_from){
+                        if($leave->total_days > 1){
+                            $date_to = Carbon::parse($leave->date_to)->format('M d Y');
+                            $wordings = "On Leave Today Until ".$date_to;
+                        }
+                        else{
+                            $wordings = "On Leave Today";
+                        }
                     }
                     else{
-                        $wordings = "On Leave Today";
+                        $leave_date = Carbon::parse($leave->date_from)->format('M d Y');
+                        $wordings = "Upcoming Leave: ".$leave_date;
                     }
+                    $toret = [
+                        "leave_type" => $leave->leaveType->name,
+                        "date_from" => $leave->date_from,
+                        "date_to" => $leave->date_to,
+                        "total_days" => $leave->total_days,
+                        "status" => $wordings
+                    ];
+                    return response()->json($toret);
                 }
                 else{
-                    $leave_date = Carbon::parse($leave->date_from)->format('M d Y');
-                    $wordings = "Upcoming Leave: ".$leave_date;
+                    $toret = [
+                        "leave_type" => null,
+                        "date_from" => null,
+                        "date_to" => null,
+                        "total_days" => null,
+                        "status" => "No Upcoming Leave"
+                    ];
+                    return response()->json($toret);
                 }
-                $toret = [
-                    "leave_type" => $leave->leaveType->name,
-                    "date_from" => $leave->date_from,
-                    "date_to" => $leave->date_to,
-                    "total_days" => $leave->total_days,
-                    "status" => $wordings
-                ];
-                return response()->json($toret);
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());
             }
