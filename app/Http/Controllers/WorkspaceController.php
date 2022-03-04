@@ -447,7 +447,9 @@ class WorkspaceController extends Controller
                 $user_email = $request->user_email;
                 $user = User::where('email', $user_email)->firstOrFail();
                 $toret = [];
-                $leave = LeaveApplication::where('user_id',$user->id)->where('status','APPROVED')->where('date_from','>=',Carbon::now()->addDays(14))->orderBy('date_from', 'ASC')->with(['leaveType'])->first();
+                $leave = LeaveApplication::where('user_id', $user->id)->where('status','APPROVED')->where('date_from','>=',Carbon::now()->subDays(1))->where('date_from','<=',Carbon::now()->addDays(14))->orderBy('date_from', 'DESC')->with(['leaveType'])->first();                                       
+                //$leave = LeaveApplication::where('user_id',$user->id)->where('status','APPROVED')->where('date_from','<=',Carbon::now()->addDays(14))->orderBy('date_from', 'DESC')->with(['leaveType'])->first();
+                //$leave = LeaveApplication::where('user_id',$user->id)->where('status','APPROVED')->where('date_from','>=',Carbon::now()->addDays(14))->orderBy('date_from', 'ASC')->with(['leaveType'])->first();
                 $wordings = "";
                 if($leave){
                     if(Carbon::today()->toDateString() == $leave->date_from){
