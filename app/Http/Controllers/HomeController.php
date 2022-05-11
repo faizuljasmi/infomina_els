@@ -56,25 +56,25 @@ class HomeController extends Controller
         //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
-        $ann_taken_first_half = LeaveApplication::where('user_id', $user->id)->where('status', 'Approved')->where('leave_type_id', 1)->whereBetween('created_at', ['2021-01-01', '2021-06-30'])->get();
+        $ann_taken_first_half = LeaveApplication::where('user_id', $user->id)->where('status', 'Approved')->where('leave_type_id', 1)->whereBetween('created_at', ['2022-01-01', '2022-06-30'])->get();
         $total_ann_taken_first_half = 0;
         foreach ($ann_taken_first_half as $ann) {
             $total_ann_taken_first_half += $ann->total_days;
         }
 
-        $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where('user_id', '=', $user->id)->whereDate('created_at', '>', '2020-12-01')->paginate(3);
+        $leaveApps = LeaveApplication::orderBy('created_at', 'DESC')->where('user_id', '=', $user->id)->whereDate('created_at', '>', '2021-12-01')->paginate(3);
         $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_2')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->sortable(['created_at'])->paginate(5, ['*'], 'pending');
 
         foreach ($leaveBal as $lb) {
@@ -93,23 +93,23 @@ class HomeController extends Controller
         $leaveHist = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'APPROVED')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'CANCELLED')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_1')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_2')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'DENIED_3')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at', '>', '2020-12-01');
+                ->whereDate('created_at', '>', '2021-12-01');
         })->sortable(['date_from'])->paginate(5, ['*'], 'history');
 
         //Get all holidays dates\

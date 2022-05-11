@@ -50,15 +50,15 @@ class UserController extends Controller
         $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at','>','2020-12-01');
+                ->whereDate('created_at','>','2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_2')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at','>','2020-12-01');
+                ->whereDate('created_at','>','2021-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at','>','2020-12-01');
+                ->whereDate('created_at','>','2021-12-01');
         })->get();
 
         foreach($leaveBal as $lb){
