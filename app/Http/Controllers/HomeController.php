@@ -56,7 +56,9 @@ class HomeController extends Controller
         //dd($user->taken_leaves()->where('leave_type_id',12)->get('no_of_days'));
         $leaveTak = TakenLeave::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
 
-        $ann_taken_first_half = LeaveApplication::where('user_id', $user->id)->where('status', 'Approved')->where('leave_type_id', 1)->whereBetween('created_at', ['2022-01-01', '2022-06-30'])->get();
+        $ann_taken_first_half = LeaveApplication::where('user_id', $user->id)->where('status', 'Approved')->where(function ($q) {
+            $q->where('leave_type_id', 1)->orWhere('leave_type_id', 6);
+        })->whereBetween('created_at', ['2022-01-01', '2022-06-30'])->get();
         $total_ann_taken_first_half = 0;
         foreach ($ann_taken_first_half as $ann) {
             $total_ann_taken_first_half += $ann->total_days;
