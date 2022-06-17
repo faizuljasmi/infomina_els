@@ -360,8 +360,8 @@ class LeaveService
         // return response()->json($data);
         $client = new Client();
         //http://128.199.123.181
-        //https://wspace.io
-        $response = $client->request('POST', 'https://wspace.io/api/v1/send-message', [
+        //https://videspace.com
+        $response = $client->request('POST', 'https://videspace.com/api/v1/send-message', [
             'headers' =>
             [
                 'Authorization' => "Bearer ".config('wspace.els_secret')

@@ -53,7 +53,7 @@ class LoginController extends Controller
 
             $request->session()->invalidate();
 
-            return redirect("https://wspace.io");
+            return redirect("https://videspace.com");
         }
     }
 }

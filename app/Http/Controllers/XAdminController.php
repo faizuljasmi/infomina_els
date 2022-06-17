@@ -808,10 +808,10 @@ class AdminController extends Controller
 
     public function sso_login(Request $request){
 
-        // $response = Http::post('https://wspace.io/api/other/validate-token', [
+        // $response = Http::post('https://videspace.com/api/other/validate-token', [
         //     'token' => $token,
         // ]);
-            $endpoint = "https://wspace.io/api/other/validate-token";
+            $endpoint = "https://videspace.com/api/other/validate-token";
             $client = new \GuzzleHttp\Client(['http_errors' => false]);
             $token = $request->token;
 
