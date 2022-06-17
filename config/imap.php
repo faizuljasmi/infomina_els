@@ -69,7 +69,7 @@ return [
             'encryption' => 'ssl',
             'validate_cert' => false,
             'username' => 'eleave.infomina@gmail.com',
-            'password' => 'Infomina@123',
+            'password' => 'hkxzkvvlajttzscl',
             'authentication' => 'oauth2', // use v2.0
         ],
 
