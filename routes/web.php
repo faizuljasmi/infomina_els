@@ -12,7 +12,7 @@
 */
 
 Route::get('/login', function () {
-    return redirect("http://128.199.123.181");
+    return redirect("https://videspace.com/");
 });
 
 Route::get('/admin-login', function () {
@@ -27,9 +27,9 @@ Route::get('/', function () {
         return redirect('/home');
     }
     else{
-        //http://128.199.123.181
-        //http://128.199.123.181/app
-        return redirect("http://128.199.123.181");
+        //https://videspace.com/
+        //https://videspace.com//app
+        return redirect("https://videspace.com/");
     }
 });
 
