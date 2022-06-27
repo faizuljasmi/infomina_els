@@ -28,7 +28,7 @@ Route::get('/', function () {
     }
     else{
         //https://videspace.com/
-        //https://videspace.com//app
+        //https://videspace.com/app
         return redirect("https://videspace.com/");
     }
 });

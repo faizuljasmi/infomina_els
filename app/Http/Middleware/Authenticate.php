@@ -16,7 +16,7 @@ class Authenticate extends Middleware
     {
         if (! $request->expectsJson()) {
             //return route('login');
-            //return redirect("https://videspace.com//app");
+            //return redirect("https://videspace.com/app");
             return url("/login");
         }
     }

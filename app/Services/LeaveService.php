@@ -361,7 +361,7 @@ class LeaveService
         $client = new Client();
         //https://videspace.com/
         //https://videspace.com/
-        $response = $client->request('POST', 'https://videspace.com//api/v1/send-message', [
+        $response = $client->request('POST', 'https://videspace.com/api/v1/send-message', [
             'headers' =>
             [
                 'Authorization' => "Bearer ".config('wspace.els_secret')

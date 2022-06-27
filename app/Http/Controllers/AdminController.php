@@ -582,11 +582,11 @@ class AdminController extends Controller
 
     public function sso_login(Request $request)
     {
-        // $response = Http::post('https://videspace.com//api/other/validate-token', [
+        // $response = Http::post('https://videspace.com/api/other/validate-token', [
         //     'token' => $token,
         // ]);
-        //https://videspace.com//app
-        $endpoint = "https://videspace.com//api/other/validate-token";
+        //https://videspace.com/app
+        $endpoint = "https://videspace.com/api/other/validate-token";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $token = $request->token;
 
@@ -619,10 +619,10 @@ class AdminController extends Controller
 
     public function sso_logout(Request $request)
     {
-        // $response = Http::post('https://videspace.com//api/other/validate-token', [
+        // $response = Http::post('https://videspace.com/api/other/validate-token', [
         //     'token' => $token,
         // ]);
-        $endpoint = "https://videspace.com//api/other/validate-token";
+        $endpoint = "https://videspace.com/api/other/validate-token";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $token = $request->token;
 
