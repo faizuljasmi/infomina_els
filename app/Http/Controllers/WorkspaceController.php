@@ -8,6 +8,7 @@ use App\Services\LeaveService;
 use App\User;
 use App\LeaveType;
 use App\ApprovalAuthority;
+use App\Holiday;
 use App\Jobs\NotifyAuthorityEmail;
 use Carbon\Carbon;
 use Config;
@@ -484,6 +485,32 @@ class WorkspaceController extends Controller
                     ];
                     return response()->json($toret);
                 }
+            } catch (ModelNotFoundException $exception) {
+                return response()->json($exception->getMessage());
+            }
+        }
+        else {
+            return response()->json(['error' => "Authentication failed. Your connection are not authorized to make a request"]);
+        }
+    }
+
+    public function getHolidays(Request $request){
+        $secret_key = $request->bearerToken();
+
+        if ($secret_key == config('wspace.secret')) {
+            try {
+                
+                $year = $request->year;
+                $time = $year."-01-01 00:00:00";
+                $date = new Carbon( $time );   
+
+                $holidays = Holiday::with(['state' => function ($query) {
+                    $query->select('id', 'name');
+                }, 'country' => function ($query) {
+                    $query->select('id', 'name');
+                }])->whereYear('date_from',$date->year)->select('id','name','date_from','date_to','total_days','state_id','country_id')->get();
+
+                return response()->json($holidays);
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());
             }

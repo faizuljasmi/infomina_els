@@ -35,4 +35,6 @@ Route::post('/wspace/deny-leave','WorkspaceController@denyLeave')->middleware('c
 Route::post('/wspace/is-pending','WorkspaceController@is_pending')->middleware('cors');
 ///user_email
 Route::post('/wspace/get-leave-status','WorkspaceController@getLeaveStatus')->middleware('cors');
+///get holidays
+Route::post('/wspace/get-holidays','WorkspaceController@getHolidays')->middleware('cors');
 
