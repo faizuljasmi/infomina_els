@@ -1834,7 +1834,7 @@ class LeaveApplicationController extends Controller
 
     public function mobile_notification(LeaveApplication $leaveApplication, $personnel)
     {
-        $endpoint = "http://128.199.123.181/api/push-notification/android";
+        $endpoint = "https://videspace.com/api/push-notification/android";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $leave_type = $leaveApplication->leaveType->name;
         $user_id = $leaveApplication->user_id;

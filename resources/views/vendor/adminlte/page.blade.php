@@ -124,8 +124,8 @@ config('adminlte.sidebar_scrollbar_theme') : '') . ' ' . (config('adminlte.sideb
                     @yield('content_top_nav_right')
                     @if(Auth::user())
                     <li class="nav-item">
-                        <a class="nav-link" href="{{url('http://128.199.123.181/app/landing/app')}}">
-                            Videspace <img class="mr-2" src="http://128.199.123.181/dist/_static/img/videspace.png"
+                        <a class="nav-link" href="{{url('https://videspace.com/app/landing/app')}}">
+                            Videspace <img class="mr-2" src="https://videspace.com/dist/_static/img/videspace.png"
                                 style="float:left;width:auto;height:100%;">
                         </a>
                     </li>
