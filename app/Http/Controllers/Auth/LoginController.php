@@ -53,7 +53,7 @@ class LoginController extends Controller
 
             $request->session()->invalidate();
 
-            return redirect("http://128.199.123.181/");
+            return redirect("https://videspace.com/app");
         }
     }
 }
