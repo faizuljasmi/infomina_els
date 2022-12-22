@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Notification;
 use App\Notifications\EarningUpdate;
+use App\Jobs\NotifyUserNewYear;
 
 class CalculateEarning extends Command
 {
@@ -168,7 +169,8 @@ class CalculateEarning extends Command
                     }
                     
                     // if ($emp->id == 102) {
-                        $emp->notify(new EarningUpdate($emp));
+                        //$emp->notify(new EarningUpdate($emp));
+                        NotifyUserNewYear::dispatch($emp);
                     // }
                 }
             }
