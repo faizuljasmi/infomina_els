@@ -792,12 +792,13 @@ class LeaveApplicationController extends Controller
                 $sickBalance->save();
 
                 //Deduct balance in hosp leave balance
-                $hospBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
-                    $query->where('leave_type_id', '4')
-                        ->where('user_id', $leaveApplication->user_id);
-                })->first();
-                $hospBalance->no_of_days -= $leaveApplication->total_days;
-                $hospBalance->save();
+                //DISABLE AS OF 1 JAN 2023
+                // $hospBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                //     $query->where('leave_type_id', '4')
+                //         ->where('user_id', $leaveApplication->user_id);
+                // })->first();
+                // $hospBalance->no_of_days -= $leaveApplication->total_days;
+                // $hospBalance->save();
 
                 //Record in activity history
                 $hist = new History;
@@ -1038,14 +1039,15 @@ class LeaveApplicationController extends Controller
             }
 
             //If leave application is Sick leave
-            if ($leaveApplication->leave_type_id == "3") {
-                //Get leave balance for hospitalization
-                $leaveBal2 = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', 4)->first();
-                //Add the total days cancelle back to hospitalization balance
-                $leaveBal2->no_of_days += $days;
-                //Save
-                $leaveBal2->save();
-            }
+            //DISABLE AS OF 1 JAN 2023
+            // if ($leaveApplication->leave_type_id == "3") {
+            //     //Get leave balance for hospitalization
+            //     $leaveBal2 = LeaveBalance::where('user_id', $leaveApplication->user_id)->where('leave_type_id', 4)->first();
+            //     //Add the total days cancelle back to hospitalization balance
+            //     $leaveBal2->no_of_days += $days;
+            //     //Save
+            //     $leaveBal2->save();
+            // }
             //If leave application is replacement leave
             if ($leaveApplication->leave_type_id == "12") {
                 //either claim or apply
@@ -1373,12 +1375,13 @@ class LeaveApplicationController extends Controller
             $sickBalance->save();
 
             //Deduct balance in hosp leave balance
-            $hospBalance = LeaveBalance::where(function ($query) use ($leaveApp) {
-                $query->where('leave_type_id', '4')
-                    ->where('user_id', $leaveApp->user_id);
-            })->first();
-            $hospBalance->no_of_days -= $leaveApp->total_days;
-            $hospBalance->save();
+            //DISABLE AS OF 1 JAN 2023
+            // $hospBalance = LeaveBalance::where(function ($query) use ($leaveApp) {
+            //     $query->where('leave_type_id', '4')
+            //         ->where('user_id', $leaveApp->user_id);
+            // })->first();
+            // $hospBalance->no_of_days -= $leaveApp->total_days;
+            // $hospBalance->save();
 
             return back()->with('message', 'Sick leave application status updated succesfully');
         }
@@ -1660,12 +1663,13 @@ class LeaveApplicationController extends Controller
                         $sickBalance->save();
 
                         //Deduct balance in hosp leave balance
-                        $hospBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
-                            $query->where('leave_type_id', '4')
-                                ->where('user_id', $leaveApplication->user_id);
-                        })->first();
-                        $hospBalance->no_of_days -= $leaveApplication->total_days;
-                        $hospBalance->save();
+                        //DISABLE AS OF 1 JAN 2023
+                        // $hospBalance = LeaveBalance::where(function ($query) use ($leaveApplication) {
+                        //     $query->where('leave_type_id', '4')
+                        //         ->where('user_id', $leaveApplication->user_id);
+                        // })->first();
+                        // $hospBalance->no_of_days -= $leaveApplication->total_days;
+                        // $hospBalance->save();
 
                         //Record in activity history
                         $hist = new History;

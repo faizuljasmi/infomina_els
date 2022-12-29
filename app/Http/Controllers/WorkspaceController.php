@@ -252,7 +252,8 @@ class WorkspaceController extends Controller
 
                         if ($leave_app->leaveType->name == 'Sick') {
                             //Subtract amount of days from Hospitalization balance as well. [Hosp]
-                            $this->leaveService->setLeaveBalance($leave_app->user->id, 4, $leave_app->total_days, 'SUBTRACT');
+                            //DISABLE AS OF 1 JAN 2023
+                            //$this->leaveService->setLeaveBalance($leave_app->user->id, 4, $leave_app->total_days, 'SUBTRACT');
                         } else if ($leave_app->leaveType->name == 'Emergency') {
                             //Subtract amount of days from leave balance [Annual]
                             $this->leaveService->setLeaveBalance($leave_app->user->id, 1, $leave_app->total_days, 'SUBTRACT');

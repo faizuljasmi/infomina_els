@@ -148,9 +148,10 @@ class FetchHealthMetrics implements ShouldQueue
                     $leaveBal->update();
 
                     //SUBSTRACT HOSPITALIZATION BALANCE. ADDED BY FAIZUL
-                    $hospLeaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 4)->first();
-                    $hospLeaveBal->no_of_days = $hospLeaveBal->no_of_days - intval($totalDays);
-                    $hospLeaveBal->update();
+                    //DISABLE AS OF 1 JAN 2023
+                    // $hospLeaveBal = LeaveBalance::where('user_id', $emp->id)->where('leave_type_id', 4)->first();
+                    // $hospLeaveBal->no_of_days = $hospLeaveBal->no_of_days - intval($totalDays);
+                    // $hospLeaveBal->update();
 
                     $takenLeave = TakenLeave::where('user_id', $emp->id)->where('leave_type_id', 3)->first();
                     $takenLeave->no_of_days = $takenLeave->no_of_days + intval($totalDays);
