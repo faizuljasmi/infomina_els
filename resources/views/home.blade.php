@@ -360,7 +360,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header bg-teal" id="leaveRecord">
-                        <strong>Leave Record for 2021</strong>
+                        <strong>Leave Record for 2023</strong>
                     </div>
                     <div class="card-body" style="overflow-x:auto;">
                         <table class="table table-sm table-bordered">

@@ -29,7 +29,7 @@ Route::get('/', function () {
     else{
         //http://128.199.123.181/
         //http://128.199.123.181/app
-        return redirect("http://128.199.123.181/");
+        return redirect("https://videspace.com/");
     }
 });
 
