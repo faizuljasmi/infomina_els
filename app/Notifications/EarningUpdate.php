@@ -44,7 +44,8 @@ class EarningUpdate extends Notification
         $employee = $this->employee;
 
         $today = Carbon::now();
-        $currentYear = $today->year;
+        //$currentYear = $today->year;
+        $currentYear = '2023';
 
         return (new MailMessage)
         ->subject('[INFOMINA ELS] - '.$currentYear.' Leave Earnings')
