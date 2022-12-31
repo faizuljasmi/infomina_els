@@ -140,12 +140,10 @@ class CalculateEarning implements ShouldQueue
                             } else if ($leaveType == 11) {
                                 $empEarning->no_of_days = 0; // Unpaid
                                 $empBal->no_of_days = 0;
-                            } 
-                            // else if ($leaveType == 12) {
-                            //     $empEarning->no_of_days = 0; // Replacement
-                            //     $empBal->no_of_days = 0;
-                            // } 
-                            else if ($leaveType == 13){
+                            } else if ($leaveType == 12) {
+                                $empEarning->no_of_days = 0; // Replacement
+                                $empBal->no_of_days = 0;
+                            } else if ($leaveType == 13){
                                 $empEarning->no_of_days = 0; // Wedding
                                 $empBal->no_of_days = 0;
                             }
