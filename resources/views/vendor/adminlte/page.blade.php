@@ -215,7 +215,7 @@ config('adminlte.sidebar_scrollbar_theme') : '') . ' ' . (config('adminlte.sideb
 
 
     <footer class="main-footer">
-        <strong>Copyright &copy; 2023 <a href="http://infomina.com.my/">Infomina Sdn. Bhd.</a></strong>
+        <strong>Copyright &copy; 2023 <a href="http://infomina.co/">Infomina Berhad</a></strong>
         All rights reserved.
         <div class="float-right d-none d-sm-inline-block">
             <b>Version</b> 3.0.0
