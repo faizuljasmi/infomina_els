@@ -628,7 +628,9 @@ class LeaveApplicationController extends Controller
             //Save filename into Database
             $leaveApp->update(['attachment' => $filename]);
         }
-
+        
+        // To set back replacement action to Apply/Claim
+        $leaveApp->remarks = $request->replacement_action;
 
         $leaveApp->save();
         //Send email notification

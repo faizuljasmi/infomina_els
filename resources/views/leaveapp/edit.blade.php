@@ -469,6 +469,9 @@
                     <input style="display:none;" type="text" name="approver_id_3" value="4" />
                     <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
 
+                    <!-- Replacement Action -->
+                    <input style="display:none;" type="text" name="replacement_action" id="replacement_action" value="{{ $leaveApplication->remarks }}" />
+
                     <!-- Submit Button -->
                     <button type="submit" class="btn btn-success float-right">Submit</button>
                   </div>
