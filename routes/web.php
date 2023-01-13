@@ -12,7 +12,7 @@
 */
 
 Route::get('/login', function () {
-    return redirect("https://videspace.com/");
+    return redirect("https://videspace.com/app/external/app/leave-dashboard");
 });
 
 Route::get('/admin-login', function () {
