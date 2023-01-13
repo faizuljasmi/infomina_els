@@ -12,7 +12,7 @@
 */
 
 Route::get('/login', function () {
-    return redirect("http://128.199.123.181/");
+    return redirect("https://videspace.com/");
 });
 
 Route::get('/admin-login', function () {
