@@ -559,7 +559,7 @@ var user_state = $('#user_state').val();
 
 
 
-        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
+        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)')){
            // Added by GR - Later if need to add states that have diff weekend, add in here ##user_state. 
            if ( user_state == 9 ) { // Johor Bahru
                 if(
@@ -580,7 +580,7 @@ var user_state = $('#user_state').val();
             }
         }
 
-        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
+        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)')){
         if(
             (name == FC.date_from.name && calendar.isHoliday(date_from) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
           ||
@@ -641,7 +641,7 @@ var user_state = $('#user_state').val();
             let to = _form.get(FC.date_to);
             let total = calendar.getTotalWorkingDay(from, to);
             let hasError = false;
-            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
+            if(validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)'){
               total = calendar.getTotalDays(from, to);
             }
             var leaveId = _form.get(FC.leave_type_id);

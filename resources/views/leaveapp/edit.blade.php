@@ -756,7 +756,7 @@
           }
 
 
-          if (!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')) {
+          if (!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)')) {
             if (
               (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave())) ||
               (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))
@@ -766,7 +766,7 @@
           }
 
 
-          if (!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')) {
+          if (!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)')) {
             if (
               (name == FC.date_from.name && calendar.isHoliday(date_from) && (!validation.isMaternityLeave())) ||
               (name == FC.date_to.name && calendar.isHoliday(date_to) && (!validation.isMaternityLeave()))
@@ -823,7 +823,7 @@
               let from = _form.get(FC.date_from);
               let to = _form.get(FC.date_to);
               let total = calendar.getTotalWorkingDay(from, to);
-              if (validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk') {
+              if (validation.isUnpaidLeave() || validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)') {
                 total = calendar.getTotalDays(from, to);
               }
               var leaveId = _form.get(FC.leave_type_id);

@@ -726,7 +726,7 @@ var user_state = $('#user_state').val();
     var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
     var userGroup = {!! json_encode($user->emp_group->name, JSON_HEX_TAG) !!};
     var rep_claims = {!! json_encode($all_rep_claims, JSON_HEX_TAG) !!};
-    console.log((userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'));
+    console.log((userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)'));
 
     //console.log("MY APP:",myapplications);
 
@@ -824,7 +824,7 @@ var user_state = $('#user_state').val();
         //ANNUAL POLICY
         if(validation.isAnnualLeave()){
 
-		if(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
+		if(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)'){
 			let next2 = calendar.nextDay(calendar.today());
           		next2 = calendar.nextDay(next2);
                 next2 = calendar.nextDay(next2);
@@ -963,7 +963,7 @@ var user_state = $('#user_state').val();
         }
         }
 
-        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
+        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)')){
             // Added by GR - Later if need to add states that have diff weekend, add in here ##user_state. 
             if ( user_state == 9 ) { // Johor Bahru
                 if(
@@ -985,7 +985,7 @@ var user_state = $('#user_state').val();
         }
 
 
-        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk')){
+        if(!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)')){
         if(
             (name == FC.date_from.name && calendar.isHoliday(date_from) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
           ||
@@ -1046,7 +1046,7 @@ var user_state = $('#user_state').val();
             let to = _form.get(FC.date_to);
             let total = calendar.getTotalWorkingDay(from, to);
             let hasError = false;
-            if( validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk'){
+            if( validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)'){
               total = calendar.getTotalDays(from, to);
             }
             var leaveId = _form.get(FC.leave_type_id);
