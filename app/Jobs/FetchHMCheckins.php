@@ -68,8 +68,9 @@ class FetchHMCheckins implements ShouldQueue
             // Get check in date.
             $checkInPos = strpos($body, 'CHECK-IN TIME</span></span><br>') + 138;
             $checkInDateStr = substr($body, $checkInPos, $countDate + $countMonth + 6); // Receiving format Y/d/m.
-            $dCheckIn = explode('/',$checkInDateStr);
-            $checkInDate = date('Y-m-d', strtotime($dCheckIn[1].'/'.$dCheckIn[0].'/'.$dCheckIn[2])); // Convert to Y-m-d.
+            // $dCheckIn = explode('/',$checkInDateStr);
+            // $checkInDate = date('Y-m-d', strtotime($dCheckIn[1].'/'.$dCheckIn[0].'/'.$dCheckIn[2])); // Convert to Y-m-d.
+            $checkInDate = date('Y-m-d', strtotime($checkInDateStr));
             $validCD = DateTime::createFromFormat('Y-m-d', $checkInDate);
             $isCDValid = ($validCD && $validCD->format('Y-m-d') === $checkInDate); // Check is a date.
             // dd($isCTValid);
