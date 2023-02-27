@@ -899,7 +899,7 @@ var user_state = $('#user_state').val();
         }
 
         //SICK, EMERGENCY, PATERNITY, COMPASSIONATE, CALAMITY POLICY
-        if(validation.isSickLeave() || validation.isEmergencyLeave() || validation.isPaternityLeave() || validation.isCompassionateLeave() || validation.isCalamityLeave()){
+        if(validation.isSickLeave() || validation.isEmergencyLeave() || validation.isCompassionateLeave() || validation.isCalamityLeave() || validation.isPaternityLeave()){
           let prev3 = calendar.getThreePrevWorkingDay(calendar.today());
           prev3 = calendar.getDateDb(prev3);
           prev3 = calendar.getDateDb(prev3);
@@ -967,17 +967,17 @@ var user_state = $('#user_state').val();
             // Added by GR - Later if need to add states that have diff weekend, add in here ##user_state. 
             if ( user_state == 9 ) { // Johor Bahru
                 if(
-                (name == FC.date_from.name && calendar.isWeekendFriday(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                (name == FC.date_from.name && calendar.isWeekendFriday(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isPaternityLeave()) && (!validation.isHospitalizationLeave()))
                 ||
-                (name == FC.date_to.name && calendar.isWeekendFriday(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                (name == FC.date_to.name && calendar.isWeekendFriday(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isPaternityLeave()) && (!validation.isHospitalizationLeave()))
                 ){
                     return "Selected date is a Weekend day. Please select another date.";
                 }
             } else {
                 if(
-                (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isPaternityLeave()) && (!validation.isHospitalizationLeave()))
                 ||
-                (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isHospitalizationLeave()))
+                (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isPaternityLeave()) && (!validation.isHospitalizationLeave()))
                 ){
                     return "Selected date is a Weekend day. Please select another date.";
                 }
@@ -1046,7 +1046,7 @@ var user_state = $('#user_state').val();
             let to = _form.get(FC.date_to);
             let total = calendar.getTotalWorkingDay(from, to);
             let hasError = false;
-            if( validation.isHospitalizationLeave() || validation.isMaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)'){
+            if( validation.isHospitalizationLeave() || validation.isMaternityLeave() || validation.isPaternityLeave() || userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)'){
               total = calendar.getTotalDays(from, to);
             }
             var leaveId = _form.get(FC.leave_type_id);
