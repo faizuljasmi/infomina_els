@@ -1075,11 +1075,14 @@ class LeaveApplicationController extends Controller
                     //Check if have apply leave related
                     $apply_claim = ReplacementRelation::where('claim_id', $leaveApplication->id)->first();
                     if ($apply_claim != null) {
-                        $user = auth()->user();
-                        if ($user->user_type == "Employee") {
-                            return redirect()->to('/home')->with('message', 'Leave cannot be cancelled. There is a Apply application related to it');
-                        } else {
-                            return redirect()->to('/admin')->with('message', 'Leave cannot be cancelled. There is a Apply application related to it');
+                        $apply_claim_status = $apply_claim->application->status;
+                        if($apply_claim_status == "PENDING_1" || $apply_claim_status == "PENDING_2" || $apply_claim_status == "PENDING_3" || $apply_claim_status == "APPROVED"){
+                            $user = auth()->user();
+                            if ($user->user_type == "Employee") {
+                                return redirect()->to('/home')->with('message', 'Leave cannot be cancelled. There is a Apply application related to it');
+                            } else {
+                                return redirect()->to('/admin')->with('message', 'Leave cannot be cancelled. There is a Apply application related to it');
+                            }
                         }
                     }
                     //Get leave earning for replacement leave
