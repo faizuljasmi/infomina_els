@@ -671,7 +671,7 @@ var user_state = $('#user_state').val();
                 hasError = true;
                 }
             }
-            if(total > 60){
+            if(total > 365){
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
                 _form.set(FC.date_resume, "");
