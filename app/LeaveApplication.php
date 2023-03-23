@@ -12,10 +12,18 @@ class LeaveApplication extends Model
 
     //Declare Fillable
     protected $fillable = [
-        'date_from','date_to', 'date_resume',
-        'total_days', 'reason', 'relief_personnel_id',
+        'date_from',
+        'date_to',
+        'date_resume',
+        'total_days',
+        'reason',
+        'relief_personnel_id',
         'status',
-        'attachment','emergency_contact',
+        'attachment',
+        'emergency_contact',
+        'start_time',
+        'end_time',
+        'total_hours'
     ];
 
     public $sortable = [

@@ -23,9 +23,12 @@ class CreateLeaveApplicationsTable extends Migration
             $table->unsignedBigInteger('approver_id_3')->nullable();
             $table->date('date_from');
             $table->date('date_to');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->string('apply_for');
             $table->date('date_resume');
             $table->float('total_days', 8,1);
+            $table->float('total_hours', 8,1);
             $table->longText('reason');
             $table->unsignedBigInteger('relief_personnel_id')->nullable();
             $table->string('attachment')->nullable();
