@@ -32,26 +32,26 @@
               <div class="card-body">
 
                 <!-- Leave Type -->
-                <div class="form-group">
-                  <label>Leave Type</label>
+                <div class="form-group" style="display:none;">
+                  <!-- <label>Leave Type</label> -->
                   <div class="input-group">
-                    <div class="input-group-prepend">
+                    <!-- <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="far fa-star"></i>
                       </span>
                     </div>
                     <select class="form-control" disabled>
                       <option value="12" selected>Replacement</option>
-                    </select>
-                    <input style="display:none;" type="text" class="form-control float-right" name="leave_type_id" value="12">
+                    </select> -->
+                    <input type="text" class="form-control float-right" name="leave_type_id" value="12">
                   </div>
                 </div>
 
                 <!-- Leave Variation -->
-                <div class="form-group">
-                  <label>Full/Half Day <font color="red">*</font></label>
+                <div class="form-group" style="display:none;">
+                  <!-- <label>Full/Half Day <font color="red">*</font></label> -->
                   <div class="input-group">
-                    <div class="input-group-prepend">
+                    <!-- <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="far fa-clock"></i>
                       </span>
@@ -60,34 +60,35 @@
                         <option value="full-day"  {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
                         <option value="half-day-am" {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM</option>
                         <option value="half-day-pm" {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM</option>
-                    </select>
+                    </select> -->
+                    <input type="text" class="form-control float-right" name="apply_for" value="full-day">
                   </div>
                 </div>
 
 
                 <!-- Date From -->
                 <div class="form-group">
-                  <label>Date From <font color="red">*</font></label>
+                  <label>Start Date & Time <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_from" id="FromDate">
+                    <input type="datetime-local" class="form-control float-right" name="date_from" id="FromDate">
                   </div>
                 </div>
 
                 <!-- Date To -->
                 <div class="form-group">
-                  <label>Date To <font color="red">*</font></label>
+                  <label>End Date & Time <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="fa fa-calendar-day"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_to" id="ToDate">
+                    <input type="datetime-local" class="form-control float-right" name="date_to" id="ToDate">
                   </div>
                 </div>
 
@@ -104,18 +105,31 @@
                   </div>
                 </div>
 
-                <!-- Date Resume -->
-                <div class="form-group" style="display:none">
-                  <label>Date Resume</label>
+                <!-- Total Hours -->
+                <div class="form-group">
+                  <label>Total Hours</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
+                        <i class="far fa-clock"></i>
                       </span>
                     </div>
-                    <input type="date" class="form-control float-right" name="date_resume">
+                    <input type="number" class="form-control float-right" name="total_hours">
                   </div>
                 </div>
+
+                <!-- Date Resume -->
+                <!-- <div class="form-group" style="display:none"> -->
+                  <!-- <label>Date Resume</label> -->
+                  <!-- <div class="input-group"> -->
+                    <!-- <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                      </span>
+                    </div> -->
+                    <!-- <input type="date" class="form-control float-right" name="date_resume">
+                  </div>
+                </div> -->
 
 
                 <!-- Reason -->
@@ -214,48 +228,48 @@
 <script>
   $(document).ready(MainLeaveApplicationCreate);
 
-    $("#FromDate").change(function() {
-        var from = $("#FromDate").val();
-            $("#ToDate").val("");
-            $("#ToDate").attr({
-                 "min" : from          // values (or variables) here
-            });
-        });
-var text_max = 5;
-$('#count_reason').html(text_max + ' remaining');
+  $("#FromDate").change(function() {
+    var from = $("#FromDate").val();
+      $("#ToDate").val("");
+      $("#ToDate").attr({
+            "min" : from          // values (or variables) here
+      });
+  });
+  var text_max = 5;
+  $('#count_reason').html(text_max + ' remaining');
 
-$('#reason').keyup(function() {
-  var text_length = $('#reason').val().length;
-  var text_remaining = text_max - text_length;
-    if(text_remaining < 0){
-        $('#count_reason').html('Looks good!');
-    }
-    else{
-  $('#count_reason').html(text_remaining + ' remaining');
-    }
-});
+  $('#reason').keyup(function() {
+    var text_length = $('#reason').val().length;
+    var text_remaining = text_max - text_length;
+      if(text_remaining < 0){
+          $('#count_reason').html('Looks good!');
+      }
+      else{
+    $('#count_reason').html(text_remaining + ' remaining');
+      }
+  });
 
   (function() {
-  'use strict';
-  window.addEventListener('load', function() {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    var spinner = $('#loading');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        else{
-            spinner.show();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  }, false);
-})();
+    'use strict';
+    window.addEventListener('load', function() {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.getElementsByClassName('needs-validation');
+      var spinner = $('#loading');
+      // Loop over them and prevent submission
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          else{
+              spinner.show();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
 
   function MainLeaveApplicationCreate() {
 
@@ -276,45 +290,9 @@ $('#reason').keyup(function() {
 
 
     const validation = {
-      isAnnualLeave : function(){
-        return _form.get(FC.leave_type_id) == "1";
-      },
-      isCalamityLeave : function(){
-        return _form.get(FC.leave_type_id) == "2";
-      },
-       isSickLeave : function(){
-        return _form.get(FC.leave_type_id) == "3";
-      },
-      isHospitalizationLeave : function(){
-        return _form.get(FC.leave_type_id) == "4";
-      },
-      isCompassionateLeave : function(){
-        return _form.get(FC.leave_type_id) == "5";
-      },
-      isEmergencyLeave : function(){
-        return _form.get(FC.leave_type_id) == "6";
-      },
-      isMarriageLeave : function(){
-        return _form.get(FC.leave_type_id) == "7";
-      },
-      isMaternityLeave : function(){
-        return _form.get(FC.leave_type_id) == "8";
-      },
-      isPaternityLeave : function(){
-        return _form.get(FC.leave_type_id) == "9";
-      },
-      isTrainingLeave : function(){
-        return _form.get(FC.leave_type_id) == "10";
-      },
-      isUnpaidLeave : function(){
-        return _form.get(FC.leave_type_id) == "11";
-      },
-      isReplacementLeave : function(){
-        return _form.get(FC.leave_type_id) == "12";
-      },
-
       onchange : function(v, e, fc){
-          //console.log("onchange", v, e, fc);
+          console.log("onchange", "v", v, "e", e, "fc" ,fc);
+          console.log("FC.date_from.name", FC);
           let name = fc.name;
 
           if(name == FC.date_from.name || name == FC.date_to.name){
@@ -329,25 +307,18 @@ $('#reason').keyup(function() {
           validation._dateFrom(name);
           validation._dateTo(name);
 
-          validation._totalDay(name);
-          validation._dateResume(name);
+          validation._totalDayHours(name);
 
-      },
-      isHalfDayAm : function(){
-        return _form.get(FC.apply_for) == "half-day-am";
-      },
-      isHalfDayPm : function(){
-        return _form.get(FC.apply_for) == "half-day-pm";
-      },
-      isFullDay : function(){
-        return _form.get(FC.apply_for) == "full-day";
       },
       validateDateFromAndTo : function(name){
+        let from = _form.get(FC.date_from);
+        let to = _form.get(FC.date_to);
 
-        let date_from = _form.get(FC.date_from);
-        let date_to = _form.get(FC.date_to);
+        // Format to date only
+        let date_from = from.substring(0,10);
+        let date_to = to.substring(0,10);
 
-        // REPLACEMENT POLICY
+        // To ensure the claim submitted within 7 working days from the day of event
         let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
         prev7 = calendar.getDateDb(prev7);
         if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
@@ -358,6 +329,41 @@ $('#reason').keyup(function() {
             if( myapplications[index] == calendar.getDateDb(date_from) || myapplications[index] == calendar.getDateDb(date_to)){
                 return "You already have a Pending/Approved application during this date.";
             }
+        }
+
+        // To ensure the start date in not a working day
+        if(!_form.isEmpty(FC.date_from)) {
+          if (calendar.isWorkingDay(date_from)) {
+            return "You can't claim replacement leave on normal working days."
+          }
+        }
+
+        // To get working hours
+        if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)) {
+          let timeRaw = from.substring(11,16);
+          let time =  timeRaw.replace(':', '');
+          let timeToInt = parseInt(time);
+          let totalHours = calendar.getTotalHours(from, to);
+
+          console.log(timeToInt, "timeToInt");
+          console.log(calendar.isLessThan5Hours(totalHours), "isLessThan5Hours");
+          console.log(calendar.isLessThan4Hours(totalHours), "isLessThan4Hours");
+
+          if (timeToInt >= 700 && timeToInt <= 2359) {
+            // Day shift
+            if (calendar.isLessThan5Hours(totalHours)) {
+              _form.set(FC.total_hours, "");
+              _form.set(FC.total_days, "");
+              return "You need to work at least 5 hours to claim a replacement leave."
+            }
+          } else if (timeToInt >= 0 && timeToInt <= 659) {
+            // Night shift
+            if (calendar.isLessThan4Hours(totalHours)) {
+              _form.set(FC.total_hours, "");
+              _form.set(FC.total_days, "");
+              return "You need to work at least 4 hours to claim a replacement leave."
+            }
+          }
         }
 
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
@@ -379,41 +385,26 @@ $('#reason').keyup(function() {
       _dateFrom : function(name){
       },
       _dateTo : function(name){
-        if(validation.isHalfDayAm() || validation.isHalfDayPm()){
-          _form.disabled(FC.date_to);
-          _form.copy(FC.date_from, FC.date_to);
-        } else if(validation.isFullDay()){
-          _form.required(FC.date_to);
-          if(name == FC.apply_for.name){
-            _form.set(FC.date_to, "");
-          }
+        _form.required(FC.date_to);
+        if(name == FC.apply_for.name){
+          _form.set(FC.date_to, "");
         }
       },
-      _dateResume : function(name){
-        if(!_form.isEmpty(FC.date_to)){
-          let dateTo = _form.get(FC.date_to);
-          let nextWorkingDay = calendar.getNextWorkingDay(dateTo);
-          nextWorkingDay = calendar.getDateInput(nextWorkingDay);
-          _form.set(FC.date_resume, nextWorkingDay)
-        }
-      },
-      _totalDay : function(name){
-        if(validation.isHalfDayAm() || validation.isHalfDayPm()){
-          _form.set(FC.total_days, 0.5);
-        }else if(validation.isFullDay()){
-          if(name == FC.apply_for.name){
-            _form.set(FC.total_days, "");
-          }
-
-          if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
-            let from = _form.get(FC.date_from);
-            let to = _form.get(FC.date_to);
-            let total = calendar.getTotalDays(from, to);
-            console.log("total",total)
-            _form.set(FC.total_days, total);
-          } else{
-            _form.set(FC.total_days, "");
-          }
+      _totalDayHours : function(name){
+        if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
+          let from = _form.get(FC.date_from);
+          let to = _form.get(FC.date_to);
+          let totalHours = calendar.getTotalHours(from, to);
+          _form.set(FC.total_hours, totalHours);
+          
+          // Format to date only
+          let dateFrom = from.substring(0,10);
+          let dateTo = to.substring(0,10);
+          let totalDays = calendar.getTotalDays(dateFrom, dateTo);
+          _form.set(FC.total_days, totalDays);
+        } else{
+          _form.set(FC.total_hours, "");
+          _form.set(FC.total_days, "");
         }
       }
     }
@@ -439,6 +430,10 @@ $('#reason').keyup(function() {
       },
       total_days : {
         name : "total_days",
+        type : MyFormType.NUMBER
+      },
+      total_hours : {
+        name : "total_hours",
         type : MyFormType.NUMBER
       },
       date_resume : {
@@ -482,6 +477,7 @@ $('#reason').keyup(function() {
 
     _form.disabled(FC.date_resume);
     _form.disabled(FC.total_days);
+    _form.disabled(FC.total_hours);
 
 
   }

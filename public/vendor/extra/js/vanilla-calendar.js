@@ -415,6 +415,27 @@ let VanillaCalendar = (function() {
             return isWeekendFriday(dateObj);
         };
 
+        this.isLessThan4Hours = function(totalHours) {
+            return totalHours < 4;
+        }
+
+        this.isLessThan5Hours = function(totalHours) {
+            return totalHours < 5;
+        }
+
+        this.isWorkingDay = function(dateStr) {
+            let dateObj = getDateObj(dateStr);
+            let isWorkingDay = true;
+
+            if (isWeekend(dateObj)) {
+                isWorkingDay = false;
+            } else if (isHoliday(dateObj)) {
+                isWorkingDay = false;
+            }
+
+            return isWorkingDay;
+        }
+
         this.isHoliday = function(dateStr) {
             let dateObj = getDateObj(dateStr);
             return isHoliday(dateObj);
@@ -474,6 +495,15 @@ let VanillaCalendar = (function() {
                 }
             }
             return total;
+        };
+
+        this.getTotalHours = function(dateFrom, dateTo) {
+            dateFrom = new Date(dateFrom);
+            dateTo = new Date(dateTo);
+
+            let hours = Math.floor(Math.abs(dateFrom - dateTo) / (60*60*1000));
+            
+            return hours;
         };
 
         this.today = function() {

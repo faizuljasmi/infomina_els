@@ -326,55 +326,90 @@
                           </span>
                         </div>
                         <select class="form-control" disabled>
-                          <option value="12" selected>Replacement</option>
+                          @if ($leaveApplication->remarks == "Claim")
+                            <option value="12" selected>Replacement (Claim)</option>
+                          @else
+                            <option value="12" selected>Replacement (Apply)</option>
+                          @endif
                         </select>
                         <input style="display:none;" type="text" class="form-control float-right" name="leave_type_id" value="12">
                       </div>
                     </div>
 
-                    <!-- Leave Variation -->
-                    <div class="form-group">
-                      <label>Full/Half Day <font color="red">*</font></label>
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text">
-                            <i class="far fa-clock"></i>
-                          </span>
+                    @if ($leaveApplication->remarks != "Claim")
+                      <!-- Leave Variation -->
+                      <div class="form-group">
+                        <label>Full/Half Day <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="far fa-clock"></i>
+                            </span>
+                          </div>
+                          <select class="form-control" name="apply_for">
+                            <option value="full-day" {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
+                            <option value="half-day-am" {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM</option>
+                            <option value="half-day-pm" {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM</option>
+                          </select>
                         </div>
-                        <select class="form-control" name="apply_for">
-                          <option value="full-day" {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
-                          <option value="half-day-am" {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM</option>
-                          <option value="half-day-pm" {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM</option>
-                        </select>
                       </div>
-                    </div>
+                    @endif
 
-
-                    <!-- Date From -->
-                    <div class="form-group">
-                      <label>Date From <font color="red">*</font></label>
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text">
-                            <i class="fa fa-calendar-day"></i>
-                          </span>
+                    @if ($leaveApplication->remarks != "Claim")
+                      <!-- Date From -->
+                      <div class="form-group">
+                        <label>Date From <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-calendar-day"></i>
+                            </span>
+                          </div>
+                          <input type="date" class="form-control float-right" name="date_from" id="date_from" value="{{$leaveApplication->date_from}}">
                         </div>
-                        <input type="date" class="form-control float-right" name="date_from" id="date_from" value="{{$leaveApplication->date_from}}">
                       </div>
-                    </div>
-
-                    <!-- Date From -->
-                    <div class="form-group">
-                      <label>Date To <font color="red">*</font></label>
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text">
-                            <i class="fa fa-calendar-day"></i>
-                          </span>
+                    @else 
+                      <!-- Start Date & Time -->
+                      <div class="form-group">
+                        <label>Start Date & Time <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-calendar-day"></i>
+                            </span>
+                          </div>
+                          <input type="datetime-local" class="form-control float-right" name="date_from" id="date_from" value="{{$leaveApplication->date_from}}T{{$leaveApplication->start_time}}">
                         </div>
-                        <input type="date" class="form-control float-right" name="date_to" id="date_to" value="{{$leaveApplication->date_to}}">
                       </div>
-                    </div>
+                    @endif
+
+                    @if ($leaveApplication->remarks != "Claim")
+                      <!-- Date From -->
+                      <div class="form-group">
+                        <label>Date To <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-calendar-day"></i>
+                            </span>
+                          </div>
+                          <input type="date" class="form-control float-right" name="date_to" id="date_to" value="{{$leaveApplication->date_to}}">
+                        </div>
+                      </div>
+                    @else
+                      <!-- End Date & Time -->
+                      <div class="form-group">
+                        <label>End Date & Time <font color="red">*</font></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="fa fa-calendar-day"></i>
+                            </span>
+                          </div>
+                          <input type="datetime-local" class="form-control float-right" name="date_to" id="date_to" value="{{$leaveApplication->date_to}}T{{$leaveApplication->end_time}}">
+                        </div>
+                      </div>
+                    @endif
 
                     <!-- Total Days -->
                     <div class="form-group">
@@ -388,6 +423,21 @@
                         <input type="number" class="form-control float-right" name="total_days" value="{{$leaveApplication->total_days}}">
                       </div>
                     </div>
+                    
+                    @if ($leaveApplication->remarks == "Claim")
+                      <!-- Total Hours -->
+                      <div class="form-group">
+                        <label>Total Hours</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              <i class="far fa-clock"></i>
+                            </span>
+                          </div>
+                          <input type="number" class="form-control float-right" name="total_hours" value="{{$leaveApplication->total_hours}}">
+                        </div>
+                      </div>
+                    @endif
 
                     <!-- Date Resume -->
                     <div class="form-group" style="display:none">
@@ -401,7 +451,6 @@
                         <input type="date" class="form-control float-right" name="date_resume">
                       </div>
                     </div>
-
 
                     <!-- Reason -->
                     <div class="form-group">
@@ -626,9 +675,11 @@
         isReplacementLeave: function() {
           return _form.get(FC.leave_type_id) == "12";
         },
+        isReplacementClaim: function() {
+          return (_form.get(FC.leave_type_id) == "12" && _form.get(FC.remarks) == "Claim");
+        },
 
         onchange: function(v, e, fc) {
-          //console.log("onchange", v, e, fc);
           let name = fc.name;
 
           if (name == FC.date_from.name || name == FC.date_to.name) {
@@ -755,11 +806,73 @@
             }
           }
 
+          // REPLACEMENT CLAIM POLICY
+          if (validation.isReplacementClaim()) {
+            let from = _form.get(FC.date_from);
+            let to = _form.get(FC.date_to);
+
+            // Format to date only
+            let date_from = from.substring(0,10);
+            let date_to = to.substring(0,10);
+
+            // To ensure the claim submitted within 7 working days from the day of event
+            let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
+            prev7 = calendar.getDateDb(prev7);
+            if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
+              return "Attention: Claim must be submitted within 7 working days from the day of event.";
+            }
+
+            for (index = 0; index < myapplications.length; index++) {
+              if( myapplications[index] == calendar.getDateDb(date_from) || myapplications[index] == calendar.getDateDb(date_to)){
+                return "You already have a Pending/Approved application during this date.";
+              }
+            }
+
+            // To ensure the start date in not a working day
+            if(!_form.isEmpty(FC.date_from)) {
+              if (calendar.isWorkingDay(date_from)) {
+                return "You can't claim replacement leave on normal working days."
+              }
+            }
+
+            // To get working hours
+            if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)) {
+              let timeRaw = from.substring(11,16);
+              let time =  timeRaw.replace(':', '');
+              let timeToInt = parseInt(time);
+              let totalHours = calendar.getTotalHours(from, to);
+
+              console.log(timeToInt, "timeToInt");
+              console.log(calendar.isLessThan5Hours(totalHours), "isLessThan5Hours");
+              console.log(calendar.isLessThan4Hours(totalHours), "isLessThan4Hours");
+
+              if (timeToInt >= 700 && timeToInt <= 2359) {
+                // Day shift
+                if (calendar.isLessThan5Hours(totalHours)) {
+                  _form.set(FC.total_hours, "");
+                  _form.set(FC.total_days, "");
+                  return "You need to work at least 5 hours to claim a replacement leave."
+                }
+              } else if (timeToInt >= 0 && timeToInt <= 659) {
+                // Night shift
+                if (calendar.isLessThan4Hours(totalHours)) {
+                  _form.set(FC.total_hours, "");
+                  _form.set(FC.total_days, "");
+                  return "You need to work at least 4 hours to claim a replacement leave."
+                }
+              }
+            }
+
+            // To ensure claim is not applied advance
+            if(calendar.isDateBigger(date_from,calendar.today())){
+                return "Attention: Replacement leave cannot be claimed in advance."
+            }
+          }
 
           if (!(userGroup == 'Support Engineer' || userGroup == 'ICSC' || userGroup == 'Helpdesk' || userGroup == 'Service Delivery (Technical)')) {
             if (
-              (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave())) ||
-              (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()))
+              (name == FC.date_from.name && calendar.isWeekend(date_from) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isReplacementClaim())) ||
+              (name == FC.date_to.name && calendar.isWeekend(date_to) && (!validation.isTrainingLeave()) && (!validation.isMaternityLeave()) && (!validation.isReplacementClaim()))
             ) {
               return "Selected date is a Weekend day. Please select another date.";
             }
@@ -842,6 +955,19 @@
             } else {
               _form.set(FC.total_days, "");
             }
+          } else {
+            if (validation.isReplacementClaim()) {
+                let from = _form.get(FC.date_from);
+              let to = _form.get(FC.date_to);
+              let totalHours = calendar.getTotalHours(from, to);
+              _form.set(FC.total_hours, totalHours);
+              
+              // Format to date only
+              let dateFrom = from.substring(0,10);
+              let dateTo = to.substring(0,10);
+              let totalDays = calendar.getTotalDays(dateFrom, dateTo);
+              _form.set(FC.total_days, totalDays);
+            }
           }
         },
         _attachment: function(name) {
@@ -874,6 +1000,10 @@
           name: "total_days",
           type: MyFormType.NUMBER
         },
+        total_hours: {
+          name: "total_hours",
+          type: MyFormType.NUMBER
+        },
         date_resume: {
           name: "date_resume",
           type: MyFormType.DATE
@@ -898,6 +1028,10 @@
           name: "emergency_contact_name",
           type: MyFormType.TEXT
         },
+        remarks: {
+          name: "replacement_action",
+          type: MyFormType.TEXT
+        },
         // ####################################
         // ## data generated from controller ##
         // user_id
@@ -919,6 +1053,7 @@
 
       _form.disabled(FC.date_resume);
       _form.disabled(FC.total_days);
+      _form.disabled(FC.total_hours);
 
 
     }

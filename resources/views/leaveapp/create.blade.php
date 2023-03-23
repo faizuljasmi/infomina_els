@@ -780,7 +780,7 @@ var user_state = $('#user_state').val();
       },
 
       onchange : function(v, e, fc){
-          //console.log("onchange", v, e, fc);
+          console.log("onchange", v, e, fc);
           let name = fc.name;
 
           if(name == FC.date_from.name || name == FC.date_to.name){

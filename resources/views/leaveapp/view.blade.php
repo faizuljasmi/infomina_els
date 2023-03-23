@@ -124,57 +124,90 @@
                                         </div>
                                     </div>
 
-                                    <!-- Leave Variation -->
-                                    <div class="form-group">
-                                        <label>Full/Half Day</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="far fa-clock"></i>
-                                                </span>
+                                    @if($leaveApp->remarks != "Claim" && $leaveApp->leaveType->name == "Replacement")
+                                        <!-- Leave Variation -->
+                                        <div class="form-group">
+                                            <label>Full/Half Day</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="far fa-clock"></i>
+                                                    </span>
+                                                </div>
+                                                <select class="form-control" name="apply_for">
+                                                    <option value="full-day"
+                                                        {{ ($leaveApp->apply_for == "full-day" ? "selected":"") }}>Full Day
+                                                    </option>
+                                                    <option value="half-day-am"
+                                                        {{ ($leaveApp->apply_for == "half-day-am" ? "selected":"") }}>Half
+                                                        Day AM</option>
+                                                    <option value="half-day-pm"
+                                                        {{ ($leaveApp->apply_for == "half-day-pm" ? "selected":"") }}>Half
+                                                        Day PM</option>
+                                                </select>
                                             </div>
-                                            <select class="form-control" name="apply_for">
-                                                <option value="full-day"
-                                                    {{ ($leaveApp->apply_for == "full-day" ? "selected":"") }}>Full Day
-                                                </option>
-                                                <option value="half-day-am"
-                                                    {{ ($leaveApp->apply_for == "half-day-am" ? "selected":"") }}>Half
-                                                    Day AM</option>
-                                                <option value="half-day-pm"
-                                                    {{ ($leaveApp->apply_for == "half-day-pm" ? "selected":"") }}>Half
-                                                    Day PM</option>
-                                            </select>
                                         </div>
-                                    </div>
+                                    @endif
 
-
-                                    <!-- Date From -->
-                                    <div class="form-group">
-                                        <label>Date From</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-calendar-day"></i>
-                                                </span>
+                                    @if($leaveApp->remarks != "Claim" && $leaveApp->leaveType->name == "Replacement")
+                                        <!-- Date From -->
+                                        <div class="form-group">
+                                            <label>Date From</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fa fa-calendar-day"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control" id="type"
+                                                    placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_from)->format('d/m/Y')}}">
                                             </div>
-                                            <input type="text" class="form-control" id="type"
-                                                placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_from)->format('d/m/Y')}}">
                                         </div>
-                                    </div>
-
-                                    <!-- Date From -->
-                                    <div class="form-group">
-                                        <label>Date To</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-calendar-day"></i>
-                                                </span>
+                                    @else
+                                        <!-- Start Date & Time -->
+                                        <div class="form-group">
+                                            <label>Start Date & Time</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fa fa-calendar-day"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control" id="type"
+                                                    placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_from)->format('d/m/Y')}} {{ \Carbon\Carbon::parse($leaveApp->start_time)->format('g:i A')}}">
                                             </div>
-                                            <input type="text" class="form-control" id="type"
-                                                placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_to)->format('d/m/Y')}}">
                                         </div>
-                                    </div>
+                                    @endif
+
+                                    @if($leaveApp->remarks != "Claim" && $leaveApp->leaveType->name == "Replacement")
+                                        <!-- Date From -->
+                                        <div class="form-group">
+                                            <label>Date To</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fa fa-calendar-day"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control" id="type"
+                                                    placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_to)->format('d/m/Y')}}">
+                                            </div>
+                                        </div>
+                                    @else
+                                        <!-- End Date & Time -->
+                                        <div class="form-group">
+                                            <label>End Date & Time</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fa fa-calendar-day"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control" id="type"
+                                                    placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_to)->format('d/m/Y')}} {{ \Carbon\Carbon::parse($leaveApp->end_time)->format('g:i A')}}">
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <!-- Total Days -->
                                     <div class="form-group">
@@ -190,20 +223,37 @@
                                         </div>
                                     </div>
 
-                                    <!-- Date Resume -->
-                                    <div class="form-group">
-                                        <label>Date Resume</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="far fa-calendar-alt"></i>
-                                                </span>
+                                    @if($leaveApp->remarks == "Claim" && $leaveApp->leaveType->name == "Replacement")
+                                        <!-- Total Hours -->
+                                        <div class="form-group">
+                                            <label>Total Hours</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="far fa-clock"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="number" class="form-control" id="type"
+                                                    placeholder="{{$leaveApp->total_hours}}">
                                             </div>
-                                            <input type="number" class="form-control" id="type"
-                                                placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_resume)->format('d/m/Y')}}">
                                         </div>
-                                    </div>
+                                    @endif
 
+                                    @if($leaveApp->remarks != "Claim" && $leaveApp->leaveType->name == "Replacement")
+                                        <!-- Date Resume -->
+                                        <div class="form-group">
+                                            <label>Date Resume</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="far fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="number" class="form-control" id="type"
+                                                    placeholder="{{ \Carbon\Carbon::parse($leaveApp->date_resume)->format('d/m/Y')}}">
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <!-- Reason -->
                                     <div class="form-group">

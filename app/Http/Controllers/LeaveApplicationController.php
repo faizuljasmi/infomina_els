@@ -227,7 +227,6 @@ class LeaveApplicationController extends Controller
     //Store Application
     public function store(Request $request)
     {
-
         $request->flash();
         //dd($request->emergency_contact_no);
         //Get user id
@@ -275,9 +274,8 @@ class LeaveApplicationController extends Controller
         //status set pending 1
         //get all authorities id
 
-        //If it is replacement leave claim
+        // If it is replacement leave claim ( Set approver )
         if ($request->leave_type_id == '12' && $request->replacement_action == "Claim") {
-
             //If there is no second approver, move the last approver to the 2nd one
             if ($request->approver_id_2 == null) {
                 $leaveApp->approver_id_1 = $request->approver_id_1;
@@ -298,7 +296,17 @@ class LeaveApplicationController extends Controller
             }
         }
 
+        // If it is replacement leave claim ( Set time )
+        if ($request->leave_type_id == '12' && $request->replacement_action == "Claim") {
+            $startTimeStr = substr($request->date_from,11,16);
+            $endTimeStr = substr($request->date_to,11,16);
+            $startTime = date('H:i', strtotime($startTimeStr));
+            $endTime = date('H:i', strtotime($endTimeStr));
 
+            $leaveApp->start_time = $startTime;
+            $leaveApp->end_time = $endTime;
+            $leaveApp->total_hours = $request->total_hours;
+        }
 
         //get date from
         $leaveApp->date_from = $request->date_from;
@@ -529,10 +537,9 @@ class LeaveApplicationController extends Controller
         $leaveApp->leave_type_id = $request->leave_type_id;
         //status set pending 1
         //get all authorities id
-        //If it is replacement leave claim
-        //If it is replacement leave claim
+        
+        //If it is replacement leave claim ( Set approver )
         if ($request->leave_type_id == '12' && $request->replacement_action == "Claim") {
-
             //If there is no second approver, move the last approver to the 2nd one
             if ($request->approver_id_2 == null) {
                 $leaveApp->approver_id_1 = $request->approver_id_1;
@@ -553,6 +560,17 @@ class LeaveApplicationController extends Controller
             }
         }
 
+        // If it is replacement leave claim ( Set time )
+        if ($request->leave_type_id == '12' && $request->replacement_action == "Claim") {
+            $startTimeStr = substr($request->date_from,11,16);
+            $endTimeStr = substr($request->date_to,11,16);
+            $startTime = date('H:i', strtotime($startTimeStr));
+            $endTime = date('H:i', strtotime($endTimeStr));
+
+            $leaveApp->start_time = $startTime;
+            $leaveApp->end_time = $endTime;
+            $leaveApp->total_hours = $request->total_hours;
+        }
 
         //get date from
         $leaveApp->date_from = $request->date_from;
