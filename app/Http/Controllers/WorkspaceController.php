@@ -442,50 +442,117 @@ class WorkspaceController extends Controller
 
     public function getLeaveStatus(Request $request){
         $secret_key = $request->bearerToken();
+        
 
         if ($secret_key == config('wspace.secret')) {
             
             try {
+                // $user_email = $request->user_email;
+                // $user = User::where('email', $user_email)->firstOrFail();
+                // $toret = [];
+                // $leave = LeaveApplication::where('user_id', $user->id)
+                //     ->where('status', 'APPROVED')
+                //     ->where('date_from', '>=', Carbon::now()->subDays(1))
+                //     ->where('date_from', '<=', Carbon::now()->addDays(14))
+                //     ->orderBy('date_from', 'DESC')
+                //     ->with(['leaveType'])
+                //     ->first();
+
+            
+
+                // $wordings = "";
+                // if ($leave) {
+                //     if (Carbon::today()->toDateString() == $leave->date_from) {
+                //         if ($leave->total_days > 1) {
+                //             $date_to = Carbon::parse($leave->date_to)->format('M d Y');
+                //             $wordings = "On Leave Today Until " . $date_to;
+                //         } else {
+                //             $wordings = "On Leave Today";
+                //         }
+                //     } else {
+                //         $leave_date = Carbon::parse($leave->date_from)->format('M d Y');
+                //         $wordings = "Upcoming Leave: " . $leave_date;
+                //     }
+                //     $toret = [
+                //         "leave_type" => $leave->leaveType->name,
+                //         "date_from" => $leave->date_from,
+                //         "date_to" => $leave->date_to,
+                //         "total_days" => $leave->total_days,
+                //         "status" => $wordings
+                //     ];
+                //     return response()->json($toret);
+                // } else {
+                //     $toret = [
+                //         "leave_type" => null,
+                //         "date_from" => null,
+                //         "date_to" => null,
+                //         "total_days" => null,
+                //         "status" => "No Upcoming Leave"
+                //     ];
+                //     return response()->json($toret);
+                // }
+
                 $user_email = $request->user_email;
-                $user = User::where('email', $user_email)->firstOrFail();
                 $toret = [];
-                $leave = LeaveApplication::where('user_id', $user->id)->where('status','APPROVED')->where('date_from','>=',Carbon::now()->subDays(1))->where('date_from','<=',Carbon::now()->addDays(14))->orderBy('date_from', 'DESC')->with(['leaveType'])->first();                                       
-                //$leave = LeaveApplication::where('user_id',$user->id)->where('status','APPROVED')->where('date_from','<=',Carbon::now()->addDays(14))->orderBy('date_from', 'DESC')->with(['leaveType'])->first();
-                //$leave = LeaveApplication::where('user_id',$user->id)->where('status','APPROVED')->where('date_from','>=',Carbon::now()->addDays(14))->orderBy('date_from', 'ASC')->with(['leaveType'])->first();
                 $wordings = "";
-                if($leave){
-                    if(Carbon::today()->toDateString() == $leave->date_from){
-                        if($leave->total_days > 1){
-                            $date_to = Carbon::parse($leave->date_to)->format('M d Y');
-                            $wordings = "On Leave Today Until ".$date_to;
-                        }
-                        else{
-                            $wordings = "On Leave Today";
-                        }
+                 // Retrieve the LeaveApplication records for the given user_email and current year
+                $leaveApplications = LeaveApplication::whereHas('user', function($query) use ($user_email) {
+                    $query->where('email', $user_email);
+                })
+                ->where('status', 'APPROVED')
+                ->whereYear('date_from', Carbon::now()->year)
+                ->get();
+
+                // Get the current date
+                $currentDate = Carbon::now();
+
+                // Iterate through each leave application to determine the status
+                foreach ($leaveApplications as $leaveApplication) {
+
+                    $dateFrom = Carbon::createFromFormat('Y-m-d', $leaveApplication->date_from);
+                    $dateTo = Carbon::createFromFormat('Y-m-d', $leaveApplication->date_to);
+
+                    // Check if the staff is on leave today
+                    if ($currentDate->greaterThanOrEqualTo($dateFrom) && $currentDate->lessThanOrEqualTo($dateTo)) {
+                        // Return the leave status with the date until
+                        $wordings = 'On Leave Today Until: ' . Carbon::parse($leaveApplication->date_to)->format('M d Y');
+                        $toret = [
+                                    "leave_type" => $leaveApplication->leaveType->name,
+                                    "date_from" => $leaveApplication->date_from,
+                                    "date_to" => $leaveApplication->date_to,
+                                    "total_days" => $leaveApplication->total_days,
+                                    "status" => $wordings
+                                ];
+                        return response()->json($toret);
                     }
-                    else{
-                        $leave_date = Carbon::parse($leave->date_from)->format('M d Y');
-                        $wordings = "Upcoming Leave: ".$leave_date;
+
+                    // Check if the leave is upcoming within the next 14 days
+                    $upcomingDate = $currentDate->copy()->addDays(14);
+                    if (($dateFrom->greaterThanOrEqualTo($currentDate) && $dateFrom->lessThanOrEqualTo($upcomingDate)) || 
+                    ($dateTo->greaterThanOrEqualTo($currentDate) && $dateTo->lessThanOrEqualTo($upcomingDate)) ||
+                    ($dateFrom->lessThan($currentDate) && $dateTo->greaterThan($upcomingDate))) {
+                        // Return the leave status with the upcoming leave date
+                        $wordings =  'Upcoming Leave: ' . Carbon::parse($leaveApplication->date_from)->format('M d Y');
+                        $toret = [
+                            "leave_type" => $leaveApplication->leaveType->name,
+                            "date_from" => $leaveApplication->date_from,
+                            "date_to" => $leaveApplication->date_to,
+                            "total_days" => $leaveApplication->total_days,
+                            "status" => $wordings
+                        ];
+                        return response()->json($toret);
                     }
-                    $toret = [
-                        "leave_type" => $leave->leaveType->name,
-                        "date_from" => $leave->date_from,
-                        "date_to" => $leave->date_to,
-                        "total_days" => $leave->total_days,
-                        "status" => $wordings
-                    ];
-                    return response()->json($toret);
                 }
-                else{
-                    $toret = [
-                        "leave_type" => null,
-                        "date_from" => null,
-                        "date_to" => null,
-                        "total_days" => null,
-                        "status" => "No Upcoming Leave"
-                    ];
-                    return response()->json($toret);
-                }
+
+                // If no leave application matches, return "Not Upcoming Leave"
+                $toret = [
+                            "leave_type" => null,
+                            "date_from" => null,
+                            "date_to" => null,
+                            "total_days" => null,
+                            "status" => "No Upcoming Leave"
+                        ];
+                return response()->json($toret);
             } catch (ModelNotFoundException $exception) {
                 return response()->json($exception->getMessage());
             }
