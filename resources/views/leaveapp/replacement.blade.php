@@ -338,6 +338,13 @@
           }
         }
 
+        // To ensure the end date in not a working day too
+        if(!_form.isEmpty(FC.date_to)) {
+          if (calendar.isWorkingDay(date_to)) {
+            return "You can't claim replacement leave on normal working days."
+          }
+        }
+
         // To get working hours
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)) {
           let timeRaw = from.substring(11,16);
