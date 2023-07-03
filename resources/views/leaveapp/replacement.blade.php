@@ -361,8 +361,8 @@
           console.log(calendar.isLessThan5Hours(totalHours), "isLessThan5Hours");
           console.log(calendar.isLessThan4Hours(totalHours), "isLessThan4Hours");
 
-          if (calendar.isWorkingDay(date_from)) {
-            // If Working Day
+          if (!calendar.isWorkingDay(date_from)) {
+            // If Weekend / PH
             if (timeToInt >= 700 && timeToInt <= 2359) {
               // From 12.00am - 6.59am; Overtime > 4 Hours
               if (calendar.isLessThan5Hours(totalHours)) {
@@ -379,13 +379,19 @@
               }
             }
           } else {
-            // If Weekend / PH
+            // If Working Day
             if (timeToInt >= 0 && timeToInt <= 659) {
               // From 12.00am - 6.59am; Working 4-6 Hours
               if (calendar.isLessThan4Hours(totalHours)) {
                 _form.set(FC.total_hours, "");
                 _form.set(FC.total_days, "");
                 return "You need to work at least 4 hours to claim a replacement leave."
+              }
+            } else if (timeToInt >= 700 && timeToInt <= 2359) {
+              if (totalHours < 14) {
+                _form.set(FC.total_hours, "");
+                _form.set(FC.total_days, "");
+                return "You need to work at least 6 hours on top of working hours to claim a replacement leave."
               }
             }
           }
