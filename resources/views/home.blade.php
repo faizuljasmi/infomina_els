@@ -379,7 +379,7 @@
                                 </tr>
                                 <tr>
                                     <th>Brought Forward <i class="fas fa-info-circle" data-toggle="tooltip"
-                                            data-placement="top" title="Brought forward leave from 2020"></i>
+                                            data-placement="top" title="Brought forward leave from 2022"></i>
                                     </th>
                                     @foreach($broughtFwd as $bf)
                                     @if($bf->leave_type_id == '1')
