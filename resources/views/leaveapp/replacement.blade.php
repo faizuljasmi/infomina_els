@@ -273,6 +273,11 @@
 
   function MainLeaveApplicationCreate() {
 
+    if(navigator.userAgent.indexOf("Chrome") == -1 ) {
+      alert('Kindly claim your replacement leave by using Google Chrome browser.');
+      window.history.back();
+    }
+
     var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
     var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
     var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
@@ -332,18 +337,18 @@
         }
 
         // To ensure the start date in not a working day
-        if(!_form.isEmpty(FC.date_from)) {
-          if (calendar.isWorkingDay(date_from)) {
-            return "You can't claim replacement leave on normal working days."
-          }
-        }
+        // if(!_form.isEmpty(FC.date_from)) {
+        //   if (calendar.isWorkingDay(date_from)) {
+        //     return "You can't claim replacement leave on normal working days."
+        //   }
+        // }
 
         // To ensure the end date in not a working day too
-        if(!_form.isEmpty(FC.date_to)) {
-          if (calendar.isWorkingDay(date_to)) {
-            return "You can't claim replacement leave on normal working days."
-          }
-        }
+        // if(!_form.isEmpty(FC.date_to)) {
+        //   if (calendar.isWorkingDay(date_to)) {
+        //     return "You can't claim replacement leave on normal working days."
+        //   }
+        // }
 
         // To get working hours
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)) {
@@ -356,19 +361,32 @@
           console.log(calendar.isLessThan5Hours(totalHours), "isLessThan5Hours");
           console.log(calendar.isLessThan4Hours(totalHours), "isLessThan4Hours");
 
-          if (timeToInt >= 700 && timeToInt <= 2359) {
-            // Day shift
-            if (calendar.isLessThan5Hours(totalHours)) {
-              _form.set(FC.total_hours, "");
-              _form.set(FC.total_days, "");
-              return "You need to work at least 5 hours to claim a replacement leave."
+          if (calendar.isWorkingDay(date_from)) {
+            // If Working Day
+            if (timeToInt >= 700 && timeToInt <= 2359) {
+              // From 12.00am - 6.59am; Overtime > 4 Hours
+              if (calendar.isLessThan5Hours(totalHours)) {
+                _form.set(FC.total_hours, "");
+                _form.set(FC.total_days, "");
+                return "You need to work at least 5 hours to claim a replacement leave."
+              }
+            } else if (timeToInt >= 0 && timeToInt <= 659) {
+              // From 7.00am - 11.59pm; Overtime > 5 Hours
+              if (calendar.isLessThan4Hours(totalHours)) {
+                _form.set(FC.total_hours, "");
+                _form.set(FC.total_days, "");
+                return "You need to work at least 4 hours to claim a replacement leave."
+              }
             }
-          } else if (timeToInt >= 0 && timeToInt <= 659) {
-            // Night shift
-            if (calendar.isLessThan4Hours(totalHours)) {
-              _form.set(FC.total_hours, "");
-              _form.set(FC.total_days, "");
-              return "You need to work at least 4 hours to claim a replacement leave."
+          } else {
+            // If Weekend / PH
+            if (timeToInt >= 0 && timeToInt <= 659) {
+              // From 12.00am - 6.59am; Working 4-6 Hours
+              if (calendar.isLessThan4Hours(totalHours)) {
+                _form.set(FC.total_hours, "");
+                _form.set(FC.total_days, "");
+                return "You need to work at least 4 hours to claim a replacement leave."
+              }
             }
           }
         }
@@ -403,11 +421,19 @@
           let to = _form.get(FC.date_to);
           let totalHours = calendar.getTotalHours(from, to);
           _form.set(FC.total_hours, totalHours);
-          
+
           // Format to date only
           let dateFrom = from.substring(0,10);
           let dateTo = to.substring(0,10);
           let totalDays = calendar.getTotalDays(dateFrom, dateTo);
+
+          // Working Day; From 12.00am - 6.59am; Working 4-6 Hours
+          if (calendar.isWorkingDay(dateFrom)) {
+            if(!calendar.isMoreThan6Hours(totalHours)) {
+              totalDays = 0.5; // Only Entitled for Half Day
+            }
+          }
+
           _form.set(FC.total_days, totalDays);
         } else{
           _form.set(FC.total_hours, "");

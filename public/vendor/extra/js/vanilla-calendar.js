@@ -423,6 +423,10 @@ let VanillaCalendar = (function() {
             return totalHours < 5;
         }
 
+        this.isMoreThan6Hours = function(totalHours) {
+            return totalHours >= 6;
+        }
+
         this.isWorkingDay = function(dateStr) {
             let dateObj = getDateObj(dateStr);
             let isWorkingDay = true;

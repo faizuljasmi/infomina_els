@@ -384,9 +384,9 @@ class LeaveApplicationController extends Controller
         //Notification::route('mail', $leaveApp->approver_one->email)->notify(new NewApplication($leaveApp));
 
         //$leaveApp->approver_one->notify(new NewApplication($leaveApp));
-        NotifyAuthorityEmail::dispatch($leaveApp, $this->leaveService)->delay(now()->addMinutes(1));
+        // NotifyAuthorityEmail::dispatch($leaveApp, $this->leaveService)->delay(now()->addMinutes(1));
         //$this->mobile_notification($leaveApp,"authority_1");
-        NotifyWspace::dispatch($leaveApp, $this->leaveService)->delay(now()->addMinutes(1));
+        // NotifyWspace::dispatch($leaveApp, $this->leaveService)->delay(now()->addMinutes(1));
 
         //STORE
         return redirect()->to('/home')->with('message', 'Leave application submitted succesfully');
