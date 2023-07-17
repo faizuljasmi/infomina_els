@@ -31,40 +31,26 @@
               </div>
               <div class="card-body">
 
+                <!-- Working Hour -->
+                <div class="form-group" style="display:none;">
+                  <div class="input-group">
+                    <input type="text" class="form-control float-right" id="working_hour" value="{{$user->working_hour_id}}">
+                  </div>
+                </div>
+
                 <!-- Leave Type -->
                 <div class="form-group" style="display:none;">
-                  <!-- <label>Leave Type</label> -->
                   <div class="input-group">
-                    <!-- <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-star"></i>
-                      </span>
-                    </div>
-                    <select class="form-control" disabled>
-                      <option value="12" selected>Replacement</option>
-                    </select> -->
                     <input type="text" class="form-control float-right" name="leave_type_id" value="12">
                   </div>
                 </div>
 
                 <!-- Leave Variation -->
                 <div class="form-group" style="display:none;">
-                  <!-- <label>Full/Half Day <font color="red">*</font></label> -->
                   <div class="input-group">
-                    <!-- <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-clock"></i>
-                      </span>
-                    </div>
-                    <select class="form-control" name="apply_for">
-                        <option value="full-day"  {{ (old('apply_for') == 'full-day' ? "selected":"") }}>Full Day</option>
-                        <option value="half-day-am" {{ (old('apply_for') == 'half-day-am' ? "selected":"") }}>Half Day AM</option>
-                        <option value="half-day-pm" {{ (old('apply_for') == 'half-day-pm' ? "selected":"") }}>Half Day PM</option>
-                    </select> -->
                     <input type="text" class="form-control float-right" name="apply_for" value="full-day">
                   </div>
                 </div>
-
 
                 <!-- Date From -->
                 <div class="form-group">
@@ -94,7 +80,7 @@
 
                 <!-- Total Days -->
                 <div class="form-group">
-                  <label>Total Days</label>
+                  <label>Total Leaves Entitled</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
@@ -104,33 +90,6 @@
                     <input type="number" class="form-control float-right" name="total_days">
                   </div>
                 </div>
-
-                <!-- Total Hours -->
-                <div class="form-group">
-                  <label>Total Hours</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-clock"></i>
-                      </span>
-                    </div>
-                    <input type="number" class="form-control float-right" name="total_hours">
-                  </div>
-                </div>
-
-                <!-- Date Resume -->
-                <!-- <div class="form-group" style="display:none"> -->
-                  <!-- <label>Date Resume</label> -->
-                  <!-- <div class="input-group"> -->
-                    <!-- <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
-                    </div> -->
-                    <!-- <input type="date" class="form-control float-right" name="date_resume">
-                  </div>
-                </div> -->
-
 
                 <!-- Reason -->
                 <div class="form-group">
@@ -148,9 +107,9 @@
                   </div>
                 </div>
 
-                  <!-- Approval Authority -->
-                  <div class="form-group">
-                  <label>Approval Authority 1 <font color="red">*</font></label>
+                <!-- Approval Authority -->
+                <div class="form-group">
+                  <label>Approval Authority <font color="red">*</font></label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
@@ -166,30 +125,11 @@
                   </div>
                 </div>
 
-                <!-- Relief Personel -->
-                <div class="form-group">
-                  <label>Approval Authority 2</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                      </span>
-                    </div>
-                    <select class="form-control" name="approver_id_2">
-                      <option value=""selected>Choose Person (Optional)</option>
-                      @foreach($leaveAuth as $emp)
-                      <option value="{{$emp->id}}">{{$emp->name}}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-
-                <!-- $leaveAuth->authority_1_id -->
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_name" value="{{isset($user->emergency_contact_name) ? $user->emergency_contact_name:'NA'}}">
                 <input style="display:none;" type="text" class="form-control float-right" name="emergency_contact_no" value="{{isset($user->emergency_contact_no) ? $user->emergency_contact_no :'NA'}}">
-                <!-- CHANGE TO CYNTHIA ID -->
-                <input style="display:none;" type="text" name="approver_id_3" value="4" />
-                <input style="display:none;" type="text" name="relief_personnel_id" value=" " />
+                <!-- CHANGE TO HR ADMIN ID -->
+                <input style="display:none;" type="text" name="approver_id_2" value="111" />
+                <input style="display:none;" type="text" name="relief_personnel_id" value="" />
                 <input style="display:none;" type="text" name="replacement_action" value="Claim" />
 
                 <!-- Submit Button -->
@@ -232,7 +172,7 @@
     var from = $("#FromDate").val();
       $("#ToDate").val("");
       $("#ToDate").attr({
-            "min" : from          // values (or variables) here
+        "min" : from
       });
   });
   var text_max = 5;
@@ -278,65 +218,93 @@
       window.history.back();
     }
 
+    // Default working hours for employees based on workingHourGroup ID
+    function setWorkingHours(workingHourGroup) {
+      switch(workingHourGroup) {
+        case '1':
+          workStartTime = 730;
+          workEndTime = 1630;
+          break;
+        case '2':
+          workStartTime = 800;
+          workEndTime = 1700;
+          break;
+        case '3':
+          workStartTime = 830;
+          workEndTime = 1730;
+          break;
+        case '4':
+          workStartTime = 900;
+          workEndTime = 1800;
+          break;
+      }
+    }
+
+    var workingHourGroup = $('#working_hour').val();
+    let workStartTime = '';
+    let workEndTime = '';
+
+    setWorkingHours(workingHourGroup);
+
+    console.log(workStartTime, workEndTime, 'workTime')
+
     var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
     var myapplications= {!! json_encode($myApplication, JSON_HEX_TAG) !!};
     var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
     var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
 
     let calendar = new VanillaCalendar({
-        holiday: dates,
-        applied: applied,
-        approved: approved,
-        selector: ".myCalendar",
-        onSelect: (data, elem) => {
-            // console.log(data, elem)
-        }
+      holiday: dates,
+      applied: applied,
+      approved: approved,
+      selector: ".myCalendar",
+      onSelect: (data, elem) => {
+          // console.log(data, elem)
+      }
     });
-
 
     const validation = {
       onchange : function(v, e, fc){
-          console.log("onchange", "v", v, "e", e, "fc" ,fc);
-          console.log("FC.date_from.name", FC);
-          let name = fc.name;
+        console.log("onchange", "v", v, "e", e, "fc" ,fc);
+        console.log("FC.date_from.name", FC);
+        let name = fc.name;
 
-          if(name == FC.date_from.name || name == FC.date_to.name){
-            let error = validation.validateDateFromAndTo(name);
-            if(error != null){
-              alert(error);
-              _form.set(fc, "");
-              return;
-            }
+        if(name == FC.date_from.name || name == FC.date_to.name){
+          let error = validation.validateDateFromAndTo(name);
+          if(error != null){
+            alert(error);
+            _form.set(fc, "");
+            return;
           }
+        }
 
-          validation._dateFrom(name);
-          validation._dateTo(name);
-
-          validation._totalDayHours();
-
+        validation._dateFrom(name);
+        validation._dateTo(name);
+        validation._totalDayHours();
       },
       validateDateFromAndTo : function(name){
         let from = _form.get(FC.date_from);
         let to = _form.get(FC.date_to);
 
         // Format to date only
-        let date_from = from.substring(0,10);
-        let date_to = to.substring(0,10);
+        let dateFrom = from.substring(0,10);
+        let dateTo = to.substring(0,10);
 
         // To ensure the claim submitted within 7 working days from the day of event
         let prev7 = calendar.getPrevWeekWorkingDay(calendar.today());
         prev7 = calendar.getDateDb(prev7);
-        if(calendar.isDateSmaller(date_from, prev7) || calendar.isDateEqual(date_from, prev7)){
+        if(calendar.isDateSmaller(dateFrom, prev7) || calendar.isDateEqual(dateFrom, prev7)){
           return "Attention: Claim must be submitted within 7 working days from the day of event.";
         }
 
+        // Check existing applications
         for (index = 0; index < myapplications.length; index++) {
-            if( myapplications[index] == calendar.getDateDb(date_from) || myapplications[index] == calendar.getDateDb(date_to)){
+            if( myapplications[index] == calendar.getDateDb(dateFrom) || myapplications[index] == calendar.getDateDb(dateTo)){
                 return "You already have a Pending/Approved application during this date.";
             }
         }
 
-        // To get working hours
+        // To get OT hours
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)) {
           let timeRawF = from.substring(11,16);
           let timeF =  timeRawF.replace(':', '');
@@ -347,66 +315,152 @@
           let timeToIntT = parseInt(timeT);
 
           let totalHours = calendar.getTotalHours(from, to);
+          let totalDays = calendar.getTotalDays(dateFrom, dateTo);
 
-          if (!calendar.isWorkingDay(date_from)) {
-            // If Weekend / PH
-            // Same day
-            if (date_from == date_to) {
-              if (timeToIntF >= 700 && timeToIntT <= 2359) {
-                // From 7.00am - 11.59pm; Overtime > 5 Hours
-                if (calendar.isLessThan5Hours(totalHours)) {
-                  _form.set(FC.total_hours, "");
-                  _form.set(FC.total_days, "");
-                  return "You need to work at least 5 hours to claim a replacement leave. (Weekend/PH)"
-                }
-              } else if (timeToIntF >= 0 && timeToIntT <= 659) {
-                // From 12.00am - 6.59am; Overtime > 4 Hours
-                if (calendar.isLessThan4Hours(totalHours)) {
-                  _form.set(FC.total_hours, "");
-                  _form.set(FC.total_days, "");
-                  return "You need to work at least 4 hours to claim a replacement leave. (Weekend/PH)"
-                }
+          let totalRLEarned = 0;
+
+          function getMinuteDiffs(A, B) {
+            let totalMinutesA = Math.floor(A / 100) * 60 + (A % 100);
+            let totalMinutesB = Math.floor(B / 100) * 60 + (B % 100);
+
+            return totalMinutesB - totalMinutesA;
+          }
+
+          function getHours(minutes) {
+            return Math.floor(minutes / 60);
+          }
+
+          function getDayCalc(day) {
+            // Only applicaple when employee selects more than one day to claim RL
+            let minuteDiffs = '';
+            let hours = '';
+
+            if (day == 'FIRST') {
+              // Calculate hours worked for the first day
+              // End time is auto set to 11.59pm
+              minuteDiffs = getMinuteDiffs(timeToIntF, 2359);
+              hours = getHours(minuteDiffs + 1);
+            } else if (day == 'LAST') {
+              // Calculate hours worked for the last day
+              // Start time is auto set to 12.00am
+              minuteDiffs = getMinuteDiffs(0, timeToIntT);
+              hours = getHours(minuteDiffs);
+            }
+
+            return hours;
+          }
+
+          function setClaimDays(day, hours) {
+            // Set total RL earned based on extra hours worked
+            if (day == 'WORKING') {
+              if (hours >= 4 && hours < 6) {
+                totalRLEarned = totalRLEarned + 0.5;
+              }
+  
+              if (hours >= 6) {
+                totalRLEarned = totalRLEarned + 1;
+              }
+            } else if (day == 'HOLIDAY') {
+              if (hours >= 1 && hours < 5) {
+                totalRLEarned = totalRLEarned + 0.5;
+              }
+
+              if (hours >= 5) {
+                totalRLEarned = totalRLEarned + 1;
               }
             }
-          } else {
-            // If Working Day
-            // Same day
-            if (date_from == date_to) {
-              if (timeToIntF >= 0 && timeToIntT <= 659) {
-                // From 12.00am - 6.59am; Working 4-6 Hours 
-                if (calendar.isLessThan4Hours(totalHours)) {
-                  _form.set(FC.total_hours, "");
-                  _form.set(FC.total_days, "");
-                  return "You need to work 4-6 hours to claim a half day replacement leave. (Working Day)"
-                } 
-              } else if (timeToIntF >= 1800 && timeToIntF <= 2359) {
-                // Working hours 8 + Minimun 6 hours extra ( OT starts after 6PM )
-                if (!calendar.isMoreThan6Hours(totalHours)) {
-                  _form.set(FC.total_hours, "");
-                  _form.set(FC.total_days, "");
-                  return "You need to work at least 6 hours on top of working hours to claim a replacement leave. (Working Day)"
+          }
+
+          if (totalDays > 1) {
+            let date = dateFrom;
+            let i = 0;
+
+            while (i < totalDays) {
+              let isWorkingDay = calendar.isWorkingDay(date);
+            
+              if (i == 0) {
+                // First day of claim
+                let hours = getDayCalc('FIRST');
+                if (isWorkingDay) {
+                  setClaimDays('WORKING', hours);
+                } else {
+                  setClaimDays('HOLIDAY', hours);
+                }
+              } else if (i == totalDays - 1) {
+                // Last day of claim
+                let hours = getDayCalc('LAST');
+                if (isWorkingDay) {
+                  setClaimDays('WORKING', hours);
+                } else {
+                  setClaimDays('HOLIDAY', hours);
                 }
               } else {
-                _form.set(FC.total_hours, "");
-                _form.set(FC.total_days, "");
-                return "You need to work at least 6 hours on top of working hours to claim a replacement leave. (Working Day)"
+                // Assume days in between , the employee worked for the whole day
+                totalRLEarned = totalRLEarned + 1;
               }
-            } 
-          }
-        }
+              date = calendar.nextDayStr(date);
+              i++;
+            }
 
-        if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
-          if(calendar.isDateSmaller(date_to, date_from)){
-            if(name == FC.date_from.name){
-              return "Starting date cannot be bigger than end date";
-            } else if(name == FC.date_to.name){
-              return "End date cannot be smaller than starting date";
+            if (calendar.isWorkingDay(dateFrom) && totalRLEarned == 0) {
+              _form.set(FC.total_days, "");
+              return "You need to work at least 4 hours to claim a replacement leave. (Working Day)"
+            }
+
+            if (!calendar.isWorkingDay(dateFrom) && totalRLEarned == 0) {
+              _form.set(FC.total_days, "");
+              return "You need to work at least 1 hour to claim a replacement leave. (Weekend/Public Holiday)"
+            } 
+          } else {
+            // Claim in made within the same day
+            let isWorkingDay = calendar.isWorkingDay(dateFrom);
+            let minutes = 0;
+
+            if (workStartTime && workEndTime) {
+              // If have working hours
+              // Check start time with default working hours
+              if (timeToIntF < workStartTime) {
+                minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
+              }
+              // Check end time with default working hours
+              if (timeToIntT > workEndTime) {
+                minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
+              }
+            } else {
+              minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
+            }
+            
+            let hours = getHours(minutes);
+
+            if (isWorkingDay) {
+              if (hours < 4) {
+                _form.set(FC.total_days, "");
+                return "You need to work at least 4 hours to claim a replacement leave. (Working Day)"
+              }
+              setClaimDays('WORKING', hours);
+            } else {
+              if (hours < 1) {
+                _form.set(FC.total_days, "");
+                return "You need to work at least 1 hour to claim a replacement leave. (Weekend/Public Holiday)"
+              }
+              setClaimDays('HOLIDAY', hours);
             }
           }
+          
+          _form.set(FC.total_days, totalRLEarned);
+          console.log(totalRLEarned);
+
+          // Group 1 = 7.30am - 4.30pm
+          // Group 2 = 8.00am - 5.00pm
+          // Group 3 = 8.30am - 5.30pm
+          // Group 4 = 9.00am - 6.00pm
+          // Group 5 = Open
         }
-        if(calendar.isDateBigger(date_from,calendar.today())){
+
+        if(calendar.isDateBigger(dateFrom,calendar.today())){
             return "Attention: Replacement leave cannot be claimed in advance."
         }
+
         return null;
       },
       // #########################################
@@ -420,26 +474,7 @@
         }
       },
       _totalDayHours : function(){
-        if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
-          let from = _form.get(FC.date_from);
-          let to = _form.get(FC.date_to);
-          let totalHours = calendar.getTotalHours(from, to);
-          _form.set(FC.total_hours, totalHours);
-
-          // Format to date only
-          let dateFrom = from.substring(0,10);
-          let dateTo = to.substring(0,10);
-          let totalDays = calendar.getTotalDays(dateFrom, dateTo);
-
-          // Working Day; From 12.00am - 6.59am; Working 4-6 Hours
-          if (calendar.isWorkingDay(dateFrom)) {
-            if(!calendar.isMoreThan6Hours(totalHours)) {
-              totalDays = 0.5; // Only Entitled for Half Day
-            }
-          }
-
-          _form.set(FC.total_days, totalDays);
-        } else{
+        if(_form.isEmpty(FC.date_from) && _form.isEmpty(FC.date_to)){
           _form.set(FC.total_hours, "");
           _form.set(FC.total_days, "");
         }
@@ -467,10 +502,6 @@
       },
       total_days : {
         name : "total_days",
-        type : MyFormType.NUMBER
-      },
-      total_hours : {
-        name : "total_hours",
         type : MyFormType.NUMBER
       },
       date_resume : {
@@ -515,8 +546,6 @@
     _form.disabled(FC.date_resume);
     _form.disabled(FC.total_days);
     _form.disabled(FC.total_hours);
-
-
   }
 
 </script>

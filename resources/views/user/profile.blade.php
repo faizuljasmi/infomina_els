@@ -73,6 +73,11 @@
                                     placeholder="{{$user->branch->name}}">
                             </div>
                             <div class="form-group col-md-6">
+                                <label for="type">Working Hours</label>
+                                <input type="text" class="form-control" id="type"
+                                    placeholder="{{$user->working_hour->label}}">
+                            </div>
+                            <div class="form-group col-md-6">
                                 <label for="type">Employee Groups</label>
                                 <table class="table table-striped table-bordered table-sm">
                                     <tr>

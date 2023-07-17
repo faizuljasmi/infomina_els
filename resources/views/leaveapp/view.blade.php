@@ -31,9 +31,11 @@
                                         data-toggle="modal" data-target="#cancelModal">
                                         Cancel
                                     </button>
-                                    <a href="{{route('edit_application', $leaveApp->id)}}"
-                                        class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip"
-                                        title="Edit Application">Edit</a>
+                                        @if(!$leaveApp->status == 'CLAIM')
+                                            <a href="{{route('edit_application', $leaveApp->id)}}"
+                                                class="btn btn-primary btn-sm float-right mr-1" data-toggle="tooltip"
+                                                title="Edit Application">Edit</a>
+                                        @endif
                                     @endcan
                                     @can('approve',$leaveApp)
                                     @if($leaveApp->status == 'APPROVED' || $leaveApp->status ==
@@ -223,9 +225,9 @@
                                         </div>
                                     </div>
 
-                                    @if($leaveApp->remarks == "Claim" && $leaveApp->leaveType->name == "Replacement")
+                                    <!-- @if($leaveApp->remarks == "Claim" && $leaveApp->leaveType->name == "Replacement") -->
                                         <!-- Total Hours -->
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label>Total Hours</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -237,7 +239,7 @@
                                                     placeholder="{{$leaveApp->total_hours}}">
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif -->
 
                                     @if($leaveApp->remarks != "Claim" && $leaveApp->leaveType->name == "Replacement")
                                         <!-- Date Resume -->

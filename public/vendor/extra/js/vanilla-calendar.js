@@ -617,6 +617,13 @@ let VanillaCalendar = (function() {
                 .toDate();
         };
 
+        this.nextDayStr = function(date) {
+            let dateDb = this.getDateDb(date);
+            return moment(dateDb, "YYYYMMDD")
+                .add(1, "days")
+                .format("YYYY-MM-DD");
+        };
+
         this.init();
     }
     return VanillaCalendar;

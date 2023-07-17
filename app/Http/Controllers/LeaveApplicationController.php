@@ -276,16 +276,9 @@ class LeaveApplicationController extends Controller
 
         // If it is replacement leave claim ( Set approver )
         if ($request->leave_type_id == '12' && $request->replacement_action == "Claim") {
-            //If there is no second approver, move the last approver to the 2nd one
-            if ($request->approver_id_2 == null) {
-                $leaveApp->approver_id_1 = $request->approver_id_1;
-                $leaveApp->approver_id_2 = $request->approver_id_3;
-                $leaveApp->approver_id_3 = null;
-            } else {
-                $leaveApp->approver_id_1 = $request->approver_id_1;
-                $leaveApp->approver_id_2 = $request->approver_id_2;
-                $leaveApp->approver_id_3 = $request->approver_id_3;
-            }
+            $leaveApp->approver_id_1 = $request->approver_id_1;
+            $leaveApp->approver_id_2 = $request->approver_id_2; // FE sends HR Admin as Approver 2
+            $leaveApp->approver_id_3 = null;
             $leaveApp->remarks = "Claim";
         } else {
             $leaveApp->approver_id_1 = $request->approver_id_1;

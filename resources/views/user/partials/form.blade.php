@@ -72,6 +72,17 @@
             </select>
         </div>
         <div class="form-group col-md-6">
+            <label for="type">Working Hours</label>
+            <select class="form-control" id="working_hour_id" name="working_hour_id">
+                <option value="">Not Selected</option>
+                @foreach($workingHours as $wh)
+                <option value="{{$wh->id}}"
+                    {{isset($user->working_hour_id) && $user->working_hour_id == $wh->id ? 'selected':''}}>{{$wh->label}}
+                </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group col-md-6">
             <label for="type">Employee Group</label>
             <table class="table table-striped table-bordered table-sm">
                 <tr>

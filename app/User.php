@@ -143,6 +143,12 @@ class User extends Authenticatable
         return $this->belongsTo(Branch::class,'branch_id');
     }
 
+    public function working_hour(){
+        return $this->belongsTo(WorkingHour::class,'working_hour_id')->withDefault([
+            'label' => 'Not Applied',
+        ]);;
+    }
+
     public function state_holidays(){
         return $this->branch->state->state_wide_holidays();
     }

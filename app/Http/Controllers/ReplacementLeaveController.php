@@ -29,8 +29,7 @@ class ReplacementLeaveController extends Controller
         //dd($groupMate->name);
 
         //Get approval authorities for this user
-        //Change id to CYNTHIA'S ID
-        $leaveAuth = User::orderBy('id', 'ASC')->where('id', '!=', '4')->where('user_type', 'Authority')->where('status','Active')->get()->except($user->id);
+        $leaveAuth = User::orderBy('id', 'ASC')->where('user_type', 'Authority')->where('status','Active')->get()->except($user->id);
 
         //TODO: Get leave balance of THIS employee
         $leaveBal = LeaveBalance::orderBy('leave_type_id', 'ASC')->where('user_id', '=', $user->id)->get();
@@ -50,35 +49,34 @@ class ReplacementLeaveController extends Controller
         //Get all claim applications
         $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->where('user_id',$user->id)->where('leave_type_id', 12)->where('remarks','Claim')->get();
 
-    //Get all leave applications date
-      $applied_dates = array();
-      $approved_dates = array();
-      $myApplication = array();
-      foreach ($leaveApps as $la) {
+        //Get all leave applications date
+        $applied_dates = array();
+        $approved_dates = array();
+        $myApplication = array();
+        foreach ($leaveApps as $la) {
           //Get the user applied and approved application
           if ($la->status == 'APPROVED') {
               $stardDate = new Carbon($la->date_from);
               $endDate = new Carbon($la->date_to);
-
-              while ($stardDate->lte($endDate)) {
-                  $dates = str_replace("-", "", $stardDate->toDateString());
-                  $myApplication[] = $dates;
-                  $approved_dates[] = $dates;
-                  $stardDate->addDay();
-              }
-          }
-          if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
-            $stardDate = new Carbon($la->date_from);
-            $endDate = new Carbon($la->date_to);
-
-            while ($stardDate->lte($endDate)) {
-                $dates = str_replace("-", "", $stardDate->toDateString());
-                $myApplication[] = $dates;
-                $applied_dates = $dates;
-                $stardDate->addDay();
+                while ($stardDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $stardDate->toDateString());
+                    $myApplication[] = $dates;
+                    $approved_dates[] = $dates;
+                    $stardDate->addDay();
+                }
             }
-          }
-      }
+            if($la->status == 'PENDING_1' || $la->status == 'PENDING_2' || $la->status == 'PENDING_3'){
+                $stardDate = new Carbon($la->date_from);
+                $endDate = new Carbon($la->date_to);
+
+                while ($stardDate->lte($endDate)) {
+                    $dates = str_replace("-", "", $stardDate->toDateString());
+                    $myApplication[] = $dates;
+                    $applied_dates = $dates;
+                    $stardDate->addDay();
+                }
+            }
+        }
 
         return view('leaveapp.replacement')->with(compact('user',  'groupMates', 'leaveAuth', 'leaveBal', 'all_dates','applied_dates','approved_dates','myApplication'));
     }

@@ -23,6 +23,7 @@ use App\TakenLeave;
 use App\BroughtForwardLeave;
 use App\BurntLeave;
 use App\Branch;
+use App\WorkingHour;
 use Redirect,Response,DB,Config;
 use Datatables;
 
@@ -102,13 +103,14 @@ class RegistrationController extends Controller
         $burntLeave = BurntLeave::where('user_id',$user->id)->where('leave_type_id',1)->first();
         $burntReplacement = BurntLeave::where('user_id',$user->id)->where('leave_type_id',12)->first();
         $branches = Branch::all();
-        return view('user.edit')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','burntLeave','branches','burntReplacement'));
+        $workingHours = WorkingHour::all();
+        return view('user.edit')->with(compact('user','user_insesh', 'users', 'authUsers', 'empType', 'empTypes', 'empGroup','empGroup2','empGroup3','empGroup4','empGroup5', 'empGroups', 'empAuth', 'leaveTypes', 'leaveEnt', 'leaveEarn', 'broughtFwd', 'leaveBal', 'leaveTak','burntLeave','branches','burntReplacement','workingHours'));
     }
 
     public function update(Request $request, User $user)
     {
         try {
-            $user->update($request->only('name', 'staff_id', 'email', 'user_type', 'join_date','branch_id', 'gender', 'emp_type_id', 'emp_group_id','emp_group_two_id','emp_group_three_id','emp_group_four_id','emp_group_five_id', 'job_title', 'emergency_contact_name', 'emergency_contact_no'));
+            $user->update($request->only('name', 'staff_id', 'email', 'user_type', 'join_date','branch_id', 'gender', 'emp_type_id', 'emp_group_id','emp_group_two_id','emp_group_three_id','emp_group_four_id','emp_group_five_id', 'job_title', 'emergency_contact_name', 'emergency_contact_no', 'working_hour_id'));
         } catch (\Exception $e) { // It's actually a QueryException but this works too
             if ($e->getCode() == 23000) {
                 return redirect()->route('user_view', ['user' => $user])->with('message', 'Staff ID has already been taken. User details not updated.');
