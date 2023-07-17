@@ -312,7 +312,7 @@
           validation._dateFrom(name);
           validation._dateTo(name);
 
-          validation._totalDayHours(name);
+          validation._totalDayHours();
 
       },
       validateDateFromAndTo : function(name){
@@ -336,64 +336,62 @@
             }
         }
 
-        // To ensure the start date in not a working day
-        // if(!_form.isEmpty(FC.date_from)) {
-        //   if (calendar.isWorkingDay(date_from)) {
-        //     return "You can't claim replacement leave on normal working days."
-        //   }
-        // }
-
-        // To ensure the end date in not a working day too
-        // if(!_form.isEmpty(FC.date_to)) {
-        //   if (calendar.isWorkingDay(date_to)) {
-        //     return "You can't claim replacement leave on normal working days."
-        //   }
-        // }
-
         // To get working hours
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)) {
-          let timeRaw = from.substring(11,16);
-          let time =  timeRaw.replace(':', '');
-          let timeToInt = parseInt(time);
-          let totalHours = calendar.getTotalHours(from, to);
+          let timeRawF = from.substring(11,16);
+          let timeF =  timeRawF.replace(':', '');
+          let timeToIntF = parseInt(timeF);
 
-          console.log(timeToInt, "timeToInt");
-          console.log(calendar.isLessThan5Hours(totalHours), "isLessThan5Hours");
-          console.log(calendar.isLessThan4Hours(totalHours), "isLessThan4Hours");
+          let timeRawT = to.substring(11,16);
+          let timeT =  timeRawT.replace(':', '');
+          let timeToIntT = parseInt(timeT);
+
+          let totalHours = calendar.getTotalHours(from, to);
 
           if (!calendar.isWorkingDay(date_from)) {
             // If Weekend / PH
-            if (timeToInt >= 700 && timeToInt <= 2359) {
-              // From 12.00am - 6.59am; Overtime > 4 Hours
-              if (calendar.isLessThan5Hours(totalHours)) {
-                _form.set(FC.total_hours, "");
-                _form.set(FC.total_days, "");
-                return "You need to work at least 5 hours to claim a replacement leave."
-              }
-            } else if (timeToInt >= 0 && timeToInt <= 659) {
-              // From 7.00am - 11.59pm; Overtime > 5 Hours
-              if (calendar.isLessThan4Hours(totalHours)) {
-                _form.set(FC.total_hours, "");
-                _form.set(FC.total_days, "");
-                return "You need to work at least 4 hours to claim a replacement leave."
+            // Same day
+            if (date_from == date_to) {
+              if (timeToIntF >= 700 && timeToIntT <= 2359) {
+                // From 7.00am - 11.59pm; Overtime > 5 Hours
+                if (calendar.isLessThan5Hours(totalHours)) {
+                  _form.set(FC.total_hours, "");
+                  _form.set(FC.total_days, "");
+                  return "You need to work at least 5 hours to claim a replacement leave. (Weekend/PH)"
+                }
+              } else if (timeToIntF >= 0 && timeToIntT <= 659) {
+                // From 12.00am - 6.59am; Overtime > 4 Hours
+                if (calendar.isLessThan4Hours(totalHours)) {
+                  _form.set(FC.total_hours, "");
+                  _form.set(FC.total_days, "");
+                  return "You need to work at least 4 hours to claim a replacement leave. (Weekend/PH)"
+                }
               }
             }
           } else {
             // If Working Day
-            if (timeToInt >= 0 && timeToInt <= 659) {
-              // From 12.00am - 6.59am; Working 4-6 Hours
-              if (calendar.isLessThan4Hours(totalHours)) {
+            // Same day
+            if (date_from == date_to) {
+              if (timeToIntF >= 0 && timeToIntT <= 659) {
+                // From 12.00am - 6.59am; Working 4-6 Hours 
+                if (calendar.isLessThan4Hours(totalHours)) {
+                  _form.set(FC.total_hours, "");
+                  _form.set(FC.total_days, "");
+                  return "You need to work 4-6 hours to claim a half day replacement leave. (Working Day)"
+                } 
+              } else if (timeToIntF >= 1800 && timeToIntF <= 2359) {
+                // Working hours 8 + Minimun 6 hours extra ( OT starts after 6PM )
+                if (!calendar.isMoreThan6Hours(totalHours)) {
+                  _form.set(FC.total_hours, "");
+                  _form.set(FC.total_days, "");
+                  return "You need to work at least 6 hours on top of working hours to claim a replacement leave. (Working Day)"
+                }
+              } else {
                 _form.set(FC.total_hours, "");
                 _form.set(FC.total_days, "");
-                return "You need to work at least 4 hours to claim a replacement leave."
+                return "You need to work at least 6 hours on top of working hours to claim a replacement leave. (Working Day)"
               }
-            } else if (timeToInt >= 700 && timeToInt <= 2359) {
-              if (totalHours < 14) {
-                _form.set(FC.total_hours, "");
-                _form.set(FC.total_days, "");
-                return "You need to work at least 6 hours on top of working hours to claim a replacement leave."
-              }
-            }
+            } 
           }
         }
 
@@ -421,7 +419,7 @@
           _form.set(FC.date_to, "");
         }
       },
-      _totalDayHours : function(name){
+      _totalDayHours : function(){
         if(!_form.isEmpty(FC.date_from) && !_form.isEmpty(FC.date_to)){
           let from = _form.get(FC.date_from);
           let to = _form.get(FC.date_to);
