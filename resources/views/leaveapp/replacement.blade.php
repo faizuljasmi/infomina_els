@@ -404,7 +404,7 @@
 
             if (calendar.isWorkingDay(dateFrom) && totalRLEarned == 0) {
               _form.set(FC.total_days, "");
-              return "You need to work at least 4 hours to claim a replacement leave. (Working Day)"
+              return "You need to work at least 4 hours on top of working hours to claim a replacement leave. (Working Day)"
             }
 
             if (!calendar.isWorkingDay(dateFrom) && totalRLEarned == 0) {
@@ -435,7 +435,7 @@
             if (isWorkingDay) {
               if (hours < 4) {
                 _form.set(FC.total_days, "");
-                return "You need to work at least 4 hours to claim a replacement leave. (Working Day)"
+                return "You need to work at least 4 hours on top of working hours to claim a replacement leave. (Working Day)"
               }
               setClaimDays('WORKING', hours);
             } else {
