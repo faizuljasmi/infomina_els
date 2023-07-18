@@ -18,6 +18,7 @@ class CreateWorkingHoursTable extends Migration
             $table->string('label');
             $table->timestamps();
         });
+        // php artisan migrate --path=/database/migrations/2023_07_17_101434_create_working_hours_table.php
     }
 
     /**

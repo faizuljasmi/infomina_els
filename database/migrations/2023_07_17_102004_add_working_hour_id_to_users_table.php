@@ -17,6 +17,7 @@ class AddWorkingHourIdToUsersTable extends Migration
             $table->unsignedBigInteger('working_hour_id')->nullable();
             $table->foreign('working_hour_id')->references('id')->on('working_hours');
         });
+        // php artisan migrate --path=/database/migrations/2023_07_17_102004_add_working_hour_id_to_users_table.php
     }
 
     /**
