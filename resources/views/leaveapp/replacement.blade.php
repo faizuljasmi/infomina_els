@@ -414,17 +414,20 @@
           } else {
             // Claim in made within the same day
             let isWorkingDay = calendar.isWorkingDay(dateFrom);
+            console.log(isWorkingDay, 'isWorkingDay');
             let minutes = 0;
 
-            if (workStartTime && workEndTime) {
+            if (workStartTime && workEndTime && isWorkingDay) {
               // If have working hours
-              // Check start time with default working hours
-              if (timeToIntF < workStartTime) {
+              // If time start OT is before workk start time and end OT is after work end time
+              if (timeToIntF < workStartTime && timeToIntT > workEndTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
-              }
-              // Check end time with default working hours
-              if (timeToIntT > workEndTime) {
                 minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
+              }
+
+              // If start OT after work end time or end OT before work start time
+              if (timeToIntF > workEndTime || timeToIntT < workStartTime) {
+                minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
               }
             } else {
               minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
