@@ -100,9 +100,9 @@
 
                 <!-- File Attachment -->
                 <div class="form-group">
-                  <label>Attachment <small class="text-muted">Optional. Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
+                  <label>Attachment <font color="red">*</font><small class="text-muted"> Format: jpg,jpeg,png,pdf. Max size: 2MB</small></label>
                   <div class="input-group">
-                    <input type="file" class="form-control-file" name="attachment" id="attachment">
+                    <input type="file" class="form-control-file" name="attachment" id="attachment" required>
                     <span class="text-danger"> {{ $errors->first('attachment') }}</span>
                   </div>
                 </div>
@@ -121,6 +121,8 @@
                       @foreach($leaveAuth as $la)
                       <option value="{{$la->id}}">{{$la->name}}</option>
                       @endforeach
+                      <!-- Hard coded to let anyone set Cynthia as first approver  -->
+                      <option value="4">Cynthia Mok Pek Yoke</option> 
                     </select>
                   </div>
                 </div>
@@ -347,25 +349,25 @@
               hours = getHours(minuteDiffs);
             }
 
-            return hours;
+            return minuteDiffs;
           }
 
-          function setClaimDays(day, hours) {
+          function setClaimDays(day, mins) {
             // Set total RL earned based on extra hours worked
             if (day == 'WORKING') {
-              if (hours >= 4 && hours < 6) {
+              if (mins >= 240 && mins <= 360) {
                 totalRLEarned = totalRLEarned + 0.5;
               }
   
-              if (hours >= 6) {
+              if (mins > 360) {
                 totalRLEarned = totalRLEarned + 1;
               }
             } else if (day == 'HOLIDAY') {
-              if (hours >= 1 && hours < 5) {
+              if (mins >= 60 && mins <= 300) {
                 totalRLEarned = totalRLEarned + 0.5;
               }
 
-              if (hours >= 5) {
+              if (hours > 300) {
                 totalRLEarned = totalRLEarned + 1;
               }
             }
@@ -380,19 +382,20 @@
             
               if (i == 0) {
                 // First day of claim
-                let hours = getDayCalc('FIRST');
+                // let hours = getDayCalc('FIRST');
+                let mins = getDayCalc('FIRST');
                 if (isWorkingDay) {
-                  setClaimDays('WORKING', hours);
+                  setClaimDays('WORKING', mins);
                 } else {
-                  setClaimDays('HOLIDAY', hours);
+                  setClaimDays('HOLIDAY', mins);
                 }
               } else if (i == totalDays - 1) {
                 // Last day of claim
-                let hours = getDayCalc('LAST');
+                let mins = getDayCalc('LAST');
                 if (isWorkingDay) {
-                  setClaimDays('WORKING', hours);
+                  setClaimDays('WORKING', mins);
                 } else {
-                  setClaimDays('HOLIDAY', hours);
+                  setClaimDays('HOLIDAY', mins);
                 }
               } else {
                 // Assume days in between , the employee worked for the whole day
@@ -414,20 +417,29 @@
           } else {
             // Claim in made within the same day
             let isWorkingDay = calendar.isWorkingDay(dateFrom);
-            console.log(isWorkingDay, 'isWorkingDay');
             let minutes = 0;
 
             if (workStartTime && workEndTime && isWorkingDay) {
               // If have working hours
-              // If time start OT is before workk start time and end OT is after work end time
+              // If time start OT is before work start time and end OT is after work end time
               if (timeToIntF < workStartTime && timeToIntT > workEndTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
                 minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
               }
 
-              // If start OT after work end time or end OT before work start time
-              if (timeToIntF >= workEndTime || timeToIntT <= workStartTime) {
+              // If start OT after work end time and end OT before next work start time
+              if (timeToIntF >= workEndTime && timeToIntT <= workStartTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
+              }
+
+              // If start OT before work end time and end OT after work end time
+              if (timeToIntF < workEndTime && timeToIntT > workEndTime) {
+                minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
+              }
+
+              // If start OT before work start time and end OT after work start time
+              if (timeToIntF < workStartTime && timeToIntT > workStartTime) {
+                minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
               }
             } else {
               minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
@@ -440,13 +452,13 @@
                 _form.set(FC.total_days, "");
                 return "You need to work at least 4 hours on top of working hours to claim a replacement leave. (Working Day)"
               }
-              setClaimDays('WORKING', hours);
+              setClaimDays('WORKING', minutes);
             } else {
               if (hours < 1) {
                 _form.set(FC.total_days, "");
                 return "You need to work at least 1 hour to claim a replacement leave. (Weekend/Public Holiday)"
               }
-              setClaimDays('HOLIDAY', hours);
+              setClaimDays('HOLIDAY', minutes);
             }
           }
           
