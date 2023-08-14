@@ -441,6 +441,11 @@
               if (timeToIntF < workStartTime && timeToIntT > workStartTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
               }
+
+              // If start OT same as work end time or end OT same as work start time
+              if (timeToIntF == workEndTime || timeToIntT == workStartTime) {
+                minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
+              }
             } else {
               minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
             }
