@@ -367,7 +367,7 @@
                 totalRLEarned = totalRLEarned + 0.5;
               }
 
-              if (hours > 300) {
+              if (mins > 300) {
                 totalRLEarned = totalRLEarned + 1;
               }
             }
