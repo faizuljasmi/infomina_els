@@ -428,7 +428,7 @@
               }
 
               // If start OT after work end time and end OT before next work start time
-              if (timeToIntF >= workEndTime && timeToIntT <= workStartTime) {
+              if (timeToIntF >= workEndTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
               }
 
