@@ -353,6 +353,7 @@
           }
 
           function setClaimDays(day, mins) {
+            console.log(mins, 'mins')
             // Set total RL earned based on extra hours worked
             if (day == 'WORKING') {
               if (mins >= 240 && mins <= 360) {
@@ -443,9 +444,11 @@
               }
 
               // If start OT same as work end time or end OT same as work start time
-              if (timeToIntF == workEndTime || timeToIntT == workStartTime) {
-                minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
-              }
+              // if (timeToIntF == workEndTime || timeToIntT == workStartTime) {
+              //   console.log(minutes, 'HERE')
+              //   minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
+              //   console.log(minutes, 'HERE')
+              // }
             } else {
               minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
             }
