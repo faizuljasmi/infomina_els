@@ -50,11 +50,12 @@ class ReplacementValidator extends Command
         $claims = LeaveApplication::where('leave_type_id', 12)->where('remarks', 'Claim')->get();
         
         foreach($claims as $claim) {
-            $start = new DateTime($claim->date_from);
-            $diff = $start->diff($today)->format('%a');
+            $date = new DateTime($claim->updated_at);
+            $formattedDate = Carbon::parse($date)->format('Y-m-d');
+            $diff = $date->diff($today)->format('%a');
 
             // If claim passed more than 30 days and not utilized fully.
-            if ($diff >= 30 && $claim->status != 'TAKEN' && $claim->status != 'EXPIRED') {
+            if ($diff >= 30 && $claim->status == 'APPROVED') {
                 // Change claim status to Expired.
                 $claim->status = 'EXPIRED';
                 $claim->update();
@@ -101,9 +102,9 @@ class ReplacementValidator extends Command
                     'balance' => $leaveBalance->no_of_days
                 ];
                 
-                if ($balanceForThisClaim > 0) {
-                    $claim->user->notify(new ExpiredLeave($leave));
-                }
+                // if ($balanceForThisClaim > 0) {
+                //     $claim->user->notify(new ExpiredLeave($leave));
+                // }
 
             }
         }
