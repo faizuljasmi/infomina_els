@@ -316,6 +316,8 @@
           let timeT =  timeRawT.replace(':', '');
           let timeToIntT = parseInt(timeT);
 
+          console.log(timeToIntF, timeToIntT, 'FROM TO')
+
           let totalHours = calendar.getTotalHours(from, to);
           let totalDays = calendar.getTotalDays(dateFrom, dateTo);
 
@@ -332,44 +334,79 @@
             return Math.floor(minutes / 60);
           }
 
-          function getDayCalc(day) {
+          function getMultiDayMinutes(whichDay, isWorkingDay) {
             // Only applicaple when employee selects more than one day to claim RL
-            let minuteDiffs = '';
-            let hours = '';
+            let minutes = 0;
+            let fixedStart = 0;
+            let fixedEnd = 2359;
 
-            if (day == 'FIRST') {
-              // Calculate hours worked for the first day
-              // End time is auto set to 11.59pm
-              minuteDiffs = getMinuteDiffs(timeToIntF, 2359);
-              hours = getHours(minuteDiffs + 1);
-            } else if (day == 'LAST') {
-              // Calculate hours worked for the last day
-              // Start time is auto set to 12.00am
-              minuteDiffs = getMinuteDiffs(0, timeToIntT);
-              hours = getHours(minuteDiffs);
+            if (whichDay == 'FIRST') {
+              // Calculate minutes worked for the first day
+              // If OT start before working hours
+              if (timeToIntF < workStartTime) {
+                minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
+                minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd)
+              }
+              // If OT start after working hours
+              if (timeToIntF >= workEndTime) {
+                minutes = minutes + getMinuteDiffs(timeToIntF, fixedEnd)
+              }
+              // If OT start during working hours
+              if (timeToIntF < workEndTime && timeToIntT > workEndTime) {
+                minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd)
+              }
+            } else if (whichDay == 'LAST') {
+              // Calculate minutes worked for the last day
+              // If OT end before working hours
+              if (timeToIntT < workStartTime) {
+                minutes = minutes + getMinuteDiffs(fixedStart, timeToIntT)
+              }
+              // If OT end after working hours
+              if (timeToIntT >= workEndTime) {
+                minutes = minutes + getMinuteDiffs(fixedStart, workStartTime)
+                minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
+              }
+            } else {
+              // Calculate minutes for days in between
+              // If working day, minus working hours
+              if (isWorkingDay) {
+                minutes = minutes + getMinuteDiffs(fixedStart, workStartTime)
+                minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd)
+              } else {
+                minutes = minutes + 1440
+              }
             }
 
-            return minuteDiffs;
+            return minutes;
           }
 
-          function setClaimDays(day, mins) {
-            console.log(mins, 'mins')
+          function setTotalClaimDays(isWorkingDay, mins) {
             // Set total RL earned based on extra hours worked
-            if (day == 'WORKING') {
+            if (isWorkingDay) {
               if (mins >= 240 && mins <= 360) {
                 totalRLEarned = totalRLEarned + 0.5;
               }
   
               if (mins > 360) {
-                totalRLEarned = totalRLEarned + 1;
+                let totalDays = Math.floor(mins / 360);
+                let remainder = mins % 360;
+                totalRLEarned = totalRLEarned + totalDays;
+                if (remainder >= 240) {
+                  totalRLEarned = totalRLEarned + 0.5;
+                }
               }
-            } else if (day == 'HOLIDAY') {
+            } else {
               if (mins >= 60 && mins <= 300) {
                 totalRLEarned = totalRLEarned + 0.5;
               }
 
               if (mins > 300) {
-                totalRLEarned = totalRLEarned + 1;
+                let totalDays = Math.floor(mins/360);
+                let remainder = mins % 360;
+                totalRLEarned = totalRLEarned + totalDays;
+                if (remainder >= 60) {
+                  totalRLEarned = totalRLEarned + 0.5;
+                }
               }
             }
           }
@@ -377,44 +414,45 @@
           if (totalDays > 1) {
             let date = dateFrom;
             let i = 0;
+            let minutes = 0;
 
-            while (i < totalDays) {
-              let isWorkingDay = calendar.isWorkingDay(date);
-            
-              if (i == 0) {
-                // First day of claim
-                // let hours = getDayCalc('FIRST');
-                let mins = getDayCalc('FIRST');
-                if (isWorkingDay) {
-                  setClaimDays('WORKING', mins);
+            if (workStartTime && workEndTime) {
+              while (i < totalDays) {
+                let isWorkingDay = calendar.isWorkingDay(date);
+              
+                if (i == 0) {
+                  // First day of claim
+                  minutes = minutes + getMultiDayMinutes('FIRST', isWorkingDay);
+                } else if (i == totalDays - 1) {
+                  // Last day of claim
+                  minutes = minutes + getMultiDayMinutes('LAST', isWorkingDay);
                 } else {
-                  setClaimDays('HOLIDAY', mins);
+                  // Days in between
+                  minutes = minutes + getMultiDayMinutes('BETWEEN', isWorkingDay);
                 }
-              } else if (i == totalDays - 1) {
-                // Last day of claim
-                let mins = getDayCalc('LAST');
-                if (isWorkingDay) {
-                  setClaimDays('WORKING', mins);
-                } else {
-                  setClaimDays('HOLIDAY', mins);
-                }
-              } else {
-                // Assume days in between , the employee worked for the whole day
-                totalRLEarned = totalRLEarned + 1;
+                date = calendar.nextDayStr(date);
+                i++;
               }
-              date = calendar.nextDayStr(date);
-              i++;
             }
 
-            if (calendar.isWorkingDay(dateFrom) && totalRLEarned == 0) {
-              _form.set(FC.total_days, "");
-              return "You need to work at least 4 hours on top of working hours to claim a replacement leave. (Working Day)"
+            console.log(minutes, 'FINAL MINUTES')
+
+            let isWorkingDay = calendar.isWorkingDay(dateFrom);
+            let hours = getHours(minutes);
+            
+            if (isWorkingDay) {
+              if (hours < 4) {
+                _form.set(FC.total_days, "");
+                return "You need to work at least 4 hours on top of working hours to claim a replacement leave. (Working Day)"
+              }
+            } else {
+              if (hours < 1) {
+                _form.set(FC.total_days, "");
+                return "You need to work at least 1 hour to claim a replacement leave. (Weekend/Public Holiday)"
+              }
             }
 
-            if (!calendar.isWorkingDay(dateFrom) && totalRLEarned == 0) {
-              _form.set(FC.total_days, "");
-              return "You need to work at least 1 hour to claim a replacement leave. (Weekend/Public Holiday)"
-            } 
+            setTotalClaimDays(isWorkingDay, minutes);
           } else {
             // Claim in made within the same day
             let isWorkingDay = calendar.isWorkingDay(dateFrom);
@@ -422,33 +460,21 @@
 
             if (workStartTime && workEndTime && isWorkingDay) {
               // If have working hours
-              // If time start OT is before work start time and end OT is after work end time
+              // If start OT before work and end after work
               if (timeToIntF < workStartTime && timeToIntT > workEndTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
                 minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
               }
 
-              // If start OT after work end time and end OT before next work start time
+              // If start OT after work
               if (timeToIntF >= workEndTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
               }
 
-              // If start OT before work end time and end OT after work end time
-              if (timeToIntF < workEndTime && timeToIntT > workEndTime) {
-                minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
-              }
-
-              // If start OT before work start time and end OT after work start time
-              if (timeToIntF < workStartTime && timeToIntT > workStartTime) {
+              // If start OT before work
+              if (timeToIntF < workStartTime) {
                 minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
               }
-
-              // If start OT same as work end time or end OT same as work start time
-              // if (timeToIntF == workEndTime || timeToIntT == workStartTime) {
-              //   console.log(minutes, 'HERE')
-              //   minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
-              //   console.log(minutes, 'HERE')
-              // }
             } else {
               minutes = minutes + getMinuteDiffs(timeToIntF, timeToIntT)
             }
@@ -460,18 +486,18 @@
                 _form.set(FC.total_days, "");
                 return "You need to work at least 4 hours on top of working hours to claim a replacement leave. (Working Day)"
               }
-              setClaimDays('WORKING', minutes);
             } else {
               if (hours < 1) {
                 _form.set(FC.total_days, "");
                 return "You need to work at least 1 hour to claim a replacement leave. (Weekend/Public Holiday)"
               }
-              setClaimDays('HOLIDAY', minutes);
             }
+
+            setTotalClaimDays(isWorkingDay, minutes);
           }
+
           
           _form.set(FC.total_days, totalRLEarned);
-          console.log(totalRLEarned);
 
           // Group 1 = 7.30am - 4.30pm
           // Group 2 = 8.00am - 5.00pm
