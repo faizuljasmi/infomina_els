@@ -342,36 +342,44 @@
 
             if (whichDay == 'FIRST') {
               // Calculate minutes worked for the first day
-              // If OT start before working hours
-              if (timeToIntF < workStartTime) {
-                minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime)
-                minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd)
-              }
-              // If OT start after working hours
-              if (timeToIntF >= workEndTime) {
-                minutes = minutes + getMinuteDiffs(timeToIntF, fixedEnd)
-              }
-              // If OT start during working hours
-              if (timeToIntF < workEndTime && timeToIntT > workEndTime) {
-                minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd)
+              if (isWorkingDay) {
+                // If OT start before working hours
+                if (timeToIntF < workStartTime) {
+                  minutes = minutes + getMinuteDiffs(timeToIntF, workStartTime);
+                  minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd);
+                }
+                // If OT start after working hours
+                if (timeToIntF >= workEndTime) {
+                  minutes = minutes + getMinuteDiffs(timeToIntF, fixedEnd);
+                }
+                // If OT start during working hours
+                if (timeToIntF < workEndTime && timeToIntT > workEndTime) {
+                  minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd);
+                }
+              } else {
+                minutes = minutes + getMinuteDiffs(timeToIntF, fixedEnd);
               }
             } else if (whichDay == 'LAST') {
               // Calculate minutes worked for the last day
-              // If OT end before working hours
-              if (timeToIntT < workStartTime) {
-                minutes = minutes + getMinuteDiffs(fixedStart, timeToIntT)
-              }
-              // If OT end after working hours
-              if (timeToIntT >= workEndTime) {
-                minutes = minutes + getMinuteDiffs(fixedStart, workStartTime)
-                minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT)
+              if (isWorkingDay) {
+                // If OT end before working hours
+                if (timeToIntT < workStartTime) {
+                  minutes = minutes + getMinuteDiffs(fixedStart, timeToIntT);
+                }
+                // If OT end after working hours
+                if (timeToIntT >= workEndTime) {
+                  minutes = minutes + getMinuteDiffs(fixedStart, workStartTime);
+                  minutes = minutes + getMinuteDiffs(workEndTime, timeToIntT);
+                }
+              } else {
+                minutes = minutes + getMinuteDiffs(fixedStart, timeToIntT); 
               }
             } else {
               // Calculate minutes for days in between
               // If working day, minus working hours
               if (isWorkingDay) {
-                minutes = minutes + getMinuteDiffs(fixedStart, workStartTime)
-                minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd)
+                minutes = minutes + getMinuteDiffs(fixedStart, workStartTime);
+                minutes = minutes + getMinuteDiffs(workEndTime, fixedEnd);
               } else {
                 minutes = minutes + 1440
               }
@@ -380,7 +388,7 @@
             return minutes;
           }
 
-          function setTotalClaimDays(isWorkingDay, mins) {
+          function setTotalClaimDays(isWorkingDay, mins, totalDays) {
             // Set total RL earned based on extra hours worked
             if (isWorkingDay) {
               if (mins >= 240 && mins <= 360) {
@@ -388,11 +396,19 @@
               }
   
               if (mins > 360) {
-                let totalDays = Math.floor(mins / 360);
-                let remainder = mins % 360;
-                totalRLEarned = totalRLEarned + totalDays;
-                if (remainder >= 240) {
-                  totalRLEarned = totalRLEarned + 0.5;
+                if (totalDays > 1) {
+                  let _totalDays = Math.floor(mins / 360);
+                  let remainder = mins % 360;
+                  totalRLEarned = totalRLEarned + _totalDays;
+                  if (remainder >= 240) {
+                    totalRLEarned = totalRLEarned + 0.5;
+                  } 
+                  // If RL earned is more than total no of days, just set to total days.
+                  if (totalRLEarned > totalDays) {
+                    totalRLEarned = totalDays;
+                  }
+                } else {
+                  totalRLEarned = totalRLEarned + 1;
                 }
               }
             } else {
@@ -401,11 +417,19 @@
               }
 
               if (mins > 300) {
-                let totalDays = Math.floor(mins/360);
-                let remainder = mins % 360;
-                totalRLEarned = totalRLEarned + totalDays;
-                if (remainder >= 60) {
-                  totalRLEarned = totalRLEarned + 0.5;
+                if (totalDays > 1) {
+                  let _totalDays = Math.floor(mins/360);
+                  let remainder = mins % 360;
+                  totalRLEarned = totalRLEarned + _totalDays;
+                  if (remainder >= 60) {
+                    totalRLEarned = totalRLEarned + 0.5;
+                  }
+                  // If RL earned is more than total no of days, just set to total days.
+                  if (totalRLEarned > totalDays) {
+                    totalRLEarned = totalDays;
+                  }
+                } else {
+                  totalRLEarned = totalRLEarned + 1;
                 }
               }
             }
@@ -415,6 +439,8 @@
             let date = dateFrom;
             let i = 0;
             let minutes = 0;
+
+            console.log(totalDays, 'Total Days')
 
             if (workStartTime && workEndTime) {
               while (i < totalDays) {
@@ -452,7 +478,7 @@
               }
             }
 
-            setTotalClaimDays(isWorkingDay, minutes);
+            setTotalClaimDays(isWorkingDay, minutes, totalDays);
           } else {
             // Claim in made within the same day
             let isWorkingDay = calendar.isWorkingDay(dateFrom);
@@ -493,7 +519,7 @@
               }
             }
 
-            setTotalClaimDays(isWorkingDay, minutes);
+            setTotalClaimDays(isWorkingDay, minutes, totalDays);
           }
 
           
