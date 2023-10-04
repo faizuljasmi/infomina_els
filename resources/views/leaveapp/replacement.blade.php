@@ -391,16 +391,16 @@
           function setTotalClaimDays(isWorkingDay, mins, totalDays) {
             // Set total RL earned based on extra hours worked
             if (isWorkingDay) {
-              if (mins >= 240 && mins <= 360) {
+              if (mins >= 241 && mins <= 360) {
                 totalRLEarned = totalRLEarned + 0.5;
               }
   
               if (mins > 360) {
                 if (totalDays > 1) {
-                  let _totalDays = Math.floor(mins / 360);
-                  let remainder = mins % 360;
+                  let _totalDays = Math.floor(mins / 361);
+                  let remainder = mins % 361;
                   totalRLEarned = totalRLEarned + _totalDays;
-                  if (remainder >= 240) {
+                  if (remainder >= 241) {
                     totalRLEarned = totalRLEarned + 0.5;
                   } 
                   // If RL earned is more than total no of days, just set to total days.
@@ -418,8 +418,8 @@
 
               if (mins > 300) {
                 if (totalDays > 1) {
-                  let _totalDays = Math.floor(mins/360);
-                  let remainder = mins % 360;
+                  let _totalDays = Math.floor(mins/361);
+                  let remainder = mins % 361;
                   totalRLEarned = totalRLEarned + _totalDays;
                   if (remainder >= 60) {
                     totalRLEarned = totalRLEarned + 0.5;
