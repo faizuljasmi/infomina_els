@@ -42,7 +42,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new FetchHealthMetrics)->everyThirtyMinutes()->withoutOverlapping();
 
-
+        $schedule->command('queue:work --stop-when-empty')
+             ->everyMinute()
+             ->withoutOverlapping();
     }
 
     /**
