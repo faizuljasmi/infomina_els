@@ -1224,6 +1224,26 @@ class LeaveApplicationController extends Controller
             return Carbon::parse($val->date_from)->format('F');
         });
 
+        $state_hols = $user->state_holidays;
+        $natioanl_hols = $user->national_holidays;
+
+        $holidays = $state_hols->merge($natioanl_hols)->sortBy('date_from');
+        $holsPaginated = $holidays->groupBy(function ($val) {
+            return Carbon::parse($val->date_from)->format('F');
+        });
+
+        //dd($holsPaginated);
+        $all_dates = array();
+        foreach ($holidays as $hols) {
+            $startDate = new Carbon($hols->date_from);
+            $endDate = new Carbon($hols->date_to);
+            while ($startDate->lte($endDate)) {
+                $dates = str_replace("-", "", $startDate->toDateString());
+                $all_dates[] = $dates;
+                $startDate->addDay();
+            }
+        }
+
         //Get all leave applications date
         $applied_dates = array();
         $approved_dates = array();
@@ -1254,7 +1274,7 @@ class LeaveApplicationController extends Controller
             }
         }
 
-        return view('leaveapp.applyfor')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'myApps', 'myApplication', 'applied_dates', 'approved_dates'));
+        return view('leaveapp.applyfor')->with(compact('user', 'leaveType', 'groupMates', 'leaveAuth', 'leaveBal', 'myApps', 'myApplication', 'applied_dates', 'approved_dates', 'all_dates', 'holidays', 'holsPaginated'));
     }
 
     public function submitApplyFor(Request $request, User $user)

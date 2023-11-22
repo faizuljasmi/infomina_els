@@ -458,6 +458,7 @@ var user_state = $('#user_state').val();
 
   function MainLeaveApplicationCreate() {
 
+    var dates = {!! json_encode($all_dates, JSON_HEX_TAG) !!};
     var applied = {!! json_encode($applied_dates, JSON_HEX_TAG) !!};
     var approved = {!! json_encode($approved_dates, JSON_HEX_TAG) !!};
     var balances= {!! json_encode($leaveBal, JSON_HEX_TAG) !!};
@@ -467,7 +468,7 @@ var user_state = $('#user_state').val();
     //console.log("MY APP:",myapplications);
 
     let calendar = new VanillaCalendar({
-        holiday: [],
+        holiday: dates,
         applied: applied,
         approved: approved,
         selector: ".myCalendar",
