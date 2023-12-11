@@ -664,8 +664,8 @@ var user_state = $('#user_state').val();
                 }
             }
             if(validation.isSickLeave()){
-                if(total > balances[3]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
-                alert('Employee has insufficient hospitalization leave balance');
+                if(total > balances[2]['no_of_days'] && _form.get(FC.leave_type_id) != "12"){
+                alert('Employee has insufficient sick leave balance');
                 _form.set(FC.date_to, "");
                 _form.set(FC.total_days, "");
                 _form.set(FC.date_resume, "");
