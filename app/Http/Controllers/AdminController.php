@@ -587,7 +587,7 @@ class AdminController extends Controller
         // ]);
         //https://videspace.com/app
         //https://videspace.com
-        $endpoint = "http://128.199.123.181/api/other/validate-token";
+        $endpoint = "https://videspace.com/api/other/validate-token";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $token = $request->token;
 
@@ -623,7 +623,7 @@ class AdminController extends Controller
         // $response = Http::post('http://128.199.123.181/api/other/validate-token', [
         //     'token' => $token,
         // ]);
-        $endpoint = "http://128.199.123.181/api/other/validate-token";
+        $endpoint = "https://videspace.com/api/other/validate-token";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $token = $request->token;
 
