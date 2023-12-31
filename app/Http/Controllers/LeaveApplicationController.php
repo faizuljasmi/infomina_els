@@ -104,7 +104,7 @@ class LeaveApplicationController extends Controller
 
 
         //Get all leave applications
-        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->whereDate('created_at', '>', '2022-12-30')->get();
+        $leaveApps = LeaveApplication::orderBy('date_from', 'ASC')->whereDate('created_at', '>', '2023-12-30')->get();
 
 
         //Get leave applications of same group
@@ -1874,7 +1874,7 @@ class LeaveApplicationController extends Controller
 
     public function mobile_notification(LeaveApplication $leaveApplication, $personnel)
     {
-        $endpoint = "http://128.199.123.181/api/push-notification/android";
+        $endpoint = "https://videspace.com/api/push-notification/android";
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $leave_type = $leaveApplication->leaveType->name;
         $user_id = $leaveApplication->user_id;

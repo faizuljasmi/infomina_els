@@ -360,7 +360,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header bg-teal" id="leaveRecord">
-                        <strong>Leave Record for 2023</strong>
+                        <strong>Leave Record for 2024</strong>
                     </div>
                     <div class="card-body" style="overflow-x:auto;">
                         <table class="table table-sm table-bordered">
@@ -379,7 +379,7 @@
                                 </tr>
                                 <tr>
                                     <th>Brought Forward <i class="fas fa-info-circle" data-toggle="tooltip"
-                                            data-placement="top" title="Brought forward leave from 2022"></i>
+                                            data-placement="top" title="Brought forward leave from 2023"></i>
                                     </th>
                                     @foreach($broughtFwd as $bf)
                                     @if($bf->leave_type_id == '1')

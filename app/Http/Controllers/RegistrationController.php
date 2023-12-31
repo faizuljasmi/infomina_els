@@ -147,15 +147,15 @@ class RegistrationController extends Controller
         $pendLeaves = LeaveApplication::where(function ($query) use ($user) {
             $query->where('status', 'PENDING_1')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at','>','2022-12-01');
+                ->whereDate('created_at','>','2023-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_2')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at','>','2022-12-01');
+                ->whereDate('created_at','>','2023-12-01');
         })->orWhere(function ($query) use ($user) {
             $query->where('status', 'PENDING_3')
                 ->where('user_id', $user->id)
-                ->whereDate('created_at','>','2022-12-01');
+                ->whereDate('created_at','>','2023-12-01');
         })->get();
 
         foreach($leaveBal as $lb){
@@ -172,7 +172,7 @@ class RegistrationController extends Controller
 
         $ann_taken_first_half = LeaveApplication::where('user_id', $user->id)->where('status', 'Approved')->where(function ($q) {
             $q->where('leave_type_id', 1)->orWhere('leave_type_id', 6);
-        })->whereBetween('created_at', ['2023-01-01', '2023-06-30'])->get();
+        })->whereBetween('created_at', ['2024-01-01', '2024-06-30'])->get();
         $total_ann_taken_first_half = 0;
         foreach($ann_taken_first_half as $ann){
             $total_ann_taken_first_half += $ann->total_days;
