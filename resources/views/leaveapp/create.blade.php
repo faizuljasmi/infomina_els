@@ -137,7 +137,7 @@
                                                 }
                                             ?>
                                             @if (($all_rep_claim->total_days - $total_used) > 0)
-                                                <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}" data-event-date="{{$all_rep_claim->date_from}}">
+                                                <option value="{{$all_rep_claim->id}}" data-total-days="{{$all_rep_claim->total_days}}" data-event-date="{{$all_rep_claim->date_from}}" data-approved="{{$all_rep_claim->updated_at}}">
                                                         {{$all_rep_claim->date_from}} - {{$all_rep_claim->date_to}} | {{$all_rep_claim->reason}} | Day(s) : {{$all_rep_claim->total_days - $total_used}}
                                                 </option>
                                             @endif
@@ -635,7 +635,9 @@
             $("#claim_id").val(claim_id);
 
             var claimed_days = $(this).find(':selected').data('total-days'); // To get total submitted days of claim.
-            event_date = $(this).find(':selected').data('event-date'); // To get event date of claim.
+            // event_date = $(this).find(':selected').data('event-date'); // To get event date of claim.
+            var approved = $(this).find(':selected').data('approved');
+            event_date = approved.split(" ")[0]; 
 
             // If claimed more than one day.
             if (claimed_days >= 1) {
@@ -885,13 +887,14 @@ var user_state = $('#user_state').val();
         // REPLACEMENT POLICY
         if (validation.isReplacementLeave()) {
             var date_event = new Date(event_date);
+            console.log(date_event, 'date_event')
             var date_allow = new Date(date_from);
 
             date_event.setDate(date_event.getDate() + 30); // Add 30 days.
             date_allow.setDate(date_allow.getDate() + count_balance); // Add the balance days of the claim.
             // console.log(count_balance);
             if(calendar.isDateBigger(date_from, date_event)){
-                return "Attention: This replacement claim should be utilized within 30 days from the claimed event date.";
+                return "Attention: This replacement claim should be utilized within 30 days from the claim approved date.";
             }
             if(calendar.isDateBigger(date_to, date_allow) || calendar.isDateEqual(date_to, date_allow)){
                 return "Attention: You have insufficient leave balance from this claim to apply until this date.";
