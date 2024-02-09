@@ -546,7 +546,7 @@ class AdminController extends Controller
                 if ($user->id == $bf->user_id) {
                     $ann_taken_first_half = LeaveApplication::where('user_id', $user->id)->where('status', 'Approved')->where(function ($q) {
                         $q->where('leave_type_id', 1)->orWhere('leave_type_id', 6);
-                    })->whereBetween('created_at', ['2023-01-01', '2023-06-30'])->get();
+                    })->whereBetween('created_at', ['2024-01-01', '2024-06-30'])->get();
                     $cur_ann_leave_bal = LeaveBalance::where('user_id', $user->id)->where('leave_type_id', 1)->first();
                     $total_days = 0;
                     foreach ($ann_taken_first_half as $ann) {

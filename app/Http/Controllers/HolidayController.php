@@ -25,7 +25,15 @@ class HolidayController extends Controller
      */
     public function index()
     {
-        $holidays = Holiday::all();
+        // $holidays = Holiday::all();
+        // Get the current year and the next year
+        $currentYear = Carbon::now()->year;
+        $nextYear = Carbon::now()->addYear()->year;
+
+        // Fetch holidays for the current year and the next year
+        $holidays = Holiday::whereYear('date_from', '>=', $currentYear)
+                            ->whereYear('date_to', '<=', $nextYear)
+                            ->get();
         $all_dates = array();
         foreach ($holidays as $hols) {
             $startDate = new Carbon($hols->date_from);
@@ -36,7 +44,12 @@ class HolidayController extends Controller
                 $startDate->addDay();
             }
         }
-        $countries = Country::all();
+        // $countries = Country::all();
+        $countries = Country::with(['holidays' => function ($query) use ($currentYear, $nextYear) {
+            $query->whereYear('date_from', '>=', $currentYear)
+                ->whereYear('date_to', '<=', $nextYear)
+                ->orderBy('date_from', 'desc');
+        }])->get();
         //dd($all_dates);
         $states = State::all();
         return view('holiday.index')->with(compact('holidays', 'all_dates','countries'));
