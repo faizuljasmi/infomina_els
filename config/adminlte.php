@@ -208,18 +208,18 @@ return [
             'icon' => 'fas fa-fw fa-user-tie',
             'can' => 'employee-dashboard',
         ],
-        [
-            'text' => 'Apply Leave',
-            'url'  => '/leave/apply',
-            'icon' => 'fas fa-fw fa-calendar-alt',
-            'can' => 'employee-dashboard',
-        ],
-        [
-            'text' => 'Claim Replacement Leave',
-            'url'  => '/leave/replacement/apply',
-            'icon' => 'fas fa-fw fa-calendar-plus',
-            'can' => 'employee-dashboard',
-        ],
+        // [
+        //     'text' => 'Apply Leave',
+        //     'url'  => '/leave/apply',
+        //     'icon' => 'fas fa-fw fa-calendar-alt',
+        //     'can' => 'employee-dashboard',
+        // ],
+        // [
+        //     'text' => 'Claim Replacement Leave',
+        //     'url'  => '/leave/replacement/apply',
+        //     'icon' => 'fas fa-fw fa-calendar-plus',
+        //     'can' => 'employee-dashboard',
+        // ],
         [
             'text' => 'Employee Records',
             'url'  => '/create',

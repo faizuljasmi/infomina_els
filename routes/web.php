@@ -199,8 +199,8 @@ Route::middleware('can:edit_settings')->group(function() {
 });
 
 //Leave Application
-Route::get('/leave/apply','LeaveApplicationController@create')->middleware('auth');
-Route::post('leave/apply','LeaveApplicationController@store')->name('leaveapp_store')->middleware('auth');
+// Route::get('/leave/apply','LeaveApplicationController@create')->middleware('auth');
+// Route::post('leave/apply','LeaveApplicationController@store')->name('leaveapp_store')->middleware('auth');
 Route::get('/leave/apply/view/{leaveApplication}','LeaveApplicationController@view')->name('view_application')->middleware('auth');
 Route::get('/leave/apply/edit/{leaveApplication}','LeaveApplicationController@edit')->name('edit_application')->middleware('auth');
 Route::post('/leave/apply/update/{leaveApplication}','LeaveApplicationController@update')->name('update_application')->middleware('auth');
@@ -209,7 +209,7 @@ Route::get('/leave/apply/deny/{leaveApplication}','LeaveApplicationController@de
 Route::post('/leave/apply/cancel/{leaveApplication}','LeaveApplicationController@cancel')->name('cancel_application')->middleware('auth');
 
 //Replacement leave
-Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->middleware('auth');
+// Route::get('/leave/replacement/apply','ReplacementLeaveController@create')->middleware('auth');
 
 //Excel Import & Export
 //Route::get('import-excel', 'ExcelController@index');
